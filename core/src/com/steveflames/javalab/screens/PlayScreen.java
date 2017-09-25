@@ -1,31 +1,22 @@
-package com.steveflames.javalab.levels;
+package com.steveflames.javalab.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.steveflames.javalab.MyGdxGame;
-import com.steveflames.javalab.Tools.B2WorldCreator;
-import com.steveflames.javalab.Tools.Fonts;
-import com.steveflames.javalab.Tools.Toast;
-import com.steveflames.javalab.Tools.WorldContactListener;
+import com.steveflames.javalab.scenes.Editor;
+import com.steveflames.javalab.tools.B2WorldCreator;
+import com.steveflames.javalab.scenes.Toast;
+import com.steveflames.javalab.tools.WorldContactListener;
 import com.steveflames.javalab.Window;
 import com.steveflames.javalab.scenes.Hud;
 import com.steveflames.javalab.sprites.Pc;
@@ -101,12 +92,12 @@ public class PlayScreen extends Window {
             if(player.currentState != Player.State.CODING) {
                 if (Gdx.input.isKeyJustPressed(Input.Keys.W))
                     player.jump();
-                else if (Gdx.input.isKeyPressed(Input.Keys.D) && player.b2body.getLinearVelocity().x <= 2) //2
-                    player.b2body.applyLinearImpulse(new Vector2(0.2f, 0), player.b2body.getWorldCenter(), true); //0.2f
-                else if (Gdx.input.isKeyPressed(Input.Keys.A) && player.b2body.getLinearVelocity().x >= -2)
-                    player.b2body.applyLinearImpulse(new Vector2(-0.2f, 0), player.b2body.getWorldCenter(), true);
+                else if (Gdx.input.isKeyPressed(Input.Keys.D) && player.b2body.getLinearVelocity().x <= 5) //2
+                    player.b2body.applyLinearImpulse(new Vector2(0.5f, 0), player.b2body.getWorldCenter(), true); //0.2f
+                else if (Gdx.input.isKeyPressed(Input.Keys.A) && player.b2body.getLinearVelocity().x >= -5)
+                    player.b2body.applyLinearImpulse(new Vector2(-0.5f, 0), player.b2body.getWorldCenter(), true);
                 else if (Gdx.input.isKeyJustPressed(Input.Keys.T))
-                    hud.newToast("Sample textSample is\n just a joke come on now mustard\n yolo lorem ipsum merde kap\n lolololloa weaweawe\n xaxxaxaxaxaxaxa kikikikikiririririirirkikiki xoxoxo xax\naxaxaxa adwodka opwdk oawk dpoakwdpo akwpod kak aop aaaaaaaakakakakakakka");
+                    hud.newToast("Sample textSample is\n just a iug come on now momo\n yoyo lorem ipsum merde kap\n lolololloa weaweawe\n xaxxaxaxaxaxaxa kikikikikiririririirirkikiki xoxoxo xax\naxaxaxa adwodka opwdk oawk dpoakwdpo akwpod kak aop aaaaaaaakakakakakakka");
                 else if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
                     for (Pc pc : pcs) {
                         if (pc.isUsable()) {
@@ -114,13 +105,16 @@ public class PlayScreen extends Window {
                             player.b2body.setTransform(pc.getBounds().x/MyGdxGame.PPM + 0.1f, pc.getBounds().y/MyGdxGame.PPM + player.getRadius(), 0);
                             player.currentState = Player.State.CODING;
                             cam.position.x = pc.getBounds().x / MyGdxGame.PPM + 1.5f;
+                            hud.newEditor();
                         }
                     }
                 }
             }
             else {
-                if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
+                if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
                     player.currentState = Player.State.STANDING;
+                    hud.closeCurrentEditor();
+                }
             }
         }
         else if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {

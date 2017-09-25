@@ -1,4 +1,4 @@
-package com.steveflames.javalab.Tools;
+package com.steveflames.javalab.tools;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -31,7 +31,7 @@ public class Fonts {
                 //"αβγδεζηθικλμνξοπρστυφχψως" +
                 //"ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ" +
                 //"άέήίόύώΆΈΉΊΌΎΏΪ" +
-                "+-:/!.*<>^;[](),'?%" +
+                "+-:/!.*<>^;[](){},'?%" +
                 "abcdefghijklmnopqrstuvwxyz" +
                 "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         xsmall = generator.generateFont(parameter);
@@ -50,7 +50,7 @@ public class Fonts {
                 //"αβγδεζηθικλμνξοπρστυφχψως" +
                 //"ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ" +
                 //"άέήίόύώΆΈΉΊΌΎΏΪ" +
-                "+-:/!.*<>^;[](),'?%" +
+                "`~!@#$%^&*()-=_+,<.>/?;:'\"{\\}|[]" +
                 "abcdefghijklmnopqrstuvwxyz" +
                 "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         xsmallMono = generator.generateFont(parameter);

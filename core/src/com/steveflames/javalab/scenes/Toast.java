@@ -1,4 +1,4 @@
-package com.steveflames.javalab.Tools;
+package com.steveflames.javalab.scenes;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
@@ -7,11 +7,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.steveflames.javalab.MyGdxGame;
 import com.steveflames.javalab.buttons.Button;
+import com.steveflames.javalab.tools.Fonts;
 
 import java.util.ArrayList;
-import java.util.Timer;
 
 /**
  * Created by Flames on 24/9/2017.
@@ -34,7 +33,7 @@ public class Toast extends Button{
     private int linePtr = 0;
 
     public Toast(String text, Camera cam) {
-        super(text, new Rectangle(10, -150, cam.viewportWidth-20, 150));
+        super(text, new Rectangle(10, -150, cam.viewportWidth-20, 150), Fonts.small);
         linesOfText = new ArrayList<ArrayList<String>>();
         linesOfText.add(new ArrayList<String>());
         currentPage = 0;
@@ -98,8 +97,8 @@ public class Toast extends Button{
 
     public void update(float dt) {
         if(currentState == State.INCOMING) {
-            if (getRect().y + getRect().height <= 160) {
-                getRect().y += SPEED * dt;
+            if (rect.y + rect.height <= 160) {
+                rect.y += SPEED * dt;
             } else {
                 currentState = State.WRITING;
                 timerMillis = TimeUtils.millis();

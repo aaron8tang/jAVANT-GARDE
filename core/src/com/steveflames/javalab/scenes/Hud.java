@@ -11,10 +11,9 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.steveflames.javalab.MyGdxGame;
-import com.steveflames.javalab.Tools.Fonts;
-import com.steveflames.javalab.Tools.Toast;
+import com.steveflames.javalab.tools.Fonts;
 import com.steveflames.javalab.Window;
-import com.steveflames.javalab.levels.PlayScreen;
+import com.steveflames.javalab.screens.PlayScreen;
 import com.steveflames.javalab.sprites.Pc;
 import com.steveflames.javalab.sprites.Player;
 
@@ -30,6 +29,7 @@ public class Hud implements Disposable {
     private Label healthLabel;
 
     private Toast currentToast = null;
+    private Editor currentEditor = null;
 
     public Hud(PlayScreen level, SpriteBatch sb) {
         this.level = level;
@@ -56,6 +56,11 @@ public class Hud implements Disposable {
             if(currentToast.getCurrentState() == Toast.State.LEFT)
                 currentToast = null;
         }
+        if(currentEditor != null) {
+            currentEditor.update(dt);
+            if(currentEditor.getCurrentState() == Editor.State.LEFT)
+                currentEditor = null;
+        }
     }
 
     public void render(SpriteBatch sb, ShapeRenderer sr) {
@@ -75,6 +80,8 @@ public class Hud implements Disposable {
 
         if(currentToast != null)
             currentToast.render(sb, sr);
+        if(currentEditor != null)
+            currentEditor.render(sb, sr);
 
         for(Pc pc: level.getPcs()) { //draw the 'use PC' prompt
             if(pc.isUsable()) {
@@ -94,6 +101,10 @@ public class Hud implements Disposable {
         currentToast = new Toast(text, stage.getCamera());
     }
 
+    public void newEditor() {
+        currentEditor = new Editor(stage.getCamera());
+    }
+
     @Override
     public void dispose() {
         stage.dispose();
@@ -101,5 +112,13 @@ public class Hud implements Disposable {
 
     public Toast getCurrentToast() {
         return currentToast;
+    }
+
+    public Editor getCurrentEditor() {
+        return currentEditor;
+    }
+
+    public void closeCurrentEditor() {
+        currentEditor = null;
     }
 }

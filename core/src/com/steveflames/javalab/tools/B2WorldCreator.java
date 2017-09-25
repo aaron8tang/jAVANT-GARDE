@@ -1,4 +1,4 @@
-package com.steveflames.javalab.Tools;
+package com.steveflames.javalab.tools;
 
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
@@ -8,7 +8,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.steveflames.javalab.MyGdxGame;
-import com.steveflames.javalab.levels.PlayScreen;
+import com.steveflames.javalab.screens.PlayScreen;
 import com.steveflames.javalab.sprites.Pc;
 
 /**

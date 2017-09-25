@@ -1,4 +1,4 @@
-package com.steveflames.javalab.Tools;
+package com.steveflames.javalab.tools;
 
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
@@ -22,7 +22,7 @@ public class WorldContactListener implements ContactListener {
             Fixture object = player == fixA ? fixB : fixA;
 
             if(object.getUserData() instanceof Pc) {
-                System.out.println("COLLISION START "+object.getBody().getPosition().x + " " + object.getBody().getPosition().y);
+                //System.out.println("COLLISION START "+object.getBody().getPosition().x + " " + object.getBody().getPosition().y);
                 ((Pc) object.getUserData()).setUsable(true);
             }
         }
@@ -38,7 +38,7 @@ public class WorldContactListener implements ContactListener {
             Fixture object = player == fixA ? fixB : fixA;
 
             if(object.getUserData() instanceof Pc) {
-                System.out.println("COLLISION END "+object.getBody().getPosition().x + " " + object.getBody().getPosition().y);
+                //System.out.println("COLLISION END "+object.getBody().getPosition().x + " " + object.getBody().getPosition().y);
                 ((Pc) object.getUserData()).setUsable(false);
             }
         }

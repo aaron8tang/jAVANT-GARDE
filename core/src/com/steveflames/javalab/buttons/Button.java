@@ -2,12 +2,12 @@ package com.steveflames.javalab.buttons;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
-import com.steveflames.javalab.MyGdxGame;
-import com.steveflames.javalab.Tools.Fonts;
+import com.steveflames.javalab.tools.Fonts;
 
 /**
  * The button items on the windows extend this class.
@@ -21,14 +21,16 @@ public class Button implements java.io.Serializable{
 
     protected String text;
     protected transient Texture texture;
+    protected BitmapFont font;
 
     private boolean highlighted;
 
-    public Button(String text, Rectangle rect) {
+    public Button(String text, Rectangle rect, BitmapFont font) {
         this.rect = rect;
         this.text = text;
+        this.font = font;
         glyphLayout = new GlyphLayout();
-        glyphLayout.setText(Fonts.small, text);
+        glyphLayout.setText(font, text);
         highlighted = false;
         shapeColor = Color.RED;
     }
@@ -78,16 +80,7 @@ public class Button implements java.io.Serializable{
      * @param sb -> SpriteBatch, renders the text
      */
     public void drawFont(SpriteBatch sb) {
-        Fonts.small.draw(sb, text, rect.x + rect.width/2 - glyphLayout.width/2, rect.y + rect.height/2 + glyphLayout.height/2);
-    }
-
-    /**
-     * Draw the text of the button. (medium font)
-     * @param sb -> SpriteBatch, renders the text
-     * @param s -> the text to be written
-     */
-    public void drawMediumFont(SpriteBatch sb, String s) {
-        Fonts.medium.draw(sb, s, rect.x + rect.width/2 - glyphLayout.width/2, rect.y + rect.height/2 + glyphLayout.height/2);
+        font.draw(sb, text, rect.x + rect.width/2 - glyphLayout.width/2, rect.y + rect.height/2 + glyphLayout.height/2);
     }
 
     /**
@@ -95,7 +88,7 @@ public class Button implements java.io.Serializable{
      * @param sb -> SpriteBatch, renders the text
      */
     public void drawFieldFont(SpriteBatch sb) {
-        Fonts.small.draw(sb, text, rect.x + 5, rect.y+40);
+        font.draw(sb, text, rect.x + 5, rect.y+40);
     }
 
     public Rectangle getRect() {
@@ -104,18 +97,6 @@ public class Button implements java.io.Serializable{
 
     public void setRect(Rectangle rect) {
         this.rect = rect;
-    }
-
-    public void setY(float y) {
-        rect.y = y;
-    }
-
-    public void setX(float x) {
-        rect.x = x;
-    }
-
-    public float getX() {
-        return rect.x;
     }
 
     public String getText() {
@@ -162,4 +143,7 @@ public class Button implements java.io.Serializable{
         return texture;
     }
 
+    public GlyphLayout getGlyphLayout() {
+        return glyphLayout;
+    }
 }

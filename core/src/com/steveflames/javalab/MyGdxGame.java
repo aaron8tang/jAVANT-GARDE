@@ -5,8 +5,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.steveflames.javalab.Tools.Fonts;
-import com.steveflames.javalab.levels.PlayScreen;
+import com.steveflames.javalab.tools.Fonts;
+import com.steveflames.javalab.screens.PlayScreen;
 
 public class MyGdxGame extends Game {
 
