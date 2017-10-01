@@ -2,6 +2,7 @@ package com.steveflames.javalab.tools;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
@@ -55,5 +56,11 @@ public class Fonts {
                 "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         xsmallMono = generator.generateFont(parameter);
         generator.dispose();
+
+        Fonts.xsmallMono.setColor(Color.BLACK);
+        Fonts.xsmall.setColor(Color.BLACK);
+        Fonts.medium.setColor(Color.WHITE);
+        Fonts.small.setColor(Color.WHITE);
+        Fonts.big.setColor(Color.WHITE);
     }
 }

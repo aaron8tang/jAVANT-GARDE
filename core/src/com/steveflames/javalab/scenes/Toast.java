@@ -41,6 +41,8 @@ public class Toast extends Button{
 
         breakTextIntoLines();
         timerMillis = TimeUtils.millis();
+
+        //initialize finalLinesOfText
         finalLinesOfText = new ArrayList<ArrayList<String>>();
         for(ArrayList<String> sList: linesOfText) {
             finalLinesOfText.add(new ArrayList<String>());
@@ -158,25 +160,6 @@ public class Toast extends Button{
             for(int i=0; i<finalLinesOfText.get(currentPage).size(); i++) {
                 Fonts.small.draw(sb, finalLinesOfText.get(currentPage).get(i), rect.x + 120, rect.y + rect.height - 20 - (33) * i);
             }
-            /*for(int i=0; i<linesOfText.get(currentPage).size(); i++) {
-                if(i >= linePtr  && currentState == State.WRITING) {
-                    break;
-                }
-                else if(i < linePtr -1) {
-                    Fonts.small.draw(sb, linesOfText.get(currentPage).get(i), rect.x + 120, rect.y + rect.height - 20 - (33) * i);
-                    break;
-                }
-                for(int j=0; j<linesOfText.get(currentPage).get(i).length(); j++) {
-                    if(letterPtr == linesOfText.get(currentPage).get(i).length()  && currentState == State.WRITING) {
-                        letterPtr=0;
-                        linePtr++;
-                        if(linePtr==4) {
-                            currentState = State.READY;
-                        }
-                    }
-                    Fonts.small.draw(sb, linesOfText.get(currentPage).get(i).substring(0, letterPtr), rect.x + 120, rect.y + rect.height - 20 - (33) * i);
-                }
-            }*/
             Fonts.xsmall.draw(sb, "Press ENTER", getRect().x + getRect().width - 140, getRect().y + 25);
             sb.end();
         }

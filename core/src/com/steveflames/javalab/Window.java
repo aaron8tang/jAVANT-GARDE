@@ -21,8 +21,6 @@ public abstract class Window implements Screen, InputProcessor {
 
     protected float WIDTH;
     protected float HEIGHT;
-    protected static final int BTNWIDTH = 300;
-    protected static final int BTNHEIGHT = 120;
     protected Rectangle clickCoords;
     protected Vector3 clickVector;
 
@@ -40,10 +38,6 @@ public abstract class Window implements Screen, InputProcessor {
         clickVector = new Vector3();
         glyphLayouts = new ArrayList<GlyphLayout>();
         strings = new ArrayList<String>();
-
-        Fonts.medium.setColor(Color.WHITE);
-        Fonts.small.setColor(Color.WHITE);
-        Fonts.big.setColor(Color.WHITE);
 
         Gdx.input.setInputProcessor(this);
     }

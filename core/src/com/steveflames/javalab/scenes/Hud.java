@@ -1,18 +1,29 @@
 package com.steveflames.javalab.scenes;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.steveflames.javalab.MyGdxGame;
 import com.steveflames.javalab.tools.Fonts;
-import com.steveflames.javalab.Window;
 import com.steveflames.javalab.screens.PlayScreen;
 import com.steveflames.javalab.sprites.Pc;
 import com.steveflames.javalab.sprites.Player;
@@ -26,7 +37,6 @@ public class Hud implements Disposable {
     private Viewport viewport;
 
     private PlayScreen level;
-    private Label healthLabel;
 
     private Toast currentToast = null;
     private Editor currentEditor = null;
@@ -35,19 +45,60 @@ public class Hud implements Disposable {
         this.level = level;
 
         viewport = new StretchViewport(MyGdxGame.WIDTH, MyGdxGame.HEIGHT, new OrthographicCamera());
+
+
+        //Skin skin = new Skin(Gdx.files.internal("skins/lml/skin/skin.json"));
+        //skin.getFont("font-label").setFixedWidthGlyphs("qwertyuiop[]asdfghjkl;'zxcvbnm,./`1234567890-=\\QWERTYUIOP{}ASDFGHJKL:\"ZXCVBNM<>?~!@#$%^&*()_+");
+
         stage = new Stage(viewport, sb);
+        /*Window container = new Window("PC", skin);
+        container.setSize(710,555);
 
-        Table table = new Table();
-        table.top();
-        table.left();
-        table.setFillParent(true);
+        TextArea textArea = new TextArea(
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n"
+                        + "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n"
+                        + "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n"
+                        + "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n"
+                        + "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n"
+                        + "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n"
+                        + "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n"
+                        + "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n"
+                        + "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n"
+                        + "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n"
+                        + "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n"
+                        + "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n"
+                        + "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n"
+                        + "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n"
+                        + "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n"
+                        + "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n"
+                        + "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n"
+                        + "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n"
+                        + "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n"
+                        + "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n"
+                        + "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n"
+                        + "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n"
+                        + "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n"
+                        + "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n",
+                skin);
 
-        healthLabel = new Label("HEALTH" , new Label.LabelStyle(Fonts.small, Color.WHITE));
+        Table codeTable = new Table(skin);
+        codeTable.add(textArea).width(600).height(2000);
 
-        table.add(healthLabel).padLeft(15).padTop(5);
+        ScrollPane scroll = new ScrollPane(codeTable, skin);
 
-        stage.addActor(table);
 
+        Table lineNumTable = new Table(skin);
+        for(int i=0; i<textArea.getLines(); i++) {
+            lineNumTable.add(new TextButton(i+"", skin)).height(18f);
+            lineNumTable.row();
+        }
+
+
+        container.add(lineNumTable).left().top().expandX();
+        container.add(scroll).expandX();
+        stage.addActor(container);
+        Gdx.input.setInputProcessor(stage);
+        */
     }
 
     public void update(float dt) {
@@ -71,9 +122,9 @@ public class Hud implements Disposable {
         if(level.getPlayer().getHealth() > 0) {
             for(int i=0; i<level.getPlayer().getHealth(); i++) {
                 sr.setColor(Color.BLACK);
-                sr.rect(180 +(70*i), stage.getCamera().viewportHeight - 22 - 32, 64, 34);
+                sr.rect(20 +(60*i), stage.getCamera().viewportHeight - 20 - 29, 54, 29);
                 sr.setColor(Color.RED);
-                sr.rect(182 +(70*i), stage.getCamera().viewportHeight - 22 - 30, 60, 30);
+                sr.rect(22 +(60*i), stage.getCamera().viewportHeight - 20 - 27, 50, 25);
             }
         }
         sr.end();
@@ -89,12 +140,13 @@ public class Hud implements Disposable {
                     sb.setProjectionMatrix(sr.getProjectionMatrix());
                     sb.begin();
                     Fonts.medium.setColor(Color.RED);
-                    Fonts.medium.draw(sb, "!", pc.getBounds().x + pc.getBounds().width / 2 - 10 - Window.getCam().position.x * MyGdxGame.PPM + Window.getCam().viewportWidth / 2 * MyGdxGame.PPM, pc.getBounds().y + pc.getBounds().height + 50);
+                    Fonts.medium.draw(sb, "!", pc.getBounds().x + pc.getBounds().width / 2 - 10 - com.steveflames.javalab.Window.getCam().position.x * MyGdxGame.PPM + com.steveflames.javalab.Window.getCam().viewportWidth / 2 * MyGdxGame.PPM, pc.getBounds().y + pc.getBounds().height + 50);
                     sb.end();
                     break;
                 }
             }
         }
+
     }
 
     public void newToast(String text) {
@@ -120,5 +172,6 @@ public class Hud implements Disposable {
 
     public void closeCurrentEditor() {
         currentEditor = null;
+        Gdx.input.setInputProcessor(level);
     }
 }

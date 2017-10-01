@@ -13,7 +13,7 @@ public class LineOfCode extends Button {
 
     private boolean editable;
     private int lineNum;
-    private static int linesTotal = 0;
+    public static int linesTotal = 0;
     public static final int LEFTPAD = 60;
 
     public LineOfCode(String text, Rectangle rect, boolean editable) {

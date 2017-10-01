@@ -8,6 +8,10 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.steveflames.javalab.tools.Fonts;
 import com.steveflames.javalab.screens.PlayScreen;
 
+/**
+ * TODO:
+ * allo handleInput gia android k allo gia pc. interface? opws bt
+ */
 public class MyGdxGame extends Game {
 
 	public static final int WIDTH = 1280; //1185, 854, 1920, 1280

@@ -9,6 +9,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -33,6 +34,7 @@ public class PlayScreen extends Window {
     private Hud hud;
 
     private static final int GRAVITY = -20 ;
+    private static final float PLAYERSPEED = 0.5f;
 
     private TmxMapLoader mapLoader;
     private TiledMap map;
@@ -44,6 +46,8 @@ public class PlayScreen extends Window {
 
     private Player player;
     private ArrayList<Pc> pcs = new ArrayList<Pc>();
+    private boolean touchDown = false;
+    private Vector2 touchDownVector = new Vector2();
 
     public PlayScreen(MyGdxGame game) {
         super(game);
@@ -92,17 +96,19 @@ public class PlayScreen extends Window {
             if(player.currentState != Player.State.CODING) {
                 if (Gdx.input.isKeyJustPressed(Input.Keys.W))
                     player.jump();
-                else if (Gdx.input.isKeyPressed(Input.Keys.D) && player.b2body.getLinearVelocity().x <= 5) //2
-                    player.b2body.applyLinearImpulse(new Vector2(0.5f, 0), player.b2body.getWorldCenter(), true); //0.2f
-                else if (Gdx.input.isKeyPressed(Input.Keys.A) && player.b2body.getLinearVelocity().x >= -5)
-                    player.b2body.applyLinearImpulse(new Vector2(-0.5f, 0), player.b2body.getWorldCenter(), true);
+                else if (Gdx.input.isKeyPressed(Input.Keys.D) && player.b2body.getLinearVelocity().x <= PLAYERSPEED*10) {
+                    player.b2body.applyLinearImpulse(new Vector2(PLAYERSPEED, 0), player.b2body.getWorldCenter(), true); //0.2f
+                }
+                else if (Gdx.input.isKeyPressed(Input.Keys.A) && player.b2body.getLinearVelocity().x >= -PLAYERSPEED*10) {
+                    player.b2body.applyLinearImpulse(new Vector2(-PLAYERSPEED, 0), player.b2body.getWorldCenter(), true);
+                }
                 else if (Gdx.input.isKeyJustPressed(Input.Keys.T))
                     hud.newToast("Sample textSample is\n just a iug come on now momo\n yoyo lorem ipsum merde kap\n lolololloa weaweawe\n xaxxaxaxaxaxaxa kikikikikiririririirirkikiki xoxoxo xax\naxaxaxa adwodka opwdk oawk dpoakwdpo akwpod kak aop aaaaaaaakakakakakakka");
-                else if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+                if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
                     for (Pc pc : pcs) {
                         if (pc.isUsable()) {
-                            player.b2body.setLinearVelocity(0,0);
-                            player.b2body.setTransform(pc.getBounds().x/MyGdxGame.PPM + 0.1f, pc.getBounds().y/MyGdxGame.PPM + player.getRadius(), 0);
+                            player.b2body.setLinearVelocity(0, 0);
+                            player.b2body.setTransform(pc.getBounds().x / MyGdxGame.PPM + 0.1f, pc.getBounds().y / MyGdxGame.PPM + player.getRadius(), 0);
                             player.currentState = Player.State.CODING;
                             cam.position.x = pc.getBounds().x / MyGdxGame.PPM + 1.5f;
                             hud.newEditor();
@@ -111,7 +117,7 @@ public class PlayScreen extends Window {
                 }
             }
             else {
-                if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+                if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
                     player.currentState = Player.State.STANDING;
                     hud.closeCurrentEditor();
                 }
@@ -138,6 +144,16 @@ public class PlayScreen extends Window {
             //   cam.position.y = player.b2body.getPosition().y;
         }
 
+        if(touchDown) {
+            if (clickCoords.x > player.b2body.getPosition().x) {
+                if (player.b2body.getLinearVelocity().x <= PLAYERSPEED*10) //2
+                    player.b2body.applyLinearImpulse(new Vector2(PLAYERSPEED, 0), player.b2body.getWorldCenter(), true); //0.2f
+            } else if (clickCoords.x < player.b2body.getPosition().x) {
+                if (player.b2body.getLinearVelocity().x >= -PLAYERSPEED*10)
+                    player.b2body.applyLinearImpulse(new Vector2(-PLAYERSPEED, 0), player.b2body.getWorldCenter(), true);
+            }
+        }
+
         cam.update();
         renderer.setView(cam);
 
@@ -159,6 +175,7 @@ public class PlayScreen extends Window {
         player.draw(game.sr);
         game.sr.end();
 
+        hud.stage.act(Gdx.graphics.getDeltaTime());
         hud.stage.draw();
         hud.render(game.sb, game.sr); //must be last in render because it messes with projection matrix
     }
@@ -171,6 +188,52 @@ public class PlayScreen extends Window {
     @Override
     public void hide() {
 
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        clickVector.set(screenX, screenY, 0);
+        clickVector = cam.unproject(clickVector);
+        touchDownVector.set(clickVector.x, clickVector.y);
+        clickCoords.set(clickVector.x, clickVector.y, 1, 1);
+
+        touchDown = true;
+        return false;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        clickVector.set(screenX, screenY, 0);
+        clickVector = cam.unproject(clickVector);
+        clickCoords.set(clickVector.x * MyGdxGame.PPM, clickVector.y * MyGdxGame.PPM, 1, 1);
+
+        touchDown = false;
+
+        if(touchDownVector.y < clickVector.y - 0.8f)
+            player.jump();
+
+        for (Pc pc : pcs) {
+            if (pc.isUsable()) {
+                System.out.println(clickCoords + " " +pc.getBounds());
+                if(clickCoords.overlaps(pc.getBounds())) {
+                    player.b2body.setLinearVelocity(0, 0);
+                    player.b2body.setTransform(pc.getBounds().x / MyGdxGame.PPM + 0.1f, pc.getBounds().y / MyGdxGame.PPM + player.getRadius(), 0);
+                    player.currentState = Player.State.CODING;
+                    cam.position.x = pc.getBounds().x / MyGdxGame.PPM + 1.5f;
+                    hud.newEditor();
+                }
+                break;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        clickVector.set(screenX, screenY, 0);
+        clickVector = cam.unproject(clickVector);
+        clickCoords.set(clickVector.x, clickVector.y, 1, 1);
+        return false;
     }
 
     @Override

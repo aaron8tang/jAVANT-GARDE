@@ -35,6 +35,7 @@ public class B2WorldCreator {
             body.createFixture(fdef);
         }
 
+        //initialize pcs
         for(MapObject object: playScreen.getMap().getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
             playScreen.getPcs().add(new Pc(playScreen.getWorld(), playScreen.getMap(), rect));

@@ -47,10 +47,18 @@ public class Editor extends Button implements InputProcessor{
     private Vector3 touchCoords = new Vector3();
     private Rectangle touchRect = new Rectangle();
 
+    private int currentCharPtr = -1;
+    private GlyphLayout tempCharGlyphLayout = new GlyphLayout();
+
+    private boolean backspacePressed = false;
+    private long backspaceIntervalMillis;
+
 
     public Editor(Camera cam) { //na pairnei to level, to pc, to progress
         super("", new Rectangle(cam.position.x+ cam.viewportWidth/2, 190, 700, 555), Fonts.small);
         this.cam = cam;
+        LineOfCode.linesTotal=0;
+        backspaceIntervalMillis = TimeUtils.millis();
 
         editRect = new Rectangle();
         tabsRect = new Rectangle();
@@ -80,6 +88,11 @@ public class Editor extends Button implements InputProcessor{
         changeCurrentTab(0);
     }
 
+    private void changeCurrentTab(int tabPtr) {
+        currentTabPtr = tabPtr;
+        tabs.get(currentTabPtr).getRect().height = tabsRect.height+1;
+    }
+
     private void addTab(String text) {
         tabs.add(new Button(text, new Rectangle(0, -200, 20, 20), Fonts.xsmallMono));
         if(tabs.size()>1) {
@@ -90,7 +103,7 @@ public class Editor extends Button implements InputProcessor{
         }
         tabs.get(tabs.size()-1).getRect().y = tabsRect.y;
         tabs.get(tabs.size()-1).getRect().width = tabs.get(tabs.size()-1).getGlyphLayout().width + 26;
-        tabs.get(tabs.size()-1).getRect().height = tabs.get(tabs.size()-1).getGlyphLayout().height + 10;
+        tabs.get(tabs.size()-1).getRect().height = tabsRect.getHeight();
     }
 
     private void handleInput() {
@@ -102,14 +115,82 @@ public class Editor extends Button implements InputProcessor{
             for(int i=0; i<lines.size(); i++) {
                 if(touchRect.overlaps(lines.get(i).getRect())) {
                     if (lines.get(i).isEditable()) {
-                        cursor.setX(lines.get(i).getRect().x + LineOfCode.LEFTPAD + lines.get(i).getGlyphLayout().width);
+                        for(int j=0; j<lines.get(i).getText().length(); j++) {
+                            currentCharPtr++;
+                            tempCharGlyphLayout.setText(Fonts.xsmallMono, lines.get(i).getText().substring(0,j));
+                            System.out.println(lines.get(i).getText().charAt(j));
+                            if(lines.get(i).getRect().x + LineOfCode.LEFTPAD + tempCharGlyphLayout.width >= touchRect.x) {
+                                if(lines.get(i).getText().length()>0)
+                                    tempCharGlyphLayout.setText(Fonts.xsmallMono, lines.get(i).getText().substring(0,j-1));//WTF LATHOS
+                                else {
+                                    System.out.println("EDWDWDDWWDWD BAINEI?");
+                                    tempCharGlyphLayout.setText(Fonts.xsmallMono, "");
+                                }
+                                break;
+                            }
+                        }
+                        cursor.setX(lines.get(i).getRect().x + LineOfCode.LEFTPAD + tempCharGlyphLayout.width);
                         cursor.setY(lines.get(i).getRect().y + 2);
                         currentLinePtr = i;
+                        break;
                     }
                 }
             }
         }
 
+        //handle backspace
+        if (Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE)) {
+            backspacePressed = true;
+            backspaceIntervalMillis = TimeUtils.millis();
+            backspace();
+        }
+        if (backspacePressed) {
+            if (TimeUtils.timeSinceMillis(backspaceIntervalMillis) > 600) {
+                backspaceIntervalMillis = TimeUtils.millis() - 560;
+                backspace();
+            }
+        }
+
+        //handle arrows
+        if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+            if(lines.size()>0) {
+                do {
+                    currentLinePtr++;
+                    if(currentLinePtr >= lines.size()) {
+                        currentLinePtr = 0;
+                    }
+                } while (!lines.get(currentLinePtr).isEditable());
+                cursor.setX(lines.get(currentLinePtr).getRect().x + LineOfCode.LEFTPAD + lines.get(currentLinePtr).getGlyphLayout().width);
+                cursor.setY(lines.get(currentLinePtr).getRect().y + 2);
+            }
+        }
+        else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
+
+        }
+        else if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+            if(lines.size()>0) {
+                do {
+                    currentLinePtr--;
+                    if(currentLinePtr < 0) {
+                        currentLinePtr = lines.size()-1;
+                    }
+                } while (!lines.get(currentLinePtr).isEditable());
+                cursor.setX(lines.get(currentLinePtr).getRect().x + LineOfCode.LEFTPAD + lines.get(currentLinePtr).getGlyphLayout().width);
+                cursor.setY(lines.get(currentLinePtr).getRect().y + 2);
+            }
+        }
+        else if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
+
+        }
+    }
+
+    private void backspace() {
+        if (lines.get(currentLinePtr).getText().length() > 0) {
+            inputCharGlyphLayout.setText(Fonts.xsmallMono, String.valueOf(lines.get(currentLinePtr).getText().charAt(lines.get(currentLinePtr).getText().length() - 1)));
+            lines.get(currentLinePtr).getGlyphLayout().setText(Fonts.xsmallMono, String.valueOf(lines.get(currentLinePtr).getText().charAt(lines.get(currentLinePtr).getText().length() - 1)));
+            lines.get(currentLinePtr).setText(lines.get(currentLinePtr).getText().substring(0, lines.get(currentLinePtr).getText().length() - 1));
+            cursor.x -= inputCharGlyphLayout.width;
+        }
     }
 
     private void addLine(String text, boolean editable) {
@@ -135,15 +216,9 @@ public class Editor extends Button implements InputProcessor{
         //set the cursor to the first editable line
         if(editable && currentLinePtr<0) {
             currentLinePtr = lines.size() - 1;
-            System.out.println(currentLinePtr);
             cursor.setX(lines.get(currentLinePtr).getRect().x + LineOfCode.LEFTPAD + lines.get(currentLinePtr).getGlyphLayout().width);
             cursor.setY(lines.get(currentLinePtr).getRect().y + 2);
         }
-    }
-
-    private void changeCurrentTab(int tabPtr) {
-        currentTabPtr = tabPtr;
-        tabs.get(currentTabPtr).getRect().height = tabsRect.height;
     }
 
     public void update(float dt) {
@@ -229,15 +304,7 @@ public class Editor extends Button implements InputProcessor{
 
     @Override
     public boolean keyUp(int keycode) {
-        if (keycode == Input.Keys.BACKSPACE) {
-            if (lines.get(currentLinePtr).getText().length() > 0) {
-                inputCharGlyphLayout.setText(Fonts.xsmallMono, String.valueOf(lines.get(currentLinePtr).getText().charAt(lines.get(currentLinePtr).getText().length() - 1)));
-                lines.get(currentLinePtr).getGlyphLayout().setText(Fonts.xsmallMono, String.valueOf(lines.get(currentLinePtr).getText().charAt(lines.get(currentLinePtr).getText().length() - 1)));
-                lines.get(currentLinePtr).setText(lines.get(currentLinePtr).getText().substring(0, lines.get(currentLinePtr).getText().length() - 1));
-                cursor.x -= inputCharGlyphLayout.width;
-            }
-        }
-        else if (keycode == Input.Keys.TAB) {
+        if (keycode == Input.Keys.TAB) {
             inputCharGlyphLayout.setText(Fonts.xsmallMono, "    ");
             if (cursor.x + inputCharGlyphLayout.width < lines.get(currentLinePtr).getRect().x + lines.get(currentLinePtr).getRect().width) {
                 lines.get(currentLinePtr).setText(lines.get(currentLinePtr).getText() + "    ");
@@ -245,6 +312,8 @@ public class Editor extends Button implements InputProcessor{
             }
 
         }
+        else if (keycode == Input.Keys.BACKSPACE)
+            backspacePressed = false;
         return false;
     }
 
