@@ -9,7 +9,11 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.steveflames.javalab.MyGdxGame;
 import com.steveflames.javalab.screens.PlayScreen;
+import com.steveflames.javalab.sprites.Checkpoint;
+import com.steveflames.javalab.sprites.InfoSign;
+import com.steveflames.javalab.sprites.InteractiveTileObject;
 import com.steveflames.javalab.sprites.Pc;
+import com.steveflames.javalab.sprites.ropes.Rope;
 
 /**
  * Created by Flames on 23/9/2017.
@@ -38,7 +42,26 @@ public class B2WorldCreator {
         //initialize pcs
         for(MapObject object: playScreen.getMap().getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
-            playScreen.getPcs().add(new Pc(playScreen.getWorld(), playScreen.getMap(), rect));
+            playScreen.getPcs().add(new Pc(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
+        }
+
+        //initialize helps
+        for(MapObject object: playScreen.getMap().getLayers().get(4).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+            playScreen.getInfoSigns().add(new InfoSign(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
+        }
+
+        if(playScreen.getMap().getLayers().getCount() > 5) {
+            //initialize ropes
+            for(MapObject object: playScreen.getMap().getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
+                Rectangle rect = ((RectangleMapObject) object).getRectangle();
+                playScreen.getRopes().add(new Rope(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
+            }
+            //initialize checkpoints
+            for(MapObject object: playScreen.getMap().getLayers().get(6).getObjects().getByType(RectangleMapObject.class)) {
+                Rectangle rect = ((RectangleMapObject) object).getRectangle();
+                playScreen.getCheckpoints().add(new Checkpoint(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
+            }
         }
     }
 }

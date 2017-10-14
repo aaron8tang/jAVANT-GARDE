@@ -110,7 +110,8 @@ public class Toast extends Button{
             if(TimeUtils.timeSinceMillis(timerMillis) > 30) {
                 timerMillis = TimeUtils.millis();
 
-                finalLinesOfText.get(currentPage).set(linePtr, linesOfText.get(currentPage).get(linePtr).substring(0, letterPtr));
+                if(linesOfText.get(currentPage).get(linePtr).length()>=1)
+                    finalLinesOfText.get(currentPage).set(linePtr, linesOfText.get(currentPage).get(linePtr).substring(0, letterPtr));
                 if (letterPtr >= linesOfText.get(currentPage).get(linePtr).length()) {
                     letterPtr = 0;
                     linePtr++;
@@ -160,7 +161,7 @@ public class Toast extends Button{
             for(int i=0; i<finalLinesOfText.get(currentPage).size(); i++) {
                 Fonts.small.draw(sb, finalLinesOfText.get(currentPage).get(i), rect.x + 120, rect.y + rect.height - 20 - (33) * i);
             }
-            Fonts.xsmall.draw(sb, "Press ENTER", getRect().x + getRect().width - 140, getRect().y + 25);
+            Fonts.xsmall.draw(sb, "Press ENTER", getRect().x + getRect().width - 160, getRect().y + 25);
             sb.end();
         }
     }

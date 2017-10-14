@@ -57,6 +57,11 @@ public abstract class Window implements Screen, InputProcessor {
      */
     public abstract void dispose();
 
+    public static float getHudCameraOffsetX() {
+        return -cam.position.x * MyGdxGame.PPM
+                + cam.viewportWidth / 2 * MyGdxGame.PPM;
+    }
+
     @Override
     public boolean keyDown(int keycode) {
         return false;
@@ -138,5 +143,9 @@ public abstract class Window implements Screen, InputProcessor {
     public void resume()
     {
 
+    }
+
+    public MyGdxGame getGame() {
+        return game;
     }
 }

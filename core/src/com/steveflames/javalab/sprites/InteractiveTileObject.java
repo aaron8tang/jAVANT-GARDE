@@ -16,6 +16,7 @@ import com.steveflames.javalab.MyGdxGame;
  */
 
 public abstract class InteractiveTileObject {
+    protected String name;
     protected World world;
     protected TiledMap map;
     protected TiledMapTile tile;
@@ -23,7 +24,10 @@ public abstract class InteractiveTileObject {
     protected Body body;
     protected Fixture fixture;
 
-    public InteractiveTileObject(World world, TiledMap map, Rectangle bounds) {
+    protected boolean usable = false;
+
+    public InteractiveTileObject(String name, World world, TiledMap map, Rectangle bounds, boolean sensor) {
+        this.name = name;
         this.world = world;
         this.map = map;
         this.bounds = bounds;
@@ -40,9 +44,23 @@ public abstract class InteractiveTileObject {
         shape.setAsBox(bounds.getWidth()/2/MyGdxGame.PPM, bounds.getHeight()/2/MyGdxGame.PPM);
         fdef.shape = shape;
         fixture = body.createFixture(fdef);
+        fixture.setUserData(this);
+        fixture.setSensor(sensor);
     }
 
     public Rectangle getBounds() {
         return bounds;
+    }
+
+    public boolean isUsable() {
+        return usable;
+    }
+
+    public void setUsable(boolean usable) {
+        this.usable = usable;
+    }
+
+    public String getName() {
+        return name;
     }
 }

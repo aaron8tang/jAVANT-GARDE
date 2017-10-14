@@ -17,7 +17,7 @@ public class Fonts {
     public static BitmapFont medium;
     public static BitmapFont big;
 
-    public Fonts() {
+    public static void load() {
         xsmallMono = new BitmapFont();
         xsmall = new BitmapFont();
         small = new BitmapFont();
@@ -27,12 +27,12 @@ public class Fonts {
         FileHandle fontFile = Gdx.files.internal("fonts/mvboli.ttf");
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(fontFile);
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 20;
+        parameter.size = 24;
         parameter.characters = "1234567890" +
                 //"αβγδεζηθικλμνξοπρστυφχψως" +
                 //"ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ" +
                 //"άέήίόύώΆΈΉΊΌΎΏΪ" +
-                "+-:/!.*<>^;[](){},'?%" +
+                "`~!@#$%^&*()-=_+,<.>/?;:'\"{\\}|[]" +
                 "abcdefghijklmnopqrstuvwxyz" +
                 "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         xsmall = generator.generateFont(parameter);
@@ -46,7 +46,7 @@ public class Fonts {
 
         fontFile = Gdx.files.internal("fonts/LiberationMono-Regular.ttf");generator = new FreeTypeFontGenerator(fontFile);
         parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 20;
+        parameter.size = 26;
         parameter.characters = "1234567890" +
                 //"αβγδεζηθικλμνξοπρστυφχψως" +
                 //"ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ" +
@@ -63,4 +63,5 @@ public class Fonts {
         Fonts.small.setColor(Color.WHITE);
         Fonts.big.setColor(Color.WHITE);
     }
+
 }

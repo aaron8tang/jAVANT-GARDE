@@ -5,12 +5,73 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.steveflames.javalab.buttons.CategoryListItem;
+import com.steveflames.javalab.buttons.LevelListItem;
+import com.steveflames.javalab.screens.ChooseLevelScreen;
 import com.steveflames.javalab.tools.Fonts;
 import com.steveflames.javalab.screens.PlayScreen;
+import com.steveflames.javalab.tools.Skins;
+
+import java.util.ArrayList;
 
 /**
  * TODO:
- * allo handleInput gia android k allo gia pc. interface? opws bt
+ * allo handleInput k messages g move gia android k allo gia pc. interface? opws bt
+ * tha erxontai kata panw m opws super mario san tis xelwnes me swsta k lathos k prepei na phdhksw
+ *
+ * MISC
+ * bugs sto background gia decor
+ * java cofe
+ * hello world
+ * granazia
+ * matrix lines
+ * find free emojis gia decor
+ * 0/2 classes found
+ * verbose/laconic
+ * na grafei kapou tis suntetagmenes tou paixth
+ * analoga me to life s sto telos pairneis toso exp. me exp ksekleidwneis ta next lvls
+ *
+ *
+ * THOUGHTS
+ * levers quiz gia na energopoihseis to termatiko or sth
+ * o kakos na kanei read input sou se fash quiz
+ * ARRAYS! parse array k printf k prepei na pas sto swsto. an lathos tote -1 health
+ * VARIABLES! na pas px na vlepeis ton kwdika ths portas k na exei if(x > 10) open k na prepei na pas na to kaneis
+ * VARIABLES! ellhnika stis troxalies
+ * otan kaneis click sto console na kanei copy to clipboard
+ *
+ *
+ * STARTMENUSCREEN
+ * play
+ * tutorial
+ * options
+ * exit
+ *
+ *
+ * DIE
+ * try again
+ *
+ *
+ * BUGS
+ * pathmeno click gia na perpathsei. NO drag otan ftasei ekei p einai prp na kanei renew
+ *
+ *
+ * EDITOR
+ * compile
+ * tab (pathmeno space gia android?)
+ * indents
+ * enter na xwnei indents
+ * LOIPON. DIKO M ERROR OTI DEN EXEI MAIN METHOD AN DN EXEI
+ *
+ * ROPES
+ * random platforms (kai y kai text)
+ * otan kaneis try again h exit k ksanabaineis dn exei platforms
+ *
+ *
+ * ERRORS!!!!
+ * bes prwta pista 2 k meta pista 1 rip
+ * bigger FONTS, bigger info sign font, bigger pc CODE HERE font (test sto xperia L)
+ * STO CHOOSE LEVEL SCREEN otan patas to koumpi na einai h pista px 1_1 kai oxi sketo 1. rename k ta levels.tmx
  */
 public class MyGdxGame extends Game {
 
@@ -19,16 +80,17 @@ public class MyGdxGame extends Game {
 	public static final float PPM = 200; //pixels per meter. has to do with b2body scaling
 	public static final String TITLE = "Java Lab";
 
-
-	public SpriteBatch sb;
+	public SpriteBatch sb; //used to render textures
 	public ShapeRenderer sr; //used to render shapes
 	
 	@Override
 	public void create () {
-		new Fonts();
+		Fonts.load();
+		Skins.load();
 		sb = new SpriteBatch();
 		sr = new ShapeRenderer();
-		setScreen(new PlayScreen(this));
+		setScreen(new ChooseLevelScreen(this));
+		//setScreen(new PlayScreen(this, 1));
 	}
 
 	@Override
