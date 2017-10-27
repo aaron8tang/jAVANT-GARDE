@@ -10,9 +10,12 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.steveflames.javalab.MyGdxGame;
 import com.steveflames.javalab.screens.PlayScreen;
 import com.steveflames.javalab.sprites.Checkpoint;
+import com.steveflames.javalab.sprites.Door;
+import com.steveflames.javalab.sprites.Health;
 import com.steveflames.javalab.sprites.InfoSign;
 import com.steveflames.javalab.sprites.InteractiveTileObject;
 import com.steveflames.javalab.sprites.Pc;
+import com.steveflames.javalab.sprites.Teleporter;
 import com.steveflames.javalab.sprites.ropes.Rope;
 
 /**
@@ -28,7 +31,7 @@ public class B2WorldCreator {
         Body body;
 
         //initialize ground
-        for(MapObject object: playScreen.getMap().getLayers().get(2).getObjects().getByType(RectangleMapObject.class)) {
+        for(MapObject object: playScreen.getMap().getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
             bdef.type = BodyDef.BodyType.StaticBody;
@@ -40,28 +43,53 @@ public class B2WorldCreator {
         }
 
         //initialize pcs
-        for(MapObject object: playScreen.getMap().getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
+        for(MapObject object: playScreen.getMap().getLayers().get(4).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
             playScreen.getPcs().add(new Pc(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
         }
 
         //initialize helps
-        for(MapObject object: playScreen.getMap().getLayers().get(4).getObjects().getByType(RectangleMapObject.class)) {
+        for(MapObject object: playScreen.getMap().getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
             playScreen.getInfoSigns().add(new InfoSign(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
         }
 
-        if(playScreen.getMap().getLayers().getCount() > 5) {
-            //initialize ropes
-            for(MapObject object: playScreen.getMap().getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
+        //initialize doors
+        for(MapObject object: playScreen.getMap().getLayers().get(6).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+            playScreen.getDoors().add(new Door(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
+        }
+
+        //initialize checkpoints
+        for(MapObject object: playScreen.getMap().getLayers().get(7).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+            playScreen.getCheckpoints().add(new Checkpoint(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
+        }
+
+        //initialize teleporter
+        for(MapObject object: playScreen.getMap().getLayers().get(8).getObjects().getByType(RectangleMapObject.class)) {
+            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+            playScreen.setTeleporter(new Teleporter(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
+        }
+
+        if(playScreen.getMap().getLayers().getCount() > 9) {
+            //initialize items
+            for (MapObject object : playScreen.getMap().getLayers().get(9).getObjects().getByType(RectangleMapObject.class)) {
                 Rectangle rect = ((RectangleMapObject) object).getRectangle();
-                playScreen.getRopes().add(new Rope(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
+                if(object.getName().contains("health")) {
+                    playScreen.getHealths().add(new Health(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
+                }
+
             }
-            //initialize checkpoints
-            for(MapObject object: playScreen.getMap().getLayers().get(6).getObjects().getByType(RectangleMapObject.class)) {
-                Rectangle rect = ((RectangleMapObject) object).getRectangle();
-                playScreen.getCheckpoints().add(new Checkpoint(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
+
+            if(playScreen.getMap().getLayers().getCount() > 10) {
+                //initialize ropes
+                for (MapObject object : playScreen.getMap().getLayers().get(10).getObjects().getByType(RectangleMapObject.class)) {
+                    Rectangle rect = ((RectangleMapObject) object).getRectangle();
+                    playScreen.getRopes().add(new Rope(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
+                }
             }
         }
+
     }
 }

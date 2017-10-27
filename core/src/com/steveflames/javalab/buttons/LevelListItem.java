@@ -6,16 +6,16 @@ package com.steveflames.javalab.buttons;
 
 public class LevelListItem {
 
-    private int id;
+    private String id;
     private String name;
 
 
-    public LevelListItem(int id, String name) {
+    public LevelListItem(String id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 

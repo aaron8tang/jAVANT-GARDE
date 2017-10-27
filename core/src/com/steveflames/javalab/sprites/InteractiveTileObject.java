@@ -1,5 +1,6 @@
 package com.steveflames.javalab.sprites;
 
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.math.Rectangle;
@@ -15,13 +16,13 @@ import com.steveflames.javalab.MyGdxGame;
  * Created by Flames on 24/9/2017.
  */
 
-public abstract class InteractiveTileObject {
+public abstract class InteractiveTileObject extends Sprite{
     protected String name;
     protected World world;
     protected TiledMap map;
     protected TiledMapTile tile;
     protected Rectangle bounds;
-    protected Body body;
+    protected Body b2body;
     protected Fixture fixture;
 
     protected boolean usable = false;
@@ -36,14 +37,13 @@ public abstract class InteractiveTileObject {
         PolygonShape shape = new PolygonShape();
         FixtureDef fdef = new FixtureDef();
 
-        bdef.type = BodyDef.BodyType.StaticBody;
+        bdef.type = BodyDef.BodyType.KinematicBody;
         bdef.position.set((bounds.getX() + bounds.getWidth()/2)/ MyGdxGame.PPM, (bounds.getY() + bounds.getHeight()/2)/ MyGdxGame.PPM);
-
-        body = world.createBody(bdef);
+        b2body = world.createBody(bdef);
 
         shape.setAsBox(bounds.getWidth()/2/MyGdxGame.PPM, bounds.getHeight()/2/MyGdxGame.PPM);
         fdef.shape = shape;
-        fixture = body.createFixture(fdef);
+        fixture = b2body.createFixture(fdef);
         fixture.setUserData(this);
         fixture.setSensor(sensor);
     }
@@ -62,5 +62,9 @@ public abstract class InteractiveTileObject {
 
     public String getName() {
         return name;
+    }
+
+    public Body getB2body() {
+        return b2body;
     }
 }

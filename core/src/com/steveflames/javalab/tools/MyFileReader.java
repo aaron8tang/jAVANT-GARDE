@@ -17,4 +17,8 @@ public class MyFileReader {
         FileHandle file = Gdx.files.internal(path);
         return file.readString();
     }
+
+    public static boolean exists(String path) {
+        return Gdx.files.internal(path).exists();
+    }
 }

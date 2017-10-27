@@ -1,14 +1,13 @@
 package com.steveflames.javalab.scenes;
 
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.steveflames.javalab.buttons.Button;
-import com.steveflames.javalab.tools.Fonts;
+import com.steveflames.javalab.MyGdxGame;
+import com.steveflames.javalab.tools.global.Fonts;
 
 import java.util.ArrayList;
 
@@ -16,10 +15,14 @@ import java.util.ArrayList;
  * Created by Flames on 24/9/2017.
  */
 
-public class Toast extends Button{
+public class Toast {
     private static final int SPEED = 700;
-    public enum State { INCOMING, READY, WRITING, NEXT, SKIP, LEAVING, LEFT};
+    public enum State { INCOMING, READY, WRITING, NEXT, SKIP, LEAVING, LEFT}
     private State currentState = State.INCOMING;
+
+    private static Rectangle rect;
+    private static GlyphLayout glyphLayout;
+    private String text;
 
     private int currentPage;
     private int numOfPages;
@@ -32,8 +35,11 @@ public class Toast extends Button{
     private int letterPtr = 0;
     private int linePtr = 0;
 
-    public Toast(String text, Camera cam) {
-        super(text, new Rectangle(10, -150, cam.viewportWidth-20, 150), Fonts.small);
+    Toast(String text) {
+        rect = new Rectangle(10, -150, MyGdxGame.WIDTH-20, 150);
+        this.text = text;
+        glyphLayout = new GlyphLayout();
+        glyphLayout.setText(Fonts.small, text);
         linesOfText = new ArrayList<ArrayList<String>>();
         linesOfText.add(new ArrayList<String>());
         currentPage = 0;
@@ -53,7 +59,7 @@ public class Toast extends Button{
     }
 
     private void breakTextIntoLines() {
-        if(glyphLayout.width > getRect().width - 170 || text.contains("\n")) { //more than one line
+        if(glyphLayout.width > rect.width - 170 || text.contains("\n")) { //more than one line
             GlyphLayout tempGlyphLayout = new GlyphLayout();
             String tempText = "";
             for(int i=0; i<text.length(); i++) {
@@ -62,7 +68,7 @@ public class Toast extends Button{
                         tempText += text.charAt(i);
                     tempGlyphLayout.setText(Fonts.small, tempText);
                     //System.out.println("TEMP: " + tempText);
-                    if (tempGlyphLayout.width >= getRect().width - 170 && !tempText.equals("")) { //check characters sum width
+                    if (tempGlyphLayout.width >= rect.width - 170 && !tempText.equals("")) { //check characters sum width
                         //System.out.println("NEWLINE");
                         addNewLine(tempText);
                         tempText = "";
@@ -139,19 +145,19 @@ public class Toast extends Button{
         }
         else if(currentState == State.LEAVING) {
             if(currentState != State.LEFT) {
-                getRect().y -= SPEED*dt;
-                if(getRect().y + getRect().height < 0)
+                rect.y -= SPEED*dt;
+                if(rect.y + rect.height < 0)
                     currentState = State.LEFT;
             }
         }
     }
 
-    public void render(SpriteBatch sb, ShapeRenderer sr) {
+    void render(SpriteBatch sb, ShapeRenderer sr) {
         sr.begin(ShapeRenderer.ShapeType.Filled);
         sr.setColor(Color.BLACK);
-        drawShape(sr);
+        sr.rect(rect.x, rect.y, rect.width, rect.height);
         sr.setColor(Color.WHITE);
-        sr.rect(getRect().x + 2, getRect().y + 2, getRect().width -4, getRect().height-4);
+        sr.rect(rect.x + 2, rect.y + 2, rect.width -4, rect.height-4);
         sr.end();
 
         if(currentState == State.READY || currentState == State.WRITING || currentState == State.LEAVING) {
@@ -161,7 +167,7 @@ public class Toast extends Button{
             for(int i=0; i<finalLinesOfText.get(currentPage).size(); i++) {
                 Fonts.small.draw(sb, finalLinesOfText.get(currentPage).get(i), rect.x + 120, rect.y + rect.height - 20 - (33) * i);
             }
-            Fonts.xsmall.draw(sb, "Press ENTER", getRect().x + getRect().width - 160, getRect().y + 25);
+            Fonts.xsmall.draw(sb, MyGdxGame.platformDepended.getNextPrompt(), rect.x + rect.width - 180, rect.y + 25);
             sb.end();
         }
     }

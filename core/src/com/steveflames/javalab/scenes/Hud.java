@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -16,38 +17,33 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.steveflames.javalab.MyGdxGame;
+import com.steveflames.javalab.ingame_classes.iUserCode;
 import com.steveflames.javalab.quests.Quest;
 import com.steveflames.javalab.screens.ChooseLevelScreen;
-import com.steveflames.javalab.sprites.InfoSign;
-import com.steveflames.javalab.tools.Fonts;
 import com.steveflames.javalab.screens.PlayScreen;
-import com.steveflames.javalab.sprites.Pc;
 import com.steveflames.javalab.sprites.Player;
+import com.steveflames.javalab.tools.global.Fonts;
+import com.steveflames.javalab.tools.global.Loader;
+import com.steveflames.javalab.tools.MyCompiler;
 import com.steveflames.javalab.tools.MyFileReader;
-import com.steveflames.javalab.tools.Skins;
+import com.steveflames.javalab.tools.global.Skins;
 
-import java.lang.reflect.InvocationTargetException;
-import java.net.URI;
-import java.util.Arrays;
-
-import javax.tools.Diagnostic;
-import javax.tools.DiagnosticCollector;
-import javax.tools.JavaCompiler;
-import javax.tools.JavaFileObject;
-import javax.tools.SimpleJavaFileObject;
-import javax.tools.ToolProvider;
+import java.util.LinkedHashMap;
 
 
 /**
  * Created by Flames on 9/4/16.
  */
 public class Hud implements Disposable {
+
+    private MyCompiler compiler;
 
     //hud components
     public Stage stage;
@@ -57,18 +53,26 @@ public class Hud implements Disposable {
     private Table gameOverWindow;
     private ProgressBar progressBar;
     private TextArea codeTextArea;
+    private TextArea questTextArea;
     private TextArea consoleTextArea;
     private ScrollPane consoleScroll;
+    private TextButton hintBtn;
+    private ScrollPane questScroll;
+    private Table classTable;
+
+    private Dialog infoDialog;
+
+    private LinkedHashMap<String, String> program = new LinkedHashMap<String, String>();
 
     public static Viewport viewport;
 
-    private PlayScreen playScreen;
+    private static PlayScreen playScreen;
     private Quest quest = new Quest();
 
-    private Toast currentToast = null;
+    private static Toast currentToast = null;
 
 
-    public Hud(PlayScreen playScreen, SpriteBatch sb) {
+    public Hud(final PlayScreen playScreen, SpriteBatch sb) {
         this.playScreen = playScreen;
         viewport = new StretchViewport(MyGdxGame.WIDTH, MyGdxGame.HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, sb);
@@ -77,60 +81,35 @@ public class Hud implements Disposable {
     public void update(float dt) {
         if(currentToast != null) {
             currentToast.update(dt);
-            if(currentToast.getCurrentState() == Toast.State.LEFT)
+            if(currentToast.getCurrentState() == Toast.State.LEFT) {
                 currentToast = null;
+                if(editorWindow != null && editorWindow.isVisible())
+                    Gdx.input.setInputProcessor(stage);
+                else
+                    Gdx.input.setInputProcessor(playScreen);
+            }
         }
     }
 
     public void render(SpriteBatch sb, ShapeRenderer sr) {
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
+        sb.setColor(1,1,1,1);
 
-        sr.begin(ShapeRenderer.ShapeType.Filled);
+        sb.begin();
         if(playScreen.getPlayer().getHealth() > 0) {
-            for(int i = 0; i< playScreen.getPlayer().getHealth(); i++) {
-                sr.setColor(Color.BLACK);
-                sr.rect(20 +(60*i), stage.getCamera().viewportHeight - 20 - 29, 54, 29);
-                sr.setColor(Color.RED);
-                sr.rect(22 +(60*i), stage.getCamera().viewportHeight - 20 - 27, 50, 25);
-            }
+            for(int i = 0; i< playScreen.getPlayer().getHealth(); i++)
+                sb.draw(Loader.heartT, 20 +(60*i), MyGdxGame.HEIGHT - 60, 50, 50);
         }
-        sr.end();
+        sb.end();
 
         if(currentToast != null)
             currentToast.render(sb, sr);
-
-        for(Pc pc: playScreen.getPcs()) { //draw the 'use PC' prompt
-            if(pc.isUsable()) {
-                if(playScreen.getPlayer().currentState != Player.State.CODING) {
-                    sb.setProjectionMatrix(sr.getProjectionMatrix());
-                    sb.begin();
-                    Fonts.medium.setColor(Color.RED);
-                    Fonts.medium.draw(sb, "!", pc.getBounds().x + pc.getBounds().width / 2 - 10 + com.steveflames.javalab.Window.getHudCameraOffsetX(), pc.getBounds().y + pc.getBounds().height + 50);
-                    sb.end();
-                    break;
-                }
-            }
-        }
-
-        //TODO valto mesa sto infosign class (k to pc apo panw)
-        for(InfoSign infoSign : playScreen.getInfoSigns()) {
-            if(infoSign.isUsable()) {
-                if(playScreen.getPlayer().currentState != Player.State.IDLE) {
-                    sb.setProjectionMatrix(sr.getProjectionMatrix());
-                    sb.begin();
-                    Fonts.medium.setColor(Color.RED);
-                    Fonts.medium.draw(sb, "!", infoSign.getBounds().x + infoSign.getBounds().width / 2 - 5 + com.steveflames.javalab.Window.getHudCameraOffsetX() , infoSign.getBounds().y + infoSign.getBounds().height + 90);
-                    sb.end();
-                    break;
-                }
-            }
-        }
-
     }
 
-    public void newToast(String text) {
-        currentToast = new Toast(text, stage.getCamera());
+    public static void newToast(String text) {
+        currentToast = new Toast(text);
+        Gdx.input.setInputProcessor(playScreen);
     }
 
     public void newEditorWindow(final String name) {
@@ -139,36 +118,59 @@ public class Hud implements Disposable {
 
             //top bar
             Table topBarTable = new Table(Skins.neonSkin);
+            TextButton infoBtn = new TextButton("?", Skins.neonSkin);
+            infoBtn.pad(2);
+            infoBtn.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    showEditorInfo();
+                }
+            });
             TextButton exitBtn = new TextButton("x", Skins.neonSkin);
+            exitBtn.pad(2);
             exitBtn.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     closeCurrentEditor();
+                    Gdx.input.setOnscreenKeyboardVisible(false);
                 }
             });
-            Table classTable = new Table(Skins.skin);
-            TextButton classBtn = new TextButton("Main.java", Skins.skin);
+            classTable = new Table(Skins.skin);
+            TextButton classBtn = new TextButton("MyClass.java", Skins.neonSkin);
             classTable.add(classBtn).left().expandX();
             ScrollPane scroll = new ScrollPane(classTable, Skins.neonSkin);
 
-            topBarTable.add(scroll).left().expandX().fillX().padLeft(90);
-            topBarTable.add(exitBtn).right();
+            topBarTable.add(scroll).left().expandX().fillX().padLeft(75);
+            topBarTable.add(infoBtn).right().fill();
+            topBarTable.add(exitBtn).right().fill();
 
 
             //textArea
-            codeTextArea = new TextArea(MyFileReader.readFile("txt/pc_" + name + ".txt"), Skins.neonSkin);
+            codeTextArea = new TextArea(MyFileReader.readFile("txt/pc-" + name + ".txt").replaceAll("\r",""), Skins.neonSkin);
             codeTextArea.setFocusTraversal(false);
             codeTextArea.getOnscreenKeyboard().show(true);
+            /*codeTextArea.addListener(new InputListener(){ //todo multicolor... markup
+                @Override
+                public boolean keyTyped(InputEvent event, char character) {
+                    //int x = codeTextArea.getCursorPosition();
+                    //codeTextArea.texsetText(codeTextArea.getText().replaceAll("public", "[ORANGE]public[]"));
+                    //codeTextArea.moveCursorLine(1);
+                    return false;
+                }
+
+            });*/
             //lineNumTable
             Table lineNumTable = new Table(Skins.neonSkin);
-            for (int i = 0; i < 100; i++) {
-                lineNumTable.add(new Label(i + 1 + "", Skins.neonSkin)).width(60).height(23);
+            lineNumTable.add(new Label(1 + "", Skins.neonSkin)).width(60).height(codeTextArea.getStyle().font.getLineHeight());
+            for (int i = 1; i < 100; i++) {
                 lineNumTable.row();
+                lineNumTable.add(new Label(i + 1 + "", Skins.neonSkin)).width(60).height(codeTextArea.getStyle().font.getLineHeight());
             }
+
             //codeTable
-            Table codeTable = new Table(Skins.neonSkin);
+            Table codeTable = new Table(Skins.lmlSkin);
             codeTable.add(lineNumTable).top().left();
-            codeTable.add(codeTextArea).height(2300).fillX().expandX().padLeft(20f).padTop(5);
+            codeTable.add(codeTextArea).expand().fill().width(1000).padTop(5);
             scroll = new ScrollPane(codeTable, Skins.neonSkin);
 
             //bottom bar
@@ -176,7 +178,7 @@ public class Hud implements Disposable {
             resetBtn.addListener(new ClickListener() {
                  @Override
                  public void clicked(InputEvent event, float x, float y) {
-                    codeTextArea.setText(MyFileReader.readFile("txt/pc_" + name + ".txt"));
+                    codeTextArea.setText(MyFileReader.readFile("txt/pc-" + name + ".txt").replaceAll("\r",""));
                  }
             });
             TextButton compileAndRunBtn = new TextButton(" compile & run ", Skins.neonSkin);
@@ -185,7 +187,17 @@ public class Hud implements Disposable {
                 public void clicked(InputEvent event, float x, float y) {
                     consoleTextArea.setText("");
                     consoleScroll.scrollTo(0, viewport.getCamera().position.y + viewport.getCamera().viewportHeight, 0, 0);
-                    compile();
+
+                    program.clear();
+                    program.put("MyClass.java", codeTextArea.getText());
+                    //compile and run
+                    if(compiler.compile(program) || (playScreen.getCurrentLevel().getId().equals("1_1") && quest.getProgress()==0)) {
+                        if (quest.handleQuestResult(playScreen)) {
+                            if (!nextQuest()) {
+                                quest.completed(playScreen);
+                            }
+                        }
+                    }
                 }
             });
 
@@ -193,13 +205,13 @@ public class Hud implements Disposable {
             bottomBarTable.add(resetBtn).left().expandX();
             bottomBarTable.add(compileAndRunBtn).right().expandX();
 
-            //add to editorWindow
-            editorWindow.add(topBarTable).expandX().fillX();
-            editorWindow.row();
-            editorWindow.setSize(710, 555);
-            editorWindow.setX(MyGdxGame.WIDTH - 710);
+            //add components to window
+            editorWindow.setSize(700, 555);
+            editorWindow.setX(MyGdxGame.WIDTH - editorWindow.getWidth());
             editorWindow.setY(195);
-            editorWindow.add(scroll).expandX().fillX().top().left();
+            editorWindow.add(topBarTable).expandX().fillX().top();
+            editorWindow.row().padTop(5);
+            editorWindow.add(scroll).expandX().fillX();
             editorWindow.row().padTop(10);
             editorWindow.add(bottomBarTable).expandX().fillX();
             editorWindow.addListener(new ClickListener() {
@@ -213,69 +225,29 @@ public class Hud implements Disposable {
         stage.addActor(editorWindow);
         Gdx.input.setInputProcessor(stage);
         stage.setKeyboardFocus(codeTextArea);
+        //editorWindow.debugAll();
 
         newConsoleWindow();
         newQuestWindow(name);
-    }
-
-    private void compile() {
-        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
-
-        JavaFileObject file = new JavaSourceFromString("MyClass", codeTextArea.getText());
-
-        Iterable<? extends JavaFileObject> compilationUnits = Arrays.asList(file);
-        JavaCompiler.CompilationTask task = compiler.getTask(null, null, diagnostics, null, null, compilationUnits);
-
-        boolean success = task.call();
-        for (Diagnostic diagnostic : diagnostics.getDiagnostics()) {
-            System.out.println("------------------------");
-            System.out.println(diagnostic.getCode());
-            System.out.println(diagnostic.getKind());
-            System.out.println(diagnostic.getPosition());
-            System.out.println(diagnostic.getStartPosition());
-            System.out.println(diagnostic.getEndPosition());
-            System.out.println(diagnostic.getSource());
-            System.out.println(diagnostic.getMessage(null));
-            System.out.println("------------------------");
-        }
-
-        System.out.println("Success: " + success);
-        //TODO COMPILE
-
-        if (success) {
-            try {
-                Class.forName("MyClass").getDeclaredMethod("main", new Class[] { String[].class })
-                        .invoke(null, new Object[] { null });
-            } catch (ClassNotFoundException e) {
-                System.err.println("Class not found: " + e);
-                consoleTextArea.appendText("Class not found: " + e);
-            } catch (NoSuchMethodException e) {
-                System.err.println("No such method: " + e);
-                consoleTextArea.appendText("No such method: " + e);
-            } catch (IllegalAccessException e) {
-                System.err.println("Illegal access: " + e);
-                consoleTextArea.appendText("Illegal access: " + e);
-            } catch (InvocationTargetException e) {
-                System.err.println("Invocation target: " + e);
-                consoleTextArea.appendText("Invocation target: " + e);
-            }
-        }
+        compiler = new MyCompiler(codeTextArea, consoleTextArea, classTable);
     }
 
     private void newConsoleWindow() {
         if(consoleWindow == null) {
             consoleWindow = new Window("CONSOLE", Skins.skin);
+
+            //textArea of console window
             Table table = new Table(Skins.neonSkin);
             consoleTextArea = new TextArea("", Skins.neonSkin);
             consoleTextArea.setDisabled(true);
-            table.add(consoleTextArea).height(1000).left().expand().fillX().padTop(5);
+            table.add(consoleTextArea).height(1000).expand().fillX().left().padTop(5);
 
             consoleScroll = new ScrollPane(table, Skins.neonSkin);
             //scroll.setFadeScrollBars(false);
 
-            consoleWindow.setSize(710, 190);
-            consoleWindow.setX(MyGdxGame.WIDTH - 710);
+            //add components to window
+            consoleWindow.setSize(editorWindow.getWidth(), 190);
+            consoleWindow.setX(MyGdxGame.WIDTH - consoleWindow.getWidth());
             consoleWindow.setY(0);
             consoleWindow.add(consoleScroll).expand().fill().top().left().padTop(5);
             consoleWindow.addListener(new ClickListener() {
@@ -291,71 +263,81 @@ public class Hud implements Disposable {
     private void newQuestWindow(String name) {
         if(questWindow == null) {
             questWindow = new Window("QUEST", Skins.skin);
-            quest.parseQuestString(MyFileReader.readFile("txt/quest_" + name + ".txt"));
+            quest.parseQuestString(MyFileReader.readFile("txt/quest-" + name + ".txt").replaceAll("\r",""));
 
+            //quest text area
             Table table = new Table(Skins.lmlSkin);
-            final TextArea textArea = new TextArea(quest.getQuestSteps().get(quest.getProgress()).getText(), Skins.skin);
-            textArea.setDisabled(true);
-            table.add(textArea).height(1000).left().expand().fillX().padTop(5);
+            questTextArea = new TextArea(quest.getQuestSteps().get(quest.getProgress()).getText(), Skins.neonSkin);
+            questTextArea.getStyle().fontColor = Color.WHITE;
+            questTextArea.setDisabled(true);
+            table.add(questTextArea).height(1000).left().expand().fillX().padTop(5);
+            questScroll = new ScrollPane(table, Skins.neonSkin);
 
-            final ScrollPane scroll = new ScrollPane(table, Skins.neonSkin);
-
+            //bottom bar
             Table bottomBarTable = new Table(Skins.lmlSkin);
             progressBar = new ProgressBar(0, quest.getQuestSteps().size(), 1, false, Skins.neonSkin);
-            final TextButton hintBtn = new TextButton("hint", Skins.neonSkin);
+            hintBtn = new TextButton("hint", Skins.neonSkin);
             hintBtn.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     playScreen.getPlayer().reduceHealth(1);
                     playScreen.getPlayer().setPlayerMsgAlpha(1);
-                    textArea.appendText("\n#HINT:\n");
+                    questTextArea.appendText("\n\nHINT:\n");
                     String text = quest.getNextHint(quest);
                     if(text.contains("\r")) {
-                        text = text.replace('\r', ' ');
+                        text = text.replace("\r", "");
                         text += "\n";
                     }
-                    textArea.appendText(text);
+                    questTextArea.appendText(text);
                     if(quest.getQuestSteps().get(quest.getProgress()).getHintPtr() >= quest.getQuestSteps().get(quest.getProgress()).getHints().size()-1)
                         hintBtn.setVisible(false);
                     //TODO scroll h apla emfanhse to scroll
                 }
             });
-            bottomBarTable.add(progressBar).expandX().left().padLeft(10);
-            bottomBarTable.add(hintBtn).expandX().right();
+            if(quest.getQuestSteps().get(quest.getProgress()).getHints().size()==0)
+                hintBtn.setVisible(false);
+            bottomBarTable.add(progressBar).expandX().fillX().left().padLeft(10);
+            bottomBarTable.add(hintBtn).right();
 
-            questWindow.setSize(500, 300);
-            questWindow.setX(15);
-            questWindow.setY(390);
-            questWindow.add(scroll).expand().fill().top().left().padTop(10);
+            //add components to window
+            questWindow.setSize(580, 340);
+            questWindow.setX(0);
+            questWindow.setY(360);
+            questWindow.add(questScroll).expand().fill().top().left().padTop(10);
             questWindow.row();
             questWindow.add(bottomBarTable).expandX().fillX();
             questWindow.addListener(new ClickListener() {
                 public void enter (InputEvent event, float x, float y, int pointer, Actor fromActor) {
                     super.enter(event, x, y, pointer, fromActor);
-                    stage.setScrollFocus(textArea);
+                    stage.setScrollFocus(questTextArea);
                 }
             });
         }
         stage.addActor(questWindow);
     }
 
-    private void addProgress() {
-        progressBar.setValue(progressBar.getValue()+1);
-    }
-
-    public void newInfoWindow(String name) {
-        Dialog dialog = new Dialog("", Skins.skin, "dialog") {
+    public void newInfoWindow(final String name) {
+        infoDialog = new Dialog("", Skins.skin, "dialog") {
             public void result(Object obj) {
                 playScreen.getPlayer().currentState = Player.State.STANDING;
                 Gdx.input.setInputProcessor(playScreen);
+                playScreen.setEnterKeyHandled(true);
+                if(name.equals("info-1_1-0")) {
+                    playScreen.getDoors().get(0).open();
+                }
+                else if(name.equals("info-1_1-1")) {
+                    playScreen.getDoors().get(1).open();
+                }
+                else if(name.equals("info-1_1-2")) {
+                    playScreen.getDoors().get(2).open();
+                }
             }
         };
-        dialog.text(MyFileReader.readFile("txt/"+name+".txt"));
-        dialog.button(" OK ", true); //sends "true" as the result
-        dialog.key(Input.Keys.ENTER, true); //sends "true" when the ENTER key is pressed
-        dialog.key(Input.Keys.SPACE, true);
-        dialog.show(stage);
-
+        TextButton dummy = new TextButton("", Skins.neonSkin);
+        infoDialog.button("    OK    ", true, dummy.getStyle()); //sends "true" as the result
+        infoDialog.key(Input.Keys.ENTER, true); //sends "true" when the ENTER key is pressed
+        infoDialog.text(MyFileReader.readFile("txt/"+name+".txt"));
+        infoDialog.show(stage);
         Gdx.input.setInputProcessor(stage);
     }
 
@@ -371,7 +353,7 @@ public class Hud implements Disposable {
             gameOverWindow.row();
 
             Table optionsTable = new Table(Skins.neonSkin);
-            TextButton tryAgainBtn = new TextButton(" TRY AGAIN ", Skins.neonSkin);
+            TextButton tryAgainBtn = new TextButton(" RESTART ", Skins.neonSkin);
             tryAgainBtn.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
@@ -393,9 +375,98 @@ public class Hud implements Disposable {
             gameOverWindow.add(optionsTable).expand().fill();
         }
         stage.addActor(gameOverWindow);
+        closeCurrentEditor();
         Gdx.input.setInputProcessor(stage);
+    }
+
+    public void newLevelCompletedWindow() {
+
+        Table levelCompletedWindow = new Table(Skins.neonSkin);
+        levelCompletedWindow.setSize(400,260);
+        levelCompletedWindow.setPosition(MyGdxGame.WIDTH/2 - 200, MyGdxGame.HEIGHT/2 - 130);
+
+        Label levelCompletedLabel = new Label("LEVEL COMPLETED", Skins.lmlSkin);
+        levelCompletedLabel.scaleBy(1.2f, 1.2f);
+        levelCompletedWindow.add(levelCompletedLabel).top().expandX().padTop(5);
+        levelCompletedWindow.row();
+
+        Table optionsTable = new Table(Skins.neonSkin);
+        TextButton restartBtn = new TextButton(" RESTART ", Skins.neonSkin);
+        restartBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                playScreen.dispose();
+                playScreen.getGame().setScreen(new PlayScreen(playScreen.getGame(), playScreen.getCurrentLevel()));
+            }
+        });
+        TextButton exitBtn = new TextButton(" EXIT ", Skins.neonSkin);
+        exitBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                playScreen.getGame().setScreen(new ChooseLevelScreen(playScreen.getGame()));
+                playScreen.dispose();
+            }
+        });
+        TextButton nextLvlBtn = new TextButton(" NEXT ", Skins.neonSkin);
+        nextLvlBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                playScreen.dispose();
+                playScreen.getGame().setScreen(new PlayScreen(playScreen.getGame(), ChooseLevelScreen.getNextLevel(playScreen.getCurrentLevel())));
+
+            }
+        });
+        optionsTable.padTop(20);
+        optionsTable.add(restartBtn).left().expand().width(200).height(100);
+        optionsTable.add(exitBtn).left().expand().padLeft(50).width(200).height(100);
+        optionsTable.add(nextLvlBtn).left().expand().padLeft(50).width(200).height(100);
+        levelCompletedWindow.add(optionsTable).expand().fill();
+
+        stage.addActor(levelCompletedWindow);
+        Gdx.input.setInputProcessor(stage);
+    }
+
+    private boolean nextQuest() {
+        //add progress
+        quest.setProgress(quest.getProgress()+1);
+        progressBar.setValue(quest.getProgress());
+
+        questScroll.scrollTo(0, viewport.getCamera().position.y + viewport.getCamera().viewportHeight, 0, 0);
+        if(quest.getProgress() < quest.getQuestSteps().size()) {
+            questTextArea.setText(quest.getQuestSteps().get(quest.getProgress()).getText());
+            hintBtn.setVisible(false);
+            if(quest.getQuestSteps().get(quest.getProgress()).getHints().size()>0)
+                hintBtn.setVisible(true);
+            return true;
+        }
+        else {
+            questTextArea.setText("Quest completed!");
+            hintBtn.setVisible(false);
+            return false;
+        }
 
     }
+
+    public void showEditorInfo() {
+        newToast("dis iz editor...");
+    }
+
+    public void closeCurrentEditor() {
+        if(editorWindow!=null && editorWindow.isVisible()) {
+            playScreen.getPlayer().currentState = Player.State.STANDING;
+            editorWindow.remove();
+            consoleWindow.remove();
+            questWindow.remove();
+            Gdx.input.setInputProcessor(playScreen);
+        }
+    }
+
+    public void closeCurrentInfo() {
+        infoDialog.remove();
+        playScreen.getPlayer().currentState = Player.State.STANDING;
+        Gdx.input.setInputProcessor(playScreen);
+    }
+
 
     @Override
     public void dispose() {
@@ -406,43 +477,24 @@ public class Hud implements Disposable {
         return currentToast;
     }
 
-    public void closeCurrentEditor() {
-        if(playScreen.getPlayer().currentState == Player.State.CODING) {
-            playScreen.getPlayer().currentState = Player.State.STANDING;
-            editorWindow.remove();
-            consoleWindow.remove();
-            questWindow.remove();
-            Gdx.input.setInputProcessor(playScreen);
-        }
-    }
-
     public Viewport getViewport() {
         return viewport;
     }
 
+    public Dialog getInfoDialog() {
+        return infoDialog;
+    }
 
-    /**
-     * A file object used to represent source coming from a string.
-     */
-    public class JavaSourceFromString extends SimpleJavaFileObject {
-        /**
-         * The source code of this "file".
-         */
-        final String code;
 
-        /**
-         * Constructs a new JavaSourceFromString.
-         * @param name the name of the compilation unit represented by this file object
-         * @param code the source code for the compilation unit represented by this file object
-         */
-        JavaSourceFromString(String name, String code) {
-            super(URI.create("string:///" + name.replace('.','/') + Kind.SOURCE.extension), Kind.SOURCE);
-            this.code = code;
-        }
+    public TextArea getConsoleTextArea() {
+        return consoleTextArea;
+    }
 
-        @Override
-        public CharSequence getCharContent(boolean ignoreEncodingErrors) {
-            return code;
-        }
+    public Quest getQuest() {
+        return quest;
+    }
+
+    public TextArea getCodeTextArea() {
+        return codeTextArea;
     }
 }

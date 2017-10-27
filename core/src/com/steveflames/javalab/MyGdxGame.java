@@ -2,22 +2,19 @@ package com.steveflames.javalab;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.steveflames.javalab.buttons.CategoryListItem;
 import com.steveflames.javalab.buttons.LevelListItem;
 import com.steveflames.javalab.screens.ChooseLevelScreen;
-import com.steveflames.javalab.tools.Fonts;
 import com.steveflames.javalab.screens.PlayScreen;
-import com.steveflames.javalab.tools.Skins;
-
-import java.util.ArrayList;
+import com.steveflames.javalab.tools.global.Fonts;
+import com.steveflames.javalab.tools.global.Loader;
+import com.steveflames.javalab.tools.global.Skins;
 
 /**
  * TODO:
- * allo handleInput k messages g move gia android k allo gia pc. interface? opws bt
- * tha erxontai kata panw m opws super mario san tis xelwnes me swsta k lathos k prepei na phdhksw
  *
  * MISC
  * bugs sto background gia decor
@@ -30,6 +27,7 @@ import java.util.ArrayList;
  * verbose/laconic
  * na grafei kapou tis suntetagmenes tou paixth
  * analoga me to life s sto telos pairneis toso exp. me exp ksekleidwneis ta next lvls
+ * tha erxontai kata panw m opws super mario san tis xelwnes me swsta k lathos k prepei na phdhksw
  *
  *
  * THOUGHTS
@@ -48,14 +46,6 @@ import java.util.ArrayList;
  * exit
  *
  *
- * DIE
- * try again
- *
- *
- * BUGS
- * pathmeno click gia na perpathsei. NO drag otan ftasei ekei p einai prp na kanei renew
- *
- *
  * EDITOR
  * compile
  * tab (pathmeno space gia android?)
@@ -63,15 +53,13 @@ import java.util.ArrayList;
  * enter na xwnei indents
  * LOIPON. DIKO M ERROR OTI DEN EXEI MAIN METHOD AN DN EXEI
  *
- * ROPES
- * random platforms (kai y kai text)
- * otan kaneis try again h exit k ksanabaineis dn exei platforms
  *
  *
- * ERRORS!!!!
- * bes prwta pista 2 k meta pista 1 rip
+ * TODO!!!!
+ * kalutero rotation
+ * otan xtupaw elevator na sunexizoun na kouniounte alliws kanw respawn k ksekinaei apo kei p htan
  * bigger FONTS, bigger info sign font, bigger pc CODE HERE font (test sto xperia L)
- * STO CHOOSE LEVEL SCREEN otan patas to koumpi na einai h pista px 1_1 kai oxi sketo 1. rename k ta levels.tmx
+ * allo handleInput k messages g move gia android k allo gia pc. interface? opws bt
  */
 public class MyGdxGame extends Game {
 
@@ -82,15 +70,23 @@ public class MyGdxGame extends Game {
 
 	public SpriteBatch sb; //used to render textures
 	public ShapeRenderer sr; //used to render shapes
-	
+
+	public static iPlatformDepended platformDepended;
+	public AssetManager assetManager = new AssetManager(); //TODO
+
+	public MyGdxGame(iPlatformDepended platformDepended) {
+		MyGdxGame.platformDepended = platformDepended;
+	}
+
 	@Override
 	public void create () {
 		Fonts.load();
 		Skins.load();
+		Loader.load();
 		sb = new SpriteBatch();
 		sr = new ShapeRenderer();
 		setScreen(new ChooseLevelScreen(this));
-		//setScreen(new PlayScreen(this, 1));
+		//setScreen(new PlayScreen(this, new LevelListItem("1_1", "Hello World!")));
 	}
 
 	@Override
@@ -103,5 +99,7 @@ public class MyGdxGame extends Game {
 	@Override
 	public void dispose () {
 		sb.dispose();
+		Fonts.dispose();
+		Loader.dispose();
 	}
 }

@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -17,10 +16,12 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.steveflames.javalab.MyGdxGame;
 import com.steveflames.javalab.buttons.LevelListItem;
-import com.steveflames.javalab.tools.Skins;
+import com.steveflames.javalab.tools.global.Fonts;
+import com.steveflames.javalab.tools.global.Skins;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Created by Flames on 25/9/2017.
@@ -30,7 +31,7 @@ public class ChooseLevelScreen implements Screen{
 
     private Stage stage;
     private Viewport viewport;
-    private LinkedHashMap<String, ArrayList<LevelListItem>> categories = new LinkedHashMap<String, ArrayList<LevelListItem>>();
+    public static LinkedHashMap<String, ArrayList<LevelListItem>> categories = new LinkedHashMap<String, ArrayList<LevelListItem>>();
 
     /**
      * The components Hierarchy:
@@ -83,14 +84,14 @@ public class ChooseLevelScreen implements Screen{
                 levelBtn.addListener(new ClickListener() {
                      @Override
                      public void clicked(InputEvent event, float x, float y) {
-                         game.setScreen(new PlayScreen(game, level.getId()));
+                         game.setScreen(new PlayScreen(game, level));
                          dispose();
                      }
                 });
                 levelTables.get(levelTables.size()-1).add(levelBtn).expand().fill().left();
 
                 //add new levelTable to the levelsTable
-                levelsTable.add(levelTables.get(levelTables.size()-1)).width(250).height(200).left().top().padRight(10);
+                levelsTable.add(levelTables.get(levelTables.size()-1)).minWidth(300).height(200).left().top().padRight(10);
             }
             //add levelsTable to category
             categoryTables.get(categoryTables.size()-1).add(levelsTable).expandX().left().top();
@@ -118,11 +119,8 @@ public class ChooseLevelScreen implements Screen{
     @Override
     public void render(float delta) {
         handleInput();
-
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
-        //sb.setProjectionMatrix(stage.getCamera().combined);
-        //sr.setProjectionMatrix(stage.getCamera().combined);
     }
 
     @Override
@@ -147,29 +145,57 @@ public class ChooseLevelScreen implements Screen{
 
     @Override
     public void dispose() {
-        //TODO swsto dispose (kai tou paixnidiou dld)
         stage.dispose();
     }
 
     private void loadCategories() {
         categories.put("INTRO", new ArrayList<LevelListItem>());
-        categories.get("INTRO").add(new LevelListItem(1, "Hello World!"));
-        categories.get("INTRO").add(new LevelListItem(2, "Variables"));
+        categories.get("INTRO").add(new LevelListItem("1_1", "Hello World!"));
+        categories.get("INTRO").add(new LevelListItem("1_2", "variables"));
+        categories.get("INTRO").add(new LevelListItem("1_3", "operations"));
+        categories.get("INTRO").add(new LevelListItem("1_4", "user input"));
 
-        /*categories.put("INTRO2", new ArrayList<LevelListItem>());
-        categories.get("INTRO2").add(new LevelListItem(1, "Hello World!"));
-        categories.get("INTRO2").add(new LevelListItem(2, "Variables"));
+        categories.put("CONDITIONALS", new ArrayList<LevelListItem>());
+        categories.get("CONDITIONALS").add(new LevelListItem("2_1", " if - nested if - if else "));
+        categories.get("CONDITIONALS").add(new LevelListItem("2_2", "switch"));
 
-        categories.put("INTRO3", new ArrayList<LevelListItem>());
-        categories.get("INTRO3").add(new LevelListItem(1, "Hello World!"));
-        categories.get("INTRO3").add(new LevelListItem(2, "Variables"));
+        categories.put("LOOPS", new ArrayList<LevelListItem>());
+        categories.get("LOOPS").add(new LevelListItem("3_1", " while - do while "));
+        categories.get("LOOPS").add(new LevelListItem("3_2", "for"));
 
-        categories.put("INTRO4", new ArrayList<LevelListItem>());
-        categories.get("INTRO4").add(new LevelListItem(1, "Hello World!"));
-        categories.get("INTRO4").add(new LevelListItem(2, "Variables"));
+        categories.put("ARRAYS", new ArrayList<LevelListItem>());
+        categories.get("ARRAYS").add(new LevelListItem("4_1", "arrays"));
+        categories.get("ARRAYS").add(new LevelListItem("4_2", "enhanced for"));
+        categories.get("ARRAYS").add(new LevelListItem("4_3", "multidimensional"));
 
-        categories.put("INTRO5", new ArrayList<LevelListItem>());
-        categories.get("INTRO5").add(new LevelListItem(1, "Hello World!"));
-        categories.get("INTRO5").add(new LevelListItem(2, "Variables"));*/
+        categories.put("METHODS", new ArrayList<LevelListItem>());
+        categories.get("METHODS").add(new LevelListItem("5_1", "call method"));
+        categories.get("METHODS").add(new LevelListItem("5_2", "return types"));
+        categories.get("METHODS").add(new LevelListItem("5_3", "access modifiers"));
+
+        categories.put("CLASSES", new ArrayList<LevelListItem>());
+        categories.get("CLASSES").add(new LevelListItem("6_1", "intro"));
+    }
+
+    public static LevelListItem getNextLevel(LevelListItem currentLevel) {
+        boolean flag = false;
+        for(ArrayList<LevelListItem> value : categories.values()) {
+            if(flag) {
+                return value.get(0);
+            }
+            else{
+                for (int i = 0; i < value.size(); i++) {
+                    if (value.get(i).getId().equals(currentLevel.getId())) {
+                        if (value.size() > (i + 1))
+                            return value.get(i + 1);
+                        else {
+                            flag = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 }
