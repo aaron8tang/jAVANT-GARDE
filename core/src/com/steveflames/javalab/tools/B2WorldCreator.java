@@ -11,6 +11,7 @@ import com.steveflames.javalab.MyGdxGame;
 import com.steveflames.javalab.screens.PlayScreen;
 import com.steveflames.javalab.sprites.Checkpoint;
 import com.steveflames.javalab.sprites.Door;
+import com.steveflames.javalab.sprites.FloatingPlatform;
 import com.steveflames.javalab.sprites.Health;
 import com.steveflames.javalab.sprites.InfoSign;
 import com.steveflames.javalab.sprites.InteractiveTileObject;
@@ -76,10 +77,14 @@ public class B2WorldCreator {
             //initialize items
             for (MapObject object : playScreen.getMap().getLayers().get(9).getObjects().getByType(RectangleMapObject.class)) {
                 Rectangle rect = ((RectangleMapObject) object).getRectangle();
-                if(object.getName().contains("health")) {
-                    playScreen.getHealths().add(new Health(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
+                if(object.getName() != null) {
+                    if (object.getName().equals("health")) {
+                        playScreen.getHealths().add(new Health(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
+                    }
+                    else if(object.getName().contains("floatingPlatform")) {
+                        playScreen.getFloatingPlatforms().add(new FloatingPlatform(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
+                    }
                 }
-
             }
 
             if(playScreen.getMap().getLayers().getCount() > 10) {

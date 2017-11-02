@@ -35,7 +35,7 @@ public class Player extends Sprite {
     private static final float JUMPSPEED = 8.3f;
     public enum State { FALLING, JUMPING, STANDING, RUNNING, DEAD, CODING, READING, DISAPPEARING, DISAPPEARED }
     public State currentState;
-    public State previousState;
+    private State previousState;
     private boolean outOfBounds = false;
     private ArrayList<Checkpoint> checkpoints;
     private int currentCheckpointIndex = 0;
@@ -55,8 +55,7 @@ public class Player extends Sprite {
 
     public static boolean colliding = false;
 
-    private Animation<TextureRegion> idleAnim; //todo na valw kai ta animations sto loader?
-    private Animation<TextureRegion> attractAnim;
+    private Animation<TextureRegion> idleAnim;
     private float stateTimer = 0f;
     private float rotation =0;
 
@@ -114,11 +113,9 @@ public class Player extends Sprite {
             Gdx.gl.glEnable(GL20.GL_BLEND);
             Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
-            sb.begin();
             Fonts.small.setColor(red,green,0,playerMsgAlpha);
             Fonts.small.draw(sb, hitMsg, playerMsgVector.x*MyGdxGame.PPM  + Window.getHudCameraOffsetX()
                     - 80, playerMsgVector.y*MyGdxGame.PPM + 20); //TODO cam k gia to y otan valw new lvls
-            sb.end();
 
             if(TimeUtils.timeSinceMillis(playerMsgMillis) > 10) {
                 playerMsgMillis = TimeUtils.millis();
@@ -183,9 +180,6 @@ public class Player extends Sprite {
     }
 
     private State getState(){
-        //Test to Box2D for velocity on the X and Y-Axis
-        //if player is going positive in Y-Axis he is jumping... or if he just jumped and is falling remain in jump state
-
         if(health<=0)
             return State.DEAD;
         if(currentState == State.CODING)
@@ -194,6 +188,7 @@ public class Player extends Sprite {
             return State.READING;
         else if(currentState == State.DISAPPEARING)
             return State.DISAPPEARING;
+            //if player is going positive in Y-Axis he is jumping
         else if((b2body.getLinearVelocity().y > 0 && currentState == State.JUMPING) || (b2body.getLinearVelocity().y < 0 && previousState == State.JUMPING))
             return State.JUMPING;
             //if negative in Y-Axis player is falling
@@ -204,7 +199,6 @@ public class Player extends Sprite {
             return State.RUNNING;
             //if none of these return then he must be standing
         else {
-
             return State.STANDING;
         }
     }
@@ -218,12 +212,12 @@ public class Player extends Sprite {
     }
 
     public void runRight() {
-        b2body.applyLinearImpulse(new Vector2(PLAYERSPEED, 0), b2body.getWorldCenter(), true); //0.2f
+        b2body.applyLinearImpulse(PLAYERSPEED, 0, b2body.getWorldCenter().x,  b2body.getWorldCenter().y, true); //0.2f
         facingDirection = 1;
     }
 
     public void runLeft() {
-        b2body.applyLinearImpulse(new Vector2(-PLAYERSPEED, 0), b2body.getWorldCenter(), true);
+        b2body.applyLinearImpulse(-PLAYERSPEED, 0, b2body.getWorldCenter().x, b2body.getWorldCenter().y, true);
         facingDirection = -1;
     }
 

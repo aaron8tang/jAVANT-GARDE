@@ -21,6 +21,8 @@ public class Loader {
 
     //hud
     public static Texture heartT;
+    public static Texture fixT;
+    public static Texture eyeT;
 
     //teleporter
     public static TextureAtlas teleporterAtlas;
@@ -37,6 +39,8 @@ public class Loader {
 
         //hud
         heartT = new Texture(Gdx.files.internal("images/heart.png"));
+        fixT = new Texture(Gdx.files.internal("images/fix.png"));
+        eyeT = new Texture(Gdx.files.internal("images/eye.png"));
 
         //teleporter
         teleporterAtlas = new TextureAtlas(Gdx.files.internal("images/teleporter/teleporter.pack"));
@@ -53,6 +57,8 @@ public class Loader {
 
         //hud
         heartT.dispose();
+        fixT.dispose();
+        eyeT.dispose();
 
         //teleporter
         teleporterAtlas.dispose();

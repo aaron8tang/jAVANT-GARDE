@@ -70,18 +70,14 @@ public class Platform extends Sprite {
         }
     }
 
-    void draw(SpriteBatch sb, ShapeRenderer sr) {
-
-        sr.begin(ShapeRenderer.ShapeType.Filled);
+    void drawFilled(ShapeRenderer sr) {
         sr.setColor(0.21f, 0.18f, 0.17f, alpha);
         sr.rect(b2body.getPosition().x*MyGdxGame.PPM + Window.getHudCameraOffsetX() - WIDTH/2, b2body.getPosition().y*MyGdxGame.PPM - HEIGHT/2, WIDTH, HEIGHT);
-        sr.end();
+    }
 
-        sr.begin(ShapeRenderer.ShapeType.Line);
+    void drawLine(ShapeRenderer sr) {
         sr.setColor(0, 0, 0, alpha);
         sr.rect(b2body.getPosition().x*MyGdxGame.PPM + Window.getHudCameraOffsetX() - WIDTH/2, b2body.getPosition().y*MyGdxGame.PPM - HEIGHT/2, WIDTH, HEIGHT);
-        sr.end();
-
     }
 
     void drawFont(SpriteBatch sb) {

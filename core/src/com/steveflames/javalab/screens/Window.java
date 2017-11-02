@@ -34,6 +34,7 @@ public abstract class Window implements Screen, InputProcessor {
         Gdx.input.setInputProcessor(this);
     }
 
+
     /**
      * Updates the window's parameters. Each window has an update method.
      * @param dt -> delta time
@@ -96,5 +97,13 @@ public abstract class Window implements Screen, InputProcessor {
 
     public MyGdxGame getGame() {
         return game;
+    }
+
+    public static OrthographicCamera getCam() {
+        return cam;
+    }
+
+    public Rectangle getClickCoords() {
+        return clickCoords;
     }
 }

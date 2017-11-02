@@ -79,29 +79,25 @@ public class Rope extends InteractiveTileObject {
         }
     }
 
-    public void draw(SpriteBatch sb, ShapeRenderer sr) {
+    public void drawFilled(ShapeRenderer sr) {
+        //draw platforms
+        for(int i=0; i<platforms.size(); i++)
+            platforms.get(i).drawFilled(sr);
+    }
 
+    public void drawLine(ShapeRenderer sr) {
+        for(int i=0; i<platforms.size(); i++)
+            platforms.get(i).drawLine(sr);
+    }
 
+    public void drawFont(SpriteBatch sb) {
         //draw prompt font
-        sb.begin();
         Fonts.small.setColor(Color.ORANGE);
         Fonts.small.draw(sb, prompt, bounds.x - 95 + Window.getHudCameraOffsetX() - glyphLayout.width/2, (bounds.y + bounds.height) - glyphLayout.height/2 - 5);
-        Fonts.small.setColor(Color.WHITE);
-        sb.end();
-
-        //draw platforms
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-        for(int i=0; i<platforms.size(); i++)
-            platforms.get(i).draw(sb,sr);
-        Gdx.gl.glDisable(GL20.GL_BLEND);
-
         //draw platform fonts
-        sb.begin();
+        Fonts.small.setColor(Color.WHITE);
         for(int i=0; i<platforms.size(); i++)
             platforms.get(i).drawFont(sb);
-        sb.end();
-
     }
 
     public void drawPromptTile(ShapeRenderer sr) {

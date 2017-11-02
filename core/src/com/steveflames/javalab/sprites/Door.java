@@ -35,16 +35,14 @@ public class Door extends InteractiveTileObject {
         }
     }
 
-    public void draw(ShapeRenderer sr) {
-        sr.begin(ShapeRenderer.ShapeType.Filled);
-        sr.setColor(0.21f, 0.18f, 0.17f, 1);
+    public void drawFilled(ShapeRenderer sr) {
         sr.rect(bounds.x + Window.getHudCameraOffsetX(), bounds.y, bounds.width, bounds.height);
-        sr.end();
+    }
 
-        sr.begin(ShapeRenderer.ShapeType.Line);
+    public void drawLine(ShapeRenderer sr) {
+
         sr.setColor(Color.BLACK);
         sr.rect(bounds.x + Window.getHudCameraOffsetX(), bounds.y, bounds.width, bounds.height);
-        sr.end();
     }
 
     public void open() {

@@ -15,13 +15,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.steveflames.javalab.MyGdxGame;
-import com.steveflames.javalab.buttons.LevelListItem;
-import com.steveflames.javalab.tools.global.Fonts;
+import com.steveflames.javalab.tools.LevelListItem;
 import com.steveflames.javalab.tools.global.Skins;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * Created by Flames on 25/9/2017.
@@ -150,31 +148,33 @@ public class ChooseLevelScreen implements Screen{
 
     private void loadCategories() {
         categories.put("INTRO", new ArrayList<LevelListItem>());
-        categories.get("INTRO").add(new LevelListItem("1_1", "Hello World!"));
-        categories.get("INTRO").add(new LevelListItem("1_2", "variables"));
-        categories.get("INTRO").add(new LevelListItem("1_3", "operations"));
-        categories.get("INTRO").add(new LevelListItem("1_4", "user input"));
+        categories.get("INTRO").add(new LevelListItem("INTRO", "1_1", "Hello World!"));
+        categories.get("INTRO").add(new LevelListItem("INTRO", "1_2", "user input"));
 
-        categories.put("CONDITIONALS", new ArrayList<LevelListItem>());
-        categories.get("CONDITIONALS").add(new LevelListItem("2_1", " if - nested if - if else "));
-        categories.get("CONDITIONALS").add(new LevelListItem("2_2", "switch"));
+        categories.put("VARIABLES", new ArrayList<LevelListItem>());
+        categories.get("VARIABLES").add(new LevelListItem("VARIABLES", "2_1", "naming\n&\ntypes"));
+        categories.get("VARIABLES").add(new LevelListItem("VARIABLES", "2_2", "initialization\n&\noperations"));
+
+        /*categories.put("CONDITIONALS", new ArrayList<LevelListItem>());
+        categories.get("CONDITIONALS").add(new LevelListItem("3_1", " if - nested if - if else "));
+        categories.get("CONDITIONALS").add(new LevelListItem("3_2", "switch"));
 
         categories.put("LOOPS", new ArrayList<LevelListItem>());
-        categories.get("LOOPS").add(new LevelListItem("3_1", " while - do while "));
-        categories.get("LOOPS").add(new LevelListItem("3_2", "for"));
+        categories.get("LOOPS").add(new LevelListItem("4_1", " while - do while "));
+        categories.get("LOOPS").add(new LevelListItem("4_2", "for"));
 
         categories.put("ARRAYS", new ArrayList<LevelListItem>());
-        categories.get("ARRAYS").add(new LevelListItem("4_1", "arrays"));
-        categories.get("ARRAYS").add(new LevelListItem("4_2", "enhanced for"));
-        categories.get("ARRAYS").add(new LevelListItem("4_3", "multidimensional"));
+        categories.get("ARRAYS").add(new LevelListItem("5_1", "arrays"));
+        categories.get("ARRAYS").add(new LevelListItem("5_2", "enhanced for"));
+        categories.get("ARRAYS").add(new LevelListItem("5_3", "multidimensional"));
 
         categories.put("METHODS", new ArrayList<LevelListItem>());
-        categories.get("METHODS").add(new LevelListItem("5_1", "call method"));
-        categories.get("METHODS").add(new LevelListItem("5_2", "return types"));
-        categories.get("METHODS").add(new LevelListItem("5_3", "access modifiers"));
+        categories.get("METHODS").add(new LevelListItem("6_1", "call method"));
+        categories.get("METHODS").add(new LevelListItem("6_2", "return types"));
+        categories.get("METHODS").add(new LevelListItem("6_3", "access modifiers"));*/
 
         categories.put("CLASSES", new ArrayList<LevelListItem>());
-        categories.get("CLASSES").add(new LevelListItem("6_1", "intro"));
+        categories.get("CLASSES").add(new LevelListItem("CLASSES", "7_1", "intro"));
     }
 
     public static LevelListItem getNextLevel(LevelListItem currentLevel) {

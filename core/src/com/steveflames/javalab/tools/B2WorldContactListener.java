@@ -11,7 +11,9 @@ import com.steveflames.javalab.scenes.Hud;
 import com.steveflames.javalab.screens.PlayScreen;
 import com.steveflames.javalab.sprites.Checkpoint;
 import com.steveflames.javalab.sprites.Health;
+import com.steveflames.javalab.sprites.InfoSign;
 import com.steveflames.javalab.sprites.InteractiveTileObject;
+import com.steveflames.javalab.sprites.Pc;
 import com.steveflames.javalab.sprites.Player;
 import com.steveflames.javalab.sprites.Teleporter;
 import com.steveflames.javalab.sprites.ropes.Platform;
@@ -65,7 +67,6 @@ public class B2WorldContactListener implements ContactListener {
                 }
                 else if(object.getUserData() instanceof Teleporter) {
                     ((InteractiveTileObject) object.getUserData()).setUsable(true);
-                    Player.colliding = true;
                     if(((Teleporter) object.getUserData()).getName().equals("teleporter_end")) {
                         Gdx.input.setInputProcessor(playScreen.getHud().stage);
                         ((Player)player.getUserData()).fadeOut();
@@ -73,10 +74,16 @@ public class B2WorldContactListener implements ContactListener {
                         //((Player)player.getUserData()).b2body.setTransform(((Teleporter)object.getUserData()).getB2body().getPosition().x, ((Teleporter)object.getUserData()).getB2body().getPosition().y, 0);
                     }
                 }
-                else {
+                else if(object.getUserData() instanceof InfoSign ) {
                     //System.out.println("COLLISION START "+object.getBody().getPosition().x + " " + object.getBody().getPosition().y);
                     ((InteractiveTileObject) object.getUserData()).setUsable(true);
                     Player.colliding = true;
+                    playScreen.getHud().showUseBtn("READ");
+                }
+                else if(object.getUserData() instanceof Pc) {
+                    ((InteractiveTileObject) object.getUserData()).setUsable(true);
+                    Player.colliding = true;
+                    playScreen.getHud().showUseBtn("CODE");
                 }
             }
             else if(object.getUserData() instanceof Platform) {
@@ -99,7 +106,11 @@ public class B2WorldContactListener implements ContactListener {
                 //System.out.println("COLLISION END "+object.getBody().getPosition().x + " " + object.getBody().getPosition().y);
                 if(!(object.getUserData() instanceof Checkpoint)) {
                     ((InteractiveTileObject) object.getUserData()).setUsable(false);
+                }
+                if(object.getUserData() instanceof InfoSign || object.getUserData() instanceof  Pc) {
+                    ((InteractiveTileObject) object.getUserData()).setUsable(false);
                     Player.colliding = false;
+                    playScreen.getHud().hideUseBtn();
                 }
             }
         }

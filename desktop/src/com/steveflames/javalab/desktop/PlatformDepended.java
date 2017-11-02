@@ -14,8 +14,13 @@ public class PlatformDepended implements iPlatformDepended {
 
     @Override
     public String getLevel1Tip() {
-        return "Use the arrows to move around\n" +
+        return "Use the ARROWS to move around\n" +
                 "ENTER to use item\n" +
                 "ESCAPE to exit";
+    }
+
+    @Override
+    public boolean deviceHasKeyboard() {
+        return true;
     }
 }

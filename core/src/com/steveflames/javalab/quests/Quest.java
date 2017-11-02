@@ -1,7 +1,6 @@
 package com.steveflames.javalab.quests;
 
-import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
-import com.steveflames.javalab.ingame_classes.iUserCode;
+import com.steveflames.javalab.scenes.Hud;
 import com.steveflames.javalab.screens.PlayScreen;
 
 import java.util.ArrayList;
@@ -29,9 +28,6 @@ public class Quest {
                             questSteps.get(questSteps.size()-1).addHint(temp2[j].substring(1, temp2[j].length()-1));
                         }
                     }
-                    else {
-                        System.out.println("WARNING: no hints");
-                    }
                 }
             }
             else {
@@ -44,7 +40,8 @@ public class Quest {
     }
 
     public boolean handleQuestResult(PlayScreen playScreen) {
-        if(playScreen.getCurrentLevel().getId().equals("1_1")) {
+        return true;
+        /*if(playScreen.getCurrentLevel().getId().equals("1_1")) {
             switch (playScreen.getHud().getQuest().getProgress()) {
                 case 0:
                     if (playScreen.getHud().getConsoleTextArea().getText().equals("Error: main method not found\n"))
@@ -214,12 +211,13 @@ public class Quest {
                     break;
             }
         }
-        return false;
+        return false;*/
     }
 
     public void completed(PlayScreen playScreen) {
         if(playScreen.getCurrentLevel().getId().equals("1_1")) {
-            playScreen.getHud().newToast("Congratulations! You completed your first quest!\n" +
+            playScreen.getHud().closeCurrentEditor();
+            Hud.newToast("Congratulations! You completed your first quest!\n" +
                     "You managed to print to the user of your program the phrase 'Hello World!'\n" +
                     "Go through the portal to continue your journey and learn more about the world of Java!");
             playScreen.getDoors().get(3).open();
@@ -227,8 +225,8 @@ public class Quest {
         else if(playScreen.getCurrentLevel().getId().equals("1_2")) {
 
         }
-        else if(playScreen.getCurrentLevel().getId().equals("1_3")) {
-
+        else if(playScreen.getCurrentLevel().getId().equals("2_1")) {
+            playScreen.getDoors().get(0).open();
         }
     }
 

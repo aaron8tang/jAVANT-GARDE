@@ -18,10 +18,10 @@ import java.util.ArrayList;
 public class Toast {
     private static final int SPEED = 700;
     public enum State { INCOMING, READY, WRITING, NEXT, SKIP, LEAVING, LEFT}
-    private State currentState = State.INCOMING;
+    private State currentState = State.LEFT;
 
-    private static Rectangle rect;
-    private static GlyphLayout glyphLayout;
+    private Rectangle rect;
+    private GlyphLayout glyphLayout;
     private String text;
 
     private int currentPage;
@@ -35,21 +35,31 @@ public class Toast {
     private int letterPtr = 0;
     private int linePtr = 0;
 
-    Toast(String text) {
+    private float nextPromptOffset = 0;
+
+    Toast() {
         rect = new Rectangle(10, -150, MyGdxGame.WIDTH-20, 150);
-        this.text = text;
         glyphLayout = new GlyphLayout();
-        glyphLayout.setText(Fonts.small, text);
         linesOfText = new ArrayList<ArrayList<String>>();
-        linesOfText.add(new ArrayList<String>());
+        finalLinesOfText = new ArrayList<ArrayList<String>>();
+        if(!MyGdxGame.platformDepended.deviceHasKeyboard())
+            nextPromptOffset = 90;
+    }
+
+    void newToast(String text) {
+        this.text = text;
+        currentState = State.INCOMING;
+        glyphLayout.setText(Fonts.small, text);
         currentPage = 0;
         numOfPages = 1;
+        linesOfText.clear();
+        finalLinesOfText.clear();
+        linesOfText.add(new ArrayList<String>());
 
         breakTextIntoLines();
         timerMillis = TimeUtils.millis();
 
         //initialize finalLinesOfText
-        finalLinesOfText = new ArrayList<ArrayList<String>>();
         for(ArrayList<String> sList: linesOfText) {
             finalLinesOfText.add(new ArrayList<String>());
             for(String s: sList) {
@@ -104,19 +114,19 @@ public class Toast {
     }
 
     public void update(float dt) {
-        if(currentState == State.INCOMING) {
+        if (currentState == State.INCOMING) {
             if (rect.y + rect.height <= 160) {
                 rect.y += SPEED * dt;
             } else {
+                rect.y = 160 - rect.height;
                 currentState = State.WRITING;
                 timerMillis = TimeUtils.millis();
             }
-        }
-        else if(currentState == State.WRITING) {
-            if(TimeUtils.timeSinceMillis(timerMillis) > 30) {
+        } else if (currentState == State.WRITING) {
+            if (TimeUtils.timeSinceMillis(timerMillis) > 30) {
                 timerMillis = TimeUtils.millis();
 
-                if(linesOfText.get(currentPage).get(linePtr).length()>=1)
+                if (linesOfText.get(currentPage).get(linePtr).length() >= 1)
                     finalLinesOfText.get(currentPage).set(linePtr, linesOfText.get(currentPage).get(linePtr).substring(0, letterPtr));
                 if (letterPtr >= linesOfText.get(currentPage).get(linePtr).length()) {
                     letterPtr = 0;
@@ -128,47 +138,44 @@ public class Toast {
                 }
                 letterPtr++;
             }
-        }
-        else if(currentState == State.NEXT) {
+        } else if (currentState == State.NEXT) {
             currentState = State.WRITING;
             currentPage++;
-            if(currentPage > numOfPages-1) {
+            if (currentPage > numOfPages - 1) {
                 currentPage--;
                 currentState = State.LEAVING;
             }
-        }
-        else if(currentState == State.SKIP) {
+        } else if (currentState == State.SKIP) {
             finalLinesOfText.set(currentPage, linesOfText.get(currentPage));
             letterPtr = 0;
             linePtr = 0;
             currentState = State.READY;
-        }
-        else if(currentState == State.LEAVING) {
-            if(currentState != State.LEFT) {
-                rect.y -= SPEED*dt;
-                if(rect.y + rect.height < 0)
+        } else if (currentState == State.LEAVING) {
+            if (currentState != State.LEFT) {
+                rect.y -= SPEED * dt;
+                if (rect.y + rect.height < 0) {
                     currentState = State.LEFT;
+                    Hud.showAndroidInputTable();
+                }
             }
         }
     }
 
-    void render(SpriteBatch sb, ShapeRenderer sr) {
-        sr.begin(ShapeRenderer.ShapeType.Filled);
+    void drawFilled(ShapeRenderer sr) {
         sr.setColor(Color.BLACK);
         sr.rect(rect.x, rect.y, rect.width, rect.height);
         sr.setColor(Color.WHITE);
         sr.rect(rect.x + 2, rect.y + 2, rect.width -4, rect.height-4);
-        sr.end();
+    }
 
+    void drawFont(SpriteBatch sb) {
         if(currentState == State.READY || currentState == State.WRITING || currentState == State.LEAVING) {
-            sb.begin();
             Fonts.small.setColor(Color.BLACK);
             Fonts.xsmall.setColor(Color.BLACK);
             for(int i=0; i<finalLinesOfText.get(currentPage).size(); i++) {
                 Fonts.small.draw(sb, finalLinesOfText.get(currentPage).get(i), rect.x + 120, rect.y + rect.height - 20 - (33) * i);
             }
-            Fonts.xsmall.draw(sb, MyGdxGame.platformDepended.getNextPrompt(), rect.x + rect.width - 180, rect.y + 25);
-            sb.end();
+            Fonts.xsmall.draw(sb, MyGdxGame.platformDepended.getNextPrompt(), rect.x + rect.width - 180 + nextPromptOffset, rect.y + 25);
         }
     }
 
@@ -179,5 +186,9 @@ public class Toast {
 
     public void setCurrentState(State currentState) {
         this.currentState = currentState;
+    }
+
+    public boolean isShowing() {
+        return currentState!=State.LEFT;
     }
 }

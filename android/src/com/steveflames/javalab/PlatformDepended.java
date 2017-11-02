@@ -12,8 +12,12 @@ public class PlatformDepended implements iPlatformDepended {
 
     @Override
     public String getLevel1Tip() {
-        return "TAP to move around and slide up to jump\n" +
-                "TAP on a usable item to use\n" +
+        return "Use the ONSCREEN BUTTONS to move, jump and use items\n" +
                 "BACK to exit";
+    }
+
+    @Override
+    public boolean deviceHasKeyboard() {
+        return false;
     }
 }
