@@ -12,7 +12,9 @@ public class PlatformDepended implements iPlatformDepended {
 
     @Override
     public String getLevel1Tip() {
-        return "Use the ONSCREEN BUTTONS to move, jump and use items\n" +
+        return "Hello and welcome to jAVANT-GARDE tutorials!\n" +
+                "Here you will get the chance to learn the basics of programming in Java from scratch - let's begin!\n" +
+                "Use the ONSCREEN BUTTONS to move, jump and use items\n" +
                 "BACK to exit";
     }
 

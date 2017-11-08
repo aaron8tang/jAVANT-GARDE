@@ -1,7 +1,6 @@
 package com.steveflames.javalab.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
@@ -24,12 +23,11 @@ import com.steveflames.javalab.sprites.FloatingPlatform;
 import com.steveflames.javalab.tools.LevelListItem;
 import com.steveflames.javalab.sprites.Checkpoint;
 import com.steveflames.javalab.sprites.Door;
-import com.steveflames.javalab.sprites.Health;
+import com.steveflames.javalab.sprites.Item;
 import com.steveflames.javalab.sprites.InfoSign;
 import com.steveflames.javalab.sprites.Teleporter;
 import com.steveflames.javalab.sprites.ropes.Rope;
 import com.steveflames.javalab.tools.B2WorldCreator;
-import com.steveflames.javalab.scenes.Toast;
 import com.steveflames.javalab.tools.InputHandler;
 import com.steveflames.javalab.tools.global.Fonts;
 import com.steveflames.javalab.tools.B2WorldContactListener;
@@ -63,7 +61,7 @@ public class PlayScreen extends Window {
     private ArrayList<InfoSign> infoSigns = new ArrayList<InfoSign>();
     private ArrayList<Door> doors = new ArrayList<Door>();
     public static ArrayList<Rope> ropes = new ArrayList<Rope>(); //TODO static :/
-    private ArrayList<Health> healths = new ArrayList<Health>();
+    private ArrayList<Item> items = new ArrayList<Item>();
     private ArrayList<Checkpoint> checkpoints = new ArrayList<Checkpoint>();
     private ArrayList<Body> bodiesToRemove = new ArrayList<Body>();
     private ArrayList<FloatingPlatform> floatingPlatforms = new ArrayList<FloatingPlatform>();
@@ -115,7 +113,7 @@ public class PlayScreen extends Window {
 
         if(!MyGdxGame.platformDepended.deviceHasKeyboard())
             hud.newAndroidInputTable();
-        
+
         //hud.newEditorWindow("1_1-0");
     }
 
@@ -143,6 +141,11 @@ public class PlayScreen extends Window {
         cam.update();
         renderer.setView(cam);
 
+        if(onScreenMsgAlpha>0) {
+            if (TimeUtils.timeSinceMillis(onScreenMsgMillis) > 2000)
+                onScreenMsgAlpha -= 1f * Gdx.graphics.getDeltaTime();
+        }
+
         player.update(dt);
         hud.update(dt);
         if(inLineOfSight(teleporter.getBounds()))
@@ -151,8 +154,8 @@ public class PlayScreen extends Window {
             doors.get(i).update(dt);
         for(int i=0; i<ropes.size(); i++)
             ropes.get(i).update(dt);
-        for(int i=0; i<healths.size(); i++)
-            healths.get(i).update(dt);
+        for(int i = 0; i< items.size(); i++)
+            items.get(i).update(dt);
 
         if(player.currentState == Player.State.DISAPPEARED)
             hud.newLevelCompletedWindow();
@@ -160,20 +163,13 @@ public class PlayScreen extends Window {
 
     @Override
     public void render(float dt) {
-        update(dt);
+        if(!hud.isPauseWindowShowing())
+            update(dt);
+        else
+            hud.handleExitFromPauseMenuInput();
 
         //render our game map
         renderer.render();
-
-        //DEBUG
-        //b2dr.render(world, cam.combined);
-        //fpsLogger.log();
-        /*System.out.println("GL calls: " + GLProfiler.calls);
-        System.out.println("GL drawCalls: " + GLProfiler.drawCalls);
-        System.out.println("GL shaderSwitches: " + GLProfiler.shaderSwitches);
-        System.out.println("GL textureBindings: " + GLProfiler.textureBindings);
-        System.out.println("GL vertexCount: " + GLProfiler.vertexCount);
-        GLProfiler.reset();*/
 
         //set projection matrix according to world scaling. (1280x768 / 200)
         game.sb.setProjectionMatrix(cam.combined);
@@ -182,15 +178,15 @@ public class PlayScreen extends Window {
         //draw textures scaled to world
         game.sb.setColor(Color.WHITE);
         game.sb.begin();
-        for(int i=0; i<healths.size(); i++)
-            healths.get(i).draw(game.sb);
+        for (int i = 0; i < items.size(); i++)
+            items.get(i).draw(game.sb);
 
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         player.draw(game.sb);
         Gdx.gl.glDisable(GL20.GL_BLEND);
 
-        if(inLineOfSight(teleporter.getBounds()))
+        if (inLineOfSight(teleporter.getBounds()))
             teleporter.draw(game.sb);
         game.sb.end();
 
@@ -205,30 +201,35 @@ public class PlayScreen extends Window {
 
         //draw filled shapes
         game.sr.begin(ShapeRenderer.ShapeType.Filled);
-        for(int i=0; i<ropes.size(); i++) {
-            if(inLineOfSight(ropes.get(i).getBounds()))
+        for (int i = 0; i < ropes.size(); i++) {
+            if (inLineOfSight(ropes.get(i).getBounds()))
                 ropes.get(i).drawFilled(game.sr);
         }
         game.sr.setColor(0.21f, 0.18f, 0.17f, 1);
-        for(int i=0; i<doors.size(); i++) {
-            if(inLineOfSight(doors.get(i).getBounds()))
+        for (int i = 0; i < doors.size(); i++) {
+            if (inLineOfSight(doors.get(i).getBounds()))
                 doors.get(i).drawFilled(game.sr);
         }
-        for(int i=0; i<floatingPlatforms.size(); i++) {
-            if(inLineOfSight(floatingPlatforms.get(i).getBounds()))
-                floatingPlatforms.get(i).drawFilled(game.sr);
+        for (int i = 0; i < floatingPlatforms.size(); i++) {
+            if (inLineOfSight(floatingPlatforms.get(i).getBounds()))
+                floatingPlatforms.get(i).drawRect(game.sr);
         }
         game.sr.end();
 
         //draw line shapes
         game.sr.begin(ShapeRenderer.ShapeType.Line);
-        for(int i=0; i<ropes.size(); i++) {
-            if(inLineOfSight(ropes.get(i).getBounds()))
+        for (int i = 0; i < ropes.size(); i++) {
+            if (inLineOfSight(ropes.get(i).getBounds()))
                 ropes.get(i).drawLine(game.sr);
         }
-        for(int i=0; i<doors.size(); i++) {
-            if(inLineOfSight(doors.get(i).getBounds()))
+        game.sr.setColor(Color.BLACK);
+        for (int i = 0; i < doors.size(); i++) {
+            if (inLineOfSight(doors.get(i).getBounds()))
                 doors.get(i).drawLine(game.sr);
+        }
+        for (int i = 0; i < floatingPlatforms.size(); i++) {
+            if (inLineOfSight(floatingPlatforms.get(i).getBounds()))
+                floatingPlatforms.get(i).drawRect(game.sr);
         }
         game.sr.end();
 
@@ -241,22 +242,25 @@ public class PlayScreen extends Window {
         game.sb.begin();
         player.drawPlayerMsg(game.sb);
         Fonts.small.setColor(Color.WHITE);
-        for(int i=0; i<ropes.size(); i++) {
-            if(inLineOfSight(ropes.get(i).getBounds()))
+        for (int i = 0; i < ropes.size(); i++) {
+            if (inLineOfSight(ropes.get(i).getBounds()))
                 ropes.get(i).drawFont(game.sb);
         }
-        for(int i=0; i<floatingPlatforms.size(); i++) {
-            if(inLineOfSight(floatingPlatforms.get(i).getBounds()))
+        for (int i = 0; i < floatingPlatforms.size(); i++) {
+            if (inLineOfSight(floatingPlatforms.get(i).getBounds()))
                 floatingPlatforms.get(i).drawFont(game.sb);
         }
-        if(player.currentState != Player.State.READING && player.currentState != Player.State.CODING) { //if player is coding or reading sign, dont draw the use prompt
-            for(int i=0; i<infoSigns.size(); i++)
+        if (player.currentState != Player.State.READING && player.currentState != Player.State.CODING) { //if player is coding or reading sign, dont draw the use prompt
+            for (int i = 0; i < infoSigns.size(); i++)
                 infoSigns.get(i).drawUsePrompt(game.sb);
-            for(int i=0; i<pcs.size(); i++)
+            for (int i = 0; i < pcs.size(); i++)
                 pcs.get(i).drawUsePrompt(game.sb);
         }
         hud.drawFont(game.sb);
         drawOnScreenMsg();
+
+        if(Item.getnOfClasses() > 0) Fonts.small.draw(game.sb, "Classes found: " + player.getClasses().size() +"/" + Item.getnOfClasses(), 5, MyGdxGame.HEIGHT - 65);
+
         game.sb.end();
 
         //disable alpha
@@ -264,21 +268,20 @@ public class PlayScreen extends Window {
 
         hud.drawStage(game.sb);
 
+
+        //DEBUG
+        //b2dr.render(world, cam.combined);
+        //fpsLogger.log();
+        /*System.out.println("GL calls: " + GLProfiler.calls);
+        System.out.println("GL drawCalls: " + GLProfiler.drawCalls);
+        System.out.println("GL shaderSwitches: " + GLProfiler.shaderSwitches);
+        System.out.println("GL textureBindings: " + GLProfiler.textureBindings);
+        System.out.println("GL vertexCount: " + GLProfiler.vertexCount);
+        GLProfiler.reset();*/
+
+
         enterKeyHandled = false;
         destroyUnusedBodies();
-        //set screen and dispose should be called in the end of render method
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
-            if(player.currentState == Player.State.CODING) {
-                hud.closeCurrentEditor();
-            }
-            else if(player.currentState == Player.State.READING) {
-                hud.closeCurrentInfo();
-            }
-            else {
-                game.setScreen(new ChooseLevelScreen(game));
-                dispose();
-            }
-        }
     }
 
     public void updateCameraPosition() {
@@ -300,9 +303,6 @@ public class PlayScreen extends Window {
 
     private void drawOnScreenMsg() {
         if(onScreenMsgAlpha>0) {
-            if (TimeUtils.timeSinceMillis(onScreenMsgMillis) > 2000)
-                onScreenMsgAlpha -= 1f*Gdx.graphics.getDeltaTime();
-
             Fonts.big.setColor(new Color(1, 0, 0, onScreenMsgAlpha));
             Fonts.medium.setColor(new Color(1, 0, 0, onScreenMsgAlpha));
             Fonts.big.draw(game.sb, currentLevel.getCategoryName(), cam.viewportWidth/2 * MyGdxGame.PPM - onScreenMsgGlyphLayout2.width / 2, cam.viewportHeight/2 * MyGdxGame.PPM + 130);
@@ -341,6 +341,7 @@ public class PlayScreen extends Window {
         b2dr.dispose();
         hud.dispose();
         ropes.clear();
+        Item.reset();
     }
 
     public Player getPlayer() {
@@ -383,8 +384,8 @@ public class PlayScreen extends Window {
         this.enterKeyHandled = enterKeyHandled;
     }
 
-    public ArrayList<Health> getHealths() {
-        return healths;
+    public ArrayList<Item> getItems() {
+        return items;
     }
 
     public ArrayList<Body> getBodiesToRemove() {

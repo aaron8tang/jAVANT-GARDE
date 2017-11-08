@@ -25,7 +25,7 @@ public class InputHandler {
     public void handlePlayscreenInput() {
         if(!playScreen.getHud().getCurrentToast().isShowing() || playScreen.getHud().getCurrentToast() == null) {
             if(playScreen.getPlayer().currentState != Player.State.CODING && playScreen.getPlayer().currentState != Player.State.READING && playScreen.getPlayer().currentState != Player.State.DEAD) {
-                //move player on key pressed
+                //move player on key press
                 if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
                     playScreen.getPlayer().jump();
                 }
@@ -39,7 +39,6 @@ public class InputHandler {
                 //use item
                 if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
                     if(Player.colliding) {
-                        System.out.println(playScreen.isEnterKeyHandled());
                         if (!playScreen.isEnterKeyHandled()) {
                             for (Pc pc : playScreen.getPcs()) {
                                 if (pc.isUsable()) {
@@ -48,6 +47,8 @@ public class InputHandler {
                                     playScreen.getPlayer().currentState = Player.State.CODING;
                                     Window.getCam().position.x = pc.getBounds().x / MyGdxGame.PPM + 1.5f;
                                     playScreen.getHud().newEditorWindow(pc.getName().substring(3));
+                                    if(playScreen.getPlayer().b2body.getPosition().y > Window.getCam().position.y)
+                                        playScreen.getHud().getQuestWindow().setPosition(0, 45);
                                 }
                             }
                             for (InfoSign infoSign : playScreen.getInfoSigns()) {
@@ -75,6 +76,17 @@ public class InputHandler {
                 playScreen.getHud().getCurrentToast().setCurrentState(Toast.State.SKIP);
         }
         playScreen.setEnterKeyHandled(false);
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            if(playScreen.getPlayer().currentState == Player.State.CODING)
+                playScreen.getHud().closeCurrentEditor();
+            else if(playScreen.getPlayer().currentState == Player.State.READING)
+                playScreen.getHud().closeCurrentInfo();
+            else if(playScreen.getHud().isPauseWindowShowing())
+                playScreen.getHud().getPauseWindow().remove();
+            else
+                playScreen.getHud().newPauseWindow();
+        }
     }
 
     public void handlePlayscreenAndroidInput() {
@@ -131,7 +143,17 @@ public class InputHandler {
                     playScreen.getHud().getCurrentToast().setCurrentState(Toast.State.SKIP);
             }
         }
-
         playScreen.setEnterKeyHandled(false);
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
+            if(playScreen.getPlayer().currentState == Player.State.CODING)
+                playScreen.getHud().closeCurrentEditor();
+            else if(playScreen.getPlayer().currentState == Player.State.READING)
+                playScreen.getHud().closeCurrentInfo();
+            else if(playScreen.getHud().isPauseWindowShowing())
+                playScreen.getHud().getPauseWindow().remove();
+            else
+                playScreen.getHud().newPauseWindow();
+        }
     }
 }

@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.steveflames.javalab.screens.ChooseLevelScreen;
+import com.steveflames.javalab.screens.PlayScreen;
+import com.steveflames.javalab.tools.LevelListItem;
 import com.steveflames.javalab.tools.global.Fonts;
 import com.steveflames.javalab.tools.global.Loader;
 import com.steveflames.javalab.tools.global.Skins;
@@ -19,7 +21,6 @@ import com.steveflames.javalab.tools.global.Skins;
  * granazia
  * matrix lines
  * find free emojis gia decor
- * 0/2 classes found
  * verbose/laconic
  * na grafei kapou tis suntetagmenes tou paixth
  * analoga me to life s sto telos pairneis toso exp. me exp ksekleidwneis ta next lvls
@@ -30,12 +31,12 @@ import com.steveflames.javalab.tools.global.Skins;
  * o kakos na kanei read input sou se fash quiz
  * ARRAYS! parse array k printf k prepei na pas sto swsto. an lathos tote -1 health
  * VARIABLES! na pas px na vlepeis ton kwdika ths portas k na exei if(x > 10) open k na prepei na pas na to kaneis
+ * VARIABLES! na paizeis me tis suntetagmenes tou kleidiou gia na anoikseis thn porta
  * otan kaneis click sto console na kanei copy to clipboard
  * tha erxontai kata panw m opws super mario san tis xelwnes me swsta k lathos k prepei na phdhksw
- *
- * STO LESSON OPERATIONS NA KANW STHN ARXH int x = 10;
- * kai na emfanizetai ena koutaki X stin suntetagmenh 10
- * oi suntetagmenes tha einai zwgrafismenes k tha nai sa grifos h fash
+ * meta apo kathe kleisth porta na zwgrafizw ena mavro rect g na mh vlepei o paikths parakatw
+ * na vriskei polles klaseis k na prepei na tis diavasei k na ktlvei poia einai h swsth gia na xrhsimopoihsei
+ * create a custom onscreen keyboard fit for programming
  *
  *
  * STARTMENUSCREEN
@@ -46,22 +47,38 @@ import com.steveflames.javalab.tools.global.Skins;
  *
  *
  * EDITOR
- * compile
  * tab (pathmeno space gia android?)
- * indents
- * enter na xwnei indents
+ * for android, button to pop/hide keyboard
  *
  *
+ * COMPILER
+ * to className einai ontws MyClass?? check k ERROR
+ * variable already declared in scope ERROR
+ * method doesn't exist ERROR
+ * package? import? prin to class declaration
  *
- * TODO!!!!
- * allo handleInput k messages g move gia android k allo gia pc. interface? opws bt
+ * TODO
+ * mia fora sthn arxh tha ta diavazei ta arxeia (info, pc, ropes)
+ * review toast. giati bgainei pantou sto debugger to finalLinesOfText? +stringbuilder?
+ * todo editor markup!!!	(e.g. replaceAll("int", "[RED]int[]");
+ * gia android click allou na diwxnei to info dialog
+ *
+ *
+ * PARSE
+ * parse ton kwdika,
+ * METHODS vres pou exei method declaration kai apothikeusai ton kwdika ths MyMethod.
+ * 		parse word by word kai apo otan vreis '{' an ksanavreis '{' add se counter k otan vriskeis '}' meiwse. otan einai 0 tote autos einai o kwdikas
+ * 		ths methodou
+ * FIELDS
+ *
+ *
  */
 public class MyGdxGame extends Game {
 
 	public static final int WIDTH = 1280; //1185, 854, 1920, 1280
 	public static final int HEIGHT = 768; //600, 480,  1080, 768
 	public static final float PPM = 200; //pixels per meter. has to do with b2body scaling
-	public static final String TITLE = "J avant-garde";
+	public static final String TITLE = "jAVANT-GARDE";
 
 	public SpriteBatch sb; //used to render textures
 	public ShapeRenderer sr; //used to render shapes
@@ -81,7 +98,7 @@ public class MyGdxGame extends Game {
 		sb = new SpriteBatch();
 		sr = new ShapeRenderer();
 		setScreen(new ChooseLevelScreen(this));
-		//setScreen(new PlayScreen(this, new LevelListItem("1_1", "Hello World!")));
+		//setScreen(new PlayScreen(this, new LevelListItem("COMPILER", "2_1", "test")));
 	}
 
 	@Override

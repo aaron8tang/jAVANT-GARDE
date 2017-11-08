@@ -15,7 +15,10 @@ public class MyFileReader {
 
     public static String readFile(String path) {
         FileHandle file = Gdx.files.internal(path);
-        return file.readString();
+        if(exists(path))
+            return file.readString();
+        else
+            return null;
     }
 
     public static boolean exists(String path) {

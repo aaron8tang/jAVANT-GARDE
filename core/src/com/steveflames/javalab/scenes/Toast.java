@@ -25,7 +25,7 @@ public class Toast {
     private String text;
 
     private int currentPage;
-    private int numOfPages;
+    private int numOfPages=0;
 
     private ArrayList<ArrayList<String>> linesOfText;
     private ArrayList<ArrayList<String>> finalLinesOfText; //to draw the toast letter by letter
@@ -105,12 +105,13 @@ public class Toast {
     }
 
     private void addNewLine(String tempText) {
-        if(linesOfText.get(k).size()==3) {
-            k++;
+        if(linesOfText.get(numOfPages-1).size()==3) {
+            //k++;
             linesOfText.add(new ArrayList<String>());
             numOfPages++;
         }
-        linesOfText.get(k).add(tempText);
+        linesOfText.get(numOfPages-1).add(tempText);
+        //k=0;
     }
 
     public void update(float dt) {

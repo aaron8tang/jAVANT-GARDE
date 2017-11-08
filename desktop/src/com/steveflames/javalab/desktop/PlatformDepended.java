@@ -14,7 +14,10 @@ public class PlatformDepended implements iPlatformDepended {
 
     @Override
     public String getLevel1Tip() {
-        return "Use the ARROWS to move around\n" +
+
+        return "Hello and welcome to jAVANT-GARDE tutorials!\n" +
+                "Here you will get the chance to learn the basics of programming in Java from scratch - let's begin!\n" +
+                "Use the ARROWS to move around and jump\n" +
                 "ENTER to use item\n" +
                 "ESCAPE to exit";
     }

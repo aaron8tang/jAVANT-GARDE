@@ -40,8 +40,6 @@ public class Door extends InteractiveTileObject {
     }
 
     public void drawLine(ShapeRenderer sr) {
-
-        sr.setColor(Color.BLACK);
         sr.rect(bounds.x + Window.getHudCameraOffsetX(), bounds.y, bounds.width, bounds.height);
     }
 

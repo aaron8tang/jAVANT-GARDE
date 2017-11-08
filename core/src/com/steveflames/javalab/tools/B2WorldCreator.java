@@ -12,9 +12,8 @@ import com.steveflames.javalab.screens.PlayScreen;
 import com.steveflames.javalab.sprites.Checkpoint;
 import com.steveflames.javalab.sprites.Door;
 import com.steveflames.javalab.sprites.FloatingPlatform;
-import com.steveflames.javalab.sprites.Health;
+import com.steveflames.javalab.sprites.Item;
 import com.steveflames.javalab.sprites.InfoSign;
-import com.steveflames.javalab.sprites.InteractiveTileObject;
 import com.steveflames.javalab.sprites.Pc;
 import com.steveflames.javalab.sprites.Teleporter;
 import com.steveflames.javalab.sprites.ropes.Rope;
@@ -40,7 +39,7 @@ public class B2WorldCreator {
             body = playScreen.getWorld().createBody(bdef);
             shape.setAsBox(rect.getWidth()/2 / MyGdxGame.PPM, rect.getHeight()/2 / MyGdxGame.PPM);
             fdef.shape = shape;
-            body.createFixture(fdef);
+            body.createFixture(fdef).setUserData("ground");
         }
 
         //initialize pcs
@@ -79,7 +78,14 @@ public class B2WorldCreator {
                 Rectangle rect = ((RectangleMapObject) object).getRectangle();
                 if(object.getName() != null) {
                     if (object.getName().equals("health")) {
-                        playScreen.getHealths().add(new Health(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
+                        Item item = new Item(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect);
+                        item.setUsable(true);
+                        playScreen.getItems().add(item);
+                    }
+                    else if(object.getName().contains("class")) {
+                        Item item = new Item(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect);
+                        item.setUsable(true);
+                        playScreen.getItems().add(item);
                     }
                     else if(object.getName().contains("floatingPlatform")) {
                         playScreen.getFloatingPlatforms().add(new FloatingPlatform(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));

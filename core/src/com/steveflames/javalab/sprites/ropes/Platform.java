@@ -1,6 +1,5 @@
 package com.steveflames.javalab.sprites.ropes;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -58,7 +57,7 @@ public class Platform extends Sprite {
         fdef.shape = shape;
         fixture = b2body.createFixture(fdef);
         fixture.setUserData(this);
-        b2body.setLinearVelocity(0, -1f);
+        b2body.setLinearVelocity(0, -0.6f);
     }
 
     void update(float dt) {

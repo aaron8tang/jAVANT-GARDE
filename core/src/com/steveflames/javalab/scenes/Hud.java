@@ -26,15 +26,15 @@ import com.steveflames.javalab.MyGdxGame;
 import com.steveflames.javalab.quests.Quest;
 import com.steveflames.javalab.screens.ChooseLevelScreen;
 import com.steveflames.javalab.screens.PlayScreen;
-import com.steveflames.javalab.sprites.InfoSign;
-import com.steveflames.javalab.sprites.Pc;
 import com.steveflames.javalab.sprites.Player;
+import com.steveflames.javalab.tools.compiler.MyClass;
 import com.steveflames.javalab.tools.global.Loader;
-import com.steveflames.javalab.tools.MyCompiler;
+import com.steveflames.javalab.tools.compiler.MyCompiler;
 import com.steveflames.javalab.tools.MyFileReader;
 import com.steveflames.javalab.tools.global.Skins;
 
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.Map;
 
 
 /**
@@ -52,14 +52,15 @@ public class Hud implements Disposable {
     private Table gameOverWindow;
     private ProgressBar progressBar;
     private TextArea codeTextArea;
-    private TextArea questTextArea;
-    private TextArea consoleTextArea;
+    private Label questTextArea;
+    private Label consoleTextArea;
     private ScrollPane consoleScroll;
     private TextButton hintBtn;
     private ScrollPane questScroll;
     private Table classTable;
     private static Table androidInputTable;
     private TextButton useBtn;
+    private Window pauseWindow;
 
     private Dialog infoDialog;
     private String currentInfoSignName;
@@ -69,7 +70,11 @@ public class Hud implements Disposable {
     private boolean useBtnPressed = false;
     private boolean jumpBtnPressed = false;
 
-    private LinkedHashMap<String, String> program = new LinkedHashMap<String, String>();
+    private String myClassCode;
+    private int myClassCursorPosition =-1;
+
+    //private LinkedHashMap<String, String> program = new LinkedHashMap<String, String>();
+    private ArrayList<MyClass> myClasses = new ArrayList<MyClass>();
 
     public static Viewport viewport;
 
@@ -214,6 +219,48 @@ public class Hud implements Disposable {
             androidInputTable.setVisible(false);
     }
 
+    public void newPauseWindow() {
+        if(pauseWindow == null) {
+            pauseWindow = new Window("GAME PAUSED", Skins.skin);
+            pauseWindow.setSize(800,500);
+            pauseWindow.setPosition(MyGdxGame.WIDTH/2 - pauseWindow.getWidth()/2, MyGdxGame.HEIGHT/2 - pauseWindow.getHeight()/2);
+
+            TextButton resumeBtn = new TextButton("RESUME", Skins.neonSkin);
+            resumeBtn.addListener(new ClickListener() {
+                  @Override
+                  public void clicked(InputEvent event, float x, float y) {
+                      pauseWindow.remove();
+                  }
+            });
+            TextButton restartBtn = new TextButton("RESTART LEVEL", Skins.neonSkin);
+            restartBtn.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    playScreen.dispose();
+                    playScreen.getGame().setScreen(new PlayScreen(playScreen.getGame(), playScreen.getCurrentLevel()));
+                }
+            });
+            TextButton exitBtn = new TextButton("EXIT", Skins.neonSkin);
+            exitBtn.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    playScreen.dispose();
+                    playScreen.getGame().setScreen(new ChooseLevelScreen(playScreen.getGame()));
+                }
+            });
+
+            pauseWindow.add(resumeBtn).width(240).height(100);
+            pauseWindow.row();
+            pauseWindow.add(restartBtn).width(240).height(100);
+            pauseWindow.row().padTop(70);
+            pauseWindow.add(exitBtn).width(240).height(100);
+            //TODO DOUBLE ESCAPE
+        }
+        //add to stage
+        stage.addActor(pauseWindow);
+        Gdx.input.setInputProcessor(stage);
+    }
+
     public void newEditorWindow(final String name) {
         if(editorWindow==null) {
             editorWindow = new Window("EDITOR", Skins.skin);
@@ -237,12 +284,34 @@ public class Hud implements Disposable {
                     Gdx.input.setOnscreenKeyboardVisible(false);
                 }
             });
+            Table dummyTable = new Table(Skins.skin);
             classTable = new Table(Skins.skin);
             TextButton classBtn = new TextButton("MyClass.java", Skins.neonSkin);
-            classTable.add(classBtn).left().expandX();
-            ScrollPane scroll = new ScrollPane(classTable, Skins.neonSkin);
+            classBtn.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    if(!codeTextArea.isDisabled())
+                        myClassCode = codeTextArea.getText();
+                    if(myClassCode != null && !myClassCode.isEmpty())
+                        codeTextArea.setText(myClassCode);
+                    if(myClassCursorPosition>0)
+                        codeTextArea.setCursorPosition(myClassCursorPosition);
+                    codeTextArea.setDisabled(false);
+                }
+            });
+            classTable.add(classBtn).left().height(50).padLeft(0);
+            dummyTable.add(classTable).left().expandX();
+            ScrollPane scroll = new ScrollPane(dummyTable, Skins.neonSkin);
+            if(MyGdxGame.platformDepended.deviceHasKeyboard())
+                scroll.setFlickScroll(false);
+            scroll.addListener(new ClickListener() {
+                public void enter (InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                    super.enter(event, x, y, pointer, fromActor);
+                    stage.setScrollFocus(classTable);
+                }
+            });
 
-            topBarTable.add(scroll).left().expandX().fillX().padLeft(75);
+            topBarTable.add(scroll).left().height(50).expand().fill().padLeft(60);
             topBarTable.add(infoBtn).right().fill();
             topBarTable.add(exitBtn).right().fill();
 
@@ -251,20 +320,25 @@ public class Hud implements Disposable {
             codeTextArea = new TextArea(MyFileReader.readFile("txt/pc-" + name + ".txt").replaceAll("\r",""), Skins.neonSkin);
             codeTextArea.setFocusTraversal(false);
             codeTextArea.getOnscreenKeyboard().show(true);
-            /*codeTextArea.addListener(new InputListener(){ //todo multicolor... markup
+            codeTextArea.getStyle().fontColor = Color.WHITE;
+            myClassCode = codeTextArea.getText();
+            codeTextArea.addListener(new InputListener(){
+                 @Override
+                 public boolean keyDown(InputEvent event, int keycode) {
+                     editorKeyDown();
+                     return false;
+                 }
+
                 @Override
                 public boolean keyTyped(InputEvent event, char character) {
-                    //int x = codeTextArea.getCursorPosition();
-                    //codeTextArea.texsetText(codeTextArea.getText().replaceAll("public", "[ORANGE]public[]"));
-                    //codeTextArea.moveCursorLine(1);
+                    editorKeyTyped();
                     return false;
                 }
-
-            });*/
+            });
             //lineNumTable
             Table lineNumTable = new Table(Skins.neonSkin);
             lineNumTable.add(new Label(1 + "", Skins.neonSkin)).width(60).height(codeTextArea.getStyle().font.getLineHeight());
-            for (int i = 1; i < 100; i++) {
+            for (int i = 1; i < 150; i++) {
                 lineNumTable.row();
                 lineNumTable.add(new Label(i + 1 + "", Skins.neonSkin)).width(60).height(codeTextArea.getStyle().font.getLineHeight());
             }
@@ -274,39 +348,53 @@ public class Hud implements Disposable {
             codeTable.add(lineNumTable).top().left();
             codeTable.add(codeTextArea).expand().fill().width(1000).padTop(5);
             scroll = new ScrollPane(codeTable, Skins.neonSkin);
-            scroll.setFadeScrollBars(false);
+            //scroll.setFadeScrollBars(false);
+            if(MyGdxGame.platformDepended.deviceHasKeyboard())
+                scroll.setFlickScroll(false);
+            scroll.addListener(new ClickListener() {
+                public void enter (InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                    super.enter(event, x, y, pointer, fromActor);
+                    stage.setScrollFocus(codeTextArea);
+                }
+            });
 
             //bottom bar
-            TextButton resetBtn = new TextButton(" reset ", Skins.neonSkin);
+            /*TextButton resetBtn = new TextButton(" reset ", Skins.neonSkin);
             resetBtn.addListener(new ClickListener() {
                  @Override
                  public void clicked(InputEvent event, float x, float y) {
                     codeTextArea.setText(MyFileReader.readFile("txt/pc-" + name + ".txt").replaceAll("\r",""));
                  }
-            });
+            });*/
             TextButton compileAndRunBtn = new TextButton(" compile & run ", Skins.neonSkin);
             compileAndRunBtn.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
+                    if(!codeTextArea.isDisabled())
+                        myClassCode = codeTextArea.getText();
                     consoleTextArea.setText("");
                     consoleScroll.scrollTo(0, viewport.getCamera().position.y + viewport.getCamera().viewportHeight, 0, 0);
 
-                    program.clear();
-                    program.put("MyClass.java", codeTextArea.getText());
+                    //store the class names and code
+                    myClasses.clear();
+                    myClasses.add(new MyClass("MyClass", myClassCode));
+                    for(Map.Entry<String, String> entry: playScreen.getPlayer().getClasses().entrySet())
+                        myClasses.add(new MyClass(entry.getKey(), entry.getValue()));
+
                     //compile and run todo
-                    //if(compiler.compile(program) || (playScreen.getCurrentLevel().getId().equals("1_1") && quest.getProgress()==0)) {
-                        if (quest.handleQuestResult(playScreen)) {
+                    if(compiler.compile(myClasses) || (playScreen.getCurrentLevel().getId().equals("1_1") && quest.getProgress()==0)) {
+                        if (quest.validateCodeForQuest(playScreen, myClasses)) {
                             if (!nextQuest()) {
                                 quest.completed(playScreen);
                             }
                         }
-                    //}
+                    }
                 }
             });
 
             Table bottomBarTable = new Table(Skins.neonSkin);
-            bottomBarTable.add(resetBtn).left().expandX();
-            bottomBarTable.add(compileAndRunBtn).right().expandX();
+            //bottomBarTable.add(resetBtn).left().expandX();
+            bottomBarTable.add(compileAndRunBtn).right().expandX().pad(0).height(50);
 
             //add components to window
             editorWindow.setSize(700, MyGdxGame.HEIGHT-213);
@@ -315,25 +403,46 @@ public class Hud implements Disposable {
             editorWindow.add(topBarTable).expandX().fillX().top();
             editorWindow.row().padTop(5);
             editorWindow.add(scroll).expandX().fillX();
-            editorWindow.row().padTop(10);
+            editorWindow.row();
             editorWindow.add(bottomBarTable).expandX().fillX();
-            editorWindow.addListener(new ClickListener() {
-                public void enter (InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                    super.enter(event, x, y, pointer, fromActor);
-                    stage.setScrollFocus(codeTextArea);
-                }
-            });
         }
         //add to stage
         stage.addActor(editorWindow);
-        Gdx.input.setInputProcessor(stage);
         stage.setKeyboardFocus(codeTextArea);
-        //editorWindow.debugAll();
+        Gdx.input.setInputProcessor(stage);
+
+        //add the myClasses that the player found in the editor
+        boolean flag = true;
+        for(final Map.Entry<String, String> s : playScreen.getPlayer().getClasses().entrySet()) {
+            for(Actor textBtn: classTable.getChildren()) {
+                if(((TextButton)textBtn).getText().toString().equals(s.getKey()+".java")) {
+                    flag = false;
+                    break;
+                }
+            }
+            if(flag) {
+                final TextButton btn = new TextButton(s.getKey() + ".java", Skins.neonSkin);
+                btn.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        if(!codeTextArea.isDisabled()) {
+                            myClassCode = codeTextArea.getText();
+                            myClassCursorPosition = codeTextArea.getCursorPosition();
+                        }
+                        codeTextArea.setText(s.getValue().replaceAll("\r",""));
+                        codeTextArea.setDisabled(true);
+                        if(quest.getProgress()==0 && btn.getText().toString().equals("InfoSign.java"))
+                            nextQuest();
+                    }
+                });
+                classTable.add(btn).left().height(50).padLeft(0);
+            }
+        }
 
         newConsoleWindow();
         newQuestWindow(name);
         hideAndroidInputTable();
-        compiler = new MyCompiler(codeTextArea, consoleTextArea, classTable);
+        compiler = new MyCompiler(consoleTextArea);
     }
 
     private void newConsoleWindow() {
@@ -342,12 +451,15 @@ public class Hud implements Disposable {
 
             //textArea of console window
             Table table = new Table(Skins.neonSkin);
-            consoleTextArea = new TextArea("", Skins.neonSkin);
-            consoleTextArea.setDisabled(true);
-            table.add(consoleTextArea).height(1000).expand().fillX().left().padTop(5);
+            consoleTextArea = new Label("", Skins.skin);
+            consoleTextArea.setWrap(true);
+            //consoleTextArea.setDisabled(true);
+            table.add(consoleTextArea).expand().fillX().left().top().padLeft(5);
 
             consoleScroll = new ScrollPane(table, Skins.neonSkin);
             //scroll.setFadeScrollBars(false);
+            if(MyGdxGame.platformDepended.deviceHasKeyboard())
+                consoleScroll.setFlickScroll(false);
 
             //add components to window
             consoleWindow.setSize(editorWindow.getWidth(), 190);
@@ -371,11 +483,12 @@ public class Hud implements Disposable {
 
             //quest text area
             Table table = new Table(Skins.lmlSkin);
-            questTextArea = new TextArea(quest.getQuestSteps().get(quest.getProgress()).getText(), Skins.neonSkin);
-            questTextArea.getStyle().fontColor = Color.WHITE;
-            questTextArea.setDisabled(true);
-            table.add(questTextArea).height(1000).left().expand().fillX().padTop(5);
+            questTextArea = new Label(quest.getQuestSteps().get(quest.getProgress()).getText(), Skins.skin);
+            questTextArea.setWrap(true);
+            table.add(questTextArea).left().top().expand().fillX().padLeft(5);
             questScroll = new ScrollPane(table, Skins.neonSkin);
+            if(MyGdxGame.platformDepended.deviceHasKeyboard())
+                questScroll.setFlickScroll(false);
 
             //bottom bar
             Table bottomBarTable = new Table(Skins.lmlSkin);
@@ -386,13 +499,13 @@ public class Hud implements Disposable {
                 public void clicked(InputEvent event, float x, float y) {
                     playScreen.getPlayer().reduceHealth(1);
                     playScreen.getPlayer().setPlayerMsgAlpha(1);
-                    questTextArea.appendText("\n\nHINT:\n");
+                    questTextArea.setText(questTextArea.getText() + "\n\nHINT:\n");
                     String text = quest.getNextHint(quest);
                     if(text.contains("\r")) {
                         text = text.replace("\r", "");
                         text += "\n";
                     }
-                    questTextArea.appendText(text);
+                    questTextArea.setText(questTextArea.getText() + text);
                     if(quest.getQuestSteps().get(quest.getProgress()).getHintPtr() >= quest.getQuestSteps().get(quest.getProgress()).getHints().size()-1)
                         hintBtn.setVisible(false);
                     //TODO scroll h apla emfanhse to scroll
@@ -522,6 +635,138 @@ public class Hud implements Disposable {
         hideAndroidInputTable();
     }
 
+    private void editorKeyDown() {
+        if(Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE)) {
+            int pos = codeTextArea.getCursorPosition();
+            int charsToDelete = 0;
+            StringBuilder stringBuilder = new StringBuilder();
+
+            int i = pos-1;
+            while(i>=0 && codeTextArea.getText().charAt(i) != '\n') {
+                if(codeTextArea.getText().charAt(i) == ' ')
+                    charsToDelete++;
+                else
+                    return;
+                i--;
+            }
+
+            for(int j=0; j<pos-charsToDelete; j++)
+                stringBuilder.append(codeTextArea.getText().charAt(j));
+            for(int j=pos; j < codeTextArea.getText().length(); j++)
+                stringBuilder.append(codeTextArea.getText().charAt(j));
+
+            codeTextArea.setText(stringBuilder.toString());
+            codeTextArea.setCursorPosition(pos - charsToDelete);
+        }
+
+    }
+
+    private void editorKeyTyped() {
+        //int x = codeTextArea.getCursorPosition(); //todo multicolor... markup
+        //codeTextArea.texsetText(codeTextArea.getText().replaceAll("public", "[ORANGE]public[]"));
+        //codeTextArea.moveCursorLine(1);
+        if(Gdx.input.isKeyJustPressed(Input.Keys.TAB)) {
+            int pos = codeTextArea.getCursorPosition();
+            StringBuilder stringBuilder = new StringBuilder();
+
+            int i=0;
+            while(i<codeTextArea.getCursorPosition()) {
+                stringBuilder.append(codeTextArea.getText().charAt(i));
+                i++;
+            }
+            stringBuilder.append("    ");
+            for(int j=i; j < codeTextArea.getText().length(); j++) {
+                stringBuilder.append(codeTextArea.getText().charAt(j));
+            }
+            codeTextArea.setText(stringBuilder.toString());
+            codeTextArea.setCursorPosition(pos + 4);
+        }
+        else if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+            int bracketCounter = 0;
+            int pos = codeTextArea.getCursorPosition();
+            StringBuilder stringBuilder = new StringBuilder();
+
+            for(int i=0; i<pos; i++) {
+                if(codeTextArea.getText().charAt(i) == '{') //todo if the user types { or } as a String there's a problem
+                    bracketCounter++;
+                else if(codeTextArea.getText().charAt(i) == '}')
+                    bracketCounter--;
+                stringBuilder.append(codeTextArea.getText().charAt(i));
+            }
+            if(bracketCounter<=0)
+                return;
+            for(int i=0; i<bracketCounter; i++)
+                stringBuilder.append("    ");
+
+            //check if previous character is {, to automatically make new line and close bracket }
+            int j=pos-1;
+            boolean flag = false;
+            while(j>=0) {
+                if(codeTextArea.getText().charAt(j) == '{')
+                    flag = true;
+                else if(codeTextArea.getText().charAt(j) != ' ' && codeTextArea.getText().charAt(j) != '\n')
+                    break;
+                j--;
+            }
+            if(flag) {
+                stringBuilder.append("\n");
+                for(int i=0; i<bracketCounter-1; i++)
+                    stringBuilder.append("    ");
+                stringBuilder.append('}');
+            }
+
+            //append the rest code
+            for(int i=pos; i < codeTextArea.getText().length(); i++) {
+                stringBuilder.append(codeTextArea.getText().charAt(i));
+            }
+            codeTextArea.setText(stringBuilder.toString());
+            codeTextArea.setCursorPosition(pos + 4*bracketCounter);
+
+        }
+        else if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT_BRACKET)) {
+            if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
+                int pos = codeTextArea.getCursorPosition();
+                int charsToDelete = 0;
+                int bracketCounter = 0;
+                StringBuilder stringBuilder = new StringBuilder();
+
+                int i = pos-2;
+                while(i>=0 && codeTextArea.getText().charAt(i) != '\n') {
+                    if(codeTextArea.getText().charAt(i) == ' ') //if the whole line is spaces
+                        charsToDelete++;
+                    else
+                        return;
+                    i--;
+                }
+
+                for(int j=0; j<pos - charsToDelete; j++) { //count brackets
+                    if(codeTextArea.getText().charAt(j) == '{') //todo if the user types { or } as a String there's a problem
+                        bracketCounter++;
+                    else if(codeTextArea.getText().charAt(j) == '}')
+                        bracketCounter--;
+
+                    stringBuilder.append(codeTextArea.getText().charAt(j));
+                }
+
+                if(bracketCounter<0)
+                    return;
+
+                for(int j=0; j<bracketCounter-1; j++)
+                    stringBuilder.append("    ");
+                stringBuilder.setCharAt(stringBuilder.length()-1, '}');
+                bracketCounter = stringBuilder.length();
+
+                for(int j=pos; j < codeTextArea.getText().length(); j++)
+                    stringBuilder.append(codeTextArea.getText().charAt(j));
+
+                codeTextArea.setText(stringBuilder.toString());
+                codeTextArea.setCursorPosition(bracketCounter);
+            }
+        }
+        //questTextArea.setText(codeTextArea.getText()); //todo for the color markup. you will be writing your code in another textarea
+                                                         //todo and what u see will be a multicolor label that gets copied with each KEY DOWN
+    }
+
     private boolean nextQuest() {
         //add progress
         quest.setProgress(quest.getProgress()+1);
@@ -563,7 +808,7 @@ public class Hud implements Disposable {
         playScreen.getPlayer().currentState = Player.State.STANDING;
 
         playScreen.setEnterKeyHandled(true);
-        if(currentInfoSignName.equals("info-1_1-0")) {
+        if(currentInfoSignName.equals("info-1_1-0") || currentInfoSignName.equals("info-7_1-0")) {
             playScreen.getDoors().get(0).open();
         }
         else if(currentInfoSignName.equals("info-1_1-1")) {
@@ -586,6 +831,17 @@ public class Hud implements Disposable {
             useBtn.setVisible(false);
     }
 
+    public void handleExitFromPauseMenuInput() {
+        if(MyGdxGame.platformDepended.deviceHasKeyboard()) {
+            if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
+                pauseWindow.remove();
+        }
+        else {
+            if(Gdx.input.isKeyJustPressed(Input.Keys.BACK))
+                pauseWindow.remove();
+        }
+    }
+
     @Override
     public void dispose() {
         stage.dispose();
@@ -593,6 +849,10 @@ public class Hud implements Disposable {
 
     public Toast getCurrentToast() {
         return toast;
+    }
+
+    public boolean isPauseWindowShowing() {
+        return pauseWindow!=null && pauseWindow.getStage() != null;
     }
 
     public Viewport getViewport() {
@@ -623,5 +883,21 @@ public class Hud implements Disposable {
     public void setJumpBtnPressed(boolean jumpBtnPressed) {
         if(!MyGdxGame.platformDepended.deviceHasKeyboard())
             this.jumpBtnPressed = jumpBtnPressed;
+    }
+
+    public Window getPauseWindow() {
+        return pauseWindow;
+    }
+
+    public Window getQuestWindow() {
+        return questWindow;
+    }
+
+    public Quest getQuest() {
+        return quest;
+    }
+
+    public Label getConsoleTextArea() {
+        return consoleTextArea;
     }
 }

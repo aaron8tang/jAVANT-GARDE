@@ -2,6 +2,8 @@ package com.steveflames.javalab.quests;
 
 import com.steveflames.javalab.scenes.Hud;
 import com.steveflames.javalab.screens.PlayScreen;
+import com.steveflames.javalab.tools.compiler.MyClass;
+import com.steveflames.javalab.tools.compiler.MyVariable;
 
 import java.util.ArrayList;
 
@@ -39,179 +41,85 @@ public class Quest {
         }
     }
 
-    public boolean handleQuestResult(PlayScreen playScreen) {
-        return true;
-        /*if(playScreen.getCurrentLevel().getId().equals("1_1")) {
-            switch (playScreen.getHud().getQuest().getProgress()) {
-                case 0:
-                    if (playScreen.getHud().getConsoleTextArea().getText().equals("Error: main method not found\n"))
-                        return true;
-                    break;
-                case 1:
-                        return true;
-                case 2:
-                    //if (playScreen.getHud().getConsoleTextArea().getText().startsWith("Hello World!"))
-                    if(playScreen.getHud().getCodeTextArea().getText().contains("System.out.println(\"Hello World!\");"))
-                        return true;
-                    break;
-            }
-        }
-        else if(playScreen.getCurrentLevel().getId().equals("1_2")) {
-            String[] splitter;
-            if (playScreen.getHud().getCodeTextArea().getText().contains("\n")) {
-                splitter = playScreen.getHud().getCodeTextArea().getText().split("\n");
-                switch (playScreen.getHud().getQuest().getProgress()) {
-                    case 0:
-                        for (String lineOfCode : splitter) {
-                            if (lineOfCode.trim().startsWith("int"))
-                                return true;
-                        }
-                        break;
+    public boolean validateCodeForQuest(PlayScreen playScreen, ArrayList<MyClass> myClasses) {
+        MyClass myClass = myClasses.get(0);
 
-                    case 1:
-                        for (String lineOfCode : splitter) {
-                            if (lineOfCode.trim().startsWith("double"))
-                                return true;
-                        }
-                        break;
-                    case 2:
-                        for (String lineOfCode : splitter) {
-                            if (lineOfCode.trim().startsWith("boolean"))
-                                return true;
-                        }
-                        break;
-                    case 3:
-                        for (String lineOfCode : splitter) {
-                            if (lineOfCode.trim().startsWith("char"))
-                                return true;
-                        }
-                        break;
-                    case 4:
-                        for (String lineOfCode : splitter) {
-                            if (lineOfCode.trim().startsWith("String"))
-                                return true;
-                        }
-                        break;
-                }
-            }
-        }
-        else if(playScreen.getCurrentLevel().getId().equals("1_3")) {
-            boolean flag = false;
-            String varName = "~";
-            String[] splitter2;
+        if(playScreen.getCurrentLevel().getId().equals("1_1")) {
             switch (playScreen.getHud().getQuest().getProgress()) {
                 case 0:
-                    if (playScreen.getHud().getCodeTextArea().getText().contains("\n")) {
-                        String[] splitter = playScreen.getHud().getCodeTextArea().getText().split("\n");
-                        for (String lineOfCode : splitter) {
-                            if (lineOfCode.trim().startsWith("int") && lineOfCode.replaceAll("\\s+", "").contains("=10;"))
-                                return true;
-                        }
-                    }
+                    if (playScreen.getHud().getConsoleTextArea().getText().toString().equals("[RED]Error: main method not found[]\n"))
+                        return true;
                     break;
                 case 1:
-                    if (playScreen.getHud().getCodeTextArea().getText().contains("\n")) {
-                        String[] splitter = playScreen.getHud().getCodeTextArea().getText().split("\n");
-                        for (String lineOfCode : splitter) {
-                            if (lineOfCode.trim().startsWith("int")) {
-                                flag = true;
-                                splitter2 = lineOfCode.trim().replaceAll("\\s+", " ").split(" ");
-                                varName = splitter2[1].replaceAll(";", "");
-                                continue;
-                            }
-                            if (flag && lineOfCode.replaceAll("\\s+", "").contains(varName + "="))
-                                return true;
-                        }
+                        return true;
+                case 2:
+                    if(myClasses.get(0).getCode().contains("System.out.println(\"Hello World!\");"))
+                        return true;
+                    break;
+            }
+        }
+        else if(playScreen.getCurrentLevel().getId().equals("2_1")) {
+            switch (playScreen.getHud().getQuest().getProgress()) {
+                case 0:
+                    for(MyVariable variable : myClass.getFields()) {
+                        if(variable.getType().equals("int"))
+                            return true;
+                    }
+                    break;
+
+                case 1:
+                    for(MyVariable variable : myClass.getFields()) {
+                        if(variable.getType().equals("double"))
+                            return true;
                     }
                     break;
                 case 2:
-                    if (playScreen.getHud().getCodeTextArea().getText().contains("\n")) {
-                        String[] splitter = playScreen.getHud().getCodeTextArea().getText().split("\n");
-                        for (String lineOfCode : splitter) {
-                            if (lineOfCode.trim().startsWith("double")) {
-                                flag = true;
-                                splitter2 = lineOfCode.trim().replaceAll("\\s+", " ").split(" ");
-                                varName = splitter2[1].replaceAll(";", "");
-                                if (lineOfCode.contains("=") && lineOfCode.contains("."))
-                                    return true;
-                                continue;
-                            }
-                            if (flag && lineOfCode.replaceAll("\\s+", "").contains(varName + "=") && lineOfCode.contains("."))
-                                return true;
-                        }
+                    for(MyVariable variable : myClass.getFields()) {
+                        if(variable.getType().equals("boolean"))
+                            return true;
                     }
                     break;
                 case 3:
-                    if (playScreen.getHud().getCodeTextArea().getText().contains("\n")) {
-                        String[] splitter = playScreen.getHud().getCodeTextArea().getText().split("\n");
-                        for (String lineOfCode : splitter) {
-                            if (lineOfCode.trim().startsWith("boolean")) {
-                                flag = true;
-                                splitter2 = lineOfCode.trim().replaceAll("\\s+", " ").split(" ");
-                                varName = splitter2[1].replaceAll(";", "");
-                                if (lineOfCode.contains("=") && (lineOfCode.contains("true") || lineOfCode.contains("false")))
-                                    return true;
-                                continue;
-                            }
-                            if (flag && lineOfCode.replaceAll("\\s+", "").contains(varName + "=") && (lineOfCode.contains("true") || lineOfCode.contains("false")))
-                                return true;
-                        }
+                    for(MyVariable variable : myClass.getFields()) {
+                        if(variable.getType().equals("char"))
+                            return true;
                     }
                     break;
                 case 4:
-                    if (playScreen.getHud().getCodeTextArea().getText().contains("\n")) {
-                        String[] splitter = playScreen.getHud().getCodeTextArea().getText().split("\n");
-                        for (String lineOfCode : splitter) {
-                            if (lineOfCode.trim().startsWith("char")) {
-                                flag = true;
-                                splitter2 = lineOfCode.trim().replaceAll("\\s+", " ").split(" ");
-                                varName = splitter2[1].replaceAll(";", "");
-                                if (lineOfCode.contains("=") && lineOfCode.contains("'"))
-                                    return true;
-                                continue;
-                            }
-                            if (flag && lineOfCode.replaceAll("\\s+", "").contains(varName + "=") && lineOfCode.contains("'"))
-                                return true;
-                        }
-                    }
-                    break;
-                case 5:
-                    if (playScreen.getHud().getCodeTextArea().getText().contains("\n")) {
-                        String[] splitter = playScreen.getHud().getCodeTextArea().getText().split("\n");
-                        for (String lineOfCode : splitter) {
-                            if (lineOfCode.trim().startsWith("String")) {
-                                flag = true;
-                                splitter2 = lineOfCode.trim().replaceAll("\\s+", " ").split(" ");
-                                varName = splitter2[1].replaceAll(";", "");
-                                if (lineOfCode.contains("=") && lineOfCode.contains("\""))
-                                    return true;
-                                continue;
-                            }
-                            if (flag && lineOfCode.replaceAll("\\s+", "").contains(varName + "=") && lineOfCode.contains("\""))
-                                return true;
-                        }
-                    }
-                    break;
-                case 6:
-                    if (playScreen.getHud().getCodeTextArea().getText().contains("\n")) {
-                        String[] splitter = playScreen.getHud().getCodeTextArea().getText().split("\n");
-                        for (String lineOfCode : splitter) {
-                            if (lineOfCode.trim().contains("String")) {
-                                flag = true;
-                                splitter2 = lineOfCode.trim().replaceAll("\\s+", " ").split(" ");
-                                varName = splitter2[1].replaceAll(";", "");
-                                if (lineOfCode.contains("=") && lineOfCode.contains("\""))
-                                    return true;
-                                continue;
-                            }
-                            if (flag && lineOfCode.replaceAll("\\s+", "").contains(varName + "=") && lineOfCode.contains("\""))
-                                return true;
-                        }
+                    for(MyVariable variable : myClass.getFields()) {
+                        if(variable.getType().equals("String"))
+                            return true;
                     }
                     break;
             }
         }
-        return false;*/
+        else if(playScreen.getCurrentLevel().getId().equals("2_2")) {
+
+            switch (playScreen.getHud().getQuest().getProgress()) {
+                case 0:
+
+                    break;
+                case 1:
+
+                    break;
+                case 2:
+
+                    break;
+                case 3:
+
+                    break;
+                case 4:
+
+                    break;
+                case 5:
+
+                    break;
+                case 6:
+
+                    break;
+            }
+        }
+        return false;
     }
 
     public void completed(PlayScreen playScreen) {
@@ -226,6 +134,10 @@ public class Quest {
 
         }
         else if(playScreen.getCurrentLevel().getId().equals("2_1")) {
+            playScreen.getHud().closeCurrentEditor();
+            /*Hud.newToast("Congratulations! You completed your first quest!\n" +
+                    "You managed to print to the user of your program the phrase 'Hello World!'\n" +
+                    "Go through the portal to continue your journey and learn more about the world of Java!");*/
             playScreen.getDoors().get(0).open();
         }
     }

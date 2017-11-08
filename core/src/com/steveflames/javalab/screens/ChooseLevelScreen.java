@@ -149,7 +149,7 @@ public class ChooseLevelScreen implements Screen{
     private void loadCategories() {
         categories.put("INTRO", new ArrayList<LevelListItem>());
         categories.get("INTRO").add(new LevelListItem("INTRO", "1_1", "Hello World!"));
-        categories.get("INTRO").add(new LevelListItem("INTRO", "1_2", "user input"));
+        //categories.get("INTRO").add(new LevelListItem("INTRO", "1_2", "user input"));
 
         categories.put("VARIABLES", new ArrayList<LevelListItem>());
         categories.get("VARIABLES").add(new LevelListItem("VARIABLES", "2_1", "naming\n&\ntypes"));
@@ -174,7 +174,7 @@ public class ChooseLevelScreen implements Screen{
         categories.get("METHODS").add(new LevelListItem("6_3", "access modifiers"));*/
 
         categories.put("CLASSES", new ArrayList<LevelListItem>());
-        categories.get("CLASSES").add(new LevelListItem("CLASSES", "7_1", "intro"));
+        categories.get("CLASSES").add(new LevelListItem("CLASSES", "7_1", "creating objects"));
     }
 
     public static LevelListItem getNextLevel(LevelListItem currentLevel) {

@@ -10,7 +10,7 @@ import com.steveflames.javalab.MyGdxGame;
 import com.steveflames.javalab.scenes.Hud;
 import com.steveflames.javalab.screens.PlayScreen;
 import com.steveflames.javalab.sprites.Checkpoint;
-import com.steveflames.javalab.sprites.Health;
+import com.steveflames.javalab.sprites.Item;
 import com.steveflames.javalab.sprites.InfoSign;
 import com.steveflames.javalab.sprites.InteractiveTileObject;
 import com.steveflames.javalab.sprites.Pc;
@@ -51,7 +51,6 @@ public class B2WorldContactListener implements ContactListener {
                         }
                     }
                     else {
-                        //((Player)player.getUserData()).b2body.setTransform(((Player)player.getUserData()).b2body.getPosition().x, ((Player)player.getUserData()).b2body.getPosition().y, 0);
                         if(MyFileReader.exists("txt/" + ((Checkpoint) object.getUserData()).getName() + ".txt")) {
                             if(!((Checkpoint) object.getUserData()).isVisited()) {
                                 ((Checkpoint) object.getUserData()).setVisited(true);
@@ -60,10 +59,17 @@ public class B2WorldContactListener implements ContactListener {
                         }
                     }
                 }
-                else if(object.getUserData() instanceof Health) {
+                else if(object.getUserData() instanceof Item) {
                     playScreen.getBodiesToRemove().add(object.getBody());
-                    playScreen.getHealths().remove(object.getUserData());
-                    ((Player)player.getUserData()).addHealth();
+                    playScreen.getItems().remove(object.getUserData());
+                    if(((Item) object.getUserData()).isUsable()) {
+                        if (((Item) object.getUserData()).getName().equals("health"))
+                            ((Player) player.getUserData()).addHealth();
+                        else if (((Item) object.getUserData()).getName().contains("class")) {
+                            ((Player) player.getUserData()).addClass(((Item) object.getUserData()).getName());
+                        }
+                    }
+                    ((Item) object.getUserData()).setUsable(false);
                 }
                 else if(object.getUserData() instanceof Teleporter) {
                     ((InteractiveTileObject) object.getUserData()).setUsable(true);
@@ -75,7 +81,6 @@ public class B2WorldContactListener implements ContactListener {
                     }
                 }
                 else if(object.getUserData() instanceof InfoSign ) {
-                    //System.out.println("COLLISION START "+object.getBody().getPosition().x + " " + object.getBody().getPosition().y);
                     ((InteractiveTileObject) object.getUserData()).setUsable(true);
                     Player.colliding = true;
                     playScreen.getHud().showUseBtn("READ");
@@ -85,11 +90,24 @@ public class B2WorldContactListener implements ContactListener {
                     Player.colliding = true;
                     playScreen.getHud().showUseBtn("CODE");
                 }
+                /*else if(object.getUserData() instanceof FloatingPlatform) {
+                    ((InteractiveTileObject) object.getUserData()).setUsable(true);
+                    ((InteractiveTileObject) object.getUserData()).getB2body().setLinearVelocity(((FloatingPlatform) object.getUserData()).getFacing()*0.7f, -((Player)player.getUserData()).b2body.getLinearVelocity().y);
+                    ((Player)player.getUserData()).b2body.setLinearVelocity(0,0);
+
+                }*/
             }
             else if(object.getUserData() instanceof Platform) {
                 ((Platform) object.getUserData()).setActive(false);
             }
         }
+        /*else if(fixA.getUserData() instanceof FloatingPlatform || fixB.getUserData() instanceof FloatingPlatform) {
+            Fixture floatingPlatform = fixA.getUserData() instanceof FloatingPlatform ? fixA : fixB;
+            //Fixture object = floatingPlatform == fixA ? fixB : fixA;
+
+            ((FloatingPlatform)floatingPlatform.getUserData()).setFacing(-((FloatingPlatform)floatingPlatform.getUserData()).getFacing());
+            ((InteractiveTileObject) floatingPlatform.getUserData()).getB2body().setLinearVelocity(((FloatingPlatform) floatingPlatform.getUserData()).getFacing()*0.7f, 0);
+        }*/
     }
 
     @Override
@@ -103,7 +121,6 @@ public class B2WorldContactListener implements ContactListener {
 
             if(object.getUserData() instanceof InteractiveTileObject) {
 
-                //System.out.println("COLLISION END "+object.getBody().getPosition().x + " " + object.getBody().getPosition().y);
                 if(!(object.getUserData() instanceof Checkpoint)) {
                     ((InteractiveTileObject) object.getUserData()).setUsable(false);
                 }

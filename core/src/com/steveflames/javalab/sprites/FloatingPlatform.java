@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.steveflames.javalab.MyGdxGame;
 import com.steveflames.javalab.screens.Window;
@@ -19,19 +20,43 @@ public class FloatingPlatform extends InteractiveTileObject {
 
     private String name;
     private GlyphLayout glyphLayout = new GlyphLayout();
+    private boolean movingPlatformX = false;
+    private boolean colliding = false;
+    private int facing = 1;
 
     public FloatingPlatform(String name, World world, TiledMap map, Rectangle bounds) {
         super(name, world, map, bounds, false);
-        String[] splitter = name.split("_");
-        this.name = splitter[1];
+        if(name.contains("_")) {
+            String[] splitter = name.split("_");
+            this.name = splitter[1];
+        }
+        else {
+            this.name = "";
+            movingPlatformX = true;
+            b2body.setLinearVelocity(0.7f, 0);
+        }
         glyphLayout.setText(Fonts.small, this.name);
+        b2body.setGravityScale(0);
+        b2body.setType(BodyDef.BodyType.DynamicBody);
     }
 
-    public void drawFilled(ShapeRenderer sr) {
-        sr.rect(bounds.x + Window.getHudCameraOffsetX(), bounds.y, bounds.width, bounds.height);
+    public void update(float dt) {
+
+    }
+
+    public void drawRect(ShapeRenderer sr) {
+        sr.rect(b2body.getPosition().x*MyGdxGame.PPM + Window.getHudCameraOffsetX() - bounds.width/2, b2body.getPosition().y*MyGdxGame.PPM - bounds.height/2, bounds.width, bounds.height);
     }
 
     public void drawFont(SpriteBatch sb) {
-        Fonts.small.draw(sb, name, bounds.x + bounds.width/2 - glyphLayout.width/2 + Window.getHudCameraOffsetX(), bounds.y + bounds.height/2 + glyphLayout.height/2);
+        Fonts.small.draw(sb, name, b2body.getPosition().x*MyGdxGame.PPM - glyphLayout.width/2 + Window.getHudCameraOffsetX(), b2body.getPosition().y*MyGdxGame.PPM + glyphLayout.height/2);
+    }
+
+    public int getFacing() {
+        return facing;
+    }
+
+    public void setFacing(int facing) {
+        this.facing = facing;
     }
 }

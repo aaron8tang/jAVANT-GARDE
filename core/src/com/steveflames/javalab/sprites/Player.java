@@ -20,10 +20,12 @@ import com.steveflames.javalab.MyGdxGame;
 import com.steveflames.javalab.screens.Window;
 import com.steveflames.javalab.screens.PlayScreen;
 import com.steveflames.javalab.sprites.ropes.Rope;
+import com.steveflames.javalab.tools.MyFileReader;
 import com.steveflames.javalab.tools.global.Fonts;
 import com.steveflames.javalab.tools.global.Loader;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 /**
  * Created by Flames on 23/9/2017.
@@ -31,14 +33,16 @@ import java.util.ArrayList;
 
 public class Player extends Sprite {
 
-    public static final float PLAYERSPEED = 0.25f;
+    public static final float PLAYERSPEED = 0.24f;
     private static final float JUMPSPEED = 8.3f;
+
     public enum State { FALLING, JUMPING, STANDING, RUNNING, DEAD, CODING, READING, DISAPPEARING, DISAPPEARED }
     public State currentState;
     private State previousState;
     private boolean outOfBounds = false;
     private ArrayList<Checkpoint> checkpoints;
     private int currentCheckpointIndex = 0;
+    private LinkedHashMap<String, String> classes = new LinkedHashMap<String, String>();
 
     public Body b2body;
     private final float radius = 22/MyGdxGame.PPM;
@@ -49,8 +53,9 @@ public class Player extends Sprite {
     private float playerMsgAlpha = 1f;
     private Vector2 playerMsgVector = new Vector2();
     private int facingDirection = 1;
-    private int red;
-    private int green;
+    private float red;
+    private float green;
+    private float blue;
     private float alpha = 1f;
 
     public static boolean colliding = false;
@@ -82,7 +87,7 @@ public class Player extends Sprite {
         PolygonShape polyShape = new PolygonShape();
         polyShape.setAsBox(0.1f,0.21f, new Vector2(0, 0.13f), 0);
         fdef.shape = polyShape;
-        b2body.createFixture(fdef).setUserData("bot_upper_body");
+        b2body.createFixture(fdef).setUserData(this); //bot_upper_body
 
 
         fdef = new FixtureDef();
@@ -113,37 +118,34 @@ public class Player extends Sprite {
             Gdx.gl.glEnable(GL20.GL_BLEND);
             Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
-            Fonts.small.setColor(red,green,0,playerMsgAlpha);
+            Fonts.small.setColor(red,green,blue,playerMsgAlpha);
             Fonts.small.draw(sb, hitMsg, playerMsgVector.x*MyGdxGame.PPM  + Window.getHudCameraOffsetX()
                     - 80, playerMsgVector.y*MyGdxGame.PPM + 20); //TODO cam k gia to y otan valw new lvls
 
-            if(TimeUtils.timeSinceMillis(playerMsgMillis) > 10) {
-                playerMsgMillis = TimeUtils.millis();
-                playerMsgTick(Gdx.graphics.getDeltaTime());
-                if(playerMsgAlpha==1 && outOfBounds) { //respawn
-                    respawnAtCheckpoint();
-                }
-            }
             Gdx.gl.glDisable(GL20.GL_BLEND);
         }
     }
 
     public void update(float dt) {
+        //set current region of the bot's animation
         setRegion(getFrame(dt));
         currentState = getState();
         previousState = currentState;
         setPosition(b2body.getPosition().x - 81/MyGdxGame.PPM/2, b2body.getPosition().y - 88/MyGdxGame.PPM/2 + 0.12f);
 
+        //update the rotation of the bot's wheel
         rotation += -dt*(b2body.getLinearVelocity().x*340 +b2body.getLinearVelocity().y*400);
         if(rotation >=360 || rotation <=-360)
             rotation = 0;
 
+        //player out of bounds. reduce health and respawn
         if(b2body.getPosition().y + radius <= 0 && !outOfBounds) {
             outOfBounds = true;
             b2body.setLinearVelocity(0,0);
             reduceHealth(1);
         }
 
+        //update DISAPPEARING state of player
         if(currentState == State.DISAPPEARING) {
             if(alpha - 0.9f*dt >= 0) {
                 alpha -= 0.9f*dt;
@@ -155,6 +157,17 @@ public class Player extends Sprite {
                 b2body.setTransform(b2body.getPosition().x + 0.2f, b2body.getPosition().y, 0);
             }
             setAlpha(alpha);
+        }
+
+        //update playerMsg (e.g. '-1 health')
+        if(hitMsg!= null) {
+            if(TimeUtils.timeSinceMillis(playerMsgMillis) > 10) {
+                playerMsgMillis = TimeUtils.millis();
+                playerMsgTick(Gdx.graphics.getDeltaTime());
+                if(playerMsgAlpha==1 && outOfBounds) { //respawn
+                    respawnAtCheckpoint();
+                }
+            }
         }
     }
 
@@ -240,6 +253,8 @@ public class Player extends Sprite {
         playerMsgVector.y = b2body.getPosition().y + 0.25f;
         red = 0;
         green = 1;
+        blue = 0;
+        playerMsgAlpha = 1;
     }
 
     public void reduceHealth(int k) {
@@ -251,6 +266,20 @@ public class Player extends Sprite {
             currentState = State.DEAD;
         green = 0;
         red = 1;
+        blue = 0;
+        playerMsgAlpha = 1;
+    }
+
+    public void addClass(String text) {
+        String[] temp = text.split("-");
+        classes.put(temp[2], MyFileReader.readFile("txt/"+text+".txt"));
+        hitMsg = "+"+temp[2]+" class";
+        playerMsgVector.x = b2body.getPosition().x;
+        playerMsgVector.y = b2body.getPosition().y + 0.25f;
+        red = 0;
+        green = 0.1f;
+        blue = 1;
+        playerMsgAlpha = 1;
     }
 
     public void fadeOut() {
@@ -282,4 +311,7 @@ public class Player extends Sprite {
         return health;
     }
 
+    public LinkedHashMap<String, String> getClasses() {
+        return classes;
+    }
 }
