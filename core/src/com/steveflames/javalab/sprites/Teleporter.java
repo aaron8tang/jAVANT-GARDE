@@ -1,15 +1,10 @@
 package com.steveflames.javalab.sprites;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.Array;
 import com.steveflames.javalab.MyGdxGame;
 import com.steveflames.javalab.tools.global.Loader;
 
@@ -69,5 +64,4 @@ public class Teleporter extends InteractiveTileObject {
     public void disappear() {
         currentState = State.DISAPPEARING;
     }
-
 }

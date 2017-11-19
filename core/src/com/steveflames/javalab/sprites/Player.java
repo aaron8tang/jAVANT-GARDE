@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -17,7 +18,6 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.steveflames.javalab.MyGdxGame;
-import com.steveflames.javalab.screens.Window;
 import com.steveflames.javalab.screens.PlayScreen;
 import com.steveflames.javalab.sprites.ropes.Rope;
 import com.steveflames.javalab.tools.MyFileReader;
@@ -37,7 +37,7 @@ public class Player extends Sprite {
     private static final float JUMPSPEED = 8.3f;
 
     public enum State { FALLING, JUMPING, STANDING, RUNNING, DEAD, CODING, READING, DISAPPEARING, DISAPPEARED }
-    public State currentState;
+    private State currentState;
     private State previousState;
     private boolean outOfBounds = false;
     private ArrayList<Checkpoint> checkpoints;
@@ -46,6 +46,7 @@ public class Player extends Sprite {
 
     public Body b2body;
     private final float radius = 22/MyGdxGame.PPM;
+    public boolean canMove = true;
 
     private int health = 5;
     private String hitMsg = null;
@@ -87,15 +88,22 @@ public class Player extends Sprite {
         PolygonShape polyShape = new PolygonShape();
         polyShape.setAsBox(0.1f,0.21f, new Vector2(0, 0.13f), 0);
         fdef.shape = polyShape;
-        b2body.createFixture(fdef).setUserData(this); //bot_upper_body
+        b2body.createFixture(fdef).setUserData(this);
 
+        fdef = new FixtureDef();
+        polyShape = new PolygonShape();
+        polyShape.setAsBox(0.07f,0.01f, new Vector2(0, -0.3f), 0);
+        fdef.shape = polyShape;
+        Fixture fixture = b2body.createFixture(fdef);
+        fixture.setUserData("bot_lower_sensor"); //bot_lower_sensor
+        fixture.setSensor(true);
 
         fdef = new FixtureDef();
         CircleShape shape = new CircleShape();
         shape.setPosition(new Vector2(0,-0.19f));
         shape.setRadius(radius);
         fdef.shape = shape;
-        Fixture fixture = b2body.createFixture(fdef);
+        fixture = b2body.createFixture(fdef);
         fixture.setUserData(this);
 
         setBounds(b2body.getPosition().x - 81/MyGdxGame.PPM/2, b2body.getPosition().y - 88/MyGdxGame.PPM/2, 81/MyGdxGame.PPM, 88/MyGdxGame.PPM);
@@ -119,7 +127,7 @@ public class Player extends Sprite {
             Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
             Fonts.small.setColor(red,green,blue,playerMsgAlpha);
-            Fonts.small.draw(sb, hitMsg, playerMsgVector.x*MyGdxGame.PPM  + Window.getHudCameraOffsetX()
+            Fonts.small.draw(sb, hitMsg, playerMsgVector.x*MyGdxGame.PPM  + PlayScreen.getHudCameraOffsetX()
                     - 80, playerMsgVector.y*MyGdxGame.PPM + 20); //TODO cam k gia to y otan valw new lvls
 
             Gdx.gl.glDisable(GL20.GL_BLEND);
@@ -129,7 +137,7 @@ public class Player extends Sprite {
     public void update(float dt) {
         //set current region of the bot's animation
         setRegion(getFrame(dt));
-        currentState = getState();
+        setCurrentState(getState());
         previousState = currentState;
         setPosition(b2body.getPosition().x - 81/MyGdxGame.PPM/2, b2body.getPosition().y - 88/MyGdxGame.PPM/2 + 0.12f);
 
@@ -151,7 +159,7 @@ public class Player extends Sprite {
                 alpha -= 0.9f*dt;
             }
             else {
-                currentState = State.DISAPPEARED;
+                setCurrentState(State.DISAPPEARED);
                 alpha = 0;
                 b2body.setLinearVelocity(0,0);//todo de pianei
                 b2body.setTransform(b2body.getPosition().x + 0.2f, b2body.getPosition().y, 0);
@@ -216,11 +224,18 @@ public class Player extends Sprite {
         }
     }
 
+    public void setCoding(Rectangle pcBounds) {
+        facingDirection = 1;
+        b2body.setLinearVelocity(0, 0);
+        b2body.setTransform(pcBounds.x / MyGdxGame.PPM + 0.1f, (pcBounds.y + b2body.getPosition().y) / MyGdxGame.PPM + 0.3f, 0);
+        setCurrentState(Player.State.CODING);
+    }
+
 
     public void jump() {
         if ( currentState != State.JUMPING  && currentState != State.FALLING) {
             b2body.applyLinearImpulse(0, JUMPSPEED, b2body.getWorldCenter().x, b2body.getWorldCenter().y, true);
-            currentState = State.JUMPING;
+            setCurrentState(State.JUMPING);
         }
     }
 
@@ -263,7 +278,7 @@ public class Player extends Sprite {
         playerMsgVector.x = b2body.getPosition().x;
         playerMsgVector.y = b2body.getPosition().y + 0.25f;
         if(health <= 0)
-            currentState = State.DEAD;
+            setCurrentState(State.DEAD);
         green = 0;
         red = 1;
         blue = 0;
@@ -272,7 +287,7 @@ public class Player extends Sprite {
 
     public void addClass(String text) {
         String[] temp = text.split("-");
-        classes.put(temp[2], MyFileReader.readFile("txt/"+text+".txt"));
+        classes.put(temp[2], MyFileReader.readFile("txt/classes/"+text+".txt"));
         hitMsg = "+"+temp[2]+" class";
         playerMsgVector.x = b2body.getPosition().x;
         playerMsgVector.y = b2body.getPosition().y + 0.25f;
@@ -283,11 +298,18 @@ public class Player extends Sprite {
     }
 
     public void fadeOut() {
-        currentState = State.DISAPPEARING;
+        b2body.setLinearVelocity(0,0);
+        b2body.applyLinearImpulse(1.88f, 0, 0, 0, false);
+        setCurrentState(State.DISAPPEARING);
     }
 
     private void playerMsgTick(float dt) {
-        playerMsgVector.y += 0.8f * dt;
+        if(playerMsgVector.y + 0.8f*dt < MyGdxGame.HEIGHT/MyGdxGame.PPM - 0.15) {
+            if(currentState!=State.CODING)
+                playerMsgVector.y += 0.8f * dt;
+        }
+        else
+            playerMsgVector.y = MyGdxGame.HEIGHT/MyGdxGame.PPM - 0.14f + 0.8f*dt;
         playerMsgAlpha -= 0.4f * dt;
         if(playerMsgAlpha<=0) { //when playerMsgAlpha reaches 0 stop rendering the msg
             hitMsg = null;
@@ -313,5 +335,15 @@ public class Player extends Sprite {
 
     public LinkedHashMap<String, String> getClasses() {
         return classes;
+    }
+
+    public State getCurrentState() {
+        return currentState;
+    }
+
+    public void setCurrentState(State currentState) {
+        canMove = !(currentState == State.CODING || currentState == State.READING || currentState == State.DISAPPEARING
+                || currentState == State.DISAPPEARED || currentState == State.DEAD);
+        this.currentState = currentState;
     }
 }

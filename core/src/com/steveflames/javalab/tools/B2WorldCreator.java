@@ -3,6 +3,7 @@ package com.steveflames.javalab.tools;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -51,7 +52,7 @@ public class B2WorldCreator {
         //initialize helps
         for(MapObject object: playScreen.getMap().getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
-            playScreen.getInfoSigns().add(new InfoSign(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
+            playScreen.getInfoSigns().add(new InfoSign(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, 1));
         }
 
         //initialize doors
@@ -86,6 +87,9 @@ public class B2WorldCreator {
                         Item item = new Item(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect);
                         item.setUsable(true);
                         playScreen.getItems().add(item);
+                    }
+                    else if(object.getName().contains("marker")) {
+                        playScreen.getMarkers().add(rect);
                     }
                     else if(object.getName().contains("floatingPlatform")) {
                         playScreen.getFloatingPlatforms().add(new FloatingPlatform(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));

@@ -2,7 +2,6 @@ package com.steveflames.javalab.sprites;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -20,10 +19,11 @@ public abstract class InteractiveTileObject extends Sprite{
     protected String name;
     protected World world;
     protected TiledMap map;
-    protected TiledMapTile tile;
+    //protected TiledMapTile tile;
     protected Rectangle bounds;
     protected Body b2body;
     protected Fixture fixture;
+    protected float alpha = 1;
 
     protected boolean usable = false;
 
@@ -48,6 +48,14 @@ public abstract class InteractiveTileObject extends Sprite{
         fixture.setSensor(sensor);
     }
 
+    public void updateAlpha(float dt) {
+        if(alpha + dt < 1) {
+            alpha += dt;
+        }
+        else
+            alpha = 1;
+    }
+
     public Rectangle getBounds() {
         return bounds;
     }
@@ -67,4 +75,5 @@ public abstract class InteractiveTileObject extends Sprite{
     public Body getB2body() {
         return b2body;
     }
+
 }

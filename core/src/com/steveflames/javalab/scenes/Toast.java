@@ -25,25 +25,27 @@ public class Toast {
     private String text;
 
     private int currentPage;
-    private int numOfPages=0;
+    private int numOfPages =0;
 
-    private ArrayList<ArrayList<String>> linesOfText;
-    private ArrayList<ArrayList<String>> finalLinesOfText; //to draw the toast letter by letter
-    private int k=0;
+    private ArrayList<StringBuilder> linesOfText;
+    private int currentLine = -1;
 
     private long timerMillis;
+    private ArrayList<StringBuilder> drawStrings = new ArrayList<StringBuilder>();
     private int letterPtr = 0;
     private int linePtr = 0;
 
     private float nextPromptOffset = 0;
 
     Toast() {
-        rect = new Rectangle(10, -150, MyGdxGame.WIDTH-20, 150);
+        rect = new Rectangle(10, MyGdxGame.HEIGHT + 260, MyGdxGame.WIDTH-20, 160);
         glyphLayout = new GlyphLayout();
-        linesOfText = new ArrayList<ArrayList<String>>();
-        finalLinesOfText = new ArrayList<ArrayList<String>>();
+        linesOfText = new ArrayList<StringBuilder>();
         if(!MyGdxGame.platformDepended.deviceHasKeyboard())
             nextPromptOffset = 90;
+        drawStrings.add(new StringBuilder());
+        drawStrings.add(new StringBuilder());
+        drawStrings.add(new StringBuilder());
     }
 
     void newToast(String text) {
@@ -51,110 +53,123 @@ public class Toast {
         currentState = State.INCOMING;
         glyphLayout.setText(Fonts.small, text);
         currentPage = 0;
-        numOfPages = 1;
+        numOfPages = 0;
+        currentLine = -1;
         linesOfText.clear();
-        finalLinesOfText.clear();
-        linesOfText.add(new ArrayList<String>());
 
         breakTextIntoLines();
         timerMillis = TimeUtils.millis();
 
-        //initialize finalLinesOfText
-        for(ArrayList<String> sList: linesOfText) {
-            finalLinesOfText.add(new ArrayList<String>());
-            for(String s: sList) {
-                finalLinesOfText.get(finalLinesOfText.size()-1).add("");
-            }
-        }
+        //for(StringBuilder s : linesOfText)
+          //  System.out.println("EDW: " + s);
     }
 
     private void breakTextIntoLines() {
         if(glyphLayout.width > rect.width - 170 || text.contains("\n")) { //more than one line
             GlyphLayout tempGlyphLayout = new GlyphLayout();
-            String tempText = "";
-            for(int i=0; i<text.length(); i++) {
+            StringBuilder currentChar = new StringBuilder();
+            for(int i=0; i<text.length(); i++) { //parse each character of the text
                 if(text.charAt(i) != '\n') {
-                    if(!tempText.equals("") || text.charAt(i)!=' ') //if new line and next character is space, ignore it
-                        tempText += text.charAt(i);
-                    tempGlyphLayout.setText(Fonts.small, tempText);
-                    //System.out.println("TEMP: " + tempText);
-                    if (tempGlyphLayout.width >= rect.width - 170 && !tempText.equals("")) { //check characters sum width
-                        //System.out.println("NEWLINE");
-                        addNewLine(tempText);
-                        tempText = "";
+                    if(currentChar.length()!=0 || text.charAt(i)!=' ') //if new line and next character is space, ignore it
+                        currentChar.append(text.charAt(i));
+
+                    tempGlyphLayout.setText(Fonts.small, currentChar);
+                    if (tempGlyphLayout.width >= rect.width - 170 && currentChar.length()!=0) { //check characters sum width
+                        addNewLine(currentChar.toString());
+                        currentChar.setLength(0);
                     }
                 }
                 else {
-                    addNewLine(tempText);
-                    tempText = "";
+                    addNewLine(currentChar.toString());
+                    currentChar.setLength(0);
                 }
             }
-            int spaceIndex=0; //remove last lines spaces before the first word
-            for(int i=0; i<tempText.length(); i++) {
-                if(tempText.charAt(i) == ' ')
+
+            int spaceIndex=0; //remove last line's spaces before the first word
+            for(int i=0; i<currentChar.length(); i++) {
+                if(currentChar.charAt(i) == ' ')
                     spaceIndex++;
                 else
                     break;
             }
-            tempText = tempText.substring(spaceIndex);
-            addNewLine(tempText);
+            addNewLine(currentChar.substring(spaceIndex)); //add final line
         }
         else { //only 1 line
-            linesOfText.get(0).add(text);
+            linesOfText.add(new StringBuilder(text));
         }
     }
 
-    private void addNewLine(String tempText) {
-        if(linesOfText.get(numOfPages-1).size()==3) {
-            //k++;
-            linesOfText.add(new ArrayList<String>());
+    private void addNewLine(String currentChar) {
+        currentLine++;
+        if(currentLine==3) {
             numOfPages++;
+            currentLine = 0;
         }
-        linesOfText.get(numOfPages-1).add(tempText);
-        //k=0;
+        if(linesOfText.size() <= numOfPages)
+            linesOfText.add(new StringBuilder());
+        linesOfText.get(numOfPages).append(currentChar);
+        if(currentLine!=2)
+            linesOfText.get(numOfPages).append("\n");
     }
 
     public void update(float dt) {
         if (currentState == State.INCOMING) {
-            if (rect.y + rect.height <= 160) {
-                rect.y += SPEED * dt;
+            if (rect.y - SPEED * dt > MyGdxGame.HEIGHT - rect.height - 65) {
+                rect.y -= SPEED * dt;
             } else {
-                rect.y = 160 - rect.height;
+                rect.y = MyGdxGame.HEIGHT - rect.height - 65;
                 currentState = State.WRITING;
                 timerMillis = TimeUtils.millis();
             }
-        } else if (currentState == State.WRITING) {
+        }
+        else if (currentState == State.WRITING) {
             if (TimeUtils.timeSinceMillis(timerMillis) > 30) {
                 timerMillis = TimeUtils.millis();
 
-                if (linesOfText.get(currentPage).get(linePtr).length() >= 1)
-                    finalLinesOfText.get(currentPage).set(linePtr, linesOfText.get(currentPage).get(linePtr).substring(0, letterPtr));
-                if (letterPtr >= linesOfText.get(currentPage).get(linePtr).length()) {
-                    letterPtr = 0;
+                if(linesOfText.get(currentPage).toString().charAt(letterPtr) == '\n')
                     linePtr++;
-                    if (linePtr >= linesOfText.get(currentPage).size()) {
-                        currentState = State.READY;
-                        linePtr = 0;
-                    }
-                }
+                else
+                    drawStrings.get(linePtr).append(linesOfText.get(currentPage).toString().charAt(letterPtr));
+                //System.out.printf("|"+ linesOfText.get(currentPage).toString().charAt(letterPtr) +"|  ");
+
                 letterPtr++;
+                if(letterPtr >= linesOfText.get(currentPage).length()) {
+                    letterPtr = 0;
+                    linePtr = 0;
+                    currentState = State.READY;
+                }
             }
-        } else if (currentState == State.NEXT) {
+        }
+        else if (currentState == State.NEXT) {
+            drawStrings.get(0).setLength(0);
+            drawStrings.get(1).setLength(0);
+            drawStrings.get(2).setLength(0);
             currentState = State.WRITING;
             currentPage++;
-            if (currentPage > numOfPages - 1) {
+            if (currentPage > numOfPages) {
                 currentPage--;
                 currentState = State.LEAVING;
             }
-        } else if (currentState == State.SKIP) {
-            finalLinesOfText.set(currentPage, linesOfText.get(currentPage));
+        }
+        else if (currentState == State.SKIP) {
+            drawStrings.get(0).setLength(0); //reset drawStrings
+            drawStrings.get(1).setLength(0);
+            drawStrings.get(2).setLength(0);
+            linePtr = 0;
+            for(int i=0; i<linesOfText.get(currentPage).length(); i++) { //append all chars to corresponding drawStrings
+                if (linesOfText.get(currentPage).charAt(i) == '\n')
+                    linePtr++;
+                else
+                    drawStrings.get(linePtr).append(linesOfText.get(currentPage).charAt(i));
+            }
             letterPtr = 0;
             linePtr = 0;
             currentState = State.READY;
-        } else if (currentState == State.LEAVING) {
+        }
+        else if (currentState == State.LEAVING) {
             if (currentState != State.LEFT) {
-                rect.y -= SPEED * dt;
-                if (rect.y + rect.height < 0) {
+                rect.y += SPEED * dt;
+                if (rect.y > MyGdxGame.HEIGHT) {
                     currentState = State.LEFT;
                     Hud.showAndroidInputTable();
                 }
@@ -173,9 +188,9 @@ public class Toast {
         if(currentState == State.READY || currentState == State.WRITING || currentState == State.LEAVING) {
             Fonts.small.setColor(Color.BLACK);
             Fonts.xsmall.setColor(Color.BLACK);
-            for(int i=0; i<finalLinesOfText.get(currentPage).size(); i++) {
-                Fonts.small.draw(sb, finalLinesOfText.get(currentPage).get(i), rect.x + 120, rect.y + rect.height - 20 - (33) * i);
-            }
+
+            for(int i=0; i<drawStrings.size(); i++)
+                Fonts.small.draw(sb, drawStrings.get(i), rect.x + 120, rect.y + rect.height - 20 - i*40);
             Fonts.xsmall.draw(sb, MyGdxGame.platformDepended.getNextPrompt(), rect.x + rect.width - 180 + nextPromptOffset, rect.y + 25);
         }
     }

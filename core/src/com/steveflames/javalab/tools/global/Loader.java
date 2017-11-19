@@ -12,41 +12,27 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class Loader {
 
     //player
-    public static TextureAtlas botAtlas;
-    public static TextureRegion botWheelTR;
-    public static TextureRegion botMoveTR;
+    public static final TextureAtlas botAtlas = new TextureAtlas(Gdx.files.internal("images/bot/bot.pack"));
+    public static final TextureRegion botWheelTR = new TextureRegion(new Texture(Gdx.files.internal("images/bot/bot_wheel.png")), 0, 0, 45, 45);
+    public static final TextureRegion botMoveTR = Loader.botAtlas.findRegion("bot_move");
 
-    //door
-    public static TextureAtlas doorAtlas;
+    //world
+    public static final TextureAtlas teleporterAtlas = new TextureAtlas(Gdx.files.internal("images/teleporter/teleporter.pack"));
+    public static final Texture infoSignT = new Texture(Gdx.files.internal("images/infoSign.png"));
+    public static final Texture leverOpenT = new Texture(Gdx.files.internal("images/lever_open.png"));
+    public static final Texture leverClosedT = new Texture(Gdx.files.internal("images/lever_closed.png"));
 
     //hud
-    public static Texture heartT;
-    public static Texture classT;
-    public static Texture fixT;
-    public static Texture eyeT;
-
-    //teleporter
-    public static TextureAtlas teleporterAtlas;
+    public static final Texture heartT = new Texture(Gdx.files.internal("images/heart.png"));
+    public static final Texture classT = new Texture(Gdx.files.internal("images/class.png"));
+    public static final Texture fixT = new Texture(Gdx.files.internal("images/fix.png"));
+    public static final Texture eyeT = new Texture(Gdx.files.internal("images/eye.png"));
 
 
-    public static void load() {
-        //player
-        botAtlas = new TextureAtlas(Gdx.files.internal("images/bot/bot.pack"));
-        botWheelTR = new TextureRegion(new Texture(Gdx.files.internal("images/bot/bot_wheel.png")), 0, 0, 45, 45);
-        botMoveTR = Loader.botAtlas.findRegion("bot_move");
+    //editor
+    public static final TextureRegion keyboardUpTR = new TextureRegion(new Texture(Gdx.files.internal("images/keyboardUp.png")));
+    public static final TextureRegion keyboardDownTR = new TextureRegion(new Texture(Gdx.files.internal("images/keyboardDown.png")));
 
-        //door
-        doorAtlas = new TextureAtlas(Gdx.files.internal("images/door/door.pack"));
-
-        //hud
-        heartT = new Texture(Gdx.files.internal("images/heart.png"));
-        classT = new Texture(Gdx.files.internal("images/class.png"));
-        fixT = new Texture(Gdx.files.internal("images/fix.png"));
-        eyeT = new Texture(Gdx.files.internal("images/eye.png"));
-
-        //teleporter
-        teleporterAtlas = new TextureAtlas(Gdx.files.internal("images/teleporter/teleporter.pack"));
-    }
 
     public static void dispose() {
         //player
@@ -54,8 +40,11 @@ public class Loader {
         botWheelTR.getTexture().dispose();
         botMoveTR.getTexture().dispose();
 
-        //door
-        doorAtlas.dispose();
+        //world
+        teleporterAtlas.dispose();
+        infoSignT.dispose();
+        leverOpenT.dispose();
+        leverClosedT.dispose();
 
         //hud
         heartT.dispose();
@@ -63,11 +52,10 @@ public class Loader {
         fixT.dispose();
         eyeT.dispose();
 
-        //teleporter
-        teleporterAtlas.dispose();
+        //editor
+        keyboardUpTR.getTexture().dispose();
+        keyboardDownTR.getTexture().dispose();
     }
-
-
 
     public static TextureRegion[] loadAnim(TextureAtlas.AtlasRegion region, int columns, int rows, int lastNoImageN) {
         TextureRegion[] temp = new TextureRegion[columns * rows - lastNoImageN];

@@ -23,4 +23,12 @@ public class MyMethod {
         this.arguments = arguments;
         this.code = code;
     }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

@@ -12,11 +12,11 @@ public class QuestStep {
     private ArrayList<String> hints = new ArrayList<String>();
     private int hintPtr = -1;
 
-    public QuestStep(String text) {
+    QuestStep(String text) {
         this.text = text;
     }
 
-    public void addHint(String hint) {
+    void addHint(String hint) {
         hints.add(hint);
     }
 
@@ -32,11 +32,11 @@ public class QuestStep {
         return hintPtr;
     }
 
-    public void setHintPtr(int hintPtr) {
-        this.hintPtr = hintPtr;
+    void incrementHintPtr() {
+        hintPtr++;
     }
 
-    public void incrementHintPtr() {
-        hintPtr++;
+    public void setText(String text) {
+        this.text = text;
     }
 }

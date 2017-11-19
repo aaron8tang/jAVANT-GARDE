@@ -15,7 +15,7 @@ import com.steveflames.javalab.tools.global.Loader;
 
 public class Item extends InteractiveTileObject {
 
-    private int dir = -1;
+    private int dir = 1;
     private Texture texture;
     private static int nOfClasses = 0;
 
@@ -32,9 +32,9 @@ public class Item extends InteractiveTileObject {
     public void update(float dt) {
         b2body.setTransform(b2body.getPosition().x, b2body.getPosition().y+0.15f*dt*dir, 0);
 
-        if(b2body.getPosition().y*MyGdxGame.PPM > bounds.y + 5)
+        if(b2body.getPosition().y +0.15f*dt > bounds.y/MyGdxGame.PPM + 0.15)
             dir = -1;
-        else if (b2body.getPosition().y*MyGdxGame.PPM < bounds.y - 5)
+        else if (b2body.getPosition().y +0.15f*dt < bounds.y/MyGdxGame.PPM + 0.05)
             dir = 1;
     }
 

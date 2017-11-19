@@ -1,9 +1,9 @@
-package com.steveflames.javalab.desktop;
+package com.steveflames.javalab.client;
 
 import com.steveflames.javalab.iPlatformDepended;
 
 /**
- * Created by Flames on 14/10/2017.
+ * Created by Flames on 11/11/2017.
  */
 
 public class PlatformDepended implements iPlatformDepended {

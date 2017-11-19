@@ -1,8 +1,8 @@
 package com.steveflames.javalab.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
@@ -18,8 +18,11 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.steveflames.javalab.MyGdxGame;
+import com.steveflames.javalab.quests.Quest;
 import com.steveflames.javalab.sprites.FloatingPlatform;
+import com.steveflames.javalab.sprites.Lever;
 import com.steveflames.javalab.tools.LevelListItem;
 import com.steveflames.javalab.sprites.Checkpoint;
 import com.steveflames.javalab.sprites.Door;
@@ -41,9 +44,14 @@ import java.util.ArrayList;
  * Created by Flames on 23/9/2017.
  */
 
-public class PlayScreen extends Window {
+public class PlayScreen implements Screen{
 
+    private MyGdxGame game;
+    private static float WIDTH;
+    private static float HEIGHT;
     private static final int GRAVITY = -20;
+    private static Viewport gamePort;
+    public static OrthographicCamera cam;
     public static LevelListItem currentLevel;
 
     private Hud hud;
@@ -53,18 +61,20 @@ public class PlayScreen extends Window {
     //Box2d variables
     private World world;
     private Box2DDebugRenderer b2dr;
-    private FPSLogger fpsLogger;
+    //private FPSLogger fpsLogger;
 
     //world bodies
     private Player player;
     private ArrayList<Pc> pcs = new ArrayList<Pc>();
     private ArrayList<InfoSign> infoSigns = new ArrayList<InfoSign>();
     private ArrayList<Door> doors = new ArrayList<Door>();
-    public static ArrayList<Rope> ropes = new ArrayList<Rope>(); //TODO static :/
+    public static ArrayList<Rope> ropes; //TODO static :/
     private ArrayList<Item> items = new ArrayList<Item>();
     private ArrayList<Checkpoint> checkpoints = new ArrayList<Checkpoint>();
     private ArrayList<Body> bodiesToRemove = new ArrayList<Body>();
     private ArrayList<FloatingPlatform> floatingPlatforms = new ArrayList<FloatingPlatform>();
+    private ArrayList<Lever> levers = new ArrayList<Lever>();
+    private ArrayList<Rectangle> markers = new ArrayList<Rectangle>();
     private Teleporter teleporter;
 
     //input
@@ -79,11 +89,13 @@ public class PlayScreen extends Window {
 
 
     public PlayScreen(MyGdxGame game, LevelListItem level) {
-        super(game);
+        this.game = game;
+        Gdx.input.setCatchBackKey(true);
         currentLevel = level;
         currentLevel.setName(currentLevel.getName().replaceAll("\n", " "));
         onScreenMsgGlyphLayout1.setText(Fonts.medium, currentLevel.getName());
         onScreenMsgGlyphLayout2.setText(Fonts.big, currentLevel.getCategoryName());
+        ropes = new ArrayList<Rope>();
 
         inputHandler = new InputHandler(this);
         //fpsLogger = new FPSLogger();
@@ -114,7 +126,7 @@ public class PlayScreen extends Window {
         if(!MyGdxGame.platformDepended.deviceHasKeyboard())
             hud.newAndroidInputTable();
 
-        //hud.newEditorWindow("1_1-0");
+        //hud.showEditorWindow("1_1-0");
     }
 
     private void setMapProperties(TiledMap map) {
@@ -129,7 +141,10 @@ public class PlayScreen extends Window {
         HEIGHT = mapHeight * tilePixelHeight / MyGdxGame.PPM;
     }
 
-    @Override
+    /**
+     * Updates the window's parameters.
+     * @param dt -> delta time
+     */
     public void update(float dt) {
         if(MyGdxGame.platformDepended.deviceHasKeyboard())
             inputHandler.handlePlayscreenInput();
@@ -157,16 +172,15 @@ public class PlayScreen extends Window {
         for(int i = 0; i< items.size(); i++)
             items.get(i).update(dt);
 
-        if(player.currentState == Player.State.DISAPPEARED)
-            hud.newLevelCompletedWindow();
+        if(player.getCurrentState() == Player.State.DISAPPEARED)
+            hud.showLevelCompletedWindow();
     }
 
-    @Override
     public void render(float dt) {
         if(!hud.isPauseWindowShowing())
             update(dt);
         else
-            hud.handleExitFromPauseMenuInput();
+            hud.getPauseWindow().handleExitFromPauseMenuInput();
 
         //render our game map
         renderer.render();
@@ -178,11 +192,14 @@ public class PlayScreen extends Window {
         //draw textures scaled to world
         game.sb.setColor(Color.WHITE);
         game.sb.begin();
-        for (int i = 0; i < items.size(); i++)
-            items.get(i).draw(game.sb);
-
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        for (int i = 0; i < items.size(); i++)
+            items.get(i).draw(game.sb);
+        for (int i=0; i<infoSigns.size(); i++)
+            infoSigns.get(i).draw(game.sb, dt);
+        for (int i=0; i<levers.size(); i++)
+            levers.get(i).draw(game.sb, dt);
         player.draw(game.sb);
         Gdx.gl.glDisable(GL20.GL_BLEND);
 
@@ -250,7 +267,7 @@ public class PlayScreen extends Window {
             if (inLineOfSight(floatingPlatforms.get(i).getBounds()))
                 floatingPlatforms.get(i).drawFont(game.sb);
         }
-        if (player.currentState != Player.State.READING && player.currentState != Player.State.CODING) { //if player is coding or reading sign, dont draw the use prompt
+        if (player.getCurrentState() != Player.State.READING && player.getCurrentState() != Player.State.CODING) { //if player is coding or reading sign, dont draw the use prompt
             for (int i = 0; i < infoSigns.size(); i++)
                 infoSigns.get(i).drawUsePrompt(game.sb);
             for (int i = 0; i < pcs.size(); i++)
@@ -259,7 +276,10 @@ public class PlayScreen extends Window {
         hud.drawFont(game.sb);
         drawOnScreenMsg();
 
-        if(Item.getnOfClasses() > 0) Fonts.small.draw(game.sb, "Classes found: " + player.getClasses().size() +"/" + Item.getnOfClasses(), 5, MyGdxGame.HEIGHT - 65);
+        if(Item.getnOfClasses() > 0) {
+            Fonts.small.setColor(Color.WHITE);
+            Fonts.small.draw(game.sb, "Classes found: " + player.getClasses().size() +"/" + Item.getnOfClasses(), 15, MyGdxGame.HEIGHT - 67);
+        }
 
         game.sb.end();
 
@@ -286,12 +306,12 @@ public class PlayScreen extends Window {
 
     public void updateCameraPosition() {
         if(!player.isOutOfBounds()) {
-            if (player.b2body.getPosition().x >= cam.viewportWidth / 2 && player.b2body.getPosition().x <= WIDTH - cam.viewportWidth / 2)
-                cam.position.x = player.b2body.getPosition().x;
-            else if (player.b2body.getPosition().x < cam.viewportWidth / 2)
+            if (player.b2body.getPosition().x + player.b2body.getLinearVelocity().x/MyGdxGame.PPM < cam.viewportWidth / 2)
                 cam.position.x = cam.viewportWidth / 2;
-            else
+            else if(player.b2body.getPosition().x + player.b2body.getLinearVelocity().x/MyGdxGame.PPM > WIDTH - cam.viewportWidth / 2)
                 cam.position.x = WIDTH - cam.viewportWidth / 2;
+            else
+                cam.position.x = player.b2body.getPosition().x + player.b2body.getLinearVelocity().x/MyGdxGame.PPM;
             //if(player.b2body.getPosition().y >= HEIGHT - HEIGHT/4) //TODO y camera
             //   cam.position.y = player.b2body.getPosition().y;
         }
@@ -305,8 +325,8 @@ public class PlayScreen extends Window {
         if(onScreenMsgAlpha>0) {
             Fonts.big.setColor(new Color(1, 0, 0, onScreenMsgAlpha));
             Fonts.medium.setColor(new Color(1, 0, 0, onScreenMsgAlpha));
-            Fonts.big.draw(game.sb, currentLevel.getCategoryName(), cam.viewportWidth/2 * MyGdxGame.PPM - onScreenMsgGlyphLayout2.width / 2, cam.viewportHeight/2 * MyGdxGame.PPM + 130);
-            Fonts.medium.draw(game.sb, currentLevel.getName(), cam.viewportWidth/2 * MyGdxGame.PPM - onScreenMsgGlyphLayout1.width / 2, cam.viewportHeight/2 * MyGdxGame.PPM + 35);
+            Fonts.big.draw(game.sb, currentLevel.getCategoryName(), cam.viewportWidth/2 * MyGdxGame.PPM - onScreenMsgGlyphLayout2.width / 2, cam.viewportHeight/2 * MyGdxGame.PPM + 110);
+            Fonts.medium.draw(game.sb, currentLevel.getName(), cam.viewportWidth/2 * MyGdxGame.PPM - onScreenMsgGlyphLayout1.width / 2, cam.viewportHeight/2 * MyGdxGame.PPM + 15);
         }
     }
 
@@ -333,15 +353,48 @@ public class PlayScreen extends Window {
         bodiesToRemove.clear();
     }
 
+    public static float getHudCameraOffsetX() {
+        return -cam.position.x * MyGdxGame.PPM
+                + cam.viewportWidth / 2 * MyGdxGame.PPM;
+    }
+
+    public void pause() {}
+
+    public void resume() {}
+
+    public static void setCameraTo(float x, float y) {
+        if(x < 0)
+            x = 0;
+        else if(x > WIDTH - cam.viewportWidth/2)
+            x = WIDTH - cam.viewportWidth/2;
+        cam.position.x = x;
+        //cam.position.y = y;
+    }
+
+    /**
+     * Dispose the unused variables.
+     */
     @Override
     public void dispose() {
         map.dispose();
         renderer.dispose();
         world.dispose();
-        b2dr.dispose();
+        //b2dr.dispose();
         hud.dispose();
         ropes.clear();
         Item.reset();
+
+        pcs = null;
+        infoSigns = null;
+        doors = null;
+        ropes = null;
+        items = null;
+        checkpoints = null;
+        bodiesToRemove = null;
+        floatingPlatforms = null;
+        markers = null;
+        teleporter = null;
+        //todo dispose static variables
     }
 
     public Player getPlayer() {
@@ -406,5 +459,17 @@ public class PlayScreen extends Window {
 
     public ArrayList<FloatingPlatform> getFloatingPlatforms() {
         return floatingPlatforms;
+    }
+
+    public ArrayList<Rectangle> getMarkers() {
+        return markers;
+    }
+
+    public MyGdxGame getGame() {
+        return game;
+    }
+
+    public ArrayList<Lever> getLevers() {
+        return levers;
     }
 }

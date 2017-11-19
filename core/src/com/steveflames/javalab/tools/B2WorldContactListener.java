@@ -1,6 +1,5 @@
 package com.steveflames.javalab.tools;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -42,21 +41,19 @@ public class B2WorldContactListener implements ContactListener {
             if(object.getUserData() instanceof InteractiveTileObject) {
 
                 if(object.getUserData() instanceof Checkpoint) {
-                    splitter = ((Checkpoint) object.getUserData()).getName().split("-");
-                    ((Player)player.getUserData()).setCurrentCheckpointIndex(Integer.parseInt(splitter[2]));
-                    if(PlayScreen.currentLevel.getId().equals("1_1")) {
-                        if(!((Checkpoint) object.getUserData()).isVisited()) {
-                            ((Checkpoint) object.getUserData()).setVisited(true);
-                            Hud.newToast(MyGdxGame.platformDepended.getLevel1Tip());
-                        }
-                    }
-                    else {
-                        if(MyFileReader.exists("txt/" + ((Checkpoint) object.getUserData()).getName() + ".txt")) {
-                            if(!((Checkpoint) object.getUserData()).isVisited()) {
-                                ((Checkpoint) object.getUserData()).setVisited(true);
-                                Hud.newToast(MyFileReader.readFile("txt/" + ((Checkpoint) object.getUserData()).getName() + ".txt"));
+                    if(!((Checkpoint) object.getUserData()).isVisited()) {
+                        splitter = ((Checkpoint) object.getUserData()).getName().split("-");
+                        ((Player)player.getUserData()).setCurrentCheckpointIndex(Integer.parseInt(splitter[2]));
+
+                        if (PlayScreen.currentLevel.getId().equals("1_1")) {
+                            if (!((Checkpoint) object.getUserData()).isVisited()) {
+                                Hud.newToast(MyGdxGame.platformDepended.getLevel1Tip());
                             }
+                        } else {
+                            if(((Checkpoint) object.getUserData()).getText() != null)
+                                Hud.newToast(((Checkpoint) object.getUserData()).getText());
                         }
+                        ((Checkpoint) object.getUserData()).setVisited(true);
                     }
                 }
                 else if(object.getUserData() instanceof Item) {
@@ -74,7 +71,6 @@ public class B2WorldContactListener implements ContactListener {
                 else if(object.getUserData() instanceof Teleporter) {
                     ((InteractiveTileObject) object.getUserData()).setUsable(true);
                     if(((Teleporter) object.getUserData()).getName().equals("teleporter_end")) {
-                        Gdx.input.setInputProcessor(playScreen.getHud().stage);
                         ((Player)player.getUserData()).fadeOut();
                         ((Teleporter) object.getUserData()).disappear();
                         //((Player)player.getUserData()).b2body.setTransform(((Teleporter)object.getUserData()).getB2body().getPosition().x, ((Teleporter)object.getUserData()).getB2body().getPosition().y, 0);
@@ -97,7 +93,12 @@ public class B2WorldContactListener implements ContactListener {
 
                 }*/
             }
-            else if(object.getUserData() instanceof Platform) {
+        }
+        else if(fixA.getUserData().equals("bot_lower_sensor") || fixB.getUserData().equals("bot_lower_sensor")) {
+            Fixture player = fixA.getUserData().equals("bot_lower_sensor") ? fixA : fixB;
+            Fixture object = player == fixA ? fixB : fixA;
+
+            if(object.getUserData() instanceof Platform) {
                 ((Platform) object.getUserData()).setActive(false);
             }
         }

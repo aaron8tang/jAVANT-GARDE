@@ -13,6 +13,7 @@ public class MyClass {
     private ArrayList<MyVariable> fields = new ArrayList<MyVariable>();
     private ArrayList<MyMethod> methods = new ArrayList<MyMethod>();
     private ArrayList<String> errors = new ArrayList<String>();
+    private ArrayList<String> methodsCalled = new ArrayList<String>();
 
     private boolean classDeclared = false;
     private static boolean mainDeclared = false;
@@ -21,6 +22,10 @@ public class MyClass {
     public MyClass(String name, String code) {
         this.name = name;
         this.code = code;
+
+        if(name.equals("Lever")) {
+            methods.add(new MyMethod("package", "void", "pull", new ArrayList<MyVariable>(), ""));
+        }
     }
 
     public String getName() {
@@ -35,9 +40,15 @@ public class MyClass {
         return fields;
     }
 
-    void addErrorInLine(int lineN) {
-        if(!errors.contains("[RED]Error: in line " + lineN + " in file "+name+".java[]"))
-            errors.add("[RED]Error: in line " + lineN + " in file "+name+".java[]");
+    void addErrorInLine(String error, int lineN) {
+        if(error==null) {
+            if (!errors.contains("[RED]Error: in line " + lineN + " in file " + name + ".java[]"))
+                errors.add("[RED]Error: in line " + lineN + " in file " + name + ".java[]");
+        }
+        else {
+            if (!errors.contains("[RED]Error: "+error+" (line " + lineN + " in file " + name + ".java)[]"))
+                errors.add("[RED]Error: "+error+" (line " + lineN + " in file " + name + ".java)[]");
+        }
     }
 
     void addError(String error) {
@@ -83,5 +94,9 @@ public class MyClass {
 
     public void setEndOfClass(boolean endOfClass) {
         this.endOfClass = endOfClass;
+    }
+
+    public ArrayList<String> getMethodsCalled() {
+        return methodsCalled;
     }
 }

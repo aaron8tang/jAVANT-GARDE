@@ -1,8 +1,6 @@
 package com.steveflames.javalab.sprites.ropes;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -10,7 +8,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
 import com.steveflames.javalab.MyGdxGame;
-import com.steveflames.javalab.screens.Window;
+import com.steveflames.javalab.screens.PlayScreen;
 import com.steveflames.javalab.sprites.InteractiveTileObject;
 import com.steveflames.javalab.tools.global.Fonts;
 import com.steveflames.javalab.tools.MyFileReader;
@@ -34,7 +32,7 @@ public class Rope extends InteractiveTileObject {
 
     public Rope(String name, World world, TiledMap map, Rectangle bounds) {
         super(name, world, map, bounds, true);
-        String text = MyFileReader.readFile("txt/"+name+".txt");
+        String text = MyFileReader.readFile("txt/ropes/"+name+".txt");
         String[] lineSplitter = text.split("\r\n");
         String[] attributeSplitter;
         int platformCounter = -1;
@@ -93,7 +91,7 @@ public class Rope extends InteractiveTileObject {
     public void drawFont(SpriteBatch sb) {
         //draw prompt font
         Fonts.small.setColor(Color.ORANGE);
-        Fonts.small.draw(sb, prompt, bounds.x - 95 + Window.getHudCameraOffsetX() - glyphLayout.width/2, (bounds.y + bounds.height) - glyphLayout.height/2 - 5);
+        Fonts.small.draw(sb, prompt, bounds.x - 95 + PlayScreen.getHudCameraOffsetX() - glyphLayout.width/2, (bounds.y + bounds.height) - glyphLayout.height/2 - 5);
         //draw platform fonts
         Fonts.small.setColor(Color.WHITE);
         for(int i=0; i<platforms.size(); i++)

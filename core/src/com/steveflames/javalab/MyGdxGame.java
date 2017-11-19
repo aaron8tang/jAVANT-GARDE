@@ -28,27 +28,13 @@ import com.steveflames.javalab.tools.global.Skins;
  *
  * THOUGHTS
  * levers quiz gia na energopoihseis to termatiko or sth
- * o kakos na kanei read input sou se fash quiz
  * ARRAYS! parse array k printf k prepei na pas sto swsto. an lathos tote -1 health
- * VARIABLES! na pas px na vlepeis ton kwdika ths portas k na exei if(x > 10) open k na prepei na pas na to kaneis
+ * IF + VARIABLES! na pas px na vlepeis ton kwdika ths portas k na exei if(x > 100) open k na prepei na pas na to kaneis
  * VARIABLES! na paizeis me tis suntetagmenes tou kleidiou gia na anoikseis thn porta
  * otan kaneis click sto console na kanei copy to clipboard
  * tha erxontai kata panw m opws super mario san tis xelwnes me swsta k lathos k prepei na phdhksw
  * meta apo kathe kleisth porta na zwgrafizw ena mavro rect g na mh vlepei o paikths parakatw
  * na vriskei polles klaseis k na prepei na tis diavasei k na ktlvei poia einai h swsth gia na xrhsimopoihsei
- * create a custom onscreen keyboard fit for programming
- *
- *
- * STARTMENUSCREEN
- * play
- * tutorial
- * options
- * exit
- *
- *
- * EDITOR
- * tab (pathmeno space gia android?)
- * for android, button to pop/hide keyboard
  *
  *
  * COMPILER
@@ -58,19 +44,30 @@ import com.steveflames.javalab.tools.global.Skins;
  * package? import? prin to class declaration
  *
  * TODO
+ * na dw ta TODO
  * mia fora sthn arxh tha ta diavazei ta arxeia (info, pc, ropes)
- * review toast. giati bgainei pantou sto debugger to finalLinesOfText? +stringbuilder?
  * todo editor markup!!!	(e.g. replaceAll("int", "[RED]int[]");
- * gia android click allou na diwxnei to info dialog
+ * ston editor otan afhnw 1h grammh keno k kanw click varaei error index out of bounds -1
+ * kapoios kwdikas sta hints einai polu megalos k paei apo katw gt to label kanei warp
+ * ftiakse ton loader me assetmanager gia na borw na valw k progress bar sthn arxh p fortwnei
+ * se mia grammh meta to ; oti grafw einai swsto.. todo
+ * na tonisw oti kathe entolh grafetai se mia kainouria grammh
+ * StartMenuScreen
+ *
+ *
+ * fields.. local variables.. modifiers
+ * 2_2 operations..
+ * CLASSES: explain pass arguments (diorthose sto telos to info-7_1-1 ta () )
+ * METHODS
+ * IF
+ * LOOP
+ * ARRAY
  *
  *
  * PARSE
- * parse ton kwdika,
- * METHODS vres pou exei method declaration kai apothikeusai ton kwdika ths MyMethod.
- * 		parse word by word kai apo otan vreis '{' an ksanavreis '{' add se counter k otan vriskeis '}' meiwse. otan einai 0 tote autos einai o kwdikas
- * 		ths methodou
+ * parse ton kwdika
+ * METHODS
  * FIELDS
- *
  *
  */
 public class MyGdxGame extends Game {
@@ -94,11 +91,10 @@ public class MyGdxGame extends Game {
 	public void create () {
 		Fonts.load();
 		Skins.load();
-		Loader.load();
 		sb = new SpriteBatch();
 		sr = new ShapeRenderer();
 		setScreen(new ChooseLevelScreen(this));
-		//setScreen(new PlayScreen(this, new LevelListItem("COMPILER", "2_1", "test")));
+		//setScreen(new PlayScreen(this, new LevelListItem("COMPILER", "7_1", "test")));
 	}
 
 	@Override
