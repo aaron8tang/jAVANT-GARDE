@@ -13,7 +13,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.steveflames.javalab.MyGdxGame;
 import com.steveflames.javalab.quests.Quest;
-import com.steveflames.javalab.screens.PlayScreen;
 import com.steveflames.javalab.tools.global.Skins;
 
 /**
@@ -49,8 +48,8 @@ class QuestWindow extends Window {
             public void clicked(InputEvent event, float x, float y) {
                 Hud.playScreen.getPlayer().reduceHealth(1);
                 Hud.playScreen.getPlayer().setPlayerMsgAlpha(1);
-                questTextArea.setText(questTextArea.getText() + "\n\nHELP:\n");
-                String text = currentQuest.getNextHint(currentQuest);
+                questTextArea.setText(questTextArea.getText() + "\n[CYAN]HELP:[]\n");
+                String text = currentQuest.getNextHint();
                 if(text.contains("\r")) {
                     text = text.replace("\r", "");
                     text += "\n";
@@ -59,7 +58,8 @@ class QuestWindow extends Window {
                 questTextArea.setText(questTextArea.getText() + text);
                 if(currentQuest.getCurrentQuestStep().getHintPtr() >= currentQuest.getCurrentQuestStep().getHints().size()-1)
                     helpBtn.setVisible(false);
-                //TODO scroll h apla emfanhse to scroll
+                questScroll.layout();
+                questScroll.setScrollPercentY(100);
             }
         });
         bottomBarTable.add(progressBar).expandX().fillX().left().padLeft(10);
@@ -69,6 +69,10 @@ class QuestWindow extends Window {
         this.setSize(580, 340);
         this.setX(0);
         this.setY(MyGdxGame.HEIGHT-408);
+        if(!MyGdxGame.platformDepended.deviceHasKeyboard()) {
+            this.setHeight(320);
+            this.setY(MyGdxGame.HEIGHT-421);
+        }
         this.add(questScroll).expand().fill().top().left().padTop(10);
         this.row();
         this.add(bottomBarTable).expandX().fillX();

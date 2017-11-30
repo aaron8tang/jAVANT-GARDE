@@ -45,18 +45,15 @@ import com.steveflames.javalab.tools.global.Skins;
  *
  * TODO
  * na dw ta TODO
- * mia fora sthn arxh tha ta diavazei ta arxeia (info, pc, ropes)
  * todo editor markup!!!	(e.g. replaceAll("int", "[RED]int[]");
  * ston editor otan afhnw 1h grammh keno k kanw click varaei error index out of bounds -1
  * kapoios kwdikas sta hints einai polu megalos k paei apo katw gt to label kanei warp
  * ftiakse ton loader me assetmanager gia na borw na valw k progress bar sthn arxh p fortwnei
- * se mia grammh meta to ; oti grafw einai swsto.. todo
  * na tonisw oti kathe entolh grafetai se mia kainouria grammh
  * StartMenuScreen
  *
  *
  * fields.. local variables.. modifiers
- * 2_2 operations..
  * CLASSES: explain pass arguments (diorthose sto telos to info-7_1-1 ta () )
  * METHODS
  * IF
@@ -94,7 +91,7 @@ public class MyGdxGame extends Game {
 		sb = new SpriteBatch();
 		sr = new ShapeRenderer();
 		setScreen(new ChooseLevelScreen(this));
-		//setScreen(new PlayScreen(this, new LevelListItem("COMPILER", "7_1", "test")));
+		//setScreen(new PlayScreen(this, new LevelListItem("COMPILER", "2_2", "test")));
 	}
 
 	@Override

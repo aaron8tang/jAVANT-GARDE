@@ -4,23 +4,17 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.steveflames.javalab.MyGdxGame;
 import com.steveflames.javalab.screens.PlayScreen;
 import com.steveflames.javalab.sprites.ropes.Rope;
-import com.steveflames.javalab.tools.MyFileReader;
+import com.steveflames.javalab.tools.global.MyFileReader;
 import com.steveflames.javalab.tools.global.Fonts;
 import com.steveflames.javalab.tools.global.Loader;
 
@@ -31,9 +25,9 @@ import java.util.LinkedHashMap;
  * Created by Flames on 23/9/2017.
  */
 
-public class Player extends Sprite {
+public class Player extends GameObject {
 
-    public static final float PLAYERSPEED = 0.24f;
+    public static final float PLAYERSPEED = 0.24f; //0.24f
     private static final float JUMPSPEED = 8.3f;
 
     public enum State { FALLING, JUMPING, STANDING, RUNNING, DEAD, CODING, READING, DISAPPEARING, DISAPPEARED }
@@ -42,16 +36,17 @@ public class Player extends Sprite {
     private boolean outOfBounds = false;
     private ArrayList<Checkpoint> checkpoints;
     private int currentCheckpointIndex = 0;
+    private int health = 5;
     private LinkedHashMap<String, String> classes = new LinkedHashMap<String, String>();
 
-    public Body b2body;
+    private TextureRegion currentTR;
     private final float radius = 22/MyGdxGame.PPM;
     public boolean canMove = true;
 
-    private int health = 5;
     private String hitMsg = null;
     private long playerMsgMillis = TimeUtils.millis();
     private float playerMsgAlpha = 1f;
+    private GlyphLayout playerMsgGlyph = new GlyphLayout();
     private Vector2 playerMsgVector = new Vector2();
     private int facingDirection = 1;
     private float red;
@@ -62,59 +57,37 @@ public class Player extends Sprite {
     public static boolean colliding = false;
 
     private Animation<TextureRegion> idleAnim;
+    private Animation<TextureRegion> typingAnim;
     private float stateTimer = 0f;
     private float rotation =0;
 
 
     public Player(World world, ArrayList<Checkpoint> checkpoints) {
-        super(Loader.botAtlas.findRegion("bot_talk"));
+        definePlayer(world, radius);
+        currentTR = Loader.botAtlas.findRegion("bot_talk");
         this.checkpoints = checkpoints;
-        definePlayer(world);
+        setInitialPosition();
 
         currentState = State.STANDING;
         previousState = State.STANDING;
 
         idleAnim = new Animation<TextureRegion>(0.08f, Loader.loadAnim(Loader.botAtlas.findRegion("bot_talk"), 12, 6, 3));
+        typingAnim = new Animation<TextureRegion>(0.015f, Loader.loadAnim(Loader.botAtlas.findRegion("bot_typing"), 12, 2, 0));
     }
 
-    private void definePlayer(World world) {
-        BodyDef bdef = new BodyDef();
-        bdef.position.set(checkpoints.get(0).getBounds().x / MyGdxGame.PPM, (checkpoints.get(0).getBounds().y + checkpoints.get(0).getBounds().height/2) / MyGdxGame.PPM);
-        bdef.type = BodyDef.BodyType.DynamicBody;
-        b2body = world.createBody(bdef);
-
-
-        FixtureDef fdef = new FixtureDef();
-        PolygonShape polyShape = new PolygonShape();
-        polyShape.setAsBox(0.1f,0.21f, new Vector2(0, 0.13f), 0);
-        fdef.shape = polyShape;
-        b2body.createFixture(fdef).setUserData(this);
-
-        fdef = new FixtureDef();
-        polyShape = new PolygonShape();
-        polyShape.setAsBox(0.07f,0.01f, new Vector2(0, -0.3f), 0);
-        fdef.shape = polyShape;
-        Fixture fixture = b2body.createFixture(fdef);
-        fixture.setUserData("bot_lower_sensor"); //bot_lower_sensor
-        fixture.setSensor(true);
-
-        fdef = new FixtureDef();
-        CircleShape shape = new CircleShape();
-        shape.setPosition(new Vector2(0,-0.19f));
-        shape.setRadius(radius);
-        fdef.shape = shape;
-        fixture = b2body.createFixture(fdef);
-        fixture.setUserData(this);
-
+    private void setInitialPosition() {
         setBounds(b2body.getPosition().x - 81/MyGdxGame.PPM/2, b2body.getPosition().y - 88/MyGdxGame.PPM/2, 81/MyGdxGame.PPM, 88/MyGdxGame.PPM);
-        respawnAtCheckpoint();
+        b2body.setTransform(checkpoints.get(currentCheckpointIndex).getBounds().x / MyGdxGame.PPM,
+                (checkpoints.get(currentCheckpointIndex).getBounds().y + checkpoints.get(currentCheckpointIndex).getBounds().height / 2) / MyGdxGame.PPM, 0);
+        position = new Vector2(b2body.getPosition().x, b2body.getPosition().y);
+        position_previous = new Vector2(b2body.getPosition().x, b2body.getPosition().y);
     }
 
     @Override
     public void draw(Batch sb) {
-        super.draw(sb);
         sb.setColor(1,1,1,alpha);
-        sb.draw(Loader.botWheelTR, b2body.getPosition().x - 45/2/MyGdxGame.PPM - facingDirection*0.018f, b2body.getPosition().y - 0.31f
+        sb.draw(currentTR, position.x - 81/2/MyGdxGame.PPM, position.y - 17/MyGdxGame.PPM, 81/MyGdxGame.PPM, 88/MyGdxGame.PPM);
+        sb.draw(Loader.botWheelTR, position.x - 45/2/MyGdxGame.PPM , position.y - 0.31f
                 , 45/MyGdxGame.PPM/2,  45/MyGdxGame.PPM/2
                 , 45/MyGdxGame.PPM, 45/MyGdxGame.PPM
                 , 1, 1
@@ -128,7 +101,7 @@ public class Player extends Sprite {
 
             Fonts.small.setColor(red,green,blue,playerMsgAlpha);
             Fonts.small.draw(sb, hitMsg, playerMsgVector.x*MyGdxGame.PPM  + PlayScreen.getHudCameraOffsetX()
-                    - 80, playerMsgVector.y*MyGdxGame.PPM + 20); //TODO cam k gia to y otan valw new lvls
+                    - playerMsgGlyph.width/2, playerMsgVector.y*MyGdxGame.PPM + 20); //TODO cam k gia to y otan valw new lvls
 
             Gdx.gl.glDisable(GL20.GL_BLEND);
         }
@@ -136,7 +109,7 @@ public class Player extends Sprite {
 
     public void update(float dt) {
         //set current region of the bot's animation
-        setRegion(getFrame(dt));
+        currentTR = getFrame(dt);
         setCurrentState(getState());
         previousState = currentState;
         setPosition(b2body.getPosition().x - 81/MyGdxGame.PPM/2, b2body.getPosition().y - 88/MyGdxGame.PPM/2 + 0.12f);
@@ -155,13 +128,13 @@ public class Player extends Sprite {
 
         //update DISAPPEARING state of player
         if(currentState == State.DISAPPEARING) {
-            if(alpha - 0.9f*dt >= 0) {
+            if(alpha - 0.9f*dt > 0) {
                 alpha -= 0.9f*dt;
             }
             else {
                 setCurrentState(State.DISAPPEARED);
                 alpha = 0;
-                b2body.setLinearVelocity(0,0);//todo de pianei
+                b2body.setLinearVelocity(0,0);
                 b2body.setTransform(b2body.getPosition().x + 0.2f, b2body.getPosition().y, 0);
             }
             setAlpha(alpha);
@@ -172,9 +145,6 @@ public class Player extends Sprite {
             if(TimeUtils.timeSinceMillis(playerMsgMillis) > 10) {
                 playerMsgMillis = TimeUtils.millis();
                 playerMsgTick(Gdx.graphics.getDeltaTime());
-                if(playerMsgAlpha==1 && outOfBounds) { //respawn
-                    respawnAtCheckpoint();
-                }
             }
         }
     }
@@ -183,6 +153,11 @@ public class Player extends Sprite {
         TextureRegion region;
         switch (currentState) {
             case RUNNING:
+            case FALLING:
+            case CODING:
+                region = typingAnim.getKeyFrame(stateTimer, true);
+                break;
+            case JUMPING:
                 region = Loader.botMoveTR;
                 break;
             default:
@@ -210,18 +185,17 @@ public class Player extends Sprite {
         else if(currentState == State.DISAPPEARING)
             return State.DISAPPEARING;
             //if player is going positive in Y-Axis he is jumping
-        else if((b2body.getLinearVelocity().y > 0 && currentState == State.JUMPING) || (b2body.getLinearVelocity().y < 0 && previousState == State.JUMPING))
+        else if(b2body.getLinearVelocity().y > 0 && currentState == State.JUMPING)
             return State.JUMPING;
             //if negative in Y-Axis player is falling
         else if(b2body.getLinearVelocity().y < 0)
             return State.FALLING;
             //if player is positive or negative in the X axis he is running
-        else if(b2body.getLinearVelocity().x != 0)
+        else if(b2body.getLinearVelocity().x != 0) //todo otan strivei k ginei 0 to vel allazei stigmiaia h eikona
             return State.RUNNING;
             //if none of these return then he must be standing
-        else {
+        else
             return State.STANDING;
-        }
     }
 
     public void setCoding(Rectangle pcBounds) {
@@ -239,22 +213,22 @@ public class Player extends Sprite {
         }
     }
 
-    public void runRight() {
+    public void runRight(float dt) {
         b2body.applyLinearImpulse(PLAYERSPEED, 0, b2body.getWorldCenter().x,  b2body.getWorldCenter().y, true); //0.2f
         facingDirection = 1;
     }
 
-    public void runLeft() {
+    public void runLeft(float dt) {
         b2body.applyLinearImpulse(-PLAYERSPEED, 0, b2body.getWorldCenter().x, b2body.getWorldCenter().y, true);
         facingDirection = -1;
     }
 
-    private void respawnAtCheckpoint() {
+    public void respawnAtCheckpoint(ArrayList<Rope> ropes) {
         if(health>0) {
             b2body.setTransform(checkpoints.get(currentCheckpointIndex).getBounds().x / MyGdxGame.PPM,
                     (checkpoints.get(currentCheckpointIndex).getBounds().y + checkpoints.get(currentCheckpointIndex).getBounds().height / 2) / MyGdxGame.PPM, 0);
             outOfBounds = false;
-            for (Rope rope : PlayScreen.ropes) {
+            for (Rope rope : ropes) {
                 if(rope.getId() >= currentCheckpointIndex)
                     rope.reset();
             }
@@ -264,6 +238,7 @@ public class Player extends Sprite {
     public void addHealth() {
         health++;
         hitMsg = "+1 health";
+        playerMsgGlyph.setText(Fonts.small, hitMsg);
         playerMsgVector.x = b2body.getPosition().x;
         playerMsgVector.y = b2body.getPosition().y + 0.25f;
         red = 0;
@@ -275,6 +250,7 @@ public class Player extends Sprite {
     public void reduceHealth(int k) {
         health -= k;
         hitMsg = "-"+k+" health";
+        playerMsgGlyph.setText(Fonts.small, hitMsg);
         playerMsgVector.x = b2body.getPosition().x;
         playerMsgVector.y = b2body.getPosition().y + 0.25f;
         if(health <= 0)
@@ -289,17 +265,30 @@ public class Player extends Sprite {
         String[] temp = text.split("-");
         classes.put(temp[2], MyFileReader.readFile("txt/classes/"+text+".txt"));
         hitMsg = "+"+temp[2]+" class";
+        playerMsgGlyph.setText(Fonts.small, hitMsg);
+        playerMsgVector.x = b2body.getPosition().x;
+        playerMsgVector.y = b2body.getPosition().y + 0.25f;
+        red = 1;
+        green = 0;
+        blue = 0;
+        playerMsgAlpha = 1;
+    }
+
+    public void showPlayerMsg(String msg) {
+        hitMsg = msg;
+        playerMsgGlyph.setText(Fonts.small, hitMsg);
         playerMsgVector.x = b2body.getPosition().x;
         playerMsgVector.y = b2body.getPosition().y + 0.25f;
         red = 0;
-        green = 0.1f;
-        blue = 1;
+        green = 1;
+        blue = 0;
         playerMsgAlpha = 1;
     }
 
     public void fadeOut() {
+        float sign = Math.signum(b2body.getLinearVelocity().x);
         b2body.setLinearVelocity(0,0);
-        b2body.applyLinearImpulse(1.88f, 0, 0, 0, false);
+        b2body.applyLinearImpulse(1.88f*sign, 0, 0, 0, false);
         setCurrentState(State.DISAPPEARING);
     }
 
@@ -345,5 +334,9 @@ public class Player extends Sprite {
         canMove = !(currentState == State.CODING || currentState == State.READING || currentState == State.DISAPPEARING
                 || currentState == State.DISAPPEARED || currentState == State.DEAD);
         this.currentState = currentState;
+    }
+
+    public float getPlayerMsgAlpha() {
+        return playerMsgAlpha;
     }
 }

@@ -29,7 +29,7 @@ public class ChooseLevelScreen implements Screen{
 
     private Stage stage;
     private Viewport viewport;
-    public static LinkedHashMap<String, ArrayList<LevelListItem>> categories = new LinkedHashMap<String, ArrayList<LevelListItem>>();
+    private static LinkedHashMap<String, ArrayList<LevelListItem>> categories = new LinkedHashMap<String, ArrayList<LevelListItem>>();
 
     /**
      * The components Hierarchy:
@@ -149,7 +149,8 @@ public class ChooseLevelScreen implements Screen{
     private void loadCategories() {
         categories.put("INTRO", new ArrayList<LevelListItem>()); //1
         categories.get("INTRO").add(new LevelListItem("INTRO", "1_1", "Hello World!"));
-        //categories.get("INTRO").add(new LevelListItem("INTRO", "1_2", "user input"));
+        categories.get("INTRO").add(new LevelListItem("INTRO", "1_2", "comments"));
+        categories.get("INTRO").add(new LevelListItem("INTRO", "1_3", "user input"));
 
         categories.put("VARIABLES", new ArrayList<LevelListItem>()); //2
         categories.get("VARIABLES").add(new LevelListItem("VARIABLES", "2_1", "naming\n&\ntypes"));
@@ -158,7 +159,6 @@ public class ChooseLevelScreen implements Screen{
         categories.put("METHODS", new ArrayList<LevelListItem>()); //3
         categories.get("METHODS").add(new LevelListItem("METHODS", "3_1", "calling a method"));
         categories.get("METHODS").add(new LevelListItem("METHODS", "3_2", "return types"));
-        categories.get("METHODS").add(new LevelListItem("METHODS", "3_3", "access modifiers"));
 
         categories.put("CONDITIONALS", new ArrayList<LevelListItem>()); //4
         categories.get("CONDITIONALS").add(new LevelListItem("CONDITIONALS", "4_1", " if - nested if - if else "));
@@ -175,6 +175,8 @@ public class ChooseLevelScreen implements Screen{
 
         categories.put("CLASSES", new ArrayList<LevelListItem>()); //7
         categories.get("CLASSES").add(new LevelListItem("CLASSES", "7_1", "creating objects"));
+        categories.get("CLASSES").add(new LevelListItem("CLASSES", "7_2", "class attributes"));
+        categories.get("CLASSES").add(new LevelListItem("CLASSES", "7_3", "access modifiers"));
     }
 
     public static LevelListItem getNextLevel(LevelListItem currentLevel) {

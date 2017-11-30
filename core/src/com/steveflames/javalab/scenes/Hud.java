@@ -2,6 +2,7 @@ package com.steveflames.javalab.scenes;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -17,8 +18,10 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.steveflames.javalab.MyGdxGame;
 import com.steveflames.javalab.screens.PlayScreen;
+import com.steveflames.javalab.sprites.Item;
 import com.steveflames.javalab.sprites.Pc;
 import com.steveflames.javalab.sprites.Player;
+import com.steveflames.javalab.tools.global.Fonts;
 import com.steveflames.javalab.tools.global.Loader;
 import com.steveflames.javalab.tools.global.Skins;
 
@@ -83,9 +86,14 @@ public class Hud implements Disposable {
 
     public void drawFont(SpriteBatch sb) {
         if(playScreen.getPlayer().getHealth() > 0) {
+            if(Item.getnOfClasses() > 0) {
+                Fonts.small.setColor(Color.WHITE);
+                Fonts.small.draw(sb, "Classes found: " + playScreen.getPlayer().getClasses().size() +"/" + Item.getnOfClasses(), 15, MyGdxGame.HEIGHT - 67);
+            }
             for(int i = 0; i< playScreen.getPlayer().getHealth(); i++)
                 sb.draw(Loader.heartT, 20 +(60*i), MyGdxGame.HEIGHT - 60, 50, 50);
         }
+
         if(toast.isShowing())
             toast.drawFont(sb);
     }

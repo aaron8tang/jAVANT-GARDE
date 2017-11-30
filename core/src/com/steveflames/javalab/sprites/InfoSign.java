@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
 import com.steveflames.javalab.MyGdxGame;
 import com.steveflames.javalab.screens.PlayScreen;
-import com.steveflames.javalab.tools.MyFileReader;
+import com.steveflames.javalab.tools.global.MyFileReader;
 import com.steveflames.javalab.tools.global.Fonts;
 import com.steveflames.javalab.tools.global.Loader;
 
@@ -15,7 +15,7 @@ import com.steveflames.javalab.tools.global.Loader;
  * Created by Flames on 4/10/2017.
  */
 
-public class InfoSign extends InteractiveTileObject {
+public class InfoSign extends GameObject {
 
     private String text = "";
 
@@ -23,15 +23,14 @@ public class InfoSign extends InteractiveTileObject {
         super(name, world, map, bounds, true);
         this.alpha = alpha;
 
-        if (MyFileReader.exists("txt/infos/" + name + ".txt"))
-            text = MyFileReader.readFile("txt/infos/" + name + ".txt");
+        if (MyFileReader.exists("txt/info/" + name + ".txt"))
+            text = MyFileReader.readFile("txt/info/" + name + ".txt");
     }
 
     public void drawUsePrompt(SpriteBatch sb) {
         if(usable) {
             Fonts.medium.setColor(Color.RED);
             sb.draw(Loader.eyeT, bounds.x + bounds.width / 2 - 25 + PlayScreen.getHudCameraOffsetX(), bounds.y + bounds.height + 40, 50, 50);
-            //Fonts.medium.draw(sb, "!", bounds.x + bounds.width / 2 - 5 + Window.getHudCameraOffsetX() , bounds.y + bounds.height + 90);
         }
     }
 

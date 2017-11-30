@@ -12,7 +12,7 @@ import com.steveflames.javalab.tools.global.Loader;
  * Created by Flames on 23/10/2017.
  */
 
-public class Teleporter extends InteractiveTileObject {
+public class Teleporter extends GameObject {
 
     public enum State { HIDDEN, APPEARING, IDLE, DISAPPEARING }
     private State currentState;

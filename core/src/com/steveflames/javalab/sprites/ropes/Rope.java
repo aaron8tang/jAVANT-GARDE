@@ -7,11 +7,13 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
+import com.steveflames.javalab.GameObjectManager;
 import com.steveflames.javalab.MyGdxGame;
 import com.steveflames.javalab.screens.PlayScreen;
-import com.steveflames.javalab.sprites.InteractiveTileObject;
+import com.steveflames.javalab.sprites.FloatingPlatform;
+import com.steveflames.javalab.sprites.GameObject;
 import com.steveflames.javalab.tools.global.Fonts;
-import com.steveflames.javalab.tools.MyFileReader;
+import com.steveflames.javalab.tools.global.MyFileReader;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,7 +23,7 @@ import java.util.Random;
  * Created by Flames on 10/10/2017.
  */
 
-public class Rope extends InteractiveTileObject {
+public class Rope extends GameObject {
 
     private ArrayList<Platform> platforms = new ArrayList<Platform>();
     private boolean active = true;
@@ -30,12 +32,11 @@ public class Rope extends InteractiveTileObject {
     private String prompt = "";
     private GlyphLayout glyphLayout = new GlyphLayout();
 
-    public Rope(String name, World world, TiledMap map, Rectangle bounds) {
+    public Rope(String name, World world, TiledMap map, Rectangle bounds, GameObjectManager objectManager) {
         super(name, world, map, bounds, true);
         String text = MyFileReader.readFile("txt/ropes/"+name+".txt");
         String[] lineSplitter = text.split("\r\n");
         String[] attributeSplitter;
-        int platformCounter = -1;
         Random random = new Random();
         float randExtraY = random.nextFloat()*3;
         ArrayList<String> platformTexts = new ArrayList<String>();
@@ -47,16 +48,21 @@ public class Rope extends InteractiveTileObject {
         Collections.addAll(platformTexts, lineSplitter);
         Collections.shuffle(platformTexts);
 
+        int i=0;
         for (String s : platformTexts) {
-            if(s.contains("~")) {
-                attributeSplitter = s.split("~");
-                platformCounter++;
-                platforms.add(new Platform(attributeSplitter[0], attributeSplitter[1], platformCounter, randExtraY, world, bounds));
+            if(s.charAt(0) == '~') {
+                prompt = s.substring(1);
+                continue;
             }
             else
-                prompt = s;
+                platforms.add(new Platform(s, world, map, new Rectangle(bounds.x + bounds.width/2 - 100,
+                        bounds.y + bounds.height + (randExtraY + 2.5f*i)*MyGdxGame.PPM, 200, 50)));
+            i++;
         }
         glyphLayout.setText(Fonts.small, prompt);
+
+        for(Platform platform: platforms)
+            objectManager.addDynamicGameObject(platform);
     }
 
     public void update(float dt) {
@@ -68,7 +74,7 @@ public class Rope extends InteractiveTileObject {
                 if(!platforms.get(i).isActive()) { //if player touched this platform
                     active = false; //deactivate the rope
                     for(int j=0; j<platforms.size(); j++) { //fade all platforms
-                        platforms.get(j).b2body.setLinearVelocity(0, 0);
+                        platforms.get(j).getB2body().setLinearVelocity(0, 0);
                         if(!platforms.get(i).isFlag() || platforms.get(i) != platforms.get(j)) //if player touched right platform, dont fade it
                             platforms.get(j).fade();
                     }
@@ -78,7 +84,6 @@ public class Rope extends InteractiveTileObject {
     }
 
     public void drawFilled(ShapeRenderer sr) {
-        //draw platforms
         for(int i=0; i<platforms.size(); i++)
             platforms.get(i).drawFilled(sr);
     }
@@ -89,34 +94,19 @@ public class Rope extends InteractiveTileObject {
     }
 
     public void drawFont(SpriteBatch sb) {
-        //draw prompt font
-        Fonts.small.setColor(Color.ORANGE);
-        Fonts.small.draw(sb, prompt, bounds.x - 95 + PlayScreen.getHudCameraOffsetX() - glyphLayout.width/2, (bounds.y + bounds.height) - glyphLayout.height/2 - 5);
-        //draw platform fonts
         Fonts.small.setColor(Color.WHITE);
         for(int i=0; i<platforms.size(); i++)
             platforms.get(i).drawFont(sb);
     }
 
-    public void drawPromptTile(ShapeRenderer sr) {
-        sr.begin(ShapeRenderer.ShapeType.Filled);
-        sr.setColor(new Color(0.21f, 0.18f, 0.17f, 1));
-        sr.rect((bounds.x + bounds.width/2)/MyGdxGame.PPM - 0.6f, (bounds.y + bounds.height)/MyGdxGame.PPM - 0.32f, 1.2f, 0.32f);
-        sr.end();
-
-        sr.begin(ShapeRenderer.ShapeType.Line);
-        sr.setColor(Color.BLACK);
-        sr.rect((bounds.x + bounds.width/2)/MyGdxGame.PPM - 0.6f, (bounds.y + bounds.height)/MyGdxGame.PPM - 0.32f, 1.2f, 0.32f);
-        sr.end();
+    public void drawPromptFont(SpriteBatch sb) {
+        Fonts.small.setColor(Color.ORANGE);
+        Fonts.small.draw(sb, prompt, bounds.x - 95 + PlayScreen.getHudCameraOffsetX() - glyphLayout.width/2, (bounds.y + bounds.height) - glyphLayout.height/2 - 5);
     }
 
     public void reset() {
-        for(Platform platform: platforms) {
-            platform.setAlpha(1);
-            platform.getFixture().setSensor(false);
-            platform.b2body.setLinearVelocity(0, -1f);
-            platform.setActive(true);
-        }
+        for(Platform platform: platforms)
+            platform.reset();
         active = true;
     }
 

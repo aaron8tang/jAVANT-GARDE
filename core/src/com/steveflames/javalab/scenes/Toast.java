@@ -1,13 +1,16 @@
 package com.steveflames.javalab.scenes;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.steveflames.javalab.MyGdxGame;
 import com.steveflames.javalab.tools.global.Fonts;
+import com.steveflames.javalab.tools.global.Loader;
 
 import java.util.ArrayList;
 
@@ -17,8 +20,10 @@ import java.util.ArrayList;
 
 public class Toast {
     private static final int SPEED = 700;
+
     public enum State { INCOMING, READY, WRITING, NEXT, SKIP, LEAVING, LEFT}
     private State currentState = State.LEFT;
+    private State previousState = State.LEFT;
 
     private Rectangle rect;
     private GlyphLayout glyphLayout;
@@ -37,6 +42,10 @@ public class Toast {
 
     private float nextPromptOffset = 0;
 
+    private Animation<TextureRegion> robotTalkingAnim;
+    private TextureRegion robotTR;
+    private float stateTimer = 0f;
+
     Toast() {
         rect = new Rectangle(10, MyGdxGame.HEIGHT + 260, MyGdxGame.WIDTH-20, 160);
         glyphLayout = new GlyphLayout();
@@ -46,6 +55,7 @@ public class Toast {
         drawStrings.add(new StringBuilder());
         drawStrings.add(new StringBuilder());
         drawStrings.add(new StringBuilder());
+        robotTalkingAnim = new Animation<TextureRegion>(0.16f, Loader.loadAnim(Loader.robotTalkingAtlas.findRegion("robot-antenna"), 4, 1, 0));
     }
 
     void newToast(String text) {
@@ -65,16 +75,16 @@ public class Toast {
     }
 
     private void breakTextIntoLines() {
-        if(glyphLayout.width > rect.width - 170 || text.contains("\n")) { //more than one line
+        if(glyphLayout.width > rect.width - 150 || text.contains("\n")) { //more than one line
             GlyphLayout tempGlyphLayout = new GlyphLayout();
             StringBuilder currentChar = new StringBuilder();
             for(int i=0; i<text.length(); i++) { //parse each character of the text
                 if(text.charAt(i) != '\n') {
-                    if(currentChar.length()!=0 || text.charAt(i)!=' ') //if new line and next character is space, ignore it
+                    if(currentChar.length()!=0 || text.charAt(i)!=' ') {//if new line and next character is space, ignore it
                         currentChar.append(text.charAt(i));
-
-                    tempGlyphLayout.setText(Fonts.small, currentChar);
-                    if (tempGlyphLayout.width >= rect.width - 170 && currentChar.length()!=0) { //check characters sum width
+                        tempGlyphLayout.setText(Fonts.small, currentChar);
+                    }
+                    if (tempGlyphLayout.width >= rect.width - 150 && currentChar.length()!=0) { //check characters sum width
                         addNewLine(currentChar.toString());
                         currentChar.setLength(0);
                     }
@@ -113,6 +123,7 @@ public class Toast {
     }
 
     public void update(float dt) {
+        setCurrentFrame(dt);
         if (currentState == State.INCOMING) {
             if (rect.y - SPEED * dt > MyGdxGame.HEIGHT - rect.height - 65) {
                 rect.y -= SPEED * dt;
@@ -177,6 +188,15 @@ public class Toast {
         }
     }
 
+    private void setCurrentFrame(float dt) {
+        robotTR = robotTalkingAnim.getKeyFrame(stateTimer, true);
+        if(currentState!=State.WRITING)
+            stateTimer=0;
+        else
+            stateTimer = currentState == previousState ? stateTimer + dt : 0;
+        previousState = currentState;
+    }
+
     void drawFilled(ShapeRenderer sr) {
         sr.setColor(Color.BLACK);
         sr.rect(rect.x, rect.y, rect.width, rect.height);
@@ -192,6 +212,7 @@ public class Toast {
             for(int i=0; i<drawStrings.size(); i++)
                 Fonts.small.draw(sb, drawStrings.get(i), rect.x + 120, rect.y + rect.height - 20 - i*40);
             Fonts.xsmall.draw(sb, MyGdxGame.platformDepended.getNextPrompt(), rect.x + rect.width - 180 + nextPromptOffset, rect.y + 25);
+            sb.draw(robotTR, rect.x - 5, rect.y + 15, 128, 128);
         }
     }
 
@@ -206,5 +227,9 @@ public class Toast {
 
     public boolean isShowing() {
         return currentState!=State.LEFT;
+    }
+
+    public TextureRegion getRobotTR() {
+        return robotTR;
     }
 }

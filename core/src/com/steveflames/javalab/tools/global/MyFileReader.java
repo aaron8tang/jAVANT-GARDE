@@ -1,11 +1,7 @@
-package com.steveflames.javalab.tools;
+package com.steveflames.javalab.tools.global;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 
 /**
  * Created by Flames on 4/10/2017.

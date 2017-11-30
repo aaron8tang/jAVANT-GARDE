@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -25,9 +26,9 @@ class AndroidExtraKeyboardWindow extends Window {
 
     AndroidExtraKeyboardWindow(String title, Skin skin, final EditorWindow editorWindow) {
         super(title, skin);
-        this.setSize(700,80);
+        this.setSize(700,85);
         this.setX(MyGdxGame.WIDTH - this.getWidth());
-        this.setY(MyGdxGame.HEIGHT - 90);
+        this.setY(MyGdxGame.HEIGHT - this.getHeight() - 10);
 
         Table table = new Table(Skins.neonSkin);
         TextButton tabBtn = new TextButton("TAB", Skins.neonSkin);
@@ -52,11 +53,34 @@ class AndroidExtraKeyboardWindow extends Window {
                 editorWindow.editorKeyTyped('}');
             }
         });
+        TextButton leftParBtn = new TextButton("(", Skins.neonSkin);
+        leftParBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                editorWindow.virtualTypeKey('(');
+                editorWindow.editorKeyTyped('(');
+            }
+        });
+        TextButton rightParBtn = new TextButton(")", Skins.neonSkin);
+        rightParBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                editorWindow.virtualTypeKey(')');
+            }
+        });
         TextButton semicolonBtn = new TextButton(";", Skins.neonSkin);
         semicolonBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 editorWindow.virtualTypeKey(';');
+            }
+        });
+        TextButton singleQuoteBtn = new TextButton("'", Skins.neonSkin);
+        singleQuoteBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                editorWindow.virtualTypeKey('\'');
+                editorWindow.editorKeyTyped('\'');
             }
         });
         TextButton quoteBtn = new TextButton("\"", Skins.neonSkin);
@@ -83,15 +107,20 @@ class AndroidExtraKeyboardWindow extends Window {
                 setKeyboardShown(keyboardShown);
             }
         });
-        table.add(keyBoardBtn).left().fill().width(90).height(70);
-        table.add(tabBtn).height(75).width(100).left();
-        table.add(leftBracketBtn).height(75).width(100).left();
-        table.add(rightBracketBtn).height(75).width(100).left();
-        table.add(quoteBtn).height(75).width(100).left();
-        table.add(equalsBtn).height(75).width(100).left();
-        table.add(semicolonBtn).height(75).width(100).left();
+        table.add(leftBracketBtn).height(69).width(100).left();
+        table.add(rightBracketBtn).height(69).width(100).left();
+        table.add(leftParBtn).height(69).width(100).left();
+        table.add(rightParBtn).height(69).width(100).left();
+        table.add(equalsBtn).height(69).width(100).left();
+        table.add(semicolonBtn).height(69).width(100).left();
+        table.add(singleQuoteBtn).height(69).width(100).left();
+        table.add(quoteBtn).height(69).width(100).left();
+        table.add(tabBtn).height(69).width(100).left();
+        ScrollPane scrollPane = new ScrollPane(table, Skins.neonSkin);
 
-        this.add(table).expand().fill();
+
+        this.add(scrollPane).expand().fill();
+        this.add(keyBoardBtn).right().width(90).height(70);
     }
 
     void show(Stage stage) {

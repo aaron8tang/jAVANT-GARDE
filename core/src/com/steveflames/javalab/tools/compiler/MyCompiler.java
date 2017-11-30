@@ -87,8 +87,10 @@ public class MyCompiler {
                             if(wordSplitter[0].equals("class") || wordSplitter[0].equals("public") && isNextWordStrictlyEqualTo("class")) {
                                 if ((nextWord = getNextWordInLine()) != null && validVarName(nextWord)) { //2nd word
                                     if (isNextWordStrictlyEqualTo("{")) {
-                                        compilationClass.removeError("Error: class not defined in file " + compilationClass.getName() + ".java");
-                                        compilationClass.setClassDeclared(true);
+                                        if(getNextWordInLine()==null) {
+                                            compilationClass.removeError("Error: class not defined in file " + compilationClass.getName() + ".java");
+                                            compilationClass.setClassDeclared(true);
+                                        }
                                     }
                                 }
                             }
@@ -190,8 +192,10 @@ public class MyCompiler {
                                 if(isNextWordStrictlyEqualTo("(")) {
                                     if(isNextWordStrictlyEqualTo(")")) {
                                         if(isNextWordStrictlyEqualTo(";")) {
-                                            compilationClass.getMethodsCalled().add("Lever.pull");
-                                            return true;
+                                            if(getNextWordInLine()==null) {
+                                                compilationClass.getMethodsCalled().add("Lever.pull");
+                                                return true;
+                                            }
                                         }
                                     }
                                 }
@@ -255,7 +259,8 @@ public class MyCompiler {
                     if (nextWord != null && nextWord.equals("\"")) {
                         if (isNextWordStrictlyEqualTo(")")) {
                             if (isNextWordStrictlyEqualTo(";")) {
-                                consoleTextArea.setText(consoleTextArea.getText() + stringToPrint.toString());
+                                if(getNextWordInLine()==null)
+                                    consoleTextArea.setText(consoleTextArea.getText() + stringToPrint.toString());
                             }
                         }
                     } else
@@ -312,9 +317,11 @@ public class MyCompiler {
                                         if (isNextWordStrictlyEqualTo("args")) { //9th word
                                             if (isNextWordStrictlyEqualTo(")")) { //10th word
                                                 if (isNextWordStrictlyEqualTo("{")) { //11th word
-                                                    compilationClass.addMethod(new MyMethod("public", "void", "main", new ArrayList<MyVariable>(), ""));
-                                                    compilationClass.removeError("Error: main method not found");
-                                                    return true;
+                                                    if(getNextWordInLine()==null) {
+                                                        compilationClass.addMethod(new MyMethod("public", "void", "main", new ArrayList<MyVariable>(), ""));
+                                                        compilationClass.removeError("Error: main method not found");
+                                                        return true;
+                                                    }
                                                 }
                                             }
                                         }
@@ -364,38 +371,40 @@ public class MyCompiler {
 
                         if (varType != null && varType.equals(")") || isNextWordStrictlyEqualTo(")")) {
                             if (isNextWordStrictlyEqualTo("{")) {
-                                System.out.println("KOBLE METHOD: " + modifier + " " + returnType + " " + methodName + " (" + arguments + ") {");
-                                compilationClass.addMethod(new MyMethod(modifier, returnType, methodName, arguments, ""));
+                                if(getNextWordInLine()==null) {
+                                    System.out.println("KOBLE METHOD: " + modifier + " " + returnType + " " + methodName + " (" + arguments + ") {");
+                                    compilationClass.addMethod(new MyMethod(modifier, returnType, methodName, arguments, ""));
 
-                                int bracketCounter = 1;
-                                String nextWord;
-                                StringBuilder code = new StringBuilder();
-                                int tempLine = lineN;
-                                for(int i=lineN; i<lineSplitter.length; i++) {
-                                    lineN++;
-                                    currentWordPtr=-1;
-                                    if (!lineSplitter[i].isEmpty()) {
-                                        splitLineToWords(lineSplitter[i]);
-                                        while (bracketCounter != 0 && !isNextWordEqualTo("}")) {
+                                    int bracketCounter = 1;
+                                    String nextWord;
+                                    StringBuilder code = new StringBuilder();
+                                    int tempLine = lineN;
+                                    for (int i = lineN; i < lineSplitter.length; i++) {
+                                        lineN++;
+                                        currentWordPtr = -1;
+                                        if (!lineSplitter[i].isEmpty()) {
+                                            splitLineToWords(lineSplitter[i]);
+                                            while (bracketCounter != 0 && !isNextWordEqualTo("}")) {
 
-                                            if((nextWord = getNextWordInLine())==null)
-                                                break;
-                                            if (nextWord.equals("}"))
-                                                bracketCounter--;
-                                            else if (nextWord.equals("{"))
-                                                bracketCounter++;
-                                            else {
-                                                code.append(nextWord);
-                                                code.append(" ");
+                                                if ((nextWord = getNextWordInLine()) == null)
+                                                    break;
+                                                if (nextWord.equals("}"))
+                                                    bracketCounter--;
+                                                else if (nextWord.equals("{"))
+                                                    bracketCounter++;
+                                                else {
+                                                    code.append(nextWord);
+                                                    code.append(" ");
+                                                }
                                             }
+                                            code.append("\n");
                                         }
-                                        code.append("\n");
                                     }
-                                }
-                                compilationClass.getMethods().get(compilationClass.getMethods().size()-1).setCode(code.toString());
-                                lineN = tempLine;
+                                    compilationClass.getMethods().get(compilationClass.getMethods().size() - 1).setCode(code.toString());
+                                    lineN = tempLine;
 
-                                return true;
+                                    return true;
+                                }
                             }
                         }
                     }
@@ -414,8 +423,11 @@ public class MyCompiler {
         if(validVarType(wordSplitter[0])) { //1st word VARIABLE DECLARATION
             if ((varName = getNextWordInLine()) != null && validVarName(varName)) {
                 if (isNextWordEqualTo(";")) {
-                    compilationClass.getFields().add(new MyVariable(wordSplitter[0], varName, "null")); //todo diaxwrismos fields k local vars
-                    flag = true;
+                    currentWordPtr++;
+                    if(getNextWordInLine()==null) {
+                        compilationClass.getFields().add(new MyVariable(wordSplitter[0], varName, "null")); //todo diaxwrismos fields k local vars
+                        flag = true;
+                    }
                 }
                 else if (isNextWordStrictlyEqualTo("=")) { // ASSIGN VALUE
                     compilationClass.getFields().add(new MyVariable(wordSplitter[0], varName, "null"));
@@ -452,13 +464,15 @@ public class MyCompiler {
                 }
             }
             if (isNextWordStrictlyEqualTo(";")) {
-                if (temp.matches("^-?\\d+$")) { //is integer
-                    for(MyVariable myVariable : compilationClass.getFields()) {
-                        if(myVariable.getName().equals(varName))
-                            myVariable.setValue(temp);
+                if(getNextWordInLine()==null) {
+                    if (temp.matches("^-?\\d+$")) { //is integer
+                        for (MyVariable myVariable : compilationClass.getFields()) {
+                            if (myVariable.getName().equals(varName))
+                                myVariable.setValue(temp);
+                        }
+                        System.out.println("int: " + temp); //2_2 quest 2 eimai todo
+                        return true;
                     }
-                    System.out.println("int: " + temp); //2_2 quest 2 eimai todo
-                    return true;
                 }
             }
         }
@@ -477,13 +491,15 @@ public class MyCompiler {
             if(temp.charAt(temp.length()-1) == 'f' || temp.charAt(temp.length()-1) == 'd')
                 temp = temp.substring(0, temp.length() - 1);
             if (isNextWordStrictlyEqualTo(";")) {
-                if (temp.matches("^-?\\d+(.\\d+)?$")) {
-                    for(MyVariable myVariable : compilationClass.getFields()) {
-                        if(myVariable.getName().equals(varName))
-                            myVariable.setValue(temp);
+                if(getNextWordInLine()==null) {
+                    if (temp.matches("^-?\\d+(.\\d+)?$")) {
+                        for (MyVariable myVariable : compilationClass.getFields()) {
+                            if (myVariable.getName().equals(varName))
+                                myVariable.setValue(temp);
+                        }
+                        //System.out.println("double " + temp);
+                        return true;
                     }
-                    //System.out.println("double " + temp);
-                    return true;
                 }
             }
         }
@@ -495,12 +511,14 @@ public class MyCompiler {
         if ((temp = getNextWordInLine()) != null && !temp.equals(";")) {
             if (temp.equals("true") || temp.equals("false")) {
                 if (isNextWordStrictlyEqualTo(";")) {
-                    for(MyVariable myVariable : compilationClass.getFields()) {
-                        if(myVariable.getName().equals(varName))
-                            myVariable.setValue(temp);
+                    if(getNextWordInLine()==null) {
+                        for (MyVariable myVariable : compilationClass.getFields()) {
+                            if (myVariable.getName().equals(varName))
+                                myVariable.setValue(temp);
+                        }
+                        //System.out.println("boolean: " + temp);
+                        return true;
                     }
-                    //System.out.println("boolean: " + temp);
-                    return true;
                 }
             }
         }
@@ -515,12 +533,14 @@ public class MyCompiler {
                 if (temp.length() == 1) {
                     if (isNextWordStrictlyEqualTo("'")) {
                         if (isNextWordStrictlyEqualTo(";")) {
-                            for(MyVariable myVariable : compilationClass.getFields()) {
-                                if(myVariable.getName().equals(varName))
-                                    myVariable.setValue(temp);
+                            if(getNextWordInLine()==null) {
+                                for (MyVariable myVariable : compilationClass.getFields()) {
+                                    if (myVariable.getName().equals(varName))
+                                        myVariable.setValue(temp);
+                                }
+                                //System.out.println("char: " + temp);
+                                return true;
                             }
-                            //System.out.println("char: " + temp);
-                            return true;
                         }
                     }
                 } else
@@ -546,12 +566,14 @@ public class MyCompiler {
 
             if (temp != null && temp.equals("\"")) {
                 if (isNextWordStrictlyEqualTo(";")) {
-                    for(MyVariable myVariable : compilationClass.getFields()) {
-                        if(myVariable.getName().equals(varName))
-                            myVariable.setValue(finalValue);
+                    if(getNextWordInLine()==null) {
+                        for (MyVariable myVariable : compilationClass.getFields()) {
+                            if (myVariable.getName().equals(varName))
+                                myVariable.setValue(finalValue);
+                        }
+                        System.out.println("String: " + finalValue);
+                        return true;
                     }
-                    System.out.println("String: " + finalValue);
-                    return true;
                 }
             }
         }
@@ -567,9 +589,11 @@ public class MyCompiler {
                         if(isNextWordStrictlyEqualTo("(")) { //todo arguments
                             if(isNextWordStrictlyEqualTo(")")) {
                                 if(isNextWordStrictlyEqualTo(";")) {
-                                    System.out.println("added class type var");
-                                    compilationClass.getFields().add(new MyVariable(nextWord, varName, ""));
-                                    return true;
+                                    if(getNextWordInLine()==null) {
+                                        System.out.println("added class type var");
+                                        compilationClass.getFields().add(new MyVariable(nextWord, varName, ""));
+                                        return true;
+                                    }
                                 }
                             }
                         }

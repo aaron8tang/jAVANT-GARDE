@@ -3,6 +3,7 @@ package com.steveflames.javalab.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
@@ -19,9 +20,11 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.steveflames.javalab.GameObjectManager;
 import com.steveflames.javalab.MyGdxGame;
-import com.steveflames.javalab.quests.Quest;
+import com.steveflames.javalab.quests.Quiz;
 import com.steveflames.javalab.sprites.FloatingPlatform;
+import com.steveflames.javalab.sprites.GameObject;
 import com.steveflames.javalab.sprites.Lever;
 import com.steveflames.javalab.tools.LevelListItem;
 import com.steveflames.javalab.sprites.Checkpoint;
@@ -54,6 +57,17 @@ public class PlayScreen implements Screen{
     public static OrthographicCamera cam;
     public static LevelListItem currentLevel;
 
+    private GameObjectManager objectManager = new GameObjectManager();
+
+    //fixed timestep
+    private double accumulator = 0;
+    private final float delta = 0.0133f;	// logic updates approx. @ 75 hz //todo 0.0133f   todo maybe 45f or 300f (recommended)
+    private final static int logic_FPSupdateIntervall = 1;
+    private long logic_lastRender;
+    private long logic_now;
+    private int logic_frameCount = 0;
+    private int logic_lastFPS = 0;
+
     private Hud hud;
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
@@ -61,20 +75,21 @@ public class PlayScreen implements Screen{
     //Box2d variables
     private World world;
     private Box2DDebugRenderer b2dr;
-    //private FPSLogger fpsLogger;
+    private FPSLogger fpsLogger;
 
     //world bodies
+    private ArrayList<GameObject> objectsToRemove = new ArrayList<GameObject>();
     private Player player;
     private ArrayList<Pc> pcs = new ArrayList<Pc>();
     private ArrayList<InfoSign> infoSigns = new ArrayList<InfoSign>();
     private ArrayList<Door> doors = new ArrayList<Door>();
-    public static ArrayList<Rope> ropes; //TODO static :/
+    private ArrayList<Rope> ropes = new ArrayList<Rope>();
     private ArrayList<Item> items = new ArrayList<Item>();
     private ArrayList<Checkpoint> checkpoints = new ArrayList<Checkpoint>();
-    private ArrayList<Body> bodiesToRemove = new ArrayList<Body>();
     private ArrayList<FloatingPlatform> floatingPlatforms = new ArrayList<FloatingPlatform>();
     private ArrayList<Lever> levers = new ArrayList<Lever>();
     private ArrayList<Rectangle> markers = new ArrayList<Rectangle>();
+    private Quiz quiz;
     private Teleporter teleporter;
 
     //input
@@ -98,7 +113,7 @@ public class PlayScreen implements Screen{
         ropes = new ArrayList<Rope>();
 
         inputHandler = new InputHandler(this);
-        //fpsLogger = new FPSLogger();
+        fpsLogger = new FPSLogger();
         //GLProfiler.enable();
 
         //initialize camera and viewport
@@ -116,8 +131,8 @@ public class PlayScreen implements Screen{
         b2dr = new Box2DDebugRenderer();
 
         new B2WorldCreator(this); //create world
-
         player = new Player(world, checkpoints);
+        objectManager.addDynamicGameObject(player);
         hud = new Hud(this, game.sb);
 
         world.setContactListener(new B2WorldContactListener(this));
@@ -125,6 +140,8 @@ public class PlayScreen implements Screen{
 
         if(!MyGdxGame.platformDepended.deviceHasKeyboard())
             hud.newAndroidInputTable();
+        if(quiz!=null)
+            quiz.setHud(hud);
 
         //hud.showEditorWindow("1_1-0");
     }
@@ -141,49 +158,87 @@ public class PlayScreen implements Screen{
         HEIGHT = mapHeight * tilePixelHeight / MyGdxGame.PPM;
     }
 
-    /**
-     * Updates the window's parameters.
-     * @param dt -> delta time
-     */
-    public void update(float dt) {
-        if(MyGdxGame.platformDepended.deviceHasKeyboard())
-            inputHandler.handlePlayscreenInput();
-        else
-            inputHandler.handlePlayscreenAndroidInput();
+    public void render(float dt) {
+        if ( dt > 0.25f ) dt = 0.25f;	  // note: max frame time to avoid spiral of death
 
-        world.step(1/60f, 6, 2);
+        //System.out.println("DT: " +dt);
+        //FIXED TIMESTEP METHOD
+        accumulator += dt;
+        while (accumulator >= delta) {
+            objectManager.copyCurrentPosition(); //INTERPOLATION
+            updatePhysics(delta);
+            accumulator -= delta;
+            objectManager.interpolateCurrentPosition((float)(accumulator / delta)); //INTERPOLATION
 
-        cam.update();
-        renderer.setView(cam);
-
-        if(onScreenMsgAlpha>0) {
-            if (TimeUtils.timeSinceMillis(onScreenMsgMillis) > 2000)
-                onScreenMsgAlpha -= 1f * Gdx.graphics.getDeltaTime();
+            // FPS check
+            logic_frameCount ++;
+            logic_now = System.nanoTime();
+            if ((logic_now - logic_lastRender) >= logic_FPSupdateIntervall * 1000000000)  {
+                logic_lastFPS = logic_frameCount / logic_FPSupdateIntervall;
+                logic_frameCount = 0;
+                logic_lastRender = System.nanoTime();
+            }
         }
-
-        player.update(dt);
-        hud.update(dt);
-        if(inLineOfSight(teleporter.getBounds()))
-            teleporter.update(dt);
-        for(int i=0; i<doors.size(); i++)
-            doors.get(i).update(dt);
-        for(int i=0; i<ropes.size(); i++)
-            ropes.get(i).update(dt);
-        for(int i = 0; i< items.size(); i++)
-            items.get(i).update(dt);
-
-        if(player.getCurrentState() == Player.State.DISAPPEARED)
-            hud.showLevelCompletedWindow();
+        //System.out.println("LOGIC: " + logic_lastFPS);
+        update(dt);
+        rendering(dt);
     }
 
-    public void render(float dt) {
-        if(!hud.isPauseWindowShowing())
-            update(dt);
+    /**
+     * Updates the game's physics.
+     * @param dt -> delta time
+     */
+    private void updatePhysics(float dt) {
+        if(!hud.isPauseWindowShowing()) {
+            if (onScreenMsgAlpha > 0) {
+                if (TimeUtils.timeSinceMillis(onScreenMsgMillis) > 2000)
+                    onScreenMsgAlpha -= 1f * dt;
+            }
+
+            hud.update(dt);
+
+            //update all game objects
+            for(int i=0; i < objectManager.getDynamicGameObjectList().size(); i++)
+                objectManager.getDynamicGameObjectList().get(i).update(dt);
+
+            //TIMESTEP
+            world.step(dt, 6, 2);
+        }
+    }
+
+    private void update(float dt) {
+        if(!hud.isPauseWindowShowing()) {
+            if (MyGdxGame.platformDepended.deviceHasKeyboard())
+                inputHandler.handlePlayscreenInput(dt);
+            else
+                inputHandler.handlePlayscreenAndroidInput();
+
+            if (player.getCurrentState() == Player.State.DISAPPEARED)
+                hud.showLevelCompletedWindow();
+            if (player.isOutOfBounds() && player.getPlayerMsgAlpha() == 1)
+                player.respawnAtCheckpoint(ropes);
+        }
         else
             hud.getPauseWindow().handleExitFromPauseMenuInput();
+        cam.update();
+        renderer.setView(cam);
+    }
 
+    private void rendering(float dt) {
         //render our game map
         renderer.render();
+
+        //change projection matrix. (unscaled 1280x768)
+        game.sb.setProjectionMatrix(hud.stage.getCamera().combined);
+        game.sr.setProjectionMatrix(hud.stage.getCamera().combined);
+        game.sb.begin();
+        for (int i = 0; i < ropes.size(); i++) {
+            if (inLineOfSight(ropes.get(i).getBounds()))
+                ropes.get(i).drawPromptFont(game.sb);
+        }
+        if(quiz != null && inLineOfSight(quiz.getBounds()))
+            quiz.drawFont(game.sb);
+        game.sb.end();
 
         //set projection matrix according to world scaling. (1280x768 / 200)
         game.sb.setProjectionMatrix(cam.combined);
@@ -200,6 +255,8 @@ public class PlayScreen implements Screen{
             infoSigns.get(i).draw(game.sb, dt);
         for (int i=0; i<levers.size(); i++)
             levers.get(i).draw(game.sb, dt);
+        if(quiz!=null)
+            quiz.drawLevers(game.sb, dt);
         player.draw(game.sb);
         Gdx.gl.glDisable(GL20.GL_BLEND);
 
@@ -231,6 +288,8 @@ public class PlayScreen implements Screen{
             if (inLineOfSight(floatingPlatforms.get(i).getBounds()))
                 floatingPlatforms.get(i).drawRect(game.sr);
         }
+        if(quiz!=null && inLineOfSight(quiz.getBounds()))
+            quiz.drawFilled(game.sr);
         game.sr.end();
 
         //draw line shapes
@@ -248,6 +307,8 @@ public class PlayScreen implements Screen{
             if (inLineOfSight(floatingPlatforms.get(i).getBounds()))
                 floatingPlatforms.get(i).drawRect(game.sr);
         }
+        if(quiz!=null && inLineOfSight(quiz.getBounds()))
+            quiz.drawLine(game.sr);
         game.sr.end();
 
         //draw filled over line
@@ -272,15 +333,13 @@ public class PlayScreen implements Screen{
                 infoSigns.get(i).drawUsePrompt(game.sb);
             for (int i = 0; i < pcs.size(); i++)
                 pcs.get(i).drawUsePrompt(game.sb);
+            for (int i = 0; i < levers.size(); i++)
+                levers.get(i).drawUsePrompt(game.sb);
         }
+        if(quiz!=null && inLineOfSight(quiz.getBounds()))
+            quiz.drawFloatingPlatformsFont(game.sb);
         hud.drawFont(game.sb);
         drawOnScreenMsg();
-
-        if(Item.getnOfClasses() > 0) {
-            Fonts.small.setColor(Color.WHITE);
-            Fonts.small.draw(game.sb, "Classes found: " + player.getClasses().size() +"/" + Item.getnOfClasses(), 15, MyGdxGame.HEIGHT - 67);
-        }
-
         game.sb.end();
 
         //disable alpha
@@ -288,10 +347,9 @@ public class PlayScreen implements Screen{
 
         hud.drawStage(game.sb);
 
-
         //DEBUG
         //b2dr.render(world, cam.combined);
-        //fpsLogger.log();
+        fpsLogger.log();
         /*System.out.println("GL calls: " + GLProfiler.calls);
         System.out.println("GL drawCalls: " + GLProfiler.drawCalls);
         System.out.println("GL shaderSwitches: " + GLProfiler.shaderSwitches);
@@ -299,19 +357,18 @@ public class PlayScreen implements Screen{
         System.out.println("GL vertexCount: " + GLProfiler.vertexCount);
         GLProfiler.reset();*/
 
-
         enterKeyHandled = false;
         destroyUnusedBodies();
     }
 
     public void updateCameraPosition() {
         if(!player.isOutOfBounds()) {
-            if (player.b2body.getPosition().x + player.b2body.getLinearVelocity().x/MyGdxGame.PPM < cam.viewportWidth / 2)
+            if (player.position.x + player.b2body.getLinearVelocity().x/MyGdxGame.PPM < cam.viewportWidth / 2)
                 cam.position.x = cam.viewportWidth / 2;
-            else if(player.b2body.getPosition().x + player.b2body.getLinearVelocity().x/MyGdxGame.PPM > WIDTH - cam.viewportWidth / 2)
+            else if(player.position.x + player.b2body.getLinearVelocity().x/MyGdxGame.PPM > WIDTH - cam.viewportWidth / 2)
                 cam.position.x = WIDTH - cam.viewportWidth / 2;
             else
-                cam.position.x = player.b2body.getPosition().x + player.b2body.getLinearVelocity().x/MyGdxGame.PPM;
+                cam.position.x = player.position.x ; //+ player.b2body.getLinearVelocity().x/MyGdxGame.PPM
             //if(player.b2body.getPosition().y >= HEIGHT - HEIGHT/4) //TODO y camera
             //   cam.position.y = player.b2body.getPosition().y;
         }
@@ -347,10 +404,11 @@ public class PlayScreen implements Screen{
     }
 
     private void destroyUnusedBodies() {
-        for(int i=0; i<bodiesToRemove.size(); i++) {
-            world.destroyBody(bodiesToRemove.get(i));
+        for(int i = 0; i< objectsToRemove.size(); i++) {
+            objectManager.removeDynamicGameObject(objectsToRemove.get(i));
+            world.destroyBody(objectsToRemove.get(i).b2body);
         }
-        bodiesToRemove.clear();
+        objectsToRemove.clear();
     }
 
     public static float getHudCameraOffsetX() {
@@ -358,7 +416,9 @@ public class PlayScreen implements Screen{
                 + cam.viewportWidth / 2 * MyGdxGame.PPM;
     }
 
-    public void pause() {}
+    public void pause() {
+        hud.showPauseWindow();
+    }
 
     public void resume() {}
 
@@ -390,7 +450,7 @@ public class PlayScreen implements Screen{
         ropes = null;
         items = null;
         checkpoints = null;
-        bodiesToRemove = null;
+        objectsToRemove = null;
         floatingPlatforms = null;
         markers = null;
         teleporter = null;
@@ -441,8 +501,8 @@ public class PlayScreen implements Screen{
         return items;
     }
 
-    public ArrayList<Body> getBodiesToRemove() {
-        return bodiesToRemove;
+    public ArrayList<GameObject> getObjectsToRemove() {
+        return objectsToRemove;
     }
 
     public Hud getHud() {
@@ -471,5 +531,21 @@ public class PlayScreen implements Screen{
 
     public ArrayList<Lever> getLevers() {
         return levers;
+    }
+
+    public Quiz getQuiz() {
+        return quiz;
+    }
+
+    public void setQuiz(Quiz quiz) {
+        this.quiz = quiz;
+    }
+
+    public GameObjectManager getObjectManager() {
+        return objectManager;
+    }
+
+    public Teleporter getTeleporter() {
+        return teleporter;
     }
 }

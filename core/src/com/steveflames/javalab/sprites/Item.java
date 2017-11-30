@@ -6,14 +6,13 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
 import com.steveflames.javalab.MyGdxGame;
-import com.steveflames.javalab.sprites.InteractiveTileObject;
 import com.steveflames.javalab.tools.global.Loader;
 
 /**
  * Created by Flames on 19/10/2017.
  */
 
-public class Item extends InteractiveTileObject {
+public class Item extends GameObject {
 
     private int dir = 1;
     private Texture texture;

@@ -5,7 +5,9 @@ import com.badlogic.gdx.Input;
 import com.steveflames.javalab.MyGdxGame;
 import com.steveflames.javalab.scenes.Toast;
 import com.steveflames.javalab.screens.PlayScreen;
+import com.steveflames.javalab.sprites.FloatingPlatform;
 import com.steveflames.javalab.sprites.InfoSign;
+import com.steveflames.javalab.sprites.Lever;
 import com.steveflames.javalab.sprites.Pc;
 import com.steveflames.javalab.sprites.Player;
 
@@ -21,7 +23,7 @@ public class InputHandler {
         this.playScreen = playScreen;
     }
 
-    public void handlePlayscreenInput() {
+    public void handlePlayscreenInput(float dt) {
         if(!playScreen.getHud().getCurrentToast().isShowing() || playScreen.getHud().getCurrentToast() == null) {
             if(playScreen.getPlayer().canMove) {
                 //move player on key press
@@ -29,10 +31,10 @@ public class InputHandler {
                     playScreen.getPlayer().jump();
                 }
                 else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && playScreen.getPlayer().b2body.getLinearVelocity().x <= Player.PLAYERSPEED*10) {
-                    playScreen.getPlayer().runRight();
+                    playScreen.getPlayer().runRight(dt);
                 }
                 else if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && playScreen.getPlayer().b2body.getLinearVelocity().x >= -Player.PLAYERSPEED*10) {
-                    playScreen.getPlayer().runLeft();
+                    playScreen.getPlayer().runLeft(dt);
                 }
 
                 //use item
@@ -54,6 +56,18 @@ public class InputHandler {
                                     playScreen.getPlayer().b2body.setTransform(infoSign.getBounds().x / MyGdxGame.PPM + 0.17f, (infoSign.getBounds().y + playScreen.getPlayer().b2body.getPosition().y) / MyGdxGame.PPM + 0.3f, 0);
                                     playScreen.getPlayer().setCurrentState(Player.State.READING);
                                     playScreen.getHud().showInfoWindow(infoSign.getName(), infoSign.getText());
+                                }
+                            }
+                            if(playScreen.getQuiz()!=null) {
+                                for (FloatingPlatform floatingPlatform : playScreen.getQuiz().getFloatingPlatforms()) {
+                                    if (floatingPlatform.getLever().isUsable()) {
+                                        playScreen.getPlayer().b2body.setLinearVelocity(0, 0);
+                                        playScreen.getPlayer().b2body.setTransform(floatingPlatform.getLever().getB2body().getPosition().x - floatingPlatform.getLever().getBounds().width/2/MyGdxGame.PPM + 0.239f,
+                                                floatingPlatform.getLever().getB2body().getPosition().y + 0.08f, 0);
+                                        playScreen.getQuiz().pull(floatingPlatform);
+                                        if(floatingPlatform.isCorrect())
+                                            playScreen.getPlayer().showPlayerMsg("correct!");
+                                    }
                                 }
                             }
                         }
@@ -91,11 +105,11 @@ public class InputHandler {
             if (playScreen.getPlayer().canMove) {
                 if (playScreen.getHud().isRightBtnPressed()) {
                     if (playScreen.getPlayer().b2body.getLinearVelocity().x <= Player.PLAYERSPEED * 10)
-                        playScreen.getPlayer().runRight();
+                        playScreen.getPlayer().runRight(0.1f);
                 }
                 else if (playScreen.getHud().isLeftBtnPressed()) {
                     if (playScreen.getPlayer().b2body.getLinearVelocity().x >= -Player.PLAYERSPEED * 10)
-                        playScreen.getPlayer().runLeft();
+                        playScreen.getPlayer().runLeft(0.1f);
                 }
 
                 if (playScreen.getHud().isJumpBtnPressed()) {
@@ -121,6 +135,19 @@ public class InputHandler {
                                     playScreen.getPlayer().b2body.setTransform(infoSign.getBounds().x / MyGdxGame.PPM + 0.17f, (infoSign.getBounds().y + playScreen.getPlayer().b2body.getPosition().y) / MyGdxGame.PPM + 0.3f, 0);
                                     playScreen.getPlayer().setCurrentState(Player.State.READING);
                                     playScreen.getHud().showInfoWindow(infoSign.getName(), infoSign.getText());
+                                }
+                            }
+                            if(playScreen.getQuiz()!=null) {
+                                for (FloatingPlatform floatingPlatform : playScreen.getQuiz().getFloatingPlatforms()) {
+                                    if (floatingPlatform.getLever().isUsable()) {
+                                        playScreen.getPlayer().b2body.setLinearVelocity(0, 0);
+                                        playScreen.getPlayer().b2body.setTransform(floatingPlatform.getLever().getB2body().getPosition().x - floatingPlatform.getLever().getBounds().width/2/MyGdxGame.PPM + 0.239f,
+                                                floatingPlatform.getLever().getB2body().getPosition().y + 0.08f, 0);
+                                        playScreen.getQuiz().pull(floatingPlatform);
+                                        if(floatingPlatform.isCorrect())
+                                            playScreen.getPlayer().showPlayerMsg("correct!");
+                                        playScreen.getHud().hideUseBtn();
+                                    }
                                 }
                             }
                         }

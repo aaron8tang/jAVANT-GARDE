@@ -1,5 +1,6 @@
 package com.steveflames.javalab.tools;
 
+
 /**
  * Created by Flames on 12/10/2017.
  */

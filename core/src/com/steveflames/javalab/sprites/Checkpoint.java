@@ -3,13 +3,13 @@ package com.steveflames.javalab.sprites;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
-import com.steveflames.javalab.tools.MyFileReader;
+import com.steveflames.javalab.tools.global.MyFileReader;
 
 /**
  * Created by Flames on 11/10/2017.
  */
 
-public class Checkpoint extends InteractiveTileObject {
+public class Checkpoint extends GameObject {
 
     private boolean visited = false;
     private String text;

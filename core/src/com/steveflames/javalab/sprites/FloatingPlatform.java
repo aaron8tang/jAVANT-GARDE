@@ -7,39 +7,31 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
 import com.steveflames.javalab.MyGdxGame;
+import com.steveflames.javalab.scenes.Hud;
 import com.steveflames.javalab.screens.PlayScreen;
 import com.steveflames.javalab.tools.global.Fonts;
+
 
 /**
  * Created by Flames on 30/10/2017.
  */
 
-public class FloatingPlatform extends InteractiveTileObject {
+public class FloatingPlatform extends GameObject {
 
-    private String name;
+    private String name ="";
     private GlyphLayout glyphLayout = new GlyphLayout();
-    private boolean movingPlatformX = false;
-    private boolean colliding = false;
-    private int facing = 1;
+    private Lever lever;
+    private boolean correct = false;
 
-    public FloatingPlatform(String name, World world, TiledMap map, Rectangle bounds) {
+
+    public FloatingPlatform(String name, World world, TiledMap map, Rectangle bounds, Lever lever) {
         super(name, world, map, bounds, false);
         if(name.contains("_")) {
             String[] splitter = name.split("_");
             this.name = splitter[1];
         }
-        else {
-            this.name = "";
-            movingPlatformX = true;
-            b2body.setLinearVelocity(0.7f, 0);
-        }
         glyphLayout.setText(Fonts.small, this.name);
-        //b2body.setGravityScale(0);
-        //b2body.setType(BodyDef.BodyType.StaticBody);
-    }
-
-    public void update(float dt) {
-
+        this.lever = lever;
     }
 
     public void drawRect(ShapeRenderer sr) {
@@ -48,14 +40,49 @@ public class FloatingPlatform extends InteractiveTileObject {
 
     public void drawFont(SpriteBatch sb) {
         Fonts.small.draw(sb, name, b2body.getPosition().x*MyGdxGame.PPM - glyphLayout.width/2 + PlayScreen.getHudCameraOffsetX(), b2body.getPosition().y*MyGdxGame.PPM + glyphLayout.height/2);
+        if(lever != null)
+            lever.drawUsePrompt(sb);
     }
 
-    public int getFacing() {
-        return facing;
+    public void drawLever(SpriteBatch sb, float dt) {
+        lever.draw(sb, dt);
     }
 
-    public void setFacing(int facing) {
-        this.facing = facing;
+    public void quizReset(String name, Hud hud) {
+        b2body.setLinearVelocity(0,0);
+        correct = false;
+        lever.quizReset();
+        if(lever.isColliding()) {
+            lever.setUsable(true);
+            hud.showUseBtn("PULL");
+        }
+        b2body.setTransform((bounds.getX() + bounds.getWidth()/2)/ MyGdxGame.PPM, (bounds.getY() + bounds.getHeight()/2)/ MyGdxGame.PPM, 0);
+        setName(name);
+        if(name.equals(" ")) {
+            lever.setUsable(false);
+            lever.setManualPull(false);
+        }
+    }
+
+    public void quizPull() {
+        lever.pull();
+        if(!correct) {
+            b2body.setLinearVelocity(0, -3);
+            lever.b2body.setLinearVelocity(0, -3);
+        }
+    }
+
+    public void setName(String name) {
+        if(name.charAt(0) == '!')
+            correct = true;
+        this.name = name.substring(1);
+        glyphLayout.setText(Fonts.small, this.name);
+    }
+
+    public void setTransform(float x, float y, float angle) {
+        b2body.setTransform(x, y, angle);
+        bounds.setX(x*MyGdxGame.PPM);
+        bounds.setY(y*MyGdxGame.PPM);
     }
 
     @Override
@@ -63,9 +90,11 @@ public class FloatingPlatform extends InteractiveTileObject {
         return name;
     }
 
-    public void setTransform(float x, float y, float angle) {
-        b2body.setTransform(x, y, angle);
-        bounds.setX(x*MyGdxGame.PPM);
-        bounds.setY(y*MyGdxGame.PPM);
+    public Lever getLever() {
+        return lever;
+    }
+
+    public boolean isCorrect() {
+        return correct;
     }
 }

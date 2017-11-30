@@ -19,14 +19,16 @@ public class Loader {
     //world
     public static final TextureAtlas teleporterAtlas = new TextureAtlas(Gdx.files.internal("images/teleporter/teleporter.pack"));
     public static final Texture infoSignT = new Texture(Gdx.files.internal("images/infoSign.png"));
-    public static final Texture leverOpenT = new Texture(Gdx.files.internal("images/lever_open.png"));
     public static final Texture leverClosedT = new Texture(Gdx.files.internal("images/lever_closed.png"));
+    public static final Texture leverOpenT = new Texture(Gdx.files.internal("images/lever_open.png"));
 
     //hud
     public static final Texture heartT = new Texture(Gdx.files.internal("images/heart.png"));
     public static final Texture classT = new Texture(Gdx.files.internal("images/class.png"));
     public static final Texture fixT = new Texture(Gdx.files.internal("images/fix.png"));
     public static final Texture eyeT = new Texture(Gdx.files.internal("images/eye.png"));
+    public static final Texture handT = new Texture(Gdx.files.internal("images/hand.png"));
+    public static final TextureAtlas robotTalkingAtlas = new TextureAtlas(Gdx.files.internal("images/robotTalking/robot-antennas.pack"));
 
 
     //editor
@@ -43,14 +45,16 @@ public class Loader {
         //world
         teleporterAtlas.dispose();
         infoSignT.dispose();
-        leverOpenT.dispose();
         leverClosedT.dispose();
+        leverOpenT.dispose();
 
         //hud
         heartT.dispose();
         classT.dispose();
         fixT.dispose();
         eyeT.dispose();
+        handT.dispose();
+        robotTalkingAtlas.dispose();
 
         //editor
         keyboardUpTR.getTexture().dispose();

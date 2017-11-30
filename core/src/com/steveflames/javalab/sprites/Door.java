@@ -10,7 +10,7 @@ import com.steveflames.javalab.screens.PlayScreen;
  * Created by Flames on 15/10/2017.
  */
 
-public class Door extends InteractiveTileObject {
+public class Door extends GameObject {
 
     private boolean opening = false;
 

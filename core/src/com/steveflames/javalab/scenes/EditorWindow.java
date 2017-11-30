@@ -101,7 +101,7 @@ public class EditorWindow extends Window {
         if(MyGdxGame.platformDepended.deviceHasKeyboard())
             this.setSize(700, MyGdxGame.HEIGHT-213);
         else
-            this.setSize(700, MyGdxGame.HEIGHT-290);
+            this.setSize(700, MyGdxGame.HEIGHT-295);
         this.setX(MyGdxGame.WIDTH - this.getWidth());
         this.setY(195);
         this.add(topBarTable).expandX().fillX().top();
@@ -210,12 +210,21 @@ public class EditorWindow extends Window {
             if(codeTextArea.getSelection().length()==0) {
                 int pos = codeTextArea.getCursorPosition();
                 int charsToDelete = -1;
+                int deleteNextChar = 0;
                 StringBuilder stringBuilder = new StringBuilder();
 
                 int i = pos - 1;
-                if(i>0) {
-                    if (codeTextArea.getText().charAt(i) != ' ') //if character to delete is not space
+                if(i>0) { //if spaces, delete more than just one (max 4 = 1 tab)
+                    if (codeTextArea.getText().charAt(i) != ' ') { //if character to delete is not space
                         charsToDelete = 0;
+                        if(codeTextArea.getText().length()>i+1) {
+                            if (codeTextArea.getText().charAt(i) == '(' && codeTextArea.getText().charAt(i+1) == ')'
+                                    || codeTextArea.getText().charAt(i) == '[' && codeTextArea.getText().charAt(i+1) == ']'
+                                    || codeTextArea.getText().charAt(i) == '"' && codeTextArea.getText().charAt(i+1) == '"'
+                                    || codeTextArea.getText().charAt(i) == '\'' && codeTextArea.getText().charAt(i+1) == '\'')
+                                deleteNextChar = 1;
+                        }
+                    }
                     else {
                         while (i >= 0 && codeTextArea.getText().charAt(i) != '\n') { //delete up to 4 spaces (tab)
                             if (codeTextArea.getText().charAt(i) == ' ')
@@ -230,7 +239,7 @@ public class EditorWindow extends Window {
 
                     for (int j = 0; j < pos - charsToDelete; j++)
                         stringBuilder.append(codeTextArea.getText().charAt(j));
-                    for (int j = pos; j < codeTextArea.getText().length(); j++)
+                    for (int j = pos + deleteNextChar; j < codeTextArea.getText().length(); j++)
                         stringBuilder.append(codeTextArea.getText().charAt(j));
 
                     codeTextArea.setText(stringBuilder.toString());
@@ -377,15 +386,18 @@ public class EditorWindow extends Window {
             codeTextArea.setText(temp);
             codeTextArea.setCursorPosition(x);
         }
-        else if(character == '(') {
+        else if(character == '(' || character == '[') {
             String temp = codeTextArea.getText();
             int x = codeTextArea.getCursorPosition();
 
-            temp = temp.substring(0, x) + ')' + temp.substring(x, temp.length());
+            if(character == '(')
+                temp = temp.substring(0, x) + ')' + temp.substring(x, temp.length());
+            else
+                temp = temp.substring(0, x) + ']' + temp.substring(x, temp.length());
             codeTextArea.setText(temp);
             codeTextArea.setCursorPosition(x);
         }
-        else if(character == ')') {
+        else if(character == ')' || character == ']') {
             String temp = codeTextArea.getText();
             int x = codeTextArea.getCursorPosition();
 
