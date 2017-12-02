@@ -1,4 +1,4 @@
-package com.steveflames.javantgarde.quests;
+package com.steveflames.javantgarde.sprites;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -6,11 +6,11 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
-import com.steveflames.javantgarde.scenes.Hud;
+import com.steveflames.javantgarde.hud.Hud;
 import com.steveflames.javantgarde.screens.PlayScreen;
-import com.steveflames.javantgarde.sprites.Door;
-import com.steveflames.javantgarde.sprites.FloatingPlatform;
+import com.steveflames.javantgarde.tools.global.Cameras;
 import com.steveflames.javantgarde.tools.global.Fonts;
+import com.steveflames.javantgarde.tools.global.MyFileReader;
 
 import java.util.ArrayList;
 
@@ -18,7 +18,7 @@ import java.util.ArrayList;
  * Created by Flames on 21/11/2017.
  */
 
-public class Quiz extends com.steveflames.javantgarde.sprites.GameObject {
+public class Quiz extends GameObject {
 
     private ArrayList<String> questions = new ArrayList<String>();
     private ArrayList<String[]> answers = new ArrayList<String[]>();
@@ -35,7 +35,7 @@ public class Quiz extends com.steveflames.javantgarde.sprites.GameObject {
         super(name, world, map, bounds, true);
         this.id = id;
         this.doors = doors;
-        parseQuizString(com.steveflames.javantgarde.tools.global.MyFileReader.readFile("txt/quizes/"+name+".txt"));
+        parseQuizString(MyFileReader.readFile("txt/quizes/"+name+".txt"));
     }
 
     private void parseQuizString(String quiz) {
@@ -81,7 +81,7 @@ public class Quiz extends com.steveflames.javantgarde.sprites.GameObject {
         floatingPlatforms.get(i).drawLine(sr);
         sr.setColor(Color.CYAN);
         for(int i=0; i<questions.size()-1; i++) {
-            sr.rect(bounds.x + PlayScreen.getHudCameraOffsetX() + 10 + i*(bounds.width/(questions.size()-1)), bounds.y + bounds.height + 5, bounds.width/(questions.size()-1) - 20, 25);
+            sr.rect(bounds.x + Cameras.getHudCameraOffsetX() + 10 + i*(bounds.width/(questions.size()-1)), bounds.y + bounds.height + 5, bounds.width/(questions.size()-1) - 20, 25);
         }
     }
 
@@ -91,13 +91,13 @@ public class Quiz extends com.steveflames.javantgarde.sprites.GameObject {
         sr.setColor(Color.GREEN);
         for(int i=0; i<questions.size()-1; i++) {
             if(i<currentQuestion)
-                sr.rect(bounds.x + PlayScreen.getHudCameraOffsetX() + 10 + i*(bounds.width/(questions.size()-1)), bounds.y +bounds.height + 5, bounds.width/(questions.size()-1) - 20, 25);
+                sr.rect(bounds.x + Cameras.getHudCameraOffsetX() + 10 + i*(bounds.width/(questions.size()-1)), bounds.y +bounds.height + 5, bounds.width/(questions.size()-1) - 20, 25);
         }
     }
 
     public void drawFontInBackground(SpriteBatch sb) {
         Fonts.xsmallMonoMarkup.setColor(Color.WHITE);
-        Fonts.xsmallMonoMarkup.draw(sb, questions.get(currentQuestion), bounds.x + PlayScreen.getHudCameraOffsetX()+20, bounds.y +bounds.height - 20);
+        Fonts.xsmallMonoMarkup.draw(sb, questions.get(currentQuestion), bounds.x + Cameras.getHudCameraOffsetX()+20, bounds.y +bounds.height - 20);
     }
 
     public void drawFontScaled(SpriteBatch sb) { //draws the quizes levers

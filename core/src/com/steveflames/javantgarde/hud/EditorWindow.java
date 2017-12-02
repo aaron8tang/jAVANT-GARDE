@@ -1,4 +1,4 @@
-package com.steveflames.javantgarde.scenes;
+package com.steveflames.javantgarde.hud;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -17,6 +17,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.screens.PlayScreen;
 import com.steveflames.javantgarde.sprites.Pc;
+import com.steveflames.javantgarde.sprites.Player;
+import com.steveflames.javantgarde.tools.compiler.MyClass;
+import com.steveflames.javantgarde.tools.compiler.MyCompiler;
+import com.steveflames.javantgarde.tools.global.Cameras;
+import com.steveflames.javantgarde.tools.global.Skins;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -28,12 +33,12 @@ import java.util.Map;
 public class EditorWindow extends Window {
 
     private Pc currentPc;
-    private com.steveflames.javantgarde.tools.compiler.MyCompiler compiler;
-    private com.steveflames.javantgarde.scenes.Hud hud;
+    private MyCompiler compiler;
+    private Hud hud;
     private Table classesTable;
     private TextArea codeTextArea;
 
-    private ArrayList<com.steveflames.javantgarde.tools.compiler.MyClass> myClasses = new ArrayList<com.steveflames.javantgarde.tools.compiler.MyClass>();
+    private ArrayList<MyClass> myClasses = new ArrayList<MyClass>();
     //private String myClassCode;
     private int myClassCursorPosition =-1;
 
@@ -47,19 +52,19 @@ public class EditorWindow extends Window {
     private float tempCamX = - 1;
 
 
-    EditorWindow(String title, Skin skin, final com.steveflames.javantgarde.scenes.Hud hud) {
+    EditorWindow(String title, Skin skin, final Hud hud) {
         super(title, skin);
         this.hud = hud;
 
         //top bar
-        Table topBarTable = new Table(com.steveflames.javantgarde.tools.global.Skins.neonSkin);
-        TextButton exitBtn = new TextButton("x", com.steveflames.javantgarde.tools.global.Skins.neonSkin);
-        Table dummyTable = new Table(com.steveflames.javantgarde.tools.global.Skins.skin);
-        classesTable = new Table(com.steveflames.javantgarde.tools.global.Skins.skin);
-        TextButton classBtn = new TextButton("MyClass.java", com.steveflames.javantgarde.tools.global.Skins.neonSkin);
+        Table topBarTable = new Table(Skins.neonSkin);
+        TextButton exitBtn = new TextButton("x", Skins.neonSkin);
+        Table dummyTable = new Table(Skins.skin);
+        classesTable = new Table(Skins.skin);
+        TextButton classBtn = new TextButton("MyClass.java", Skins.neonSkin);
         classesTable.add(classBtn).left().height(50).padLeft(0);
         dummyTable.add(classesTable).left().expandX();
-        ScrollPane classesScroll = new ScrollPane(dummyTable, com.steveflames.javantgarde.tools.global.Skins.neonSkin);
+        ScrollPane classesScroll = new ScrollPane(dummyTable, Skins.neonSkin);
         if(MyGdxGame.platformDepended.deviceHasKeyboard())
             classesScroll.setFlickScroll(false);
 
@@ -68,29 +73,29 @@ public class EditorWindow extends Window {
         topBarTable.add(exitBtn).right().fill();
 
         //textArea
-        codeTextArea = new TextArea("", com.steveflames.javantgarde.tools.global.Skins.neonSkin);
+        codeTextArea = new TextArea("", Skins.neonSkin);
         codeTextArea.setFocusTraversal(false);
         codeTextArea.getStyle().fontColor = Color.WHITE;
 
         //lineNumTable
-        Table lineNumTable = new Table(com.steveflames.javantgarde.tools.global.Skins.neonSkin);
-        lineNumTable.add(new Label(1 + "", com.steveflames.javantgarde.tools.global.Skins.neonSkin)).width(60).height(codeTextArea.getStyle().font.getLineHeight());
+        Table lineNumTable = new Table(Skins.neonSkin);
+        lineNumTable.add(new Label(1 + "", Skins.neonSkin)).width(60).height(codeTextArea.getStyle().font.getLineHeight());
         for (int i = 1; i < 150; i++) {
             lineNumTable.row();
-            lineNumTable.add(new Label(i + 1 + "", com.steveflames.javantgarde.tools.global.Skins.neonSkin)).width(60).height(codeTextArea.getStyle().font.getLineHeight());
+            lineNumTable.add(new Label(i + 1 + "", Skins.neonSkin)).width(60).height(codeTextArea.getStyle().font.getLineHeight());
         }
 
         //codeTable
-        Table codeTable = new Table(com.steveflames.javantgarde.tools.global.Skins.lmlSkin);
+        Table codeTable = new Table(Skins.lmlSkin);
         codeTable.add(lineNumTable).top().left();
         codeTable.add(codeTextArea).top().expand().fill().width(1000).padTop(5); //todo otan pataw 1h grammh enter k meta click indexoutOfBouds
-        ScrollPane codeScroll = new ScrollPane(codeTable, com.steveflames.javantgarde.tools.global.Skins.neonSkin);       //todo kalutero textArea.. na valw height k scroll mono sto textArea
+        ScrollPane codeScroll = new ScrollPane(codeTable, Skins.neonSkin);       //todo kalutero textArea.. na valw height k scroll mono sto textArea
         if(MyGdxGame.platformDepended.deviceHasKeyboard())
             codeScroll.setFlickScroll(false);
 
         //bottom bar
-        TextButton compileAndRunBtn = new TextButton(" compile & run ", com.steveflames.javantgarde.tools.global.Skins.neonSkin);
-        Table bottomBarTable = new Table(com.steveflames.javantgarde.tools.global.Skins.neonSkin);
+        TextButton compileAndRunBtn = new TextButton(" compile & run ", Skins.neonSkin);
+        Table bottomBarTable = new Table(Skins.neonSkin);
         bottomBarTable.add(compileAndRunBtn).right().expandX().pad(0).height(60);
 
         //add components to window
@@ -106,11 +111,11 @@ public class EditorWindow extends Window {
         this.row();
         this.add(bottomBarTable).expandX().fillX();
 
-        consoleWindow = new ConsoleWindow("CONSOLE", com.steveflames.javantgarde.tools.global.Skins.skin, hud.stage);
-        questWindow = new QuestWindow("QUEST", com.steveflames.javantgarde.tools.global.Skins.skin, hud.stage);
+        consoleWindow = new ConsoleWindow("CONSOLE", Skins.skin, hud.stage);
+        questWindow = new QuestWindow("QUEST", Skins.skin, hud.stage);
         if(!MyGdxGame.platformDepended.deviceHasKeyboard())
-            androidExtraKeyboardWindow = new AndroidExtraKeyboardWindow("+KEYBOARD", com.steveflames.javantgarde.tools.global.Skins.skin, this);
-        compiler = new com.steveflames.javantgarde.tools.compiler.MyCompiler(consoleWindow.getConsoleTextArea());
+            androidExtraKeyboardWindow = new AndroidExtraKeyboardWindow("+KEYBOARD", Skins.skin, this);
+        compiler = new MyCompiler(consoleWindow.getConsoleTextArea());
 
 
         //ADD LISTENERS
@@ -172,17 +177,17 @@ public class EditorWindow extends Window {
                 if(!codeTextArea.isDisabled())
                     currentPc.setEditorText(codeTextArea.getText());
                 consoleWindow.getConsoleTextArea().setText("");
-                consoleWindow.getConsoleScroll().scrollTo(0, com.steveflames.javantgarde.scenes.Hud.viewport.getCamera().position.y + com.steveflames.javantgarde.scenes.Hud.viewport.getCamera().viewportHeight, 0, 0);
+                consoleWindow.getConsoleScroll().scrollTo(0, Cameras.hudPort.getCamera().position.y + Cameras.hudPort.getCamera().viewportHeight, 0, 0);
 
                 //store the class names and code
                 myClasses.clear();
-                myClasses.add(new com.steveflames.javantgarde.tools.compiler.MyClass("MyClass", currentPc.getEditorText()));
-                for(Map.Entry<String, String> entry: com.steveflames.javantgarde.scenes.Hud.playScreen.getPlayer().getClasses().entrySet())
-                    myClasses.add(new com.steveflames.javantgarde.tools.compiler.MyClass(entry.getKey(), entry.getValue()));
+                myClasses.add(new MyClass("MyClass", currentPc.getEditorText()));
+                for(Map.Entry<String, String> entry: Hud.playScreen.getPlayer().getClasses().entrySet())
+                    myClasses.add(new MyClass(entry.getKey(), entry.getValue()));
 
                 //compile and run todo
-                if(compiler.compile(myClasses) || (com.steveflames.javantgarde.scenes.Hud.playScreen.getCurrentLevel().getId().equals("1_1") && currentPc.getQuest().getProgress()==0)) {
-                    if (currentPc.getQuest().validateCodeForQuest(com.steveflames.javantgarde.scenes.Hud.playScreen, myClasses.get(0), currentPc.getQuest().getQuestN())) {
+                if(compiler.compile(myClasses) || (Hud.playScreen.getCurrentLevel().getId().equals("1_1") && currentPc.getQuest().getProgress()==0)) {
+                    if (currentPc.getQuest().validateCodeForQuest(Hud.playScreen, myClasses.get(0), currentPc.getQuest().getQuestN())) {
                         questWindow.incrementQuestStep(currentPc.getQuest());
                     }
                 }
@@ -411,9 +416,9 @@ public class EditorWindow extends Window {
 
     public void tempHideEditor(float camX, boolean hideConsole) {
         if(tempCamX == -1)
-            tempCamX = PlayScreen.cam.position.x;
+            tempCamX = Cameras.playScreenCam.position.x;
         if(camX != -1)
-            PlayScreen.cam.position.x = camX;
+            Cameras.playScreenCam.position.x = camX;
         this.remove();
         questWindow.remove();
         if(hideConsole)
@@ -424,7 +429,7 @@ public class EditorWindow extends Window {
     }
 
     private void tempShowEditor() {
-        PlayScreen.cam.position.x = tempCamX;
+        Cameras.playScreenCam.position.x = tempCamX;
         tempCamX = -1;
         hud.stage.addActor(this);
         hud.stage.addActor(questWindow);
@@ -438,13 +443,13 @@ public class EditorWindow extends Window {
 
     public void closeCurrentEditor() {
         if(this.getStage()!=null) {
-            com.steveflames.javantgarde.scenes.Hud.playScreen.getPlayer().setCurrentState(com.steveflames.javantgarde.sprites.Player.State.STANDING);
+            Hud.playScreen.getPlayer().setCurrentState(Player.State.STANDING);
             this.remove();
             consoleWindow.remove();
             questWindow.remove();
             if(!MyGdxGame.platformDepended.deviceHasKeyboard())
                 androidExtraKeyboardWindow.remove();
-            com.steveflames.javantgarde.scenes.Hud.showAndroidInputTable();
+            Hud.showAndroidInputTable();
 
             //save text to pc
             if(!codeTextArea.isDisabled())
@@ -452,7 +457,7 @@ public class EditorWindow extends Window {
 
             if(currentPc.getQuest().isCompleted()) { //if text completion has a toast, show it
                 if(currentPc.getQuest().getCompletedText()!= null)
-                    com.steveflames.javantgarde.scenes.Hud.newToast(currentPc.getQuest().getCompletedText());
+                    Hud.newToast(currentPc.getQuest().getCompletedText());
             }
         }
     }
@@ -469,7 +474,7 @@ public class EditorWindow extends Window {
 
         //add the myClasses that the player found in the editor
         boolean flag;
-        for(final Map.Entry<String, String> s : com.steveflames.javantgarde.scenes.Hud.playScreen.getPlayer().getClasses().entrySet()) {
+        for(final Map.Entry<String, String> s : Hud.playScreen.getPlayer().getClasses().entrySet()) {
             flag = true;
             for(Actor textBtn: classesTable.getChildren()) {
                 if(((TextButton)textBtn).getText().toString().equals(s.getKey()+".java")) {
@@ -478,7 +483,7 @@ public class EditorWindow extends Window {
                 }
             }
             if(flag) {
-                final TextButton btn = new TextButton(s.getKey() + ".java", com.steveflames.javantgarde.tools.global.Skins.neonSkin);
+                final TextButton btn = new TextButton(s.getKey() + ".java", Skins.neonSkin);
                 btn.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
@@ -508,7 +513,7 @@ public class EditorWindow extends Window {
         questWindow.show(hud.stage, currentPc.getQuest());
         if(!MyGdxGame.platformDepended.deviceHasKeyboard())
             androidExtraKeyboardWindow.show(hud.stage);
-        com.steveflames.javantgarde.scenes.Hud.hideAndroidInputTable();
+        Hud.hideAndroidInputTable();
     }
 
     void virtualTypeKey(char character) {

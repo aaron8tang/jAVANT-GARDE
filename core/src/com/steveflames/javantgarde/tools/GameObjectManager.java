@@ -1,4 +1,4 @@
-package com.steveflames.javantgarde;
+package com.steveflames.javantgarde.tools;
 
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.steveflames.javantgarde.sprites.GameObject;

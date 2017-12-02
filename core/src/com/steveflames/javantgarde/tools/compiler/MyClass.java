@@ -11,7 +11,7 @@ public class MyClass {
     private String name;
     private String code;
     private ArrayList<MyVariable> fields = new ArrayList<MyVariable>();
-    private ArrayList<com.steveflames.javantgarde.tools.compiler.MyMethod> methods = new ArrayList<com.steveflames.javantgarde.tools.compiler.MyMethod>();
+    private ArrayList<MyMethod> methods = new ArrayList<MyMethod>();
     private ArrayList<String> errors = new ArrayList<String>();
     private ArrayList<String> methodsCalled = new ArrayList<String>();
 
@@ -24,7 +24,7 @@ public class MyClass {
         this.code = code;
 
         if(name.equals("Lever")) {
-            methods.add(new com.steveflames.javantgarde.tools.compiler.MyMethod("package", "void", "pull", new ArrayList<MyVariable>(), ""));
+            methods.add(new MyMethod("package", "void", "pull", new ArrayList<MyVariable>(), ""));
         }
     }
 
@@ -72,11 +72,11 @@ public class MyClass {
         return classDeclared;
     }
 
-    public ArrayList<com.steveflames.javantgarde.tools.compiler.MyMethod> getMethods() {
+    public ArrayList<MyMethod> getMethods() {
         return methods;
     }
 
-    public void addMethod(com.steveflames.javantgarde.tools.compiler.MyMethod method) {
+    public void addMethod(MyMethod method) {
         methods.add(method);
     }
 

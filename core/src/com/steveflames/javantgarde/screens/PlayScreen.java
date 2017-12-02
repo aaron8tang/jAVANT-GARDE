@@ -19,6 +19,17 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.steveflames.javantgarde.MyGdxGame;
+import com.steveflames.javantgarde.hud.Hud;
+import com.steveflames.javantgarde.sprites.*;
+import com.steveflames.javantgarde.sprites.ropes.Rope;
+import com.steveflames.javantgarde.tools.B2WorldContactListener;
+import com.steveflames.javantgarde.tools.B2WorldCreator;
+import com.steveflames.javantgarde.tools.GameObjectManager;
+import com.steveflames.javantgarde.tools.InputHandler;
+import com.steveflames.javantgarde.tools.LevelListItem;
+import com.steveflames.javantgarde.tools.global.Cameras;
+import com.steveflames.javantgarde.tools.global.Fonts;
 
 import java.util.ArrayList;
 
@@ -28,13 +39,11 @@ import java.util.ArrayList;
 
 public class PlayScreen implements Screen{
 
-    private com.steveflames.javantgarde.MyGdxGame game;
+    private MyGdxGame game;
     private static float WIDTH;
     private static float HEIGHT;
     private static final int GRAVITY = -20;
-    private static Viewport gamePort;
-    public static OrthographicCamera cam;
-    public static com.steveflames.javantgarde.tools.LevelListItem currentLevel;
+    public static LevelListItem currentLevel;
 
     //fixed timestep
     private double accumulator = 0;
@@ -45,7 +54,7 @@ public class PlayScreen implements Screen{
     private int logic_frameCount = 0;
     private int logic_lastFPS = 0;
 
-    private com.steveflames.javantgarde.scenes.Hud hud;
+    private Hud hud;
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
 
@@ -54,24 +63,24 @@ public class PlayScreen implements Screen{
     private Box2DDebugRenderer b2dr;
     private FPSLogger fpsLogger;
 
-    private com.steveflames.javantgarde.GameObjectManager objectManager = new com.steveflames.javantgarde.GameObjectManager();
+    private GameObjectManager objectManager = new GameObjectManager();
     //world bodies
-    private ArrayList<com.steveflames.javantgarde.sprites.GameObject> objectsToRemove = new ArrayList<com.steveflames.javantgarde.sprites.GameObject>();
-    private com.steveflames.javantgarde.sprites.Player player;
-    private ArrayList<com.steveflames.javantgarde.sprites.Pc> pcs = new ArrayList<com.steveflames.javantgarde.sprites.Pc>();
-    private ArrayList<com.steveflames.javantgarde.sprites.InfoSign> infoSigns = new ArrayList<com.steveflames.javantgarde.sprites.InfoSign>();
-    private ArrayList<com.steveflames.javantgarde.sprites.Door> doors = new ArrayList<com.steveflames.javantgarde.sprites.Door>();
-    private ArrayList<com.steveflames.javantgarde.sprites.ropes.Rope> ropes = new ArrayList<com.steveflames.javantgarde.sprites.ropes.Rope>();
-    private ArrayList<com.steveflames.javantgarde.sprites.Item> items = new ArrayList<com.steveflames.javantgarde.sprites.Item>();
-    private ArrayList<com.steveflames.javantgarde.sprites.Checkpoint> checkpoints = new ArrayList<com.steveflames.javantgarde.sprites.Checkpoint>();
-    private ArrayList<com.steveflames.javantgarde.sprites.FloatingPlatform> floatingPlatforms = new ArrayList<com.steveflames.javantgarde.sprites.FloatingPlatform>();
-    private ArrayList<com.steveflames.javantgarde.sprites.Lever> levers = new ArrayList<com.steveflames.javantgarde.sprites.Lever>();
+    private ArrayList<GameObject> objectsToRemove = new ArrayList<GameObject>();
+    private Player player;
+    private ArrayList<Pc> pcs = new ArrayList<Pc>();
+    private ArrayList<InfoSign> infoSigns = new ArrayList<InfoSign>();
+    private ArrayList<Door> doors = new ArrayList<Door>();
+    private ArrayList<Rope> ropes = new ArrayList<Rope>();
+    private ArrayList<Item> items = new ArrayList<Item>();
+    private ArrayList<Checkpoint> checkpoints = new ArrayList<Checkpoint>();
+    private ArrayList<FloatingPlatform> floatingPlatforms = new ArrayList<FloatingPlatform>();
+    private ArrayList<Lever> levers = new ArrayList<Lever>();
     private ArrayList<Rectangle> markers = new ArrayList<Rectangle>();
-    private ArrayList<com.steveflames.javantgarde.quests.Quiz> quizes = new ArrayList<com.steveflames.javantgarde.quests.Quiz>();
-    private com.steveflames.javantgarde.sprites.Teleporter teleporter;
+    private ArrayList<Quiz> quizes = new ArrayList<Quiz>();
+    private Teleporter teleporter;
 
     //input
-    private com.steveflames.javantgarde.tools.InputHandler inputHandler;
+    private InputHandler inputHandler;
     private boolean enterKeyHandled = false;
 
     //onScreenMsg
@@ -81,44 +90,42 @@ public class PlayScreen implements Screen{
     private GlyphLayout onScreenMsgGlyphLayout2 = new GlyphLayout();
 
 
-    public PlayScreen(com.steveflames.javantgarde.MyGdxGame game, com.steveflames.javantgarde.tools.LevelListItem level) {
+    public PlayScreen(MyGdxGame game, LevelListItem level) {
         this.game = game;
         Gdx.input.setCatchBackKey(true);
         currentLevel = level;
         currentLevel.setName(currentLevel.getName().replaceAll("\n", " "));
-        onScreenMsgGlyphLayout1.setText(com.steveflames.javantgarde.tools.global.Fonts.medium, currentLevel.getName());
-        onScreenMsgGlyphLayout2.setText(com.steveflames.javantgarde.tools.global.Fonts.big, currentLevel.getCategoryName());
-        ropes = new ArrayList<com.steveflames.javantgarde.sprites.ropes.Rope>();
+        onScreenMsgGlyphLayout1.setText(Fonts.medium, currentLevel.getName());
+        onScreenMsgGlyphLayout2.setText(Fonts.big, currentLevel.getCategoryName());
+        ropes = new ArrayList<Rope>();
 
-        inputHandler = new com.steveflames.javantgarde.tools.InputHandler(this);
+        inputHandler = new InputHandler(this);
         fpsLogger = new FPSLogger();
         //GLProfiler.enable();
-
-        //initialize camera and viewport
-        cam = new OrthographicCamera();
-        cam.setToOrtho(false, com.steveflames.javantgarde.MyGdxGame.WIDTH / com.steveflames.javantgarde.MyGdxGame.PPM, com.steveflames.javantgarde.MyGdxGame.HEIGHT / com.steveflames.javantgarde.MyGdxGame.PPM);
-        gamePort = new StretchViewport(com.steveflames.javantgarde.MyGdxGame.WIDTH / com.steveflames.javantgarde.MyGdxGame.PPM, com.steveflames.javantgarde.MyGdxGame.HEIGHT / com.steveflames.javantgarde.MyGdxGame.PPM); //TODO: h mhpws fit
 
         //initialize map
         TmxMapLoader mapLoader = new TmxMapLoader();
         map = mapLoader.load("tiled/level-"+level.getId()+".tmx");
-        renderer = new OrthogonalTiledMapRenderer(map, 1 / com.steveflames.javantgarde.MyGdxGame.PPM);
+        renderer = new OrthogonalTiledMapRenderer(map, 1 / MyGdxGame.PPM);
         setMapProperties(map);
+
+        //initialize camera and viewport
+        Cameras.load(WIDTH, HEIGHT);
 
         world = new World(new Vector2(0, GRAVITY), true);
         b2dr = new Box2DDebugRenderer();
 
-        new com.steveflames.javantgarde.tools.B2WorldCreator(this); //create world
-        player = new com.steveflames.javantgarde.sprites.Player(world, checkpoints);
+        new B2WorldCreator(this); //create world
+        player = new Player(world, checkpoints);
         objectManager.addGameObject(player);
-        hud = new com.steveflames.javantgarde.scenes.Hud(this, game.sb);
+        hud = new Hud(this, game.sb);
 
-        world.setContactListener(new com.steveflames.javantgarde.tools.B2WorldContactListener(this));
+        world.setContactListener(new B2WorldContactListener(this));
         onScreenMsgMillis = TimeUtils.millis();
 
-        if(!com.steveflames.javantgarde.MyGdxGame.platformDepended.deviceHasKeyboard())
+        if(!MyGdxGame.platformDepended.deviceHasKeyboard())
             hud.newAndroidInputTable();
-        com.steveflames.javantgarde.quests.Quiz.setHud(hud);
+        Quiz.setHud(hud);
 
         //hud.showEditorWindow("1_1-0");
     }
@@ -131,8 +138,8 @@ public class PlayScreen implements Screen{
         int tilePixelWidth = prop.get("tilewidth", Integer.class);
         int tilePixelHeight = prop.get("tileheight", Integer.class);
 
-        WIDTH = mapWidth * tilePixelWidth / com.steveflames.javantgarde.MyGdxGame.PPM;
-        HEIGHT = mapHeight * tilePixelHeight / com.steveflames.javantgarde.MyGdxGame.PPM;
+        WIDTH = mapWidth * tilePixelWidth / MyGdxGame.PPM;
+        HEIGHT = mapHeight * tilePixelHeight / MyGdxGame.PPM;
     }
 
     public void render(float dt) {
@@ -191,12 +198,12 @@ public class PlayScreen implements Screen{
         if(!hud.isPauseWindowShowing()) { //game not paused
             inputHandler.handleInput();
 
-            if (player.getCurrentState() == com.steveflames.javantgarde.sprites.Player.State.DISAPPEARED)
+            if (player.getCurrentState() == Player.State.DISAPPEARED)
                 hud.showLevelCompletedWindow();
-            else if (player.getCurrentState() == com.steveflames.javantgarde.sprites.Player.State.DEAD)
+            else if (player.getCurrentState() == Player.State.DEAD)
                 hud.showGameOverWindow();
-            else if (player.getCurrentState() != com.steveflames.javantgarde.sprites.Player.State.CODING)
-                updateCameraPosition();
+            else if (player.getCurrentState() != Player.State.CODING)
+                Cameras.updateCameraPosition(player);
 
             if (player.isOutOfBounds() && player.getPlayerMsgAlpha() == 1)
                 player.respawnAtCheckpoint(ropes);
@@ -204,8 +211,8 @@ public class PlayScreen implements Screen{
         else //game paused
             hud.getPauseWindow().handleExitFromPauseMenuInput();
 
-        cam.update();
-        renderer.setView(cam);
+        Cameras.playScreenCam.update();
+        renderer.setView(Cameras.playScreenCam);
     }
 
     private void rendering() {
@@ -220,10 +227,10 @@ public class PlayScreen implements Screen{
         //draw textures and fonts in background (some fonts must be behind the player (different layout)) (unscaled)
         game.sb.begin();
         for (int i = 0; i < ropes.size(); i++)
-            if (inLineOfSightX(ropes.get(i)))
+            if (Cameras.inLineOfSight(ropes.get(i)))
                 ropes.get(i).drawFontInBackground(game.sb);
         for (int i = 0; i < quizes.size(); i++)
-            if (inLineOfSightX(quizes.get(i)))
+            if (Cameras.inLineOfSight(quizes.get(i)))
                 quizes.get(i).drawFontInBackground(game.sb);
         game.sb.end();
 
@@ -232,8 +239,8 @@ public class PlayScreen implements Screen{
 
 
         //***********set projection matrix according to world SCALE (1280x768 / 200)***********
-        game.sb.setProjectionMatrix(cam.combined);
-        game.sr.setProjectionMatrix(cam.combined);
+        game.sb.setProjectionMatrix(Cameras.playScreenCam.combined);
+        game.sr.setProjectionMatrix(Cameras.playScreenCam.combined);
         //enable alpha
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -242,7 +249,7 @@ public class PlayScreen implements Screen{
         game.sb.setColor(Color.WHITE);
         game.sb.begin();
         for(int i=0; i<objectManager.getGameObjects().size(); i++)
-            if (inLineOfSight(objectManager.getGameObjects().get(i)))
+            if (Cameras.inLineOfSight(objectManager.getGameObjects().get(i)))
                 objectManager.getGameObjects().get(i).drawFontScaled(game.sb);
         game.sb.end();
 
@@ -260,7 +267,7 @@ public class PlayScreen implements Screen{
         //draw filled shapes (unscaled)
         game.sr.begin(ShapeRenderer.ShapeType.Filled);
         for(int i=0; i<objectManager.getGameObjects().size(); i++)
-            if(inLineOfSight(objectManager.getGameObjects().get(i)))
+            if(Cameras.inLineOfSight(objectManager.getGameObjects().get(i)))
                 objectManager.getGameObjects().get(i).drawFilled(game.sr);
         game.sr.end();
 
@@ -268,7 +275,7 @@ public class PlayScreen implements Screen{
         game.sr.begin(ShapeRenderer.ShapeType.Line);
 
         for(int i=0; i<objectManager.getGameObjects().size(); i++)
-            if(inLineOfSight(objectManager.getGameObjects().get(i)))
+            if(Cameras.inLineOfSight(objectManager.getGameObjects().get(i)))
                 objectManager.getGameObjects().get(i).drawLine(game.sr);
         game.sr.end();
 
@@ -280,10 +287,10 @@ public class PlayScreen implements Screen{
         //draw fonts and textures (unscaled)
         game.sb.begin();
         for(int i=0; i<objectManager.getGameObjects().size(); i++)
-            if(inLineOfSight(objectManager.getGameObjects().get(i)))
+            if(Cameras.inLineOfSight(objectManager.getGameObjects().get(i)))
                 objectManager.getGameObjects().get(i).drawFont(game.sb);
         //draw the use item prompts
-        if (player.getCurrentState() != com.steveflames.javantgarde.sprites.Player.State.READING && player.getCurrentState() != com.steveflames.javantgarde.sprites.Player.State.CODING) { //if player is coding or reading sign, dont draw the use prompt
+        if (player.getCurrentState() != Player.State.READING && player.getCurrentState() != Player.State.CODING) { //if player is coding or reading sign, dont draw the use prompt
             for (int i = 0; i < infoSigns.size(); i++)
                 infoSigns.get(i).drawUsePrompt(game.sb);
             for (int i = 0; i < pcs.size(); i++)
@@ -314,57 +321,20 @@ public class PlayScreen implements Screen{
         GLProfiler.reset();*/
     }
 
-    public void updateCameraPosition() {
-        if(!player.isOutOfBounds()) {
-            if (player.position.x + player.b2body.getLinearVelocity().x/ com.steveflames.javantgarde.MyGdxGame.PPM < cam.viewportWidth / 2)
-                cam.position.x = cam.viewportWidth / 2;
-            else if(player.position.x + player.b2body.getLinearVelocity().x/ com.steveflames.javantgarde.MyGdxGame.PPM > WIDTH - cam.viewportWidth / 2)
-                cam.position.x = WIDTH - cam.viewportWidth / 2;
-            else
-                cam.position.x = player.position.x;
-        }
-    }
-
-    private boolean inLineOfSight(com.steveflames.javantgarde.sprites.GameObject gameObject) {
-        return (inLineOfSightX(gameObject) && inLineOfSightY(gameObject));
-    }
-
-    private boolean inLineOfSightX(com.steveflames.javantgarde.sprites.GameObject gameObject) {
-        float extra = 0;
-        if(gameObject instanceof com.steveflames.javantgarde.sprites.ropes.Rope)
-            extra = 1;
-        return Math.abs(cam.position.x - gameObject.b2body.getPosition().x) < (cam.viewportWidth/2 + gameObject.getBounds().getWidth()/2/ com.steveflames.javantgarde.MyGdxGame.PPM + extra);
-    }
-
-    private boolean inLineOfSightY(com.steveflames.javantgarde.sprites.GameObject gameObject) {
-        return Math.abs(cam.position.y - gameObject.b2body.getPosition().y) < (cam.viewportHeight/2 + gameObject.getBounds().getHeight()/2/ com.steveflames.javantgarde.MyGdxGame.PPM);
-    }
-
-    public static float getHudCameraOffsetX() {
-        return -cam.position.x * com.steveflames.javantgarde.MyGdxGame.PPM + cam.viewportWidth / 2 * com.steveflames.javantgarde.MyGdxGame.PPM;
-    }
-
-    public static void setCameraTo(float x) {
-        if(x < 0)
-            x = 0;
-        else if(x > WIDTH - cam.viewportWidth/2)
-            x = WIDTH - cam.viewportWidth/2;
-        cam.position.x = x;
-    }
 
     private void drawOnScreenMsg() {
         if(onScreenMsgAlpha>0) {
-            com.steveflames.javantgarde.tools.global.Fonts.big.setColor(1, 0, 0, onScreenMsgAlpha);
-            com.steveflames.javantgarde.tools.global.Fonts.medium.setColor(1, 0, 0, onScreenMsgAlpha);
-            com.steveflames.javantgarde.tools.global.Fonts.big.draw(game.sb, currentLevel.getCategoryName(), cam.viewportWidth/2 * com.steveflames.javantgarde.MyGdxGame.PPM - onScreenMsgGlyphLayout2.width / 2, cam.viewportHeight/2 * com.steveflames.javantgarde.MyGdxGame.PPM + 110);
-            com.steveflames.javantgarde.tools.global.Fonts.medium.draw(game.sb, currentLevel.getName(), cam.viewportWidth/2 * com.steveflames.javantgarde.MyGdxGame.PPM - onScreenMsgGlyphLayout1.width / 2, cam.viewportHeight/2 * com.steveflames.javantgarde.MyGdxGame.PPM + 15);
+            Fonts.big.setColor(1, 0, 0, onScreenMsgAlpha);
+            Fonts.medium.setColor(1, 0, 0, onScreenMsgAlpha);
+            Fonts.big.draw(game.sb, currentLevel.getCategoryName(), Cameras.playScreenCam.viewportWidth/2 * MyGdxGame.PPM - onScreenMsgGlyphLayout2.width / 2, Cameras.playScreenCam.viewportHeight/2 * MyGdxGame.PPM + 110);
+            Fonts.medium.draw(game.sb, currentLevel.getName(), Cameras.playScreenCam.viewportWidth/2 * MyGdxGame.PPM - onScreenMsgGlyphLayout1.width / 2, Cameras.playScreenCam.viewportHeight/2 * MyGdxGame.PPM + 15);
         }
     }
 
     @Override
     public void resize(int width, int height) {
-        gamePort.update(width, height);
-        hud.getViewport().update(width, height);
+        Cameras.playScreenPort.update(width, height);
+        Cameras.hudPort.update(width, height);
     }
 
     @Override
@@ -402,13 +372,13 @@ public class PlayScreen implements Screen{
         b2dr.dispose();
         hud.dispose();
         ropes.clear();
-        com.steveflames.javantgarde.sprites.Item.reset();
+        Item.reset();
 
         for(int i=0; i<objectManager.getGameObjects().size(); i++)
             objectManager.clearGameObjects();
     }
 
-    public com.steveflames.javantgarde.sprites.Player getPlayer() {
+    public Player getPlayer() {
         return player;
     }
 
@@ -420,27 +390,27 @@ public class PlayScreen implements Screen{
         return world;
     }
 
-    public ArrayList<com.steveflames.javantgarde.sprites.Pc> getPcs() {
+    public ArrayList<Pc> getPcs() {
         return pcs;
     }
 
-    public ArrayList<com.steveflames.javantgarde.sprites.InfoSign> getInfoSigns() {
+    public ArrayList<InfoSign> getInfoSigns() {
         return infoSigns;
     }
 
-    public ArrayList<com.steveflames.javantgarde.sprites.ropes.Rope> getRopes() {
+    public ArrayList<Rope> getRopes() {
         return ropes;
     }
 
-    public ArrayList<com.steveflames.javantgarde.sprites.Checkpoint> getCheckpoints() {
+    public ArrayList<Checkpoint> getCheckpoints() {
         return checkpoints;
     }
 
-    public com.steveflames.javantgarde.tools.LevelListItem getCurrentLevel() {
+    public LevelListItem getCurrentLevel() {
         return currentLevel;
     }
 
-    public ArrayList<com.steveflames.javantgarde.sprites.Door> getDoors() {
+    public ArrayList<Door> getDoors() {
         return doors;
     }
 
@@ -448,19 +418,19 @@ public class PlayScreen implements Screen{
         this.enterKeyHandled = enterKeyHandled;
     }
 
-    public ArrayList<com.steveflames.javantgarde.sprites.Item> getItems() {
+    public ArrayList<Item> getItems() {
         return items;
     }
 
-    public ArrayList<com.steveflames.javantgarde.sprites.GameObject> getObjectsToRemove() {
+    public ArrayList<GameObject> getObjectsToRemove() {
         return objectsToRemove;
     }
 
-    public com.steveflames.javantgarde.scenes.Hud getHud() {
+    public Hud getHud() {
         return hud;
     }
 
-    public void setTeleporter(com.steveflames.javantgarde.sprites.Teleporter teleporter) {
+    public void setTeleporter(Teleporter teleporter) {
         this.teleporter = teleporter;
     }
 
@@ -468,7 +438,7 @@ public class PlayScreen implements Screen{
         return enterKeyHandled;
     }
 
-    public ArrayList<com.steveflames.javantgarde.sprites.FloatingPlatform> getFloatingPlatforms() {
+    public ArrayList<FloatingPlatform> getFloatingPlatforms() {
         return floatingPlatforms;
     }
 
@@ -476,23 +446,23 @@ public class PlayScreen implements Screen{
         return markers;
     }
 
-    public com.steveflames.javantgarde.MyGdxGame getGame() {
+    public MyGdxGame getGame() {
         return game;
     }
 
-    public ArrayList<com.steveflames.javantgarde.sprites.Lever> getLevers() {
+    public ArrayList<Lever> getLevers() {
         return levers;
     }
 
-    public ArrayList<com.steveflames.javantgarde.quests.Quiz> getQuizes() {
+    public ArrayList<Quiz> getQuizes() {
         return quizes;
     }
 
-    public com.steveflames.javantgarde.GameObjectManager getObjectManager() {
+    public GameObjectManager getObjectManager() {
         return objectManager;
     }
 
-    public com.steveflames.javantgarde.sprites.Teleporter getTeleporter() {
+    public Teleporter getTeleporter() {
         return teleporter;
     }
 }

@@ -1,4 +1,4 @@
-package com.steveflames.javantgarde.scenes;
+package com.steveflames.javantgarde.hud;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.steveflames.javantgarde.MyGdxGame;
+import com.steveflames.javantgarde.tools.global.Skins;
 
 /**
  * Created by Flames on 10/11/2017.
@@ -24,13 +25,13 @@ public class ConsoleWindow extends Window {
         super(title, skin);
 
         //textArea of console window
-        Table table = new Table(com.steveflames.javantgarde.tools.global.Skins.neonSkin);
-        consoleTextArea = new Label("", com.steveflames.javantgarde.tools.global.Skins.skin);
+        Table table = new Table(Skins.neonSkin);
+        consoleTextArea = new Label("", Skins.skin);
         consoleTextArea.setWrap(true);
         //consoleTextArea.setDisabled(true);
         table.add(consoleTextArea).expand().fillX().left().top().padLeft(5);
 
-        consoleScroll = new ScrollPane(table, com.steveflames.javantgarde.tools.global.Skins.neonSkin);
+        consoleScroll = new ScrollPane(table, Skins.neonSkin);
         //scroll.setFadeScrollBars(false);
         if(MyGdxGame.platformDepended.deviceHasKeyboard())
             consoleScroll.setFlickScroll(false);

@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.screens.PlayScreen;
+import com.steveflames.javantgarde.tools.global.Cameras;
 import com.steveflames.javantgarde.tools.global.Fonts;
 import com.steveflames.javantgarde.tools.global.Loader;
 
@@ -33,7 +34,7 @@ public class Lever extends GameObject {
     public void drawUsePrompt(SpriteBatch sb) {
         if(usable) {
             Fonts.medium.setColor(Color.RED);
-            sb.draw(Loader.handT, b2body.getPosition().x*MyGdxGame.PPM - 25 + PlayScreen.getHudCameraOffsetX(), b2body.getPosition().y*MyGdxGame.PPM + bounds.height/2 + 40, 50, 50);
+            sb.draw(Loader.handT, b2body.getPosition().x*MyGdxGame.PPM - 25 + Cameras.getHudCameraOffsetX(), b2body.getPosition().y*MyGdxGame.PPM + bounds.height/2 + 40, 50, 50);
         }
     }
 

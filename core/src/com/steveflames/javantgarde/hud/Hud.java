@@ -1,4 +1,4 @@
-package com.steveflames.javantgarde.scenes;
+package com.steveflames.javantgarde.hud;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -16,9 +16,15 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.screens.PlayScreen;
+import com.steveflames.javantgarde.sprites.Item;
 import com.steveflames.javantgarde.sprites.Pc;
+import com.steveflames.javantgarde.sprites.Player;
+import com.steveflames.javantgarde.tools.global.Cameras;
 import com.steveflames.javantgarde.tools.global.Fonts;
+import com.steveflames.javantgarde.tools.global.Loader;
+import com.steveflames.javantgarde.tools.global.Skins;
 
 
 /**
@@ -28,7 +34,6 @@ public class Hud implements Disposable {
 
     static PlayScreen playScreen;
     private static Toast toast;
-    static Viewport viewport;
 
     //hud components
     public Stage stage;
@@ -51,13 +56,12 @@ public class Hud implements Disposable {
 
     public Hud(final PlayScreen playScreen, SpriteBatch sb) {
         Hud.playScreen = playScreen;
-        viewport = new StretchViewport(com.steveflames.javantgarde.MyGdxGame.WIDTH, com.steveflames.javantgarde.MyGdxGame.HEIGHT, new OrthographicCamera());
-        stage = new Stage(viewport, sb);
+        stage = new Stage(Cameras.hudPort, sb);
         toast = new Toast();
-        editorWindow = new EditorWindow("EDITOR", com.steveflames.javantgarde.tools.global.Skins.skin, this);
-        pauseWindow = new PauseWindow("GAME PAUSED", com.steveflames.javantgarde.tools.global.Skins.skin, playScreen);
-        gameOverWindow = new GameOverWindow(com.steveflames.javantgarde.tools.global.Skins.neonSkin, playScreen);
-        levelCompletedWindow = new LevelCompletedWindow(com.steveflames.javantgarde.tools.global.Skins.neonSkin, playScreen);
+        editorWindow = new EditorWindow("EDITOR", Skins.skin, this);
+        pauseWindow = new PauseWindow("GAME PAUSED", Skins.skin, playScreen);
+        gameOverWindow = new GameOverWindow(Skins.neonSkin, playScreen);
+        levelCompletedWindow = new LevelCompletedWindow(Skins.neonSkin, playScreen);
         Gdx.input.setInputProcessor(stage);
     }
 
@@ -81,12 +85,12 @@ public class Hud implements Disposable {
 
     public void drawFont(SpriteBatch sb) {
         if(playScreen.getPlayer().getHealth() > 0) {
-            if(com.steveflames.javantgarde.sprites.Item.getnOfClasses() > 0) {
+            if(Item.getnOfClasses() > 0) {
                 Fonts.small.setColor(Color.WHITE);
-                Fonts.small.draw(sb, "Classes found: " + playScreen.getPlayer().getClasses().size() +"/" + com.steveflames.javantgarde.sprites.Item.getnOfClasses(), 15, com.steveflames.javantgarde.MyGdxGame.HEIGHT - 67);
+                Fonts.small.draw(sb, "Classes found: " + playScreen.getPlayer().getClasses().size() +"/" + Item.getnOfClasses(), 15, MyGdxGame.HEIGHT - 67);
             }
             for(int i = 0; i< playScreen.getPlayer().getHealth(); i++)
-                sb.draw(com.steveflames.javantgarde.tools.global.Loader.heartT, 20 +(60*i), com.steveflames.javantgarde.MyGdxGame.HEIGHT - 60, 50, 50);
+                sb.draw(Loader.heartT, 20 +(60*i), MyGdxGame.HEIGHT - 60, 50, 50);
         }
 
         if(toast.isShowing())
@@ -99,9 +103,9 @@ public class Hud implements Disposable {
     }
 
     public void newAndroidInputTable() {
-        androidInputTable = new Table(com.steveflames.javantgarde.tools.global.Skins.neonSkin);
-        androidInputTable.setSize(com.steveflames.javantgarde.MyGdxGame.WIDTH, 120);
-        final TextButton leftBtn = new TextButton("<", com.steveflames.javantgarde.tools.global.Skins.neonSkin);
+        androidInputTable = new Table(Skins.neonSkin);
+        androidInputTable.setSize(MyGdxGame.WIDTH, 120);
+        final TextButton leftBtn = new TextButton("<", Skins.neonSkin);
         leftBtn.addListener(new ClickListener() {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
@@ -121,7 +125,7 @@ public class Hud implements Disposable {
                 }
             }
         });
-        final TextButton rightBtn = new TextButton(">", com.steveflames.javantgarde.tools.global.Skins.neonSkin);
+        final TextButton rightBtn = new TextButton(">", Skins.neonSkin);
         rightBtn.addListener(new ClickListener() {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
@@ -141,7 +145,7 @@ public class Hud implements Disposable {
                 }
             }
         });
-        useBtn = new TextButton("USE", com.steveflames.javantgarde.tools.global.Skins.neonSkin);
+        useBtn = new TextButton("USE", Skins.neonSkin);
         useBtn.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -154,7 +158,7 @@ public class Hud implements Disposable {
                 useBtnPressed = false;
             }
         });
-        TextButton jumpBtn = new TextButton("JUMP", com.steveflames.javantgarde.tools.global.Skins.neonSkin);
+        TextButton jumpBtn = new TextButton("JUMP", Skins.neonSkin);
         jumpBtn.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -169,10 +173,10 @@ public class Hud implements Disposable {
         });
 
 
-        Table leftTable = new Table(com.steveflames.javantgarde.tools.global.Skins.neonSkin);
+        Table leftTable = new Table(Skins.neonSkin);
         leftTable.add(leftBtn).left().width(150).height(120).expandX();
         leftTable.add(rightBtn).left().width(150).height(120).expandX();
-        Table rightTable = new Table(com.steveflames.javantgarde.tools.global.Skins.neonSkin);
+        Table rightTable = new Table(Skins.neonSkin);
         rightTable.add(useBtn).right().width(200).height(120).expandX();
         rightTable.add(jumpBtn).right().width(200).height(120).expandX();
 
@@ -185,12 +189,12 @@ public class Hud implements Disposable {
     }
 
     static void showAndroidInputTable() {
-        if(!com.steveflames.javantgarde.MyGdxGame.platformDepended.deviceHasKeyboard())
+        if(!MyGdxGame.platformDepended.deviceHasKeyboard())
             androidInputTable.setVisible(true);
     }
 
     static void hideAndroidInputTable() {
-        if(!com.steveflames.javantgarde.MyGdxGame.platformDepended.deviceHasKeyboard())
+        if(!MyGdxGame.platformDepended.deviceHasKeyboard())
             androidInputTable.setVisible(false);
     }
 
@@ -203,13 +207,13 @@ public class Hud implements Disposable {
     }
 
     public void showInfoWindow(String name, String text) {
-        infoDialog = new Dialog("", com.steveflames.javantgarde.tools.global.Skins.skin, "dialog") {
+        infoDialog = new Dialog("", Skins.skin, "dialog") {
             public void result(Object obj) {
                 closeCurrentInfo();
             }
         };
         currentInfoSignName = name;
-        TextButton dummy = new TextButton("", com.steveflames.javantgarde.tools.global.Skins.neonSkin);
+        TextButton dummy = new TextButton("", Skins.neonSkin);
         infoDialog.button("     OK     ", true, dummy.getStyle()).setHeight(100); //sends "true" as the result
         infoDialog.key(Input.Keys.ENTER, true); //sends "true" when the ENTER key is pressed
         infoDialog.text(text);
@@ -238,7 +242,7 @@ public class Hud implements Disposable {
     public void closeCurrentInfo() {
         if(infoDialog.getStage()!=null)
             infoDialog.remove();
-        playScreen.getPlayer().setCurrentState(com.steveflames.javantgarde.sprites.Player.State.STANDING);
+        playScreen.getPlayer().setCurrentState(Player.State.STANDING);
 
         playScreen.setEnterKeyHandled(true);
         if(currentInfoSignName.equals("info-1_1-0") || currentInfoSignName.equals("info-7_1-0"))
@@ -252,14 +256,14 @@ public class Hud implements Disposable {
     }
 
     public void showUseBtn(String text) {
-        if(!com.steveflames.javantgarde.MyGdxGame.platformDepended.deviceHasKeyboard()) {
+        if(!MyGdxGame.platformDepended.deviceHasKeyboard()) {
             useBtn.setVisible(true);
             useBtn.setText(text);
         }
     }
 
     public void hideUseBtn() {
-        if(!com.steveflames.javantgarde.MyGdxGame.platformDepended.deviceHasKeyboard())
+        if(!MyGdxGame.platformDepended.deviceHasKeyboard())
             useBtn.setVisible(false);
     }
 
@@ -274,10 +278,6 @@ public class Hud implements Disposable {
 
     public boolean isPauseWindowShowing() {
         return pauseWindow!=null && pauseWindow.getStage() != null;
-    }
-
-    public Viewport getViewport() {
-        return viewport;
     }
 
     public PauseWindow getPauseWindow() {
@@ -305,12 +305,12 @@ public class Hud implements Disposable {
     }
 
     public void setUseBtnPressed() {
-        if(!com.steveflames.javantgarde.MyGdxGame.platformDepended.deviceHasKeyboard())
+        if(!MyGdxGame.platformDepended.deviceHasKeyboard())
             this.useBtnPressed = false;
     }
 
     public void setJumpBtnPressed() {
-        if(!com.steveflames.javantgarde.MyGdxGame.platformDepended.deviceHasKeyboard())
+        if(!MyGdxGame.platformDepended.deviceHasKeyboard())
             this.jumpBtnPressed = false;
     }
 }

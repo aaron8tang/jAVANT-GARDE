@@ -7,7 +7,11 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
+import com.steveflames.javantgarde.MyGdxGame;
+import com.steveflames.javantgarde.hud.Hud;
 import com.steveflames.javantgarde.screens.PlayScreen;
+import com.steveflames.javantgarde.tools.global.Cameras;
+import com.steveflames.javantgarde.tools.global.Fonts;
 
 
 /**
@@ -28,7 +32,7 @@ public class FloatingPlatform extends GameObject {
             String[] splitter = name.split("_");
             this.name = splitter[1];
         }
-        glyphLayout.setText(com.steveflames.javantgarde.tools.global.Fonts.small, this.name);
+        glyphLayout.setText(Fonts.small, this.name);
         this.lever = lever;
     }
 
@@ -36,17 +40,17 @@ public class FloatingPlatform extends GameObject {
 
     public void drawFilled(ShapeRenderer sr) {
         sr.setColor(0.21f, 0.18f, 0.17f, 1);
-        sr.rect(b2body.getPosition().x* com.steveflames.javantgarde.MyGdxGame.PPM + PlayScreen.getHudCameraOffsetX() - bounds.width/2, b2body.getPosition().y* com.steveflames.javantgarde.MyGdxGame.PPM - bounds.height/2, bounds.width, bounds.height);
+        sr.rect(b2body.getPosition().x* MyGdxGame.PPM + Cameras.getHudCameraOffsetX() - bounds.width/2, b2body.getPosition().y* MyGdxGame.PPM - bounds.height/2, bounds.width, bounds.height);
     }
 
     public void drawLine(ShapeRenderer sr) {
         sr.setColor(Color.BLACK);
-        sr.rect(b2body.getPosition().x* com.steveflames.javantgarde.MyGdxGame.PPM + PlayScreen.getHudCameraOffsetX() - bounds.width/2, b2body.getPosition().y* com.steveflames.javantgarde.MyGdxGame.PPM - bounds.height/2, bounds.width, bounds.height);
+        sr.rect(b2body.getPosition().x* MyGdxGame.PPM + Cameras.getHudCameraOffsetX() - bounds.width/2, b2body.getPosition().y* MyGdxGame.PPM - bounds.height/2, bounds.width, bounds.height);
     }
 
     public void drawFont(SpriteBatch sb) {
-        com.steveflames.javantgarde.tools.global.Fonts.small.setColor(Color.WHITE);
-        com.steveflames.javantgarde.tools.global.Fonts.small.draw(sb, name, b2body.getPosition().x* com.steveflames.javantgarde.MyGdxGame.PPM - glyphLayout.width/2 + PlayScreen.getHudCameraOffsetX(), b2body.getPosition().y* com.steveflames.javantgarde.MyGdxGame.PPM + glyphLayout.height/2);
+        Fonts.small.setColor(Color.WHITE);
+        Fonts.small.draw(sb, name, b2body.getPosition().x* MyGdxGame.PPM - glyphLayout.width/2 + Cameras.getHudCameraOffsetX(), b2body.getPosition().y* MyGdxGame.PPM + glyphLayout.height/2);
         if(lever != null)
             lever.drawUsePrompt(sb);
     }
@@ -58,7 +62,7 @@ public class FloatingPlatform extends GameObject {
             lever.drawFontScaled(sb);
     }
 
-    public void quizReset(String name, com.steveflames.javantgarde.scenes.Hud hud) {
+    public void quizReset(String name, Hud hud) {
         b2body.setLinearVelocity(0,0);
         correct = false;
         if(!name.equals("$")) { //not empty answer
@@ -67,7 +71,7 @@ public class FloatingPlatform extends GameObject {
                 lever.setUsable(true);
                 hud.showUseBtn("PULL");
             }
-            b2body.setTransform((bounds.getX() + bounds.getWidth() / 2) / com.steveflames.javantgarde.MyGdxGame.PPM, (bounds.getY() + bounds.getHeight() / 2) / com.steveflames.javantgarde.MyGdxGame.PPM, 0);
+            b2body.setTransform((bounds.getX() + bounds.getWidth() / 2) / MyGdxGame.PPM, (bounds.getY() + bounds.getHeight() / 2) / MyGdxGame.PPM, 0);
             setName(name);
             if (name.equals(" ")) {
                 lever.setUsable(false);
@@ -92,13 +96,13 @@ public class FloatingPlatform extends GameObject {
         if(name.charAt(0) == '!')
             correct = true;
         this.name = name.substring(1);
-        glyphLayout.setText(com.steveflames.javantgarde.tools.global.Fonts.small, this.name);
+        glyphLayout.setText(Fonts.small, this.name);
     }
 
     public void setTransform(float x, float y, float angle) {
         b2body.setTransform(x, y, angle);
-        bounds.setX(x* com.steveflames.javantgarde.MyGdxGame.PPM);
-        bounds.setY(y* com.steveflames.javantgarde.MyGdxGame.PPM);
+        bounds.setX(x* MyGdxGame.PPM);
+        bounds.setY(y* MyGdxGame.PPM);
     }
 
     @Override

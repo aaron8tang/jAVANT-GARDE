@@ -7,8 +7,13 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
+import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.screens.PlayScreen;
+import com.steveflames.javantgarde.sprites.GameObject;
+import com.steveflames.javantgarde.tools.GameObjectManager;
+import com.steveflames.javantgarde.tools.global.Cameras;
 import com.steveflames.javantgarde.tools.global.Fonts;
+import com.steveflames.javantgarde.tools.global.MyFileReader;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,7 +23,7 @@ import java.util.Random;
  * Created by Flames on 10/10/2017.
  */
 
-public class Rope extends com.steveflames.javantgarde.sprites.GameObject {
+public class Rope extends GameObject {
 
     private ArrayList<Platform> platforms = new ArrayList<Platform>();
     private boolean active = true;
@@ -27,9 +32,9 @@ public class Rope extends com.steveflames.javantgarde.sprites.GameObject {
     private String prompt = "";
     private GlyphLayout glyphLayout = new GlyphLayout();
 
-    public Rope(String name, World world, TiledMap map, Rectangle bounds, com.steveflames.javantgarde.GameObjectManager objectManager) {
+    public Rope(String name, World world, TiledMap map, Rectangle bounds, GameObjectManager objectManager) {
         super(name, world, map, bounds, true);
-        String text = com.steveflames.javantgarde.tools.global.MyFileReader.readFile("txt/ropes/"+name+".txt");
+        String text = MyFileReader.readFile("txt/ropes/"+name+".txt");
         String[] lineSplitter = text.split("\r\n");
         String[] attributeSplitter;
         Random random = new Random();
@@ -51,7 +56,7 @@ public class Rope extends com.steveflames.javantgarde.sprites.GameObject {
             }
             else
                 platforms.add(new Platform(s, world, map, new Rectangle(bounds.x + bounds.width/2 - 100,
-                        bounds.y + bounds.height + (randExtraY + 2.5f*i)* com.steveflames.javantgarde.MyGdxGame.PPM, 200, 50)));
+                        bounds.y + bounds.height + (randExtraY + 2.5f*i)* MyGdxGame.PPM, 200, 50)));
             i++;
         }
         glyphLayout.setText(Fonts.small, prompt);
@@ -82,7 +87,7 @@ public class Rope extends com.steveflames.javantgarde.sprites.GameObject {
 
     public void drawFontInBackground(SpriteBatch sb) {
         Fonts.small.setColor(Color.ORANGE);
-        Fonts.small.draw(sb, prompt, bounds.x - 95 + PlayScreen.getHudCameraOffsetX() - glyphLayout.width/2, (bounds.y + bounds.height) - glyphLayout.height/2 - 5);
+        Fonts.small.draw(sb, prompt, bounds.x - 95 + Cameras.getHudCameraOffsetX() - glyphLayout.width/2, (bounds.y + bounds.height) - glyphLayout.height/2 - 5);
     }
 
     public void reset() {

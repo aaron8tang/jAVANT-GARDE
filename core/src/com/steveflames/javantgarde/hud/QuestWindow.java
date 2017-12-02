@@ -1,4 +1,4 @@
-package com.steveflames.javantgarde.scenes;
+package com.steveflames.javantgarde.hud;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -13,6 +13,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.quests.Quest;
+import com.steveflames.javantgarde.tools.global.Cameras;
+import com.steveflames.javantgarde.tools.global.Skins;
 
 /**
  * Created by Flames on 10/11/2017.
@@ -30,18 +32,18 @@ class QuestWindow extends Window {
         super(title, skin);
 
         //quest text area
-        Table table = new Table(com.steveflames.javantgarde.tools.global.Skins.lmlSkin);
-        questTextArea = new Label("", com.steveflames.javantgarde.tools.global.Skins.skin);
+        Table table = new Table(Skins.lmlSkin);
+        questTextArea = new Label("", Skins.skin);
         questTextArea.setWrap(true);
         table.add(questTextArea).left().top().expand().fillX().padLeft(5);
-        questScroll = new ScrollPane(table, com.steveflames.javantgarde.tools.global.Skins.neonSkin);
+        questScroll = new ScrollPane(table, Skins.neonSkin);
         if(MyGdxGame.platformDepended.deviceHasKeyboard())
             questScroll.setFlickScroll(false);
 
         //bottom bar
-        Table bottomBarTable = new Table(com.steveflames.javantgarde.tools.global.Skins.lmlSkin);
-        progressBar = new ProgressBar(0, 3, 1, false, com.steveflames.javantgarde.tools.global.Skins.neonSkin);
-        helpBtn = new TextButton("help", com.steveflames.javantgarde.tools.global.Skins.neonSkin);
+        Table bottomBarTable = new Table(Skins.lmlSkin);
+        progressBar = new ProgressBar(0, 3, 1, false, Skins.neonSkin);
+        helpBtn = new TextButton("help", Skins.neonSkin);
         helpBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -88,7 +90,7 @@ class QuestWindow extends Window {
         quest.setProgress(quest.getProgress()+1);
         progressBar.setValue(quest.getProgress());
 
-        questScroll.scrollTo(0, Hud.viewport.getCamera().position.y + Hud.viewport.getCamera().viewportHeight, 0, 0);
+        questScroll.scrollTo(0, Cameras.hudPort.getCamera().position.y + Cameras.hudPort.getCamera().viewportHeight, 0, 0);
         if(quest.getProgress() < quest.getSize()) {
             questTextArea.setText(quest.getCurrentQuestStep().getText());
             helpBtn.setVisible(false);

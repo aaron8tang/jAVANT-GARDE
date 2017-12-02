@@ -1,4 +1,4 @@
-package com.steveflames.javantgarde.scenes;
+package com.steveflames.javantgarde.hud;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -8,7 +8,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.steveflames.javantgarde.MyGdxGame;
+import com.steveflames.javantgarde.screens.ChooseLevelScreen;
 import com.steveflames.javantgarde.screens.PlayScreen;
+import com.steveflames.javantgarde.tools.global.Skins;
 
 /**
  * Created by Flames on 10/11/2017.
@@ -21,14 +23,14 @@ public class PauseWindow extends Window {
         this.setSize(800,500);
         this.setPosition(MyGdxGame.WIDTH/2 - this.getWidth()/2, MyGdxGame.HEIGHT/2 - this.getHeight()/2);
 
-        TextButton resumeBtn = new TextButton("RESUME", com.steveflames.javantgarde.tools.global.Skins.neonSkin);
+        TextButton resumeBtn = new TextButton("RESUME", Skins.neonSkin);
         resumeBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 remove();
             }
         });
-        TextButton restartBtn = new TextButton("RESTART LEVEL", com.steveflames.javantgarde.tools.global.Skins.neonSkin);
+        TextButton restartBtn = new TextButton("RESTART LEVEL", Skins.neonSkin);
         restartBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -36,12 +38,12 @@ public class PauseWindow extends Window {
                 playScreen.getGame().setScreen(new PlayScreen(playScreen.getGame(), playScreen.getCurrentLevel()));
             }
         });
-        TextButton exitBtn = new TextButton("EXIT", com.steveflames.javantgarde.tools.global.Skins.neonSkin);
+        TextButton exitBtn = new TextButton("EXIT", Skins.neonSkin);
         exitBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 playScreen.dispose();
-                playScreen.getGame().setScreen(new com.steveflames.javantgarde.screens.ChooseLevelScreen(playScreen.getGame()));
+                playScreen.getGame().setScreen(new ChooseLevelScreen(playScreen.getGame()));
             }
         });
 

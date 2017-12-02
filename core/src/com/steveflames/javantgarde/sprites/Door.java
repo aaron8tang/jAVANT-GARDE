@@ -7,6 +7,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
 import com.steveflames.javantgarde.screens.PlayScreen;
+import com.steveflames.javantgarde.tools.global.Cameras;
 
 /**
  * Created by Flames on 15/10/2017.
@@ -35,12 +36,12 @@ public class Door extends GameObject {
 
     public void drawFilled(ShapeRenderer sr) {
         sr.setColor(0.21f, 0.18f, 0.17f, 1);
-        sr.rect(bounds.x + PlayScreen.getHudCameraOffsetX(), bounds.y, bounds.width, bounds.height);
+        sr.rect(bounds.x + Cameras.getHudCameraOffsetX(), bounds.y, bounds.width, bounds.height);
     }
 
     public void drawLine(ShapeRenderer sr) {
         sr.setColor(Color.BLACK);
-        sr.rect(bounds.x + PlayScreen.getHudCameraOffsetX(), bounds.y, bounds.width, bounds.height);
+        sr.rect(bounds.x + Cameras.getHudCameraOffsetX(), bounds.y, bounds.width, bounds.height);
     }
 
     public void open() {

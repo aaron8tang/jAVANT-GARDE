@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.tools.LevelListItem;
+import com.steveflames.javantgarde.tools.global.Skins;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -48,36 +49,36 @@ public class ChooseLevelScreen implements Screen{
         viewport = new StretchViewport(MyGdxGame.WIDTH, MyGdxGame.HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, game.sb);
 
-        Window window = new Window("", com.steveflames.javantgarde.tools.global.Skins.skin);
+        Window window = new Window("", Skins.skin);
         window.setFillParent(true);
         window.top();
 
-        Table topTable = new Table(com.steveflames.javantgarde.tools.global.Skins.neonSkin);
-        TextButton backBtn = new TextButton("< BACK  ", com.steveflames.javantgarde.tools.global.Skins.neonSkin);
+        Table topTable = new Table(Skins.neonSkin);
+        TextButton backBtn = new TextButton("< BACK  ", Skins.neonSkin);
         topTable.add(backBtn).expandX().left();
         topTable.top();
         window.add(topTable).expandX().left();
         window.row();
 
-        Table mainTable = new Table(com.steveflames.javantgarde.tools.global.Skins.skin);
-        ScrollPane scroll = new ScrollPane(mainTable, com.steveflames.javantgarde.tools.global.Skins.neonSkin);
+        Table mainTable = new Table(Skins.skin);
+        ScrollPane scroll = new ScrollPane(mainTable, Skins.neonSkin);
         window.add(scroll).expandX().fillX().left();
 
         ArrayList<Table> categoryTables = new ArrayList<Table>();
         for(String category : categories.keySet()) {
             //new categoryTable
-            categoryTables.add(new Table(com.steveflames.javantgarde.tools.global.Skins.skin));
-            categoryTables.get(categoryTables.size()-1).add(new Label(category, com.steveflames.javantgarde.tools.global.Skins.neonSkin)).expandX().fillX().left().top();
+            categoryTables.add(new Table(Skins.skin));
+            categoryTables.get(categoryTables.size()-1).add(new Label(category, Skins.neonSkin)).expandX().fillX().left().top();
             categoryTables.get(categoryTables.size()-1).row();
 
             ArrayList<Table> levelTables = new ArrayList<Table>();
-            Table levelsTable = new Table(com.steveflames.javantgarde.tools.global.Skins.skin);
+            Table levelsTable = new Table(Skins.skin);
             for(final LevelListItem level : categories.get(category)) {
                 //create new level table
-                levelTables.add(new Table(com.steveflames.javantgarde.tools.global.Skins.skin).padRight(20));
+                levelTables.add(new Table(Skins.skin).padRight(20));
                 //levelTables.get(levelTables.size()-1).add(new Label("Level " + level.getName(), Skins.neonSkin)).expandX().left();
                 //levelTables.get(levelTables.size()-1).row();
-                final TextButton levelBtn = new TextButton(level.getName(), com.steveflames.javantgarde.tools.global.Skins.neonSkin);
+                final TextButton levelBtn = new TextButton(level.getName(), Skins.neonSkin);
                 levelBtn.addListener(new ClickListener() {
                      @Override
                      public void clicked(InputEvent event, float x, float y) {

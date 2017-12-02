@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.screens.PlayScreen;
 import com.steveflames.javantgarde.sprites.GameObject;
+import com.steveflames.javantgarde.tools.global.Cameras;
 import com.steveflames.javantgarde.tools.global.Fonts;
 
 /**
@@ -44,17 +45,17 @@ public class Platform extends GameObject {
 
     public void drawFilled(ShapeRenderer sr) {
         sr.setColor(0.21f, 0.18f, 0.17f, alpha);
-        sr.rect(position.x*MyGdxGame.PPM + PlayScreen.getHudCameraOffsetX() - bounds.width/2 , position.y*MyGdxGame.PPM - bounds.height/2, bounds.width, bounds.height);
+        sr.rect(position.x*MyGdxGame.PPM + Cameras.getHudCameraOffsetX() - bounds.width/2 , position.y*MyGdxGame.PPM - bounds.height/2, bounds.width, bounds.height);
     }
 
     public void drawLine(ShapeRenderer sr) {
         sr.setColor(0, 0, 0, alpha);
-        sr.rect(position.x*MyGdxGame.PPM + PlayScreen.getHudCameraOffsetX() - bounds.width/2 , position.y*MyGdxGame.PPM - bounds.height/2, bounds.width, bounds.height);
+        sr.rect(position.x*MyGdxGame.PPM + Cameras.getHudCameraOffsetX() - bounds.width/2 , position.y*MyGdxGame.PPM - bounds.height/2, bounds.width, bounds.height);
     }
 
     public void drawFont(SpriteBatch sb) {
         Fonts.small.setColor(1, 1, 1, alpha);
-        Fonts.small.draw(sb, text, position.x * MyGdxGame.PPM + PlayScreen.getHudCameraOffsetX() - glyphLayout.width/2, position.y * MyGdxGame.PPM + glyphLayout.height/2);
+        Fonts.small.draw(sb, text, position.x * MyGdxGame.PPM + Cameras.getHudCameraOffsetX() - glyphLayout.width/2, position.y * MyGdxGame.PPM + glyphLayout.height/2);
     }
 
     public void drawFontScaled(SpriteBatch sb) {}

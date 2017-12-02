@@ -8,7 +8,8 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.steveflames.javantgarde.MyGdxGame;
-import com.steveflames.javantgarde.quests.Quiz;
+import com.steveflames.javantgarde.sprites.Item;
+import com.steveflames.javantgarde.sprites.Quiz;
 import com.steveflames.javantgarde.screens.PlayScreen;
 import com.steveflames.javantgarde.sprites.Checkpoint;
 import com.steveflames.javantgarde.sprites.Door;
@@ -84,13 +85,13 @@ public class B2WorldCreator {
                 Rectangle rect = ((RectangleMapObject) object).getRectangle();
                 if(object.getName() != null) {
                     if (object.getName().equals("health")) {
-                        com.steveflames.javantgarde.sprites.Item item = new com.steveflames.javantgarde.sprites.Item(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect);
+                        Item item = new Item(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect);
                         item.setUsable(true);
                         playScreen.getItems().add(item);
                         playScreen.getObjectManager().addGameObject(playScreen.getItems().get(playScreen.getItems().size()-1));
                     }
                     else if(object.getName().contains("class")) {
-                        com.steveflames.javantgarde.sprites.Item item = new com.steveflames.javantgarde.sprites.Item(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect);
+                        Item item = new Item(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect);
                         item.setUsable(true);
                         playScreen.getItems().add(item);
                         playScreen.getObjectManager().addGameObject(playScreen.getItems().get(playScreen.getItems().size()-1));

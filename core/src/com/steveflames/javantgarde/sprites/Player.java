@@ -11,9 +11,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.steveflames.javantgarde.MyGdxGame;
-import com.steveflames.javantgarde.screens.PlayScreen;
 import com.steveflames.javantgarde.sprites.ropes.Rope;
+import com.steveflames.javantgarde.tools.global.Cameras;
 import com.steveflames.javantgarde.tools.global.Fonts;
+import com.steveflames.javantgarde.tools.global.Loader;
+import com.steveflames.javantgarde.tools.global.MyFileReader;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -31,7 +33,7 @@ public class Player extends GameObject {
     private State currentState;
     private State previousState;
     private boolean outOfBounds = false;
-    private ArrayList<com.steveflames.javantgarde.sprites.Checkpoint> checkpoints;
+    private ArrayList<Checkpoint> checkpoints;
     private int currentCheckpointIndex = 0;
     private int health = 5;
     private LinkedHashMap<String, String> classes = new LinkedHashMap<String, String>();
@@ -59,17 +61,17 @@ public class Player extends GameObject {
     private float rotation =0;
 
 
-    public Player(World world, ArrayList<com.steveflames.javantgarde.sprites.Checkpoint> checkpoints) {
+    public Player(World world, ArrayList<Checkpoint> checkpoints) {
         definePlayer(world, radius);
-        currentTR = com.steveflames.javantgarde.tools.global.Loader.botAtlas.findRegion("bot_talk");
+        currentTR = Loader.botAtlas.findRegion("bot_talk");
         this.checkpoints = checkpoints;
         setInitialPosition();
 
         currentState = State.STANDING;
         previousState = State.STANDING;
 
-        idleAnim = new Animation<TextureRegion>(0.08f, com.steveflames.javantgarde.tools.global.Loader.loadAnim(com.steveflames.javantgarde.tools.global.Loader.botAtlas.findRegion("bot_talk"), 12, 6, 3));
-        typingAnim = new Animation<TextureRegion>(0.015f, com.steveflames.javantgarde.tools.global.Loader.loadAnim(com.steveflames.javantgarde.tools.global.Loader.botAtlas.findRegion("bot_typing"), 12, 2, 0));
+        idleAnim = new Animation<TextureRegion>(0.08f, Loader.loadAnim(Loader.botAtlas.findRegion("bot_talk"), 12, 6, 3));
+        typingAnim = new Animation<TextureRegion>(0.015f, Loader.loadAnim(Loader.botAtlas.findRegion("bot_typing"), 12, 2, 0));
     }
 
     private void setInitialPosition() {
@@ -87,7 +89,7 @@ public class Player extends GameObject {
     public void drawFontScaled(SpriteBatch sb) {
         sb.setColor(1,1,1,alpha);
         sb.draw(currentTR, position.x - bounds.width/2/MyGdxGame.PPM, position.y - 17/MyGdxGame.PPM, bounds.width/MyGdxGame.PPM, bounds.height/MyGdxGame.PPM);
-        sb.draw(com.steveflames.javantgarde.tools.global.Loader.botWheelTR, position.x - 45/2/MyGdxGame.PPM , position.y - 0.31f
+        sb.draw(Loader.botWheelTR, position.x - 45/2/MyGdxGame.PPM , position.y - 0.31f
                 , 45/MyGdxGame.PPM/2,  45/MyGdxGame.PPM/2
                 , 45/MyGdxGame.PPM, 45/MyGdxGame.PPM
                 , 1, 1
@@ -97,7 +99,7 @@ public class Player extends GameObject {
     public void drawPlayerMsg(SpriteBatch sb) {
         if(playerMsg != null) {
             Fonts.small.setColor(red,green,blue,playerMsgAlpha);
-            Fonts.small.draw(sb, playerMsg, playerMsgVector.x*MyGdxGame.PPM  + PlayScreen.getHudCameraOffsetX()
+            Fonts.small.draw(sb, playerMsg, playerMsgVector.x*MyGdxGame.PPM  + Cameras.getHudCameraOffsetX()
                     - playerMsgGlyph.width/2, playerMsgVector.y*MyGdxGame.PPM + 20); //TODO cam k gia to y otan valw new lvls
         }
     }
@@ -153,7 +155,7 @@ public class Player extends GameObject {
                 region = typingAnim.getKeyFrame(stateTimer, true);
                 break;
             case JUMPING:
-                region = com.steveflames.javantgarde.tools.global.Loader.botMoveTR;
+                region = Loader.botMoveTR;
                 break;
             default:
                 region = idleAnim.getKeyFrame(stateTimer, true);
@@ -258,7 +260,7 @@ public class Player extends GameObject {
 
     public void addClass(String text) {
         String[] temp = text.split("-");
-        classes.put(temp[2], com.steveflames.javantgarde.tools.global.MyFileReader.readFile("txt/classes/"+text+".txt"));
+        classes.put(temp[2], MyFileReader.readFile("txt/classes/"+text+".txt"));
         playerMsg = "+"+temp[2]+" class";
         playerMsgGlyph.setText(Fonts.small, playerMsg);
         playerMsgVector.x = b2body.getPosition().x;

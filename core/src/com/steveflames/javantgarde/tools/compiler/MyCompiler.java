@@ -13,8 +13,8 @@ public class MyCompiler {
 
     public static Label consoleTextArea;
     //private HashMap<String, Integer> errors = new HashMap<String, Integer>();
-    private ArrayList<com.steveflames.javantgarde.tools.compiler.MyClass> classes;
-    private com.steveflames.javantgarde.tools.compiler.MyClass compilationClass;
+    private ArrayList<MyClass> classes;
+    private MyClass compilationClass;
 
     private String[] lineSplitter;
     private String[] wordSplitter;
@@ -48,7 +48,7 @@ public class MyCompiler {
      * Accessing an out of scope variable.
      * Actual and formal parameter mismatch.
      */
-    public boolean compile(ArrayList<com.steveflames.javantgarde.tools.compiler.MyClass> myClasses) {
+    public boolean compile(ArrayList<MyClass> myClasses) {
         classes = myClasses;
         //errors.clear();
         //errors.put("Error: class not defined", 1);
@@ -147,7 +147,7 @@ public class MyCompiler {
         //}
         //append errors in console window
         boolean flag = true;
-        for(com.steveflames.javantgarde.tools.compiler.MyClass myClass: myClasses) {
+        for(MyClass myClass: myClasses) {
             for(String error: myClass.getErrors()) {
                 consoleTextArea.setText(consoleTextArea.getText() + error+"\n");
                 flag = false;
@@ -183,9 +183,9 @@ public class MyCompiler {
         if(splitter.length<2)
             return false;
 
-        for(com.steveflames.javantgarde.tools.compiler.MyVariable myVariable: compilationClass.getFields()) {
+        for(MyVariable myVariable: compilationClass.getFields()) {
             if (splitter[0].equals(myVariable.getName())) {
-                for(com.steveflames.javantgarde.tools.compiler.MyClass myClass: classes) {
+                for(MyClass myClass: classes) {
                     if(myVariable.getType().equals(myClass.getName())) {
                         for (MyMethod myMethod : myClass.getMethods()) {
                             if (myMethod.getName().equals(splitter[1])) { //todo den exw kanei ta arguments
@@ -211,7 +211,7 @@ public class MyCompiler {
 
     private boolean isVariableAssignment() {
         boolean flag = false;
-        for(com.steveflames.javantgarde.tools.compiler.MyVariable myVariable: compilationClass.getFields()) {
+        for(MyVariable myVariable: compilationClass.getFields()) {
             if(myVariable.getName().equals(wordSplitter[0])) {
                 flag = true;
                 if(isNextWordStrictlyEqualTo("=")) {
@@ -318,7 +318,7 @@ public class MyCompiler {
                                             if (isNextWordStrictlyEqualTo(")")) { //10th word
                                                 if (isNextWordStrictlyEqualTo("{")) { //11th word
                                                     if(getNextWordInLine()==null) {
-                                                        compilationClass.addMethod(new MyMethod("public", "void", "main", new ArrayList<com.steveflames.javantgarde.tools.compiler.MyVariable>(), ""));
+                                                        compilationClass.addMethod(new MyMethod("public", "void", "main", new ArrayList<MyVariable>(), ""));
                                                         compilationClass.removeError("Error: main method not found");
                                                         return true;
                                                     }
@@ -347,7 +347,7 @@ public class MyCompiler {
                 if ((methodName = getNextWordInLine()) != null && validVarName(methodName)) {
                     if (isNextWordEqualTo("(")) {
                         currentWordPtr++;
-                        ArrayList<com.steveflames.javantgarde.tools.compiler.MyVariable> arguments = new ArrayList<com.steveflames.javantgarde.tools.compiler.MyVariable>();
+                        ArrayList<MyVariable> arguments = new ArrayList<MyVariable>();
                         String varType;
                         String varName;
                         int commaCounter = 0;
@@ -356,7 +356,7 @@ public class MyCompiler {
                                 currentWordPtr++;
                             if ((varType = getNextWordInLine()) != null && validVarType(varType)) {
                                 if ((varName = getNextWordInLine()) != null && validVarName(varName)) {
-                                    arguments.add(new com.steveflames.javantgarde.tools.compiler.MyVariable(varType, varName, "null"));
+                                    arguments.add(new MyVariable(varType, varName, "null"));
                                     commaCounter++;
                                 }
                                 else
@@ -425,12 +425,12 @@ public class MyCompiler {
                 if (isNextWordEqualTo(";")) {
                     currentWordPtr++;
                     if(getNextWordInLine()==null) {
-                        compilationClass.getFields().add(new com.steveflames.javantgarde.tools.compiler.MyVariable(wordSplitter[0], varName, "null")); //todo diaxwrismos fields k local vars
+                        compilationClass.getFields().add(new MyVariable(wordSplitter[0], varName, "null")); //todo diaxwrismos fields k local vars
                         flag = true;
                     }
                 }
                 else if (isNextWordStrictlyEqualTo("=")) { // ASSIGN VALUE
-                    compilationClass.getFields().add(new com.steveflames.javantgarde.tools.compiler.MyVariable(wordSplitter[0], varName, "null"));
+                    compilationClass.getFields().add(new MyVariable(wordSplitter[0], varName, "null"));
                     if ((wordSplitter[0].equals("int"))) { //int
                         return assignIntValue(varName);
                     } else if ((wordSplitter[0].equals("double"))) { //double
@@ -442,7 +442,7 @@ public class MyCompiler {
                     } else if ((wordSplitter[0].equals("String"))) { //String
                         return assignStringValue(varName);
                     } else {
-                        for(com.steveflames.javantgarde.tools.compiler.MyClass myClass: classes) {
+                        for(MyClass myClass: classes) {
                             if(wordSplitter[0].equals(myClass.getName())) {
                                 return assignClassValue(getNextWordInLine(), varName);
                             }
@@ -466,7 +466,7 @@ public class MyCompiler {
             if (isNextWordStrictlyEqualTo(";")) {
                 if(getNextWordInLine()==null) {
                     if (temp.matches("^-?\\d+$")) { //is integer
-                        for (com.steveflames.javantgarde.tools.compiler.MyVariable myVariable : compilationClass.getFields()) {
+                        for (MyVariable myVariable : compilationClass.getFields()) {
                             if (myVariable.getName().equals(varName))
                                 myVariable.setValue(temp);
                         }
@@ -493,7 +493,7 @@ public class MyCompiler {
             if (isNextWordStrictlyEqualTo(";")) {
                 if(getNextWordInLine()==null) {
                     if (temp.matches("^-?\\d+(.\\d+)?$")) {
-                        for (com.steveflames.javantgarde.tools.compiler.MyVariable myVariable : compilationClass.getFields()) {
+                        for (MyVariable myVariable : compilationClass.getFields()) {
                             if (myVariable.getName().equals(varName))
                                 myVariable.setValue(temp);
                         }
@@ -512,7 +512,7 @@ public class MyCompiler {
             if (temp.equals("true") || temp.equals("false")) {
                 if (isNextWordStrictlyEqualTo(";")) {
                     if(getNextWordInLine()==null) {
-                        for (com.steveflames.javantgarde.tools.compiler.MyVariable myVariable : compilationClass.getFields()) {
+                        for (MyVariable myVariable : compilationClass.getFields()) {
                             if (myVariable.getName().equals(varName))
                                 myVariable.setValue(temp);
                         }
@@ -534,7 +534,7 @@ public class MyCompiler {
                     if (isNextWordStrictlyEqualTo("'")) {
                         if (isNextWordStrictlyEqualTo(";")) {
                             if(getNextWordInLine()==null) {
-                                for (com.steveflames.javantgarde.tools.compiler.MyVariable myVariable : compilationClass.getFields()) {
+                                for (MyVariable myVariable : compilationClass.getFields()) {
                                     if (myVariable.getName().equals(varName))
                                         myVariable.setValue(temp);
                                 }
@@ -567,7 +567,7 @@ public class MyCompiler {
             if (temp != null && temp.equals("\"")) {
                 if (isNextWordStrictlyEqualTo(";")) {
                     if(getNextWordInLine()==null) {
-                        for (com.steveflames.javantgarde.tools.compiler.MyVariable myVariable : compilationClass.getFields()) {
+                        for (MyVariable myVariable : compilationClass.getFields()) {
                             if (myVariable.getName().equals(varName))
                                 myVariable.setValue(finalValue);
                         }
@@ -584,14 +584,14 @@ public class MyCompiler {
         if(firstWord!=null && firstWord.equals("new")) {
             String nextWord;
             if((nextWord = getNextWordInLine()) != null) {
-                for (com.steveflames.javantgarde.tools.compiler.MyClass myClass : classes) {
+                for (MyClass myClass : classes) {
                     if (nextWord.equals(myClass.getName())) {
                         if(isNextWordStrictlyEqualTo("(")) { //todo arguments
                             if(isNextWordStrictlyEqualTo(")")) {
                                 if(isNextWordStrictlyEqualTo(";")) {
                                     if(getNextWordInLine()==null) {
                                         System.out.println("added class type var");
-                                        compilationClass.getFields().add(new com.steveflames.javantgarde.tools.compiler.MyVariable(nextWord, varName, ""));
+                                        compilationClass.getFields().add(new MyVariable(nextWord, varName, ""));
                                         return true;
                                     }
                                 }
@@ -643,7 +643,7 @@ public class MyCompiler {
     }
 
     private boolean validVarType(String varType) {
-        for(com.steveflames.javantgarde.tools.compiler.MyClass myClass: classes) {
+        for(MyClass myClass: classes) {
             if(myClass.getName().equals(varType))
                 return true;
         }

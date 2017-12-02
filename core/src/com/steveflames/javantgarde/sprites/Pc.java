@@ -6,8 +6,12 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
+import com.steveflames.javantgarde.quests.Quest;
 import com.steveflames.javantgarde.screens.PlayScreen;
+import com.steveflames.javantgarde.tools.global.Cameras;
 import com.steveflames.javantgarde.tools.global.Fonts;
+import com.steveflames.javantgarde.tools.global.Loader;
+import com.steveflames.javantgarde.tools.global.MyFileReader;
 
 /**
  * Created by Flames on 24/9/2017.
@@ -16,14 +20,14 @@ import com.steveflames.javantgarde.tools.global.Fonts;
 public class Pc extends GameObject {
 
     private String editorText;
-    private com.steveflames.javantgarde.quests.Quest quest;
+    private Quest quest;
 
     public Pc(String name, World world, TiledMap map, Rectangle bounds) {
         super(name, world, map, bounds, true);
-        quest = new com.steveflames.javantgarde.quests.Quest(name.substring(3));
+        quest = new Quest(name.substring(3));
 
-        if(com.steveflames.javantgarde.tools.global.MyFileReader.exists("txt/pcs/" + name + ".txt"))
-            editorText = com.steveflames.javantgarde.tools.global.MyFileReader.readFile("txt/pcs/" + name + ".txt").replaceAll("\r", "");
+        if(MyFileReader.exists("txt/pcs/" + name + ".txt"))
+            editorText = MyFileReader.readFile("txt/pcs/" + name + ".txt").replaceAll("\r", "");
         else
             editorText = "class MyClass {\n" +
                     "\n" +
@@ -37,7 +41,7 @@ public class Pc extends GameObject {
     public void drawUsePrompt(SpriteBatch sb) {
         if(usable) {
             Fonts.medium.setColor(Color.RED);
-            sb.draw(com.steveflames.javantgarde.tools.global.Loader.fixT, bounds.x + bounds.width / 2 - 30 + PlayScreen.getHudCameraOffsetX(), bounds.y + bounds.height + 20, 60, 60);
+            sb.draw(Loader.fixT, bounds.x + bounds.width / 2 - 30 + Cameras.getHudCameraOffsetX(), bounds.y + bounds.height + 20, 60, 60);
         }
     }
 
@@ -55,7 +59,7 @@ public class Pc extends GameObject {
         editorText = text;
     }
 
-    public com.steveflames.javantgarde.quests.Quest getQuest() {
+    public Quest getQuest() {
         return quest;
     }
 }

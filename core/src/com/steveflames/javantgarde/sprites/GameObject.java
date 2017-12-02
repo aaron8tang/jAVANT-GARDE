@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.steveflames.javantgarde.MyGdxGame;
 
 /**
  * Created by Flames on 24/9/2017.
@@ -46,10 +47,10 @@ public abstract class GameObject extends Sprite{
         FixtureDef fdef = new FixtureDef();
 
         bdef.type = BodyDef.BodyType.KinematicBody;
-        bdef.position.set((bounds.getX() + bounds.getWidth()/2)/ com.steveflames.javantgarde.MyGdxGame.PPM, (bounds.getY() + bounds.getHeight()/2)/ com.steveflames.javantgarde.MyGdxGame.PPM);
+        bdef.position.set((bounds.getX() + bounds.getWidth()/2)/ MyGdxGame.PPM, (bounds.getY() + bounds.getHeight()/2)/ MyGdxGame.PPM);
         b2body = world.createBody(bdef);
 
-        shape.setAsBox(bounds.getWidth()/ com.steveflames.javantgarde.MyGdxGame.PPM/2, bounds.getHeight()/ com.steveflames.javantgarde.MyGdxGame.PPM/2);
+        shape.setAsBox(bounds.getWidth()/ MyGdxGame.PPM/2, bounds.getHeight()/ MyGdxGame.PPM/2);
         fdef.shape = shape;
         fixture = b2body.createFixture(fdef);
         fixture.setUserData(this);

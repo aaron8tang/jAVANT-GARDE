@@ -1,4 +1,4 @@
-package com.steveflames.javantgarde.scenes;
+package com.steveflames.javantgarde.hud;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -8,7 +8,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.tools.global.Fonts;
+import com.steveflames.javantgarde.tools.global.Loader;
 
 import java.util.ArrayList;
 
@@ -45,15 +47,15 @@ public class Toast {
     private float stateTimer = 0f;
 
     Toast() {
-        rect = new Rectangle(10, com.steveflames.javantgarde.MyGdxGame.HEIGHT + 260, com.steveflames.javantgarde.MyGdxGame.WIDTH-20, 160);
+        rect = new Rectangle(10, MyGdxGame.HEIGHT + 260, MyGdxGame.WIDTH-20, 160);
         glyphLayout = new GlyphLayout();
         linesOfText = new ArrayList<StringBuilder>();
-        if(!com.steveflames.javantgarde.MyGdxGame.platformDepended.deviceHasKeyboard())
+        if(!MyGdxGame.platformDepended.deviceHasKeyboard())
             nextPromptOffset = 90;
         drawStrings.add(new StringBuilder());
         drawStrings.add(new StringBuilder());
         drawStrings.add(new StringBuilder());
-        robotTalkingAnim = new Animation<TextureRegion>(0.16f, com.steveflames.javantgarde.tools.global.Loader.loadAnim(com.steveflames.javantgarde.tools.global.Loader.robotTalkingAtlas.findRegion("robot-antenna"), 4, 1, 0));
+        robotTalkingAnim = new Animation<TextureRegion>(0.16f, Loader.loadAnim(Loader.robotTalkingAtlas.findRegion("robot-antenna"), 4, 1, 0));
     }
 
     void newToast(String text) {
@@ -123,10 +125,10 @@ public class Toast {
     public void update(float dt) {
         setCurrentFrame(dt);
         if (currentState == State.INCOMING) {
-            if (rect.y - SPEED * dt > com.steveflames.javantgarde.MyGdxGame.HEIGHT - rect.height - 65) {
+            if (rect.y - SPEED * dt > MyGdxGame.HEIGHT - rect.height - 65) {
                 rect.y -= SPEED * dt;
             } else {
-                rect.y = com.steveflames.javantgarde.MyGdxGame.HEIGHT - rect.height - 65;
+                rect.y = MyGdxGame.HEIGHT - rect.height - 65;
                 currentState = State.WRITING;
                 timerMillis = TimeUtils.millis();
             }
@@ -178,7 +180,7 @@ public class Toast {
         else if (currentState == State.LEAVING) {
             if (currentState != State.LEFT) {
                 rect.y += SPEED * dt;
-                if (rect.y > com.steveflames.javantgarde.MyGdxGame.HEIGHT) {
+                if (rect.y > MyGdxGame.HEIGHT) {
                     currentState = State.LEFT;
                     Hud.showAndroidInputTable();
                 }
@@ -216,7 +218,7 @@ public class Toast {
 
             for(int i=0; i<drawStrings.size(); i++)
                 Fonts.small.draw(sb, drawStrings.get(i), rect.x + 120, rect.y + rect.height - 20 - i*40);
-            Fonts.xsmall.draw(sb, com.steveflames.javantgarde.MyGdxGame.platformDepended.getNextPrompt(), rect.x + rect.width - 180 + nextPromptOffset, rect.y + 25);
+            Fonts.xsmall.draw(sb, MyGdxGame.platformDepended.getNextPrompt(), rect.x + rect.width - 180 + nextPromptOffset, rect.y + 25);
             sb.draw(robotTR, rect.x - 5, rect.y + 15, 128, 128);
         }
     }
