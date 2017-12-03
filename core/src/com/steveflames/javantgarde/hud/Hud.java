@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.screens.PlayScreen;
+import com.steveflames.javantgarde.sprites.InfoSign;
 import com.steveflames.javantgarde.sprites.Item;
 import com.steveflames.javantgarde.sprites.Pc;
 import com.steveflames.javantgarde.sprites.Player;
@@ -38,12 +39,13 @@ public class Hud implements Disposable {
     //hud components
     public Stage stage;
     private EditorWindow editorWindow;
+    private EditorQuizWindow editorQuizWindow;
     private PauseWindow pauseWindow;
     private Table gameOverWindow;
     private Table levelCompletedWindow;
     private Dialog infoDialog;
 
-    private String currentInfoSignName;
+    private InfoSign currentInfoSign;
 
     //android input table
     private static Table androidInputTable;
@@ -59,6 +61,7 @@ public class Hud implements Disposable {
         stage = new Stage(Cameras.hudPort, sb);
         toast = new Toast();
         editorWindow = new EditorWindow("EDITOR", Skins.skin, this);
+        editorQuizWindow = new EditorQuizWindow("EDITOR", Skins.skin, playScreen);
         pauseWindow = new PauseWindow("GAME PAUSED", Skins.skin, playScreen);
         gameOverWindow = new GameOverWindow(Skins.neonSkin, playScreen);
         levelCompletedWindow = new LevelCompletedWindow(Skins.neonSkin, playScreen);
@@ -69,6 +72,7 @@ public class Hud implements Disposable {
         if(toast.isShowing())
             toast.update(dt);
         editorWindow.update(dt);
+        editorQuizWindow.update(dt);
     }
 
     public void drawStage(SpriteBatch sb) {
@@ -206,13 +210,17 @@ public class Hud implements Disposable {
         editorWindow.show(pc);
     }
 
-    public void showInfoWindow(String name, String text) {
+    public void showEditorQuizWindow(Pc pc) {
+        editorQuizWindow.show(pc);
+    }
+
+    public void showInfoWindow(InfoSign infoSign, String text) {
         infoDialog = new Dialog("", Skins.skin, "dialog") {
             public void result(Object obj) {
                 closeCurrentInfo();
             }
         };
-        currentInfoSignName = name;
+        currentInfoSign = infoSign;
         TextButton dummy = new TextButton("", Skins.neonSkin);
         infoDialog.button("     OK     ", true, dummy.getStyle()).setHeight(100); //sends "true" as the result
         infoDialog.key(Input.Keys.ENTER, true); //sends "true" when the ENTER key is pressed
@@ -245,14 +253,7 @@ public class Hud implements Disposable {
         playScreen.getPlayer().setCurrentState(Player.State.STANDING);
 
         playScreen.setEnterKeyHandled(true);
-        if(currentInfoSignName.equals("info-1_1-0") || currentInfoSignName.equals("info-7_1-0"))
-            playScreen.getDoors().get(0).open();
-        else if(currentInfoSignName.equals("info-1_1-1") || currentInfoSignName.equals("info-7_1-1"))
-            playScreen.getDoors().get(1).open();
-        else if(currentInfoSignName.equals("info-1_1-2") || currentInfoSignName.equals("info-7_1-2"))
-            playScreen.getDoors().get(2).open();
-        else if(currentInfoSignName.equals("info-7_1-3"))
-            playScreen.getDoors().get(3).open();
+        currentInfoSign.setRead(playScreen.getObjectManager().getDoors());
     }
 
     public void showUseBtn(String text) {
@@ -312,5 +313,9 @@ public class Hud implements Disposable {
     public void setJumpBtnPressed() {
         if(!MyGdxGame.platformDepended.deviceHasKeyboard())
             this.jumpBtnPressed = false;
+    }
+
+    public EditorQuizWindow getEditorQuizWindow() {
+        return editorQuizWindow;
     }
 }

@@ -21,21 +21,31 @@ public class Pc extends GameObject {
 
     private String editorText;
     private Quest quest;
+    private boolean quizPc = false;
 
     public Pc(String name, World world, TiledMap map, Rectangle bounds) {
         super(name, world, map, bounds, true);
-        quest = new Quest(name.substring(3));
+        if(name.startsWith("quiz")) { //quiz pc
+            quizPc = true;
+            name = name.substring(4);
+            quest = new Quest(name.substring(3));
+            editorText = quest.getCurrentQuestStepText();
+        }
+        else { //code pc
+            quest = new Quest(name.substring(3));
 
-        if(MyFileReader.exists("txt/pcs/" + name + ".txt"))
-            editorText = MyFileReader.readFile("txt/pcs/" + name + ".txt").replaceAll("\r", "");
-        else
-            editorText = "class MyClass {\n" +
-                    "\n" +
-                    "    public static void main(String[] args) {\n" +
-                    "        \n" +
-                    "    }\n" +
-                    "\n" +
-                    "}";
+            if(MyFileReader.exists("txt/pcs/" + name + ".txt"))
+                editorText = MyFileReader.readFile("txt/pcs/" + name + ".txt").replaceAll("\r", "");
+            else
+                editorText = "class MyClass {\n" +
+                        "\n" +
+                        "    public static void main(String[] args) {\n" +
+                        "        \n" +
+                        "    }\n" +
+                        "\n" +
+                        "}";
+        }
+
     }
 
     public void drawUsePrompt(SpriteBatch sb) {
@@ -61,5 +71,9 @@ public class Pc extends GameObject {
 
     public Quest getQuest() {
         return quest;
+    }
+
+    public boolean isQuizPc() {
+        return quizPc;
     }
 }

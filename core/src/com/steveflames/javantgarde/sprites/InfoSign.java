@@ -13,6 +13,8 @@ import com.steveflames.javantgarde.tools.global.Fonts;
 import com.steveflames.javantgarde.tools.global.Loader;
 import com.steveflames.javantgarde.tools.global.MyFileReader;
 
+import java.util.ArrayList;
+
 /**
  * Created by Flames on 4/10/2017.
  */
@@ -27,6 +29,17 @@ public class InfoSign extends GameObject {
 
         if (MyFileReader.exists("txt/info/" + name + ".txt"))
             text = MyFileReader.readFile("txt/info/" + name + ".txt");
+    }
+
+    public void setRead(ArrayList<Door> doors) {
+        if(name.equals("info-1_1-0") || name.equals("info-7_1-0") || name.equals("info-4_1-0"))
+            doors.get(0).open();
+        else if(name.equals("info-1_1-1") || name.equals("info-7_1-1"))
+            doors.get(1).open();
+        else if(name.equals("info-1_1-2") || name.equals("info-7_1-2"))
+            doors.get(2).open();
+        else if(name.equals("info-7_1-3"))
+            doors.get(3).open();
     }
 
     public void drawUsePrompt(SpriteBatch sb) {

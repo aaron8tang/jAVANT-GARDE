@@ -68,9 +68,10 @@ public class Quiz extends GameObject {
                     floatingPlatforms.get(i).quizReset(answers.get(currentQuestion)[i], hud);
                 else { //quiz completed
                     floatingPlatforms.get(i).quizReset(" ", hud);
-                    if(id.equals("2_2") || id.equals("1_2")) {
+                    if(id.equals("2_2") || id.equals("1_2"))
                         doors.get(0).open();
-                    }
+                    else if(id.equals("4_1"))
+                        doors.get(6).open();
                 }
             }
         }

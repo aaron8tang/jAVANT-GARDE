@@ -76,13 +76,18 @@ public class EditorWindow extends Window {
         codeTextArea = new TextArea("", Skins.neonSkin);
         codeTextArea.setFocusTraversal(false);
         codeTextArea.getStyle().fontColor = Color.WHITE;
+        codeTextArea.getStyle().disabledFontColor = Color.LIGHT_GRAY;
 
         //lineNumTable
         Table lineNumTable = new Table(Skins.neonSkin);
-        lineNumTable.add(new Label(1 + "", Skins.neonSkin)).width(60).height(codeTextArea.getStyle().font.getLineHeight());
+        Label label = new Label(1 + "", Skins.neonSkin);
+        label.setColor(Color.CYAN);
+        lineNumTable.add(label).width(60).height(codeTextArea.getStyle().font.getLineHeight());
         for (int i = 1; i < 150; i++) {
             lineNumTable.row();
-            lineNumTable.add(new Label(i + 1 + "", Skins.neonSkin)).width(60).height(codeTextArea.getStyle().font.getLineHeight());
+            label = new Label(i + 1 + "", Skins.neonSkin);
+            label.setColor(Color.CYAN);
+            lineNumTable.add(label).width(60).height(codeTextArea.getStyle().font.getLineHeight());
         }
 
         //codeTable

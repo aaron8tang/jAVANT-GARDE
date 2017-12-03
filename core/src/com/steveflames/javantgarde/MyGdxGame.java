@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.steveflames.javantgarde.screens.ChooseLevelScreen;
+import com.steveflames.javantgarde.screens.PlayScreen;
+import com.steveflames.javantgarde.tools.LevelListItem;
 import com.steveflames.javantgarde.tools.global.Cameras;
 import com.steveflames.javantgarde.tools.global.Fonts;
 import com.steveflames.javantgarde.tools.global.Loader;
@@ -47,8 +49,6 @@ import com.steveflames.javantgarde.tools.global.Skins;
  * ftiakse ton loader me assetmanager gia na borw na valw k progress bar sthn arxh p fortwnei
  * na tonisw oti kathe entolh grafetai se mia kainouria grammh
  * StartMenuScreen
- * todo object manager na valw kei mesa ola ta ArrayList
- * todo object manager remake tous constructors
  *
  * fields.. local variables.. modifiers
  * CLASSES
@@ -87,8 +87,8 @@ public class MyGdxGame extends Game {
 		Skins.load();
 		sb = new SpriteBatch();
 		sr = new ShapeRenderer();
-		setScreen(new ChooseLevelScreen(this));
-		//setScreen(new PlayScreen(this, new LevelListItem("COMPILER", "2_2", "test")));
+		//setScreen(new ChooseLevelScreen(this));
+		setScreen(new PlayScreen(this, new LevelListItem("COMPILER", "4_1", "test")));
 	}
 
 	@Override

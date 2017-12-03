@@ -63,7 +63,7 @@ public class Player extends GameObject {
 
     public Player(World world, ArrayList<Checkpoint> checkpoints) {
         definePlayer(world, radius);
-        currentTR = Loader.botAtlas.findRegion("bot_talk");
+        currentTR = Loader.botMoveTR;
         this.checkpoints = checkpoints;
         setInitialPosition();
 
@@ -222,6 +222,7 @@ public class Player extends GameObject {
 
     public void respawnAtCheckpoint(ArrayList<Rope> ropes) {
         if(health>0) {
+            currentState = State.STANDING;
             b2body.setTransform(checkpoints.get(currentCheckpointIndex).getBounds().x / MyGdxGame.PPM,
                     (checkpoints.get(currentCheckpointIndex).getBounds().y + checkpoints.get(currentCheckpointIndex).getBounds().height / 2) / MyGdxGame.PPM, 0);
             outOfBounds = false;

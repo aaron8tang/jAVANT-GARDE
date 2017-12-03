@@ -5,24 +5,21 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.hud.Hud;
-import com.steveflames.javantgarde.sprites.*;
-import com.steveflames.javantgarde.sprites.ropes.Rope;
+import com.steveflames.javantgarde.sprites.Item;
+import com.steveflames.javantgarde.sprites.Player;
+import com.steveflames.javantgarde.sprites.Quiz;
 import com.steveflames.javantgarde.tools.B2WorldContactListener;
 import com.steveflames.javantgarde.tools.B2WorldCreator;
 import com.steveflames.javantgarde.tools.GameObjectManager;
@@ -31,60 +28,45 @@ import com.steveflames.javantgarde.tools.LevelListItem;
 import com.steveflames.javantgarde.tools.global.Cameras;
 import com.steveflames.javantgarde.tools.global.Fonts;
 
-import java.util.ArrayList;
-
 /**
+ * This class holds the main loop and processing of the game.
+ *
  * Created by Flames on 23/9/2017.
  */
-
 public class PlayScreen implements Screen{
 
     private MyGdxGame game;
-    private static float WIDTH;
-    private static float HEIGHT;
+    private static float WIDTH; //width of the map
+    private static float HEIGHT; //height of the map
     private static final int GRAVITY = -20;
     public static LevelListItem currentLevel;
+    private Hud hud;
+    private World world; //box2D variable
+    private TiledMap map;
+    private OrthogonalTiledMapRenderer renderer;
 
-    //fixed timestep
+    //fixed timestep with interpolation variables
     private double accumulator = 0;
-    private final float delta = 0.0133f;	// logic updates approx. @ 75 hz //todo 0.0133f   todo maybe 45f or 300f (recommended)
+    private final float delta = 0.0133f; //logic updates 1/75f
+
+    //**************DEBUG**************
     private final static int logic_FPSupdateIntervall = 1;
     private long logic_lastRender;
     private long logic_now;
     private int logic_frameCount = 0;
-    private int logic_lastFPS = 0;
+    private int logic_lastFPS = 0; //logic frames per second
+    private Box2DDebugRenderer b2dr; //draws the outline on every object for debugging
+    private FPSLogger fpsLogger; //display game loop real frames per second
 
-    private Hud hud;
-    private TiledMap map;
-    private OrthogonalTiledMapRenderer renderer;
-
-    //Box2d variables
-    private World world;
-    private Box2DDebugRenderer b2dr;
-    private FPSLogger fpsLogger;
-
-    private GameObjectManager objectManager = new GameObjectManager();
     //world bodies
-    private ArrayList<GameObject> objectsToRemove = new ArrayList<GameObject>();
-    private Player player;
-    private ArrayList<Pc> pcs = new ArrayList<Pc>();
-    private ArrayList<InfoSign> infoSigns = new ArrayList<InfoSign>();
-    private ArrayList<Door> doors = new ArrayList<Door>();
-    private ArrayList<Rope> ropes = new ArrayList<Rope>();
-    private ArrayList<Item> items = new ArrayList<Item>();
-    private ArrayList<Checkpoint> checkpoints = new ArrayList<Checkpoint>();
-    private ArrayList<FloatingPlatform> floatingPlatforms = new ArrayList<FloatingPlatform>();
-    private ArrayList<Lever> levers = new ArrayList<Lever>();
-    private ArrayList<Rectangle> markers = new ArrayList<Rectangle>();
-    private ArrayList<Quiz> quizes = new ArrayList<Quiz>();
-    private Teleporter teleporter;
+    private GameObjectManager objectManager;
 
     //input
     private InputHandler inputHandler;
     private boolean enterKeyHandled = false;
 
-    //onScreenMsg
-    private long onScreenMsgMillis = 0; //is used to print the level name when the level starts
+    //onScreenMsg - print the level name when the level starts
+    private long onScreenMsgMillis = TimeUtils.millis();
     private float onScreenMsgAlpha = 1;
     private GlyphLayout onScreenMsgGlyphLayout1 = new GlyphLayout();
     private GlyphLayout onScreenMsgGlyphLayout2 = new GlyphLayout();
@@ -97,10 +79,10 @@ public class PlayScreen implements Screen{
         currentLevel.setName(currentLevel.getName().replaceAll("\n", " "));
         onScreenMsgGlyphLayout1.setText(Fonts.medium, currentLevel.getName());
         onScreenMsgGlyphLayout2.setText(Fonts.big, currentLevel.getCategoryName());
-        ropes = new ArrayList<Rope>();
 
-        inputHandler = new InputHandler(this);
+        //**************DEBUG**************
         fpsLogger = new FPSLogger();
+        b2dr = new Box2DDebugRenderer();
         //GLProfiler.enable();
 
         //initialize map
@@ -112,21 +94,20 @@ public class PlayScreen implements Screen{
         //initialize camera and viewport
         Cameras.load(WIDTH, HEIGHT);
 
+        //create world
         world = new World(new Vector2(0, GRAVITY), true);
-        b2dr = new Box2DDebugRenderer();
-
-        new B2WorldCreator(this); //create world
-        player = new Player(world, checkpoints);
-        objectManager.addGameObject(player);
-        hud = new Hud(this, game.sb);
-
         world.setContactListener(new B2WorldContactListener(this));
-        onScreenMsgMillis = TimeUtils.millis();
+        objectManager = new GameObjectManager(world);
+        new B2WorldCreator(this); //initialize world
+        objectManager.initializePlayer(world); //initialize player
+        hud = new Hud(this, game.sb); //initialize hud
+        Quiz.setHud(hud);
+
+        //initialize inputHandler
+        inputHandler = new InputHandler(this);
 
         if(!MyGdxGame.platformDepended.deviceHasKeyboard())
             hud.newAndroidInputTable();
-        Quiz.setHud(hud);
-
         //hud.showEditorWindow("1_1-0");
     }
 
@@ -145,7 +126,7 @@ public class PlayScreen implements Screen{
     public void render(float dt) {
         if (dt > 0.25f) dt = 0.25f; //max frame time to avoid spiral of death
 
-        //System.out.println("DT: " +dt); //debug
+        //System.out.println("DT: " +dt); //DEBUG
         //FIXED TIMESTEP METHOD
         accumulator += dt;
         while (accumulator >= delta) {
@@ -163,11 +144,11 @@ public class PlayScreen implements Screen{
                 logic_lastRender = System.nanoTime();
             }
         }
-        //System.out.println("LOGIC: " + logic_lastFPS); //debug
+        //System.out.println("LOGIC: " + logic_lastFPS); //DEBUG
         update();
         rendering();
         enterKeyHandled = false;
-        destroyUnusedBodies();
+        objectManager.destroyUnusedBodies();
     }
 
     /**
@@ -198,15 +179,15 @@ public class PlayScreen implements Screen{
         if(!hud.isPauseWindowShowing()) { //game not paused
             inputHandler.handleInput();
 
-            if (player.getCurrentState() == Player.State.DISAPPEARED)
+            if (getPlayer().getCurrentState() == Player.State.DISAPPEARED)
                 hud.showLevelCompletedWindow();
-            else if (player.getCurrentState() == Player.State.DEAD)
+            else if (getPlayer().getCurrentState() == Player.State.DEAD)
                 hud.showGameOverWindow();
-            else if (player.getCurrentState() != Player.State.CODING)
-                Cameras.updateCameraPosition(player);
+            else if (getPlayer().getCurrentState() != Player.State.CODING)
+                Cameras.updateCameraPosition(getPlayer());
 
-            if (player.isOutOfBounds() && player.getPlayerMsgAlpha() == 1)
-                player.respawnAtCheckpoint(ropes);
+            if (getPlayer().isOutOfBounds() && getPlayer().getPlayerMsgAlpha() == 1)
+                getPlayer().respawnAtCheckpoint(objectManager.getRopes());
         }
         else //game paused
             hud.getPauseWindow().handleExitFromPauseMenuInput();
@@ -226,12 +207,12 @@ public class PlayScreen implements Screen{
 
         //draw textures and fonts in background (some fonts must be behind the player (different layout)) (unscaled)
         game.sb.begin();
-        for (int i = 0; i < ropes.size(); i++)
-            if (Cameras.inLineOfSight(ropes.get(i)))
-                ropes.get(i).drawFontInBackground(game.sb);
-        for (int i = 0; i < quizes.size(); i++)
-            if (Cameras.inLineOfSight(quizes.get(i)))
-                quizes.get(i).drawFontInBackground(game.sb);
+        for (int i = 0; i < objectManager.getRopes().size(); i++)
+            if (Cameras.inLineOfSight(objectManager.getRopes().get(i)))
+                objectManager.getRopes().get(i).drawFontInBackground(game.sb);
+        for (int i = 0; i < objectManager.getQuizes().size(); i++)
+            if (Cameras.inLineOfSight(objectManager.getQuizes().get(i)))
+                objectManager.getQuizes().get(i).drawFontInBackground(game.sb);
         game.sb.end();
 
         //disable alpha
@@ -290,17 +271,17 @@ public class PlayScreen implements Screen{
             if(Cameras.inLineOfSight(objectManager.getGameObjects().get(i)))
                 objectManager.getGameObjects().get(i).drawFont(game.sb);
         //draw the use item prompts
-        if (player.getCurrentState() != Player.State.READING && player.getCurrentState() != Player.State.CODING) { //if player is coding or reading sign, dont draw the use prompt
-            for (int i = 0; i < infoSigns.size(); i++)
-                infoSigns.get(i).drawUsePrompt(game.sb);
-            for (int i = 0; i < pcs.size(); i++)
-                pcs.get(i).drawUsePrompt(game.sb);
-            for (int i = 0; i < levers.size(); i++)
-                levers.get(i).drawUsePrompt(game.sb);
+        if (getPlayer().getCurrentState() != Player.State.READING && getPlayer().getCurrentState() != Player.State.CODING) { //if player is coding or reading sign, dont draw the use prompt
+            for (int i = 0; i < objectManager.getInfoSigns().size(); i++)
+                objectManager.getInfoSigns().get(i).drawUsePrompt(game.sb);
+            for (int i = 0; i < objectManager.getPcs().size(); i++)
+                objectManager.getPcs().get(i).drawUsePrompt(game.sb);
+            for (int i = 0; i < objectManager.getLevers().size(); i++)
+                objectManager.getLevers().get(i).drawUsePrompt(game.sb);
         }
         hud.drawFont(game.sb);
         drawOnScreenMsg();
-        player.drawPlayerMsg(game.sb);
+        getPlayer().drawPlayerMsg(game.sb);
         game.sb.end();
 
         //disable alpha
@@ -320,7 +301,6 @@ public class PlayScreen implements Screen{
         System.out.println("GL vertexCount: " + GLProfiler.vertexCount);
         GLProfiler.reset();*/
     }
-
 
     private void drawOnScreenMsg() {
         if(onScreenMsgAlpha>0) {
@@ -347,14 +327,6 @@ public class PlayScreen implements Screen{
 
     }
 
-    private void destroyUnusedBodies() {
-        for(int i = 0; i< objectsToRemove.size(); i++) {
-            objectManager.removeGameObject(objectsToRemove.get(i));
-            world.destroyBody(objectsToRemove.get(i).b2body);
-        }
-        objectsToRemove.clear();
-    }
-
     public void pause() {
         hud.showPauseWindow();
     }
@@ -371,15 +343,10 @@ public class PlayScreen implements Screen{
         world.dispose();
         b2dr.dispose();
         hud.dispose();
-        ropes.clear();
         Item.reset();
 
         for(int i=0; i<objectManager.getGameObjects().size(); i++)
             objectManager.clearGameObjects();
-    }
-
-    public Player getPlayer() {
-        return player;
     }
 
     public TiledMap getMap() {
@@ -390,79 +357,32 @@ public class PlayScreen implements Screen{
         return world;
     }
 
-    public ArrayList<Pc> getPcs() {
-        return pcs;
-    }
-
-    public ArrayList<InfoSign> getInfoSigns() {
-        return infoSigns;
-    }
-
-    public ArrayList<Rope> getRopes() {
-        return ropes;
-    }
-
-    public ArrayList<Checkpoint> getCheckpoints() {
-        return checkpoints;
-    }
-
     public LevelListItem getCurrentLevel() {
         return currentLevel;
-    }
-
-    public ArrayList<Door> getDoors() {
-        return doors;
-    }
-
-    public void setEnterKeyHandled(boolean enterKeyHandled) {
-        this.enterKeyHandled = enterKeyHandled;
-    }
-
-    public ArrayList<Item> getItems() {
-        return items;
-    }
-
-    public ArrayList<GameObject> getObjectsToRemove() {
-        return objectsToRemove;
     }
 
     public Hud getHud() {
         return hud;
     }
 
-    public void setTeleporter(Teleporter teleporter) {
-        this.teleporter = teleporter;
+
+    public GameObjectManager getObjectManager() {
+        return objectManager;
     }
 
-    public boolean isEnterKeyHandled() {
-        return enterKeyHandled;
-    }
-
-    public ArrayList<FloatingPlatform> getFloatingPlatforms() {
-        return floatingPlatforms;
-    }
-
-    public ArrayList<Rectangle> getMarkers() {
-        return markers;
+    public Player getPlayer() {
+        return objectManager.getPlayer();
     }
 
     public MyGdxGame getGame() {
         return game;
     }
 
-    public ArrayList<Lever> getLevers() {
-        return levers;
+    public void setEnterKeyHandled(boolean enterKeyHandled) {
+        this.enterKeyHandled = enterKeyHandled;
     }
 
-    public ArrayList<Quiz> getQuizes() {
-        return quizes;
-    }
-
-    public GameObjectManager getObjectManager() {
-        return objectManager;
-    }
-
-    public Teleporter getTeleporter() {
-        return teleporter;
+    public boolean isEnterKeyHandled() {
+        return enterKeyHandled;
     }
 }

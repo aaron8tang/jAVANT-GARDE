@@ -86,12 +86,9 @@ class QuestWindow extends Window {
     }
 
     void incrementQuestStep(Quest quest) {
-        //add progress
-        quest.setProgress(quest.getProgress()+1);
-        progressBar.setValue(quest.getProgress());
 
         questScroll.scrollTo(0, Cameras.hudPort.getCamera().position.y + Cameras.hudPort.getCamera().viewportHeight, 0, 0);
-        if(quest.getProgress() < quest.getSize()) {
+        if(quest.nextQuestStep()) {
             questTextArea.setText(quest.getCurrentQuestStep().getText());
             helpBtn.setVisible(false);
             if(quest.getCurrentQuestStep().getHints().size()>0)
@@ -104,6 +101,7 @@ class QuestWindow extends Window {
             quest.completed(Hud.playScreen);
         }
 
+        progressBar.setValue(quest.getProgress());
     }
 
     void show(Stage stage, Quest quest) {

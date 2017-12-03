@@ -63,15 +63,15 @@ public class FloatingPlatform extends GameObject {
     }
 
     public void quizReset(String name, Hud hud) {
-        b2body.setLinearVelocity(0,0);
         correct = false;
+        resetB2Body();
         if(!name.equals("$")) { //not empty answer
             lever.quizReset();
             if (lever.isColliding()) {
                 lever.setUsable(true);
                 hud.showUseBtn("PULL");
             }
-            b2body.setTransform((bounds.getX() + bounds.getWidth() / 2) / MyGdxGame.PPM, (bounds.getY() + bounds.getHeight() / 2) / MyGdxGame.PPM, 0);
+
             setName(name);
             if (name.equals(" ")) {
                 lever.setUsable(false);
@@ -84,11 +84,16 @@ public class FloatingPlatform extends GameObject {
         }
     }
 
+    public void resetB2Body() {
+        b2body.setLinearVelocity(0,0);
+        b2body.setTransform((bounds.getX() + bounds.getWidth() / 2) / MyGdxGame.PPM, (bounds.getY() + bounds.getHeight() / 2) / MyGdxGame.PPM, 0);
+    }
+
     public void quizPull() {
         lever.pull();
         if(!correct) {
-            b2body.setLinearVelocity(0, -3);
-            lever.b2body.setLinearVelocity(0, -3);
+            b2body.setLinearVelocity(0, -6);
+            lever.b2body.setLinearVelocity(0, -6);
         }
     }
 

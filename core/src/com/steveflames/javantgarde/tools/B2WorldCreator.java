@@ -47,36 +47,36 @@ public class B2WorldCreator {
         //initialize pcs
         for(MapObject object: playScreen.getMap().getLayers().get(4).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
-            playScreen.getPcs().add(new Pc(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
-            playScreen.getObjectManager().addGameObject(playScreen.getPcs().get(playScreen.getPcs().size()-1));
+            playScreen.getObjectManager().getPcs().add(new Pc(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
+            playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getPcs().get(playScreen.getObjectManager().getPcs().size()-1));
         }
 
         //initialize info
         for(MapObject object: playScreen.getMap().getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
-            playScreen.getInfoSigns().add(new InfoSign(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, 1));
-            playScreen.getObjectManager().addGameObject(playScreen.getInfoSigns().get(playScreen.getInfoSigns().size()-1));
+            playScreen.getObjectManager().getInfoSigns().add(new InfoSign(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, 1));
+            playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getInfoSigns().get(playScreen.getObjectManager().getInfoSigns().size()-1));
         }
 
         //initialize doors
         for(MapObject object: playScreen.getMap().getLayers().get(6).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
-            playScreen.getDoors().add(new Door(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
-            playScreen.getObjectManager().addGameObject(playScreen.getDoors().get(playScreen.getDoors().size()-1));
+            playScreen.getObjectManager().getDoors().add(new Door(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
+            playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getDoors().get(playScreen.getObjectManager().getDoors().size()-1));
         }
 
         //initialize checkpoints
         for(MapObject object: playScreen.getMap().getLayers().get(7).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
-            playScreen.getCheckpoints().add(new Checkpoint(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
-            playScreen.getObjectManager().addGameObject(playScreen.getCheckpoints().get(playScreen.getCheckpoints().size()-1));
+            playScreen.getObjectManager().getCheckpoints().add(new Checkpoint(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
+            playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getCheckpoints().get(playScreen.getObjectManager().getCheckpoints().size()-1));
         }
 
         //initialize teleporter
         for(MapObject object: playScreen.getMap().getLayers().get(8).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
-            playScreen.setTeleporter(new Teleporter(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
-            playScreen.getObjectManager().addGameObject(playScreen.getTeleporter());
+            playScreen.getObjectManager().setTeleporter(new Teleporter(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
+            playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getTeleporter());
         }
 
         if(playScreen.getMap().getLayers().getCount() > 9) {
@@ -87,33 +87,33 @@ public class B2WorldCreator {
                     if (object.getName().equals("health")) {
                         Item item = new Item(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect);
                         item.setUsable(true);
-                        playScreen.getItems().add(item);
-                        playScreen.getObjectManager().addGameObject(playScreen.getItems().get(playScreen.getItems().size()-1));
+                        playScreen.getObjectManager().getItems().add(item);
+                        playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getItems().get(playScreen.getObjectManager().getItems().size()-1));
                     }
                     else if(object.getName().contains("class")) {
                         Item item = new Item(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect);
                         item.setUsable(true);
-                        playScreen.getItems().add(item);
-                        playScreen.getObjectManager().addGameObject(playScreen.getItems().get(playScreen.getItems().size()-1));
+                        playScreen.getObjectManager().getItems().add(item);
+                        playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getItems().get(playScreen.getObjectManager().getItems().size()-1));
                     }
                     else if(object.getName().contains("marker")) {
-                        playScreen.getMarkers().add(rect);
+                        playScreen.getObjectManager().getMarkers().add(rect);
                     }
                     else if(object.getName().contains("quiz")) {
-                        playScreen.getQuizes().add(new Quiz(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, playScreen.getCurrentLevel().getId(), playScreen.getDoors()));
-                        playScreen.getObjectManager().addGameObject(playScreen.getQuizes().get(playScreen.getQuizes().size()-1));
+                        playScreen.getObjectManager().getQuizes().add(new Quiz(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, playScreen.getCurrentLevel().getId(), playScreen.getObjectManager().getDoors()));
+                        playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getQuizes().get(playScreen.getObjectManager().getQuizes().size()-1));
                     }
                     else if(object.getName().contains("floatingPlatform")) {
                         if(object.getName().contains("-")) { //quiz floatingPlatform
                             String[] splitter = object.getName().split("-");
-                            playScreen.getQuizes().get(0).addFloatingPlatform(new FloatingPlatform(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect,
+                            playScreen.getObjectManager().getQuizes().get(0).addFloatingPlatform(new FloatingPlatform(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect,
                                     new Lever("lever_" + splitter[1], playScreen.getWorld(), playScreen.getMap(), new Rectangle(rect.x+ rect.width/2-45,
                                             rect.y + rect.height, 90,90), 1, true)));
-                            playScreen.getObjectManager().addGameObject(playScreen.getQuizes().get(0).getFloatingPlatforms().get(playScreen.getQuizes().get(0).getFloatingPlatforms().size()-1));// todo OXI get(0) alla auto p einai ontws.. prepei ta floatingPlatforms na len poianou quiz einai
+                            playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getQuizes().get(0).getFloatingPlatforms().get(playScreen.getObjectManager().getQuizes().get(0).getFloatingPlatforms().size()-1));// todo OXI get(0) alla auto p einai ontws.. prepei ta floatingPlatforms na len poianou quiz einai
                         }
                         else {//not a quiz floatingPlatform
-                            playScreen.getFloatingPlatforms().add(new FloatingPlatform(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, null));
-                            playScreen.getObjectManager().addGameObject(playScreen.getFloatingPlatforms().get(playScreen.getFloatingPlatforms().size()-1));
+                            playScreen.getObjectManager().getFloatingPlatforms().add(new FloatingPlatform(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, null));
+                            playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getFloatingPlatforms().get(playScreen.getObjectManager().getFloatingPlatforms().size()-1));
                         }
                     }
                 }
@@ -123,8 +123,8 @@ public class B2WorldCreator {
                 //initialize ropes
                 for (MapObject object : playScreen.getMap().getLayers().get(10).getObjects().getByType(RectangleMapObject.class)) {
                     Rectangle rect = ((RectangleMapObject) object).getRectangle();
-                    playScreen.getRopes().add(new Rope(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, playScreen.getObjectManager()));
-                    playScreen.getObjectManager().addGameObject(playScreen.getRopes().get(playScreen.getRopes().size()-1));
+                    playScreen.getObjectManager().getRopes().add(new Rope(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, playScreen.getObjectManager()));
+                    playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getRopes().get(playScreen.getObjectManager().getRopes().size()-1));
                 }
             }
         }

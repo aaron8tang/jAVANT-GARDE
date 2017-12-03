@@ -39,24 +39,30 @@ public class InputHandler {
                     if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
                         if (Player.colliding) {
                             if (!playScreen.isEnterKeyHandled()) {
-                                for (Pc pc : playScreen.getPcs()) {
+                                for (Pc pc : playScreen.getObjectManager().getPcs()) {
                                     if (pc.isUsable()) {
                                         playScreen.getPlayer().setCoding(pc.getBounds());
-                                        Cameras.setCameraTo(pc.getBounds().x / MyGdxGame.PPM + 1.5f);
-                                        playScreen.getHud().showEditorWindow(pc);
-                                        if (playScreen.getPlayer().b2body.getPosition().y > Cameras.playScreenCam.position.y)
-                                            playScreen.getHud().getEditorWindow().getQuestWindow().setPosition(0, 45);
+                                        if(!pc.isQuizPc()) {
+                                            Cameras.setCameraTo(pc.getBounds().x / MyGdxGame.PPM + 1.5f);
+                                            playScreen.getHud().showEditorWindow(pc);
+                                            if (playScreen.getPlayer().b2body.getPosition().y > Cameras.playScreenCam.position.y)
+                                                playScreen.getHud().getEditorWindow().getQuestWindow().setPosition(0, 45);
+                                        }
+                                        else { //quiz pc
+                                            Cameras.setCameraTo(pc.getBounds().x / MyGdxGame.PPM + 2.5f);
+                                            playScreen.getHud().showEditorQuizWindow(pc);
+                                        }
                                     }
                                 }
-                                for (InfoSign infoSign : playScreen.getInfoSigns()) {
+                                for (InfoSign infoSign : playScreen.getObjectManager().getInfoSigns()) {
                                     if (infoSign.isUsable()) {
                                         playScreen.getPlayer().b2body.setLinearVelocity(0, 0);
                                         playScreen.getPlayer().b2body.setTransform(infoSign.getBounds().x / MyGdxGame.PPM + 0.17f, (infoSign.getBounds().y + playScreen.getPlayer().b2body.getPosition().y) / MyGdxGame.PPM + 0.3f, 0);
                                         playScreen.getPlayer().setCurrentState(Player.State.READING);
-                                        playScreen.getHud().showInfoWindow(infoSign.getName(), infoSign.getText());
+                                        playScreen.getHud().showInfoWindow(infoSign, infoSign.getText());
                                     }
                                 }
-                                for (Quiz quiz : playScreen.getQuizes()) {
+                                for (Quiz quiz : playScreen.getObjectManager().getQuizes()) {
                                     for (FloatingPlatform floatingPlatform : quiz.getFloatingPlatforms()) {
                                         if (floatingPlatform.getLever().isUsable()) {
                                             playScreen.getPlayer().b2body.setLinearVelocity(0, 0);
@@ -76,7 +82,7 @@ public class InputHandler {
             else if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER))
                 playScreen.getHud().getCurrentToast().handleNextPressed();
         }
-        else {
+        else { //device does not have a keyboard
             if(!playScreen.getHud().getCurrentToast().isShowing() || playScreen.getHud().getCurrentToast() == null) {
                 if (playScreen.getPlayer().canMove) {
                     if (playScreen.getHud().isRightBtnPressed()) {
@@ -96,24 +102,30 @@ public class InputHandler {
                         playScreen.getHud().setUseBtnPressed();
                         if (Player.colliding) {
                             if (!playScreen.isEnterKeyHandled()) {
-                                for (Pc pc : playScreen.getPcs()) {
+                                for (Pc pc : playScreen.getObjectManager().getPcs()) {
                                     if (pc.isUsable()) {
                                         playScreen.getPlayer().setCoding(pc.getBounds());
-                                        playScreen.getHud().showEditorWindow(pc);
-                                        Cameras.setCameraTo(pc.getBounds().x / MyGdxGame.PPM + 1.5f);
-                                        if(playScreen.getPlayer().b2body.getPosition().y > Cameras.playScreenCam.position.y)
-                                            playScreen.getHud().getEditorWindow().getQuestWindow().setPosition(0, 45);
+                                        if(!pc.isQuizPc()) {
+                                            Cameras.setCameraTo(pc.getBounds().x / MyGdxGame.PPM + 1.5f);
+                                            playScreen.getHud().showEditorWindow(pc);
+                                            if (playScreen.getPlayer().b2body.getPosition().y > Cameras.playScreenCam.position.y)
+                                                playScreen.getHud().getEditorWindow().getQuestWindow().setPosition(0, 45);
+                                        }
+                                        else { //quiz pc
+                                            Cameras.setCameraTo(pc.getBounds().x / MyGdxGame.PPM + 2.5f);
+                                            playScreen.getHud().showEditorQuizWindow(pc);
+                                        }
                                     }
                                 }
-                                for (InfoSign infoSign : playScreen.getInfoSigns()) {
+                                for (InfoSign infoSign : playScreen.getObjectManager().getInfoSigns()) {
                                     if (infoSign.isUsable()) {
                                         playScreen.getPlayer().b2body.setLinearVelocity(0, 0);
                                         playScreen.getPlayer().b2body.setTransform(infoSign.getBounds().x / MyGdxGame.PPM + 0.17f, (infoSign.getBounds().y + playScreen.getPlayer().b2body.getPosition().y) / MyGdxGame.PPM + 0.3f, 0);
                                         playScreen.getPlayer().setCurrentState(Player.State.READING);
-                                        playScreen.getHud().showInfoWindow(infoSign.getName(), infoSign.getText());
+                                        playScreen.getHud().showInfoWindow(infoSign, infoSign.getText());
                                     }
                                 }
-                                for (Quiz quiz : playScreen.getQuizes()) {
+                                for (Quiz quiz : playScreen.getObjectManager().getQuizes()) {
                                     for (FloatingPlatform floatingPlatform : quiz.getFloatingPlatforms()) {
                                         if (floatingPlatform.getLever().isUsable()) {
                                             playScreen.getPlayer().b2body.setLinearVelocity(0, 0);
@@ -137,10 +149,11 @@ public class InputHandler {
 
         //COMMON
         playScreen.setEnterKeyHandled(false);
-
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
-            if (playScreen.getPlayer().getCurrentState() == Player.State.CODING)
+            if (playScreen.getPlayer().getCurrentState() == Player.State.CODING) {
                 playScreen.getHud().getEditorWindow().closeCurrentEditor();
+                playScreen.getHud().getEditorQuizWindow().closeCurrentEditor();
+            }
             else if (playScreen.getPlayer().getCurrentState() == Player.State.READING)
                 playScreen.getHud().closeCurrentInfo();
             else if (playScreen.getHud().isPauseWindowShowing())

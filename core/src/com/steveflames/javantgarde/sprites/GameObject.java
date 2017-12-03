@@ -23,13 +23,12 @@ public abstract class GameObject extends Sprite{
     protected String name;
     protected World world;
     protected TiledMap map;
-    //protected TiledMapTile tile;
     protected Rectangle bounds;
     public Body b2body;
     protected Fixture fixture;
-    protected float alpha = 1;
 
-    protected boolean usable = false;
+    float alpha = 1;
+    boolean usable = false;
 
     public Vector2 position;
     public Vector2 position_previous;
@@ -61,11 +60,10 @@ public abstract class GameObject extends Sprite{
     }
 
     public GameObject() {
-
     }
 
     //define player
-    public void definePlayer(World world, float radius) {
+    void definePlayer(World world, float radius) {
         BodyDef bdef = new BodyDef();
         bdef.type = BodyDef.BodyType.DynamicBody;
         b2body = world.createBody(bdef);
@@ -97,12 +95,6 @@ public abstract class GameObject extends Sprite{
         this.bounds = new Rectangle(b2body.getPosition().x, b2body.getPosition().y, 81, 88);
     }
 
-    public abstract void update(float dt);
-    public abstract void drawFilled(ShapeRenderer sr);
-    public abstract void drawLine(ShapeRenderer sr);
-    public abstract void drawFont(SpriteBatch sb);
-    public abstract void drawFontScaled(SpriteBatch sb);
-
     void updateAlpha(float dt) {
         if(alpha + dt*0.65f < 1)
             alpha += dt*0.65f;
@@ -110,9 +102,11 @@ public abstract class GameObject extends Sprite{
             alpha = 1;
     }
 
-    public Rectangle getBounds() {
-        return bounds;
-    }
+    public abstract void update(float dt);
+    public abstract void drawFilled(ShapeRenderer sr);
+    public abstract void drawLine(ShapeRenderer sr);
+    public abstract void drawFont(SpriteBatch sb);
+    public abstract void drawFontScaled(SpriteBatch sb);
 
     public boolean isUsable() {
         return usable;
@@ -120,6 +114,10 @@ public abstract class GameObject extends Sprite{
 
     public void setUsable(boolean usable) {
         this.usable = usable;
+    }
+
+    public Rectangle getBounds() {
+        return bounds;
     }
 
     public String getName() {

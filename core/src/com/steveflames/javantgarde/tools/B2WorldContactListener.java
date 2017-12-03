@@ -58,8 +58,8 @@ public class B2WorldContactListener implements ContactListener {
                     }
                 }
                 else if(object.getUserData() instanceof Item) {
-                    playScreen.getObjectsToRemove().add((Item)object.getUserData());
-                    playScreen.getItems().remove(object.getUserData());
+                    playScreen.getObjectManager().getObjectsToRemove().add((Item)object.getUserData());
+                    playScreen.getObjectManager().getItems().remove(object.getUserData());
                     if(((Item) object.getUserData()).isUsable()) {
                         if (((Item) object.getUserData()).getName().equals("health"))
                             ((Player) player.getUserData()).addHealth();

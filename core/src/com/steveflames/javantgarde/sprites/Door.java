@@ -24,10 +24,13 @@ public class Door extends GameObject {
 
     public void update(float dt) {
         if(opening) {
+
             if(bounds.height>0) {
                 bounds.y += 400*dt;
                 bounds.height -= 400*dt;
             }
+            else
+                opening = false;
         }
     }
 
