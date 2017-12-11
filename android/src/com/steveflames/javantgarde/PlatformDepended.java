@@ -22,4 +22,9 @@ public class PlatformDepended implements iPlatformDepended {
     public boolean deviceHasKeyboard() {
         return false;
     }
+
+    @Override
+    public boolean isHTML() {
+        return false;
+    }
 }

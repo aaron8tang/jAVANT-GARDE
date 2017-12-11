@@ -23,4 +23,9 @@ public class PlatformDepended implements com.steveflames.javantgarde.iPlatformDe
     public boolean deviceHasKeyboard() {
         return true;
     }
+
+    @Override
+    public boolean isHTML() {
+        return true;
+    }
 }
