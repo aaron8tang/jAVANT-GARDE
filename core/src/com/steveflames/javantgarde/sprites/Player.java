@@ -26,28 +26,31 @@ import java.util.LinkedHashMap;
 
 public class Player extends GameObject {
 
-    public static final float PLAYERSPEED = 0.24f; //0.24f
+    private static final float PLAYERSPEED = 10f; //multiplied by dt
+    private static final float MAXSPEED = 2.4f;
     private static final float JUMPSPEED = 8.3f;
 
     public enum State { FALLING, JUMPING, STANDING, RUNNING, DEAD, CODING, READING, DISAPPEARING, DISAPPEARED }
     private State currentState;
     private State previousState;
     private boolean outOfBounds = false;
-    private ArrayList<Checkpoint> checkpoints;
-    private int currentCheckpointIndex = 0;
-    private int health = 5;
-    private LinkedHashMap<String, String> classes = new LinkedHashMap<String, String>();
-
-    private TextureRegion currentTR;
-    private final float radius = 22/MyGdxGame.PPM;
     public boolean canMove = true;
+    private int facingDirection = 1;
+    private boolean runLeft = false;
+    private boolean runRight = false;
+    private int health = 5;
+    private final float radius = 24/MyGdxGame.PPM;
+    private int currentCheckpointIndex = 0;
+    private TextureRegion currentTR;
+    private LinkedHashMap<String, String> classes = new LinkedHashMap<String, String>();
+    private ArrayList<Checkpoint> checkpoints;
 
+    //player msg variables (e.g. "-1 health")
     private String playerMsg = null;
     private long playerMsgMillis = TimeUtils.millis();
     private float playerMsgAlpha = 1f;
     private GlyphLayout playerMsgGlyph = new GlyphLayout();
     private Vector2 playerMsgVector = new Vector2();
-    private int facingDirection = 1;
     private float red;
     private float green;
     private float blue;
@@ -100,7 +103,7 @@ public class Player extends GameObject {
         if(playerMsg != null) {
             Fonts.small.setColor(red,green,blue,playerMsgAlpha);
             Fonts.small.draw(sb, playerMsg, playerMsgVector.x*MyGdxGame.PPM  + Cameras.getHudCameraOffsetX()
-                    - playerMsgGlyph.width/2, playerMsgVector.y*MyGdxGame.PPM + 20); //TODO cam k gia to y otan valw new lvls
+                    - playerMsgGlyph.width/2, playerMsgVector.y*MyGdxGame.PPM + 30);
         }
     }
 
@@ -123,12 +126,19 @@ public class Player extends GameObject {
             reduceHealth(1);
         }
 
+        //player run left or right
+        if(runRight && b2body.getLinearVelocity().x <= Player.MAXSPEED)
+            b2body.applyLinearImpulse(PLAYERSPEED*dt, 0, b2body.getWorldCenter().x, b2body.getWorldCenter().y, true);
+        else if(runLeft && b2body.getLinearVelocity().x >= -Player.MAXSPEED)
+            b2body.applyLinearImpulse(-PLAYERSPEED*dt, 0, b2body.getWorldCenter().x, b2body.getWorldCenter().y, true);
+
+
         //update DISAPPEARING state of player
         if(currentState == State.DISAPPEARING) {
             if(alpha - 0.9f*dt > 0) {
                 alpha -= 0.9f*dt;
             }
-            else {
+            else { //todo kamia fora de bainei
                 setCurrentState(State.DISAPPEARED);
                 alpha = 0;
                 b2body.setLinearVelocity(0,0);
@@ -181,6 +191,8 @@ public class Player extends GameObject {
             return State.READING;
         else if(currentState == State.DISAPPEARING)
             return State.DISAPPEARING;
+        else if(currentState == State.DISAPPEARED)
+            return State.DISAPPEARED;
             //if player is going positive in Y-Axis he is jumping
         else if(b2body.getLinearVelocity().y > 0 && currentState == State.JUMPING)
             return State.JUMPING;
@@ -188,7 +200,7 @@ public class Player extends GameObject {
         else if(b2body.getLinearVelocity().y < 0)
             return State.FALLING;
             //if player is positive or negative in the X axis he is running
-        else if(b2body.getLinearVelocity().x != 0) //todo otan strivei k ginei 0 to vel allazei stigmiaia h eikona
+        else if(b2body.getLinearVelocity().x < -1.2 || b2body.getLinearVelocity().x > 1.2)
             return State.RUNNING;
             //if none of these return then he must be standing
         else
@@ -204,20 +216,22 @@ public class Player extends GameObject {
 
 
     public void jump() {
-        if ( currentState != State.JUMPING  && currentState != State.FALLING) {
+        if (currentState != State.JUMPING  && currentState != State.FALLING) {
             b2body.applyLinearImpulse(0, JUMPSPEED, b2body.getWorldCenter().x, b2body.getWorldCenter().y, true);
             setCurrentState(State.JUMPING);
         }
     }
 
-    public void runRight() {
-        b2body.applyLinearImpulse(PLAYERSPEED, 0, b2body.getWorldCenter().x,  b2body.getWorldCenter().y, true); //0.2f
-        facingDirection = 1;
+    public void setRunLeft(boolean runLeft) {
+        if(runLeft)
+            facingDirection = -1;
+        this.runLeft = runLeft;
     }
 
-    public void runLeft() {
-        b2body.applyLinearImpulse(-PLAYERSPEED, 0, b2body.getWorldCenter().x, b2body.getWorldCenter().y, true);
-        facingDirection = -1;
+    public void setRunRight(boolean runRight) {
+        if(runRight)
+            facingDirection = 1;
+        this.runRight = runRight;
     }
 
     public void respawnAtCheckpoint(ArrayList<Rope> ropes) {

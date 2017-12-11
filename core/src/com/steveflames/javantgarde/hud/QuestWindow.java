@@ -64,7 +64,7 @@ class QuestWindow extends Window {
             }
         });
         bottomBarTable.add(progressBar).expandX().fillX().left().padLeft(10);
-        bottomBarTable.add(helpBtn).right();
+        bottomBarTable.add(helpBtn).right().width(180);
 
         //add components to window
         this.setSize(580, 340);

@@ -43,7 +43,7 @@ public class Rope extends GameObject {
 
         //get the rope group from the name
         attributeSplitter = name.split("-");
-        id = Character.getNumericValue(attributeSplitter[2].charAt(0));
+        id = Integer.parseInt(String.valueOf(attributeSplitter[2].charAt(0)));
 
         Collections.addAll(platformTexts, lineSplitter);
         Collections.shuffle(platformTexts);

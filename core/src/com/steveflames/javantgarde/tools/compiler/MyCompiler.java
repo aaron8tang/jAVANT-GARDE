@@ -11,8 +11,7 @@ import java.util.ArrayList;
 
 public class MyCompiler {
 
-    public static Label consoleTextArea;
-    //private HashMap<String, Integer> errors = new HashMap<String, Integer>();
+    private Label consoleTextArea;
     private ArrayList<MyClass> classes;
     private MyClass compilationClass;
 
@@ -25,7 +24,7 @@ public class MyCompiler {
 
 
     public MyCompiler(Label consoleTextArea) {
-        MyCompiler.consoleTextArea = consoleTextArea;
+        this.consoleTextArea = consoleTextArea;
     }
 
 
@@ -159,18 +158,25 @@ public class MyCompiler {
     }
 
     private boolean ifCommand() {
-       /* if(wordSplitter[0].equals("if")) {
+        if(wordSplitter[0].equals("if")) {
             if(isNextWordStrictlyEqualTo("(")) {
-                if(booleanStatement) {
+                if(booleanStatement(getNextWordInLine())) {
                     if(isNextWordStrictlyEqualTo(")")) {
                         if(isNextWordStrictlyEqualTo("{")) {
 
                         }
                     }
                 }
+                //else error?
             }
-        }*/ //todo
+        } //todo
 
+        return false;
+    }
+
+    private boolean booleanStatement(String firstWord) {
+        //eite boolean var, eite method me return boolean, eite
+        //if(firstWord.equals())
         return false;
     }
 

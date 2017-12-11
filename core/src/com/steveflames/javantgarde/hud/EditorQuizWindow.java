@@ -2,6 +2,7 @@ package com.steveflames.javantgarde.hud;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -47,7 +48,9 @@ public class EditorQuizWindow extends Window {
                 closeCurrentEditor();
             }
         });
-        topBarTable.add(exitBtn).expandX().top().right();
+        Label infoLabel = new Label("[CYAN]Fill in the blank![]", Skins.skin);
+        topBarTable.add(infoLabel).expandX().center();
+        topBarTable.add(exitBtn).top().right();
 
         //codeLabel
         codeLabel = new Label("", Skins.skin);
@@ -72,7 +75,21 @@ public class EditorQuizWindow extends Window {
             if(timer > 1.5) { //1.5 after the answer
                 if(correct) { //if it is correct
                     tempHideEditor(-1); //hide the editor temporarily to show the result in the map (e.g. open door)
-                    if(playScreen.getCurrentLevel().getId().equals("4_1")) {
+                    if(playScreen.getCurrentLevel().getId().equals("3_2")) {
+                        switch (currentPc.getQuest().getProgress()) {
+                            case 0:
+                                playScreen.getObjectManager().getFloatingPlatforms().get(1).drop(20);
+                                break;
+                            case 1:
+                                playScreen.getObjectManager().getFloatingPlatforms().get(2).drop(20);
+                                break;
+                            case 2:
+                                showEditor = false;
+                                playScreen.getObjectManager().getFloatingPlatforms().get(3).drop(20);
+                                break;
+                        }
+                    }
+                    else if(playScreen.getCurrentLevel().getId().equals("4_1")) {
                         switch (currentPc.getQuest().getProgress()) {
                             case 0:
                                 playScreen.getObjectManager().getDoors().get(1).open();
@@ -115,12 +132,15 @@ public class EditorQuizWindow extends Window {
                 }
             }
         }
+        for(int i=0; i<playScreen.getObjectManager().getFloatingPlatforms().size(); i++) {
+            if(playScreen.getObjectManager().getFloatingPlatforms().get(i).b2body.getLinearVelocity().y==0)
+                playScreen.getObjectManager().getFloatingPlatforms().get(i).b2body.setType(BodyDef.BodyType.KinematicBody);
+        }
     }
 
     void btnPressed(String text) {
         if(answered == 0) {
             codeLabel.setText(codeLabel.getText().toString().replaceAll("\\[RED].*\\[]", "[RED]" + text.substring(1) + "[]"));
-            answered = 1;
 
             if (text.charAt(0) == '!') { //correct answer
                 playScreen.getPlayer().showPlayerMsg("correct!");
@@ -130,8 +150,9 @@ public class EditorQuizWindow extends Window {
             else { //wrong answer
                 closeCurrentEditor();
                 playScreen.getPlayer().setCurrentState(Player.State.CODING); //so that the player can't run
-                playScreen.getObjectManager().getFloatingPlatforms().get(0).b2body.setLinearVelocity(0, -5);
+                playScreen.getObjectManager().getFloatingPlatforms().get(0).drop(6);
             }
+            answered = 1;
         }
     }
 
@@ -179,7 +200,7 @@ public class EditorQuizWindow extends Window {
     }
 
     public void closeCurrentEditor() {
-        if(this.getStage()!=null) {
+        if(this.getStage()!=null && answered == 0) {
             Hud.playScreen.getPlayer().setCurrentState(Player.State.STANDING);
             this.remove();
             extraKeyboardWindow.clearButtons();

@@ -1,5 +1,7 @@
 package com.steveflames.javantgarde.tools;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
@@ -15,6 +17,7 @@ import com.steveflames.javantgarde.sprites.Player;
 import com.steveflames.javantgarde.sprites.Quiz;
 import com.steveflames.javantgarde.sprites.Teleporter;
 import com.steveflames.javantgarde.sprites.ropes.Rope;
+import com.steveflames.javantgarde.tools.global.Cameras;
 
 import java.util.ArrayList;
 
@@ -50,7 +53,7 @@ public class GameObjectManager {
     public void copyCurrentPosition() { //interpolation
         for (int i = 0; i < gameObjects.size(); i++) {
             if (gameObjects.get(i).b2body != null) {
-                if (gameObjects.get(i).b2body.getType() == BodyDef.BodyType.DynamicBody || gameObjects.get(i).b2body.getType() == BodyDef.BodyType.KinematicBody && gameObjects.get(i).b2body.isActive()) {
+                if ((gameObjects.get(i).b2body.getType() == BodyDef.BodyType.DynamicBody || gameObjects.get(i).b2body.getType() == BodyDef.BodyType.KinematicBody) && gameObjects.get(i).b2body.isActive()) {
                     gameObjects.get(i).position_previous.x = gameObjects.get(i).b2body.getPosition().x;
                     gameObjects.get(i).position_previous.y = gameObjects.get(i).b2body.getPosition().y;
                     gameObjects.get(i).angle_previous = gameObjects.get(i).b2body.getAngle();
@@ -62,7 +65,7 @@ public class GameObjectManager {
     public void interpolateCurrentPosition(float alpha) { //interpolation
         for (int i = 0; i < gameObjects.size(); i++) {
             if (gameObjects.get(i).b2body != null) {
-                if (gameObjects.get(i).b2body.getType() == BodyDef.BodyType.DynamicBody || gameObjects.get(i).b2body.getType() == BodyDef.BodyType.KinematicBody && gameObjects.get(i).b2body.isActive()) {
+                if ((gameObjects.get(i).b2body.getType() == BodyDef.BodyType.DynamicBody || gameObjects.get(i).b2body.getType() == BodyDef.BodyType.KinematicBody) && gameObjects.get(i).b2body.isActive()) {
                     //---- interpolate: currentState*alpha + previousState * ( 1.0 - alpha ); ------------------
                     gameObjects.get(i).position.x = gameObjects.get(i).b2body.getPosition().x * alpha + gameObjects.get(i).position_previous.x * (1.0f - alpha);
                     gameObjects.get(i).position.y = gameObjects.get(i).b2body.getPosition().y * alpha + gameObjects.get(i).position_previous.y * (1.0f - alpha);
@@ -70,6 +73,30 @@ public class GameObjectManager {
                 }
             }
         }
+    }
+
+    public void drawFontScaled(SpriteBatch sb) {
+        for(int i=0; i<gameObjects.size(); i++)
+            if (Cameras.inLineOfSight(gameObjects.get(i)))
+                gameObjects.get(i).drawFontScaled(sb);
+    }
+
+    public void drawFilled(ShapeRenderer sr) {
+        for(int i=0; i<gameObjects.size(); i++)
+            if(Cameras.inLineOfSight(gameObjects.get(i)))
+                gameObjects.get(i).drawFilled(sr);
+    }
+
+    public void drawLine(ShapeRenderer sr) {
+        for(int i=0; i<gameObjects.size(); i++)
+            if(Cameras.inLineOfSight(gameObjects.get(i)))
+                gameObjects.get(i).drawLine(sr);
+    }
+
+    public void drawFont(SpriteBatch sb) {
+        for(int i=0; i<gameObjects.size(); i++)
+            if(Cameras.inLineOfSight(gameObjects.get(i)))
+                gameObjects.get(i).drawFont(sb);
     }
 
     public void addGameObject(GameObject gameObject) {

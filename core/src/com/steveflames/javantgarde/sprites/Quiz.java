@@ -28,13 +28,12 @@ public class Quiz extends GameObject {
     private int pulled = 0;
     private float timer=0;
     private String id;
-    private ArrayList<Door> doors;
-    private static Hud hud;
+    private PlayScreen playScreen;
 
-    public Quiz(String name, World world, TiledMap map, Rectangle bounds, String id, ArrayList<Door> doors) {
-        super(name, world, map, bounds, true);
-        this.id = id;
-        this.doors = doors;
+    public Quiz(String name, PlayScreen playScreen, Rectangle bounds) {
+        super(name, playScreen.getWorld(), playScreen.getMap(), bounds, true);
+        this.playScreen = playScreen;
+        this.id = playScreen.getCurrentLevel().getId();
         parseQuizString(MyFileReader.readFile("txt/quizes/"+name+".txt"));
     }
 
@@ -65,13 +64,19 @@ public class Quiz extends GameObject {
             incrementCurrentQuestion();
             for(int i=0; i<floatingPlatforms.size(); i++){
                 if(currentQuestion + 1 <questions.size())
-                    floatingPlatforms.get(i).quizReset(answers.get(currentQuestion)[i], hud);
-                else { //quiz completed
-                    floatingPlatforms.get(i).quizReset(" ", hud);
+                    floatingPlatforms.get(i).quizReset(answers.get(currentQuestion)[i], playScreen.getHud());
+                else { //QUIZ COMPLETED
+                    floatingPlatforms.get(i).quizReset(" ", playScreen.getHud());
                     if(id.equals("2_2") || id.equals("1_2"))
-                        doors.get(0).open();
+                        playScreen.getObjectManager().getDoors().get(0).open();
                     else if(id.equals("4_1"))
-                        doors.get(6).open();
+                        playScreen.getObjectManager().getDoors().get(6).open();
+                    else if(id.equals("7_2")) {
+                        System.out.println("EDW");
+                        playScreen.getObjectManager().getTeleporter().b2body.setTransform(playScreen.getObjectManager().getInfoSigns().get(0).position.x,
+                                playScreen.getObjectManager().getInfoSigns().get(0).position.y, 0);
+                        playScreen.getObjectManager().getInfoSigns().get(0).b2body.setTransform(0, -5, 0);
+                    }
                 }
             }
         }
@@ -140,7 +145,4 @@ public class Quiz extends GameObject {
         floatingPlatform.setName(answers.get(0)[floatingPlatforms.size()-1]);
     }
 
-    public static void setHud(Hud hud) {
-        Quiz.hud = hud;
-    }
 }

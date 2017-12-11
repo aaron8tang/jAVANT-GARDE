@@ -59,19 +59,21 @@ public class Toast {
     }
 
     void newToast(String text) {
-        this.text = text;
-        currentState = State.INCOMING;
-        glyphLayout.setText(Fonts.small, text);
-        currentPage = 0;
-        numOfPages = 0;
-        currentLine = -1;
-        linesOfText.clear();
+        if(currentState == State.LEFT) {
+            this.text = text;
+            currentState = State.INCOMING;
+            glyphLayout.setText(Fonts.small, text);
+            currentPage = 0;
+            numOfPages = 0;
+            currentLine = -1;
+            linesOfText.clear();
 
-        breakTextIntoLines();
-        timerMillis = TimeUtils.millis();
+            breakTextIntoLines();
+            timerMillis = TimeUtils.millis();
 
-        //for(StringBuilder s : linesOfText)
-          //  System.out.println("EDW: " + s);
+            //for(StringBuilder s : linesOfText)
+            //  System.out.println("EDW: " + s);
+        }
     }
 
     private void breakTextIntoLines() {

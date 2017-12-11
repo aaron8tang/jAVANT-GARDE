@@ -100,7 +100,7 @@ public class B2WorldCreator {
                         playScreen.getObjectManager().getMarkers().add(rect);
                     }
                     else if(object.getName().contains("quiz")) {
-                        playScreen.getObjectManager().getQuizes().add(new Quiz(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, playScreen.getCurrentLevel().getId(), playScreen.getObjectManager().getDoors()));
+                        playScreen.getObjectManager().getQuizes().add(new Quiz(object.getName(), playScreen, rect));
                         playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getQuizes().get(playScreen.getObjectManager().getQuizes().size()-1));
                     }
                     else if(object.getName().contains("floatingPlatform")) {

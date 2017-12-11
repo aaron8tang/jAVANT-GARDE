@@ -40,6 +40,7 @@ public class Hud implements Disposable {
     public Stage stage;
     private EditorWindow editorWindow;
     private EditorQuizWindow editorQuizWindow;
+    private EditorOrderWindow editorOrderWindow;
     private PauseWindow pauseWindow;
     private Table gameOverWindow;
     private Table levelCompletedWindow;
@@ -62,6 +63,7 @@ public class Hud implements Disposable {
         toast = new Toast();
         editorWindow = new EditorWindow("EDITOR", Skins.skin, this);
         editorQuizWindow = new EditorQuizWindow("EDITOR", Skins.skin, playScreen);
+        editorOrderWindow = new EditorOrderWindow("EDITOR", Skins.skin, playScreen);
         pauseWindow = new PauseWindow("GAME PAUSED", Skins.skin, playScreen);
         gameOverWindow = new GameOverWindow(Skins.neonSkin, playScreen);
         levelCompletedWindow = new LevelCompletedWindow(Skins.neonSkin, playScreen);
@@ -73,6 +75,7 @@ public class Hud implements Disposable {
             toast.update(dt);
         editorWindow.update(dt);
         editorQuizWindow.update(dt);
+        editorOrderWindow.update(dt);
     }
 
     public void drawStage(SpriteBatch sb) {
@@ -214,6 +217,10 @@ public class Hud implements Disposable {
         editorQuizWindow.show(pc);
     }
 
+    public void showEditorOrderWindow(Pc pc) {
+        editorOrderWindow.show(pc);
+    }
+
     public void showInfoWindow(InfoSign infoSign, String text) {
         infoDialog = new Dialog("", Skins.skin, "dialog") {
             public void result(Object obj) {
@@ -317,5 +324,9 @@ public class Hud implements Disposable {
 
     public EditorQuizWindow getEditorQuizWindow() {
         return editorQuizWindow;
+    }
+
+    public EditorOrderWindow getEditorOrderWindow() {
+        return editorOrderWindow;
     }
 }

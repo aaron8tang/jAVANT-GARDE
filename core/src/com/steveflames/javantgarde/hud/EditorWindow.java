@@ -190,7 +190,7 @@ public class EditorWindow extends Window {
                 for(Map.Entry<String, String> entry: Hud.playScreen.getPlayer().getClasses().entrySet())
                     myClasses.add(new MyClass(entry.getKey(), entry.getValue()));
 
-                //compile and run todo
+                //compile and run
                 if(compiler.compile(myClasses) || (Hud.playScreen.getCurrentLevel().getId().equals("1_1") && currentPc.getQuest().getProgress()==0)) {
                     if (currentPc.getQuest().validateCodeForQuest(Hud.playScreen, myClasses.get(0), currentPc.getQuest().getQuestN())) {
                         questWindow.incrementQuestStep(currentPc.getQuest());
@@ -212,7 +212,7 @@ public class EditorWindow extends Window {
     }
 
     private void editorKeyDown(int keycode) {
-        if(keycode== Input.Keys.BACKSPACE) { //todo an o proh k epomenos xarakthras ' " () tote delete k ton epomeno
+        if(keycode== Input.Keys.BACKSPACE) {
             if(codeTextArea.getSelection().length()==0) {
                 int pos = codeTextArea.getCursorPosition();
                 int charsToDelete = -1;
@@ -256,9 +256,6 @@ public class EditorWindow extends Window {
     }
 
     void editorKeyTyped(char character) {
-        //int x = codeTextArea.getCursorPosition(); //todo multicolor... markup
-        //codeTextArea.texsetText(codeTextArea.getText().replaceAll("public", "[ORANGE]public[]"));
-        //codeTextArea.moveCursorLine(1);
         if(character == '\t') {
             int pos = codeTextArea.getCursorPosition();
             StringBuilder stringBuilder = new StringBuilder();
@@ -415,8 +412,6 @@ public class EditorWindow extends Window {
                 }
             }
         }
-        //questTextArea.setText(codeTextArea.getText()); //todo for the color markup. you will be writing your code in another textarea
-        //todo and what u see will be a multicolor label that gets copied with each KEY DOWN
     }
 
     public void tempHideEditor(float camX, boolean hideConsole) {

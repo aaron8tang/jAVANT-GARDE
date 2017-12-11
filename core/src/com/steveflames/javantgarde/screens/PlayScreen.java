@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -30,8 +31,6 @@ import com.steveflames.javantgarde.tools.global.Fonts;
 
 /**
  * This class holds the main loop and processing of the game.
- *
- * Created by Flames on 23/9/2017.
  */
 public class PlayScreen implements Screen{
 
@@ -101,7 +100,6 @@ public class PlayScreen implements Screen{
         new B2WorldCreator(this); //initialize world
         objectManager.initializePlayer(world); //initialize player
         hud = new Hud(this, game.sb); //initialize hud
-        Quiz.setHud(hud);
 
         //initialize inputHandler
         inputHandler = new InputHandler(this);
@@ -127,7 +125,9 @@ public class PlayScreen implements Screen{
         if (dt > 0.25f) dt = 0.25f; //max frame time to avoid spiral of death
 
         //System.out.println("DT: " +dt); //DEBUG
-        //FIXED TIMESTEP METHOD
+        //logic_frameCount = 0;
+
+        //*************************FIXED TIMESTEP METHOD*************************
         accumulator += dt;
         while (accumulator >= delta) {
             objectManager.copyCurrentPosition(); //INTERPOLATION
@@ -136,15 +136,16 @@ public class PlayScreen implements Screen{
             objectManager.interpolateCurrentPosition((float)(accumulator / delta)); //INTERPOLATION
 
             // FPS check
-            logic_frameCount ++;
+            /*logic_frameCount ++;
             logic_now = System.nanoTime();
             if ((logic_now - logic_lastRender) >= logic_FPSupdateIntervall * 1000000000)  {
                 logic_lastFPS = logic_frameCount / logic_FPSupdateIntervall;
                 logic_frameCount = 0;
                 logic_lastRender = System.nanoTime();
-            }
+            }*/
         }
-        //System.out.println("LOGIC: " + logic_lastFPS); //DEBUG
+        //System.out.println("LAST FPS: " + logic_lastFPS); //DEBUG
+        //System.out.println("FRAME COUNT: " + logic_frameCount); //DEBUG
         update();
         rendering();
         enterKeyHandled = false;
@@ -229,9 +230,7 @@ public class PlayScreen implements Screen{
         //draw textures and fonts (scaled)
         game.sb.setColor(Color.WHITE);
         game.sb.begin();
-        for(int i=0; i<objectManager.getGameObjects().size(); i++)
-            if (Cameras.inLineOfSight(objectManager.getGameObjects().get(i)))
-                objectManager.getGameObjects().get(i).drawFontScaled(game.sb);
+        objectManager.drawFontScaled(game.sb);
         game.sb.end();
 
         //disable alpha
@@ -247,17 +246,12 @@ public class PlayScreen implements Screen{
 
         //draw filled shapes (unscaled)
         game.sr.begin(ShapeRenderer.ShapeType.Filled);
-        for(int i=0; i<objectManager.getGameObjects().size(); i++)
-            if(Cameras.inLineOfSight(objectManager.getGameObjects().get(i)))
-                objectManager.getGameObjects().get(i).drawFilled(game.sr);
+        objectManager.drawFilled(game.sr);
         game.sr.end();
 
         //draw line shapes (unscaled)
         game.sr.begin(ShapeRenderer.ShapeType.Line);
-
-        for(int i=0; i<objectManager.getGameObjects().size(); i++)
-            if(Cameras.inLineOfSight(objectManager.getGameObjects().get(i)))
-                objectManager.getGameObjects().get(i).drawLine(game.sr);
+        objectManager.drawLine(game.sr);
         game.sr.end();
 
         //draw filled over line (unscaled)
@@ -267,9 +261,7 @@ public class PlayScreen implements Screen{
 
         //draw fonts and textures (unscaled)
         game.sb.begin();
-        for(int i=0; i<objectManager.getGameObjects().size(); i++)
-            if(Cameras.inLineOfSight(objectManager.getGameObjects().get(i)))
-                objectManager.getGameObjects().get(i).drawFont(game.sb);
+        objectManager.drawFont(game.sb);
         //draw the use item prompts
         if (getPlayer().getCurrentState() != Player.State.READING && getPlayer().getCurrentState() != Player.State.CODING) { //if player is coding or reading sign, dont draw the use prompt
             for (int i = 0; i < objectManager.getInfoSigns().size(); i++)
@@ -292,7 +284,7 @@ public class PlayScreen implements Screen{
 
 
         //*************************DEBUG*************************
-        //b2dr.render(world, cam.combined);
+        //b2dr.render(world, Cameras.playScreenCam.combined);
         //fpsLogger.log();
         /*System.out.println("GL calls: " + GLProfiler.calls);
         System.out.println("GL drawCalls: " + GLProfiler.drawCalls);
@@ -328,7 +320,8 @@ public class PlayScreen implements Screen{
     }
 
     public void pause() {
-        hud.showPauseWindow();
+        if(getPlayer().canMove)
+            hud.showPauseWindow();
     }
 
     public void resume() {}

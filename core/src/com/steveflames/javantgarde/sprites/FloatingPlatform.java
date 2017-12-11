@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.hud.Hud;
@@ -85,6 +86,7 @@ public class FloatingPlatform extends GameObject {
     }
 
     public void resetB2Body() {
+        b2body.setType(BodyDef.BodyType.KinematicBody);
         b2body.setLinearVelocity(0,0);
         b2body.setTransform((bounds.getX() + bounds.getWidth() / 2) / MyGdxGame.PPM, (bounds.getY() + bounds.getHeight() / 2) / MyGdxGame.PPM, 0);
     }
@@ -95,6 +97,11 @@ public class FloatingPlatform extends GameObject {
             b2body.setLinearVelocity(0, -6);
             lever.b2body.setLinearVelocity(0, -6);
         }
+    }
+
+    public void drop(float speed) {
+        b2body.setType(BodyDef.BodyType.DynamicBody);
+        b2body.setLinearVelocity(0, -speed);
     }
 
     public void setName(String name) {

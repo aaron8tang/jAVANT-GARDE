@@ -19,6 +19,7 @@ public class Loader {
     //world
     public static final TextureAtlas teleporterAtlas = new TextureAtlas(Gdx.files.internal("images/teleporter/teleporter.pack"));
     public static final Texture infoSignT = new Texture(Gdx.files.internal("images/infoSign.png"));
+    public static final Texture pcT = new Texture(Gdx.files.internal("images/pc.png"));
     public static final Texture leverClosedT = new Texture(Gdx.files.internal("images/lever_closed.png"));
     public static final Texture leverOpenT = new Texture(Gdx.files.internal("images/lever_open.png"));
 
@@ -45,6 +46,7 @@ public class Loader {
         //world
         teleporterAtlas.dispose();
         infoSignT.dispose();
+        pcT.dispose();
         leverClosedT.dispose();
         leverOpenT.dispose();
 

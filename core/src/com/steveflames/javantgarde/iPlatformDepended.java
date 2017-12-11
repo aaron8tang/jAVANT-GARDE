@@ -8,4 +8,5 @@ public interface iPlatformDepended {
     String getNextPrompt();
     String getLevel1Tip();
     boolean deviceHasKeyboard();
+    boolean isHTML();
 }
