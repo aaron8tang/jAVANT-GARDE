@@ -1,4 +1,4 @@
-package com.steveflames.javantgarde.hud;
+package com.steveflames.javantgarde.hud.navigation;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;

@@ -1,4 +1,4 @@
-package com.steveflames.javantgarde.hud;
+package com.steveflames.javantgarde.hud.navigation;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -18,7 +18,7 @@ import com.steveflames.javantgarde.tools.global.Skins;
 
 public class PauseWindow extends Window {
 
-    PauseWindow(String title, Skin skin, final PlayScreen playScreen) {
+    public PauseWindow(String title, Skin skin, final PlayScreen playScreen) {
         super(title, skin);
         this.setSize(800,500);
         this.setPosition(MyGdxGame.WIDTH/2 - this.getWidth()/2, MyGdxGame.HEIGHT/2 - this.getHeight()/2);

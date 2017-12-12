@@ -1,4 +1,4 @@
-package com.steveflames.javantgarde.hud;
+package com.steveflames.javantgarde.hud.code_pc;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;

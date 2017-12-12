@@ -1,7 +1,6 @@
 package com.steveflames.javantgarde.hud;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
@@ -12,9 +11,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.SnapshotArray;
 import com.steveflames.javantgarde.MyGdxGame;
+import com.steveflames.javantgarde.hud.code_pc.EditorWindow;
+import com.steveflames.javantgarde.hud.quiz_pc.EditorQuizWindow;
 import com.steveflames.javantgarde.tools.global.Cameras;
 import com.steveflames.javantgarde.tools.global.Loader;
 import com.steveflames.javantgarde.tools.global.Skins;
@@ -23,13 +22,13 @@ import com.steveflames.javantgarde.tools.global.Skins;
  * Created by Flames on 14/11/2017.
  */
 
-class AndroidExtraKeyboardWindow extends Window {
+public class AndroidExtraKeyboardWindow extends Window {
     private boolean keyboardShown = false;
     private ImageButton keyBoardBtn;
     private Table table;
     private EditorQuizWindow editorQuizWindow;
 
-    AndroidExtraKeyboardWindow(String title, Skin skin, final EditorWindow editorWindow) {
+    public AndroidExtraKeyboardWindow(String title, Skin skin, final EditorWindow editorWindow) {
         super(title, skin);
         this.setSize(700,85);
         this.setX(MyGdxGame.WIDTH - this.getWidth());
@@ -127,7 +126,7 @@ class AndroidExtraKeyboardWindow extends Window {
         this.add(keyBoardBtn).right().width(90).height(70);
     }
 
-    AndroidExtraKeyboardWindow(String title, Skin skin, final EditorQuizWindow editorQuizWindow) {
+    public AndroidExtraKeyboardWindow(String title, Skin skin, final EditorQuizWindow editorQuizWindow) {
         super(title, skin);
         this.editorQuizWindow = editorQuizWindow;
         this.setSize(10,85);
@@ -138,7 +137,7 @@ class AndroidExtraKeyboardWindow extends Window {
         this.add(table).expand().fill();
     }
 
-    void addButton(final String text) {
+    public void addButton(final String text) {
         TextButton btn = new TextButton(text.substring(1), Skins.neonSkin);
         btn.addListener(new ClickListener() {
             @Override
@@ -151,17 +150,17 @@ class AndroidExtraKeyboardWindow extends Window {
         this.setX(Cameras.hudPort.getCamera().viewportWidth/2 - this.getWidth()/2);
     }
 
-    void clearButtons() {
+    public void clearButtons() {
         this.setWidth(10);
         this.setX(editorQuizWindow.getX() - this.getWidth());
         table.clear();
     }
 
-    void show(Stage stage) {
+    public void show(Stage stage) {
         stage.addActor(this);
     }
 
-    void setKeyboardShown(boolean keyboardShown) {
+    public void setKeyboardShown(boolean keyboardShown) {
         Gdx.input.setOnscreenKeyboardVisible(keyboardShown);
         keyBoardBtn.setChecked(keyboardShown);
         this.keyboardShown = keyboardShown;

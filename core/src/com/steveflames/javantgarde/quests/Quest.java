@@ -55,7 +55,7 @@ public class Quest {
     }
 
     public boolean validateCodeForQuest(PlayScreen playScreen, MyClass myClass, int questN) {
-        if(playScreen.getCurrentLevel().getId().equals("1_1")) {
+        if(playScreen.getCurrentLevelID().equals("1_1")) {
             switch (progress) {
                 case 0:
                     if (playScreen.getHud().getEditorWindow().getConsoleWindow().getConsoleTextArea().getText().toString().equals("[RED]Error: main method not found[]\n"))
@@ -69,7 +69,7 @@ public class Quest {
                     break;
             }
         }
-        else if(playScreen.getCurrentLevel().getId().equals("2_1")) {
+        else if(playScreen.getCurrentLevelID().equals("2_1")) {
             switch (progress) {
                 case 0:
                     for(MyVariable variable : myClass.getFields()) {
@@ -104,7 +104,7 @@ public class Quest {
                     break;
             }
         }
-        else if(playScreen.getCurrentLevel().getId().equals("2_2")) {
+        else if(playScreen.getCurrentLevelID().equals("2_2")) {
 
             for(MyVariable myVariable: myClass.getFields()) {
                 if(myVariable.getType().equals("int")) {
@@ -259,7 +259,7 @@ public class Quest {
                     break;
             }
         }
-        else if(playScreen.getCurrentLevel().getId().equals("4_1")) {
+        else if(playScreen.getCurrentLevelID().equals("4_1")) {
             switch (progress) {
                 case 1:
                     break;
@@ -271,7 +271,7 @@ public class Quest {
                     break;
             }
         }
-        else if(playScreen.getCurrentLevel().getId().equals("7_1")) {
+        else if(playScreen.getCurrentLevelID().equals("7_1")) {
             switch (questN) {
                 case 0: //1st quest
                     if (progress == 1) {
@@ -307,19 +307,19 @@ public class Quest {
     }
 
     public void completed(PlayScreen playScreen) {
-        if(playScreen.getCurrentLevel().getId().equals("1_1")) {
+        if(playScreen.getCurrentLevelID().equals("1_1")) {
             playScreen.getHud().getEditorWindow().tempHideEditor(-1, false);
             playScreen.getObjectManager().getDoors().get(3).open();
         }
         //else if(playScreen.getCurrentLevel().getId().equals("1_2")) {
 
         //}
-        else if(playScreen.getCurrentLevel().getId().equals("2_1")) {
+        else if(playScreen.getCurrentLevelID().equals("2_1")) {
             playScreen.getHud().getEditorWindow().closeCurrentEditor();
             playScreen.getObjectManager().getDoors().get(0).open();
         }
 
-        else if(playScreen.getCurrentLevel().getId().equals("7_1")) {
+        else if(playScreen.getCurrentLevelID().equals("7_1")) {
             playScreen.getHud().getEditorWindow().tempHideEditor(-1, true);
             if(questN!=0) {
                 playScreen.getObjectManager().getLevers().get(0).pull();

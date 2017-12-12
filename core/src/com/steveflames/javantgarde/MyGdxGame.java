@@ -2,15 +2,10 @@ package com.steveflames.javantgarde;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.steveflames.javantgarde.screens.ChooseLevelScreen;
-import com.steveflames.javantgarde.screens.PlayScreen;
-import com.steveflames.javantgarde.tools.LevelListItem;
-import com.steveflames.javantgarde.tools.MyAssetManager;
-import com.steveflames.javantgarde.tools.global.Cameras;
 import com.steveflames.javantgarde.tools.global.Fonts;
 import com.steveflames.javantgarde.tools.global.Loader;
 import com.steveflames.javantgarde.tools.global.Skins;

@@ -3,7 +3,6 @@ package com.steveflames.javantgarde.hud;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -14,9 +13,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.steveflames.javantgarde.MyGdxGame;
+import com.steveflames.javantgarde.hud.code_pc.EditorWindow;
+import com.steveflames.javantgarde.hud.navigation.GameOverWindow;
+import com.steveflames.javantgarde.hud.navigation.LevelCompletedWindow;
+import com.steveflames.javantgarde.hud.navigation.PauseWindow;
+import com.steveflames.javantgarde.hud.order_pc.EditorOrderWindow;
+import com.steveflames.javantgarde.hud.quiz_pc.EditorQuizWindow;
 import com.steveflames.javantgarde.screens.PlayScreen;
 import com.steveflames.javantgarde.sprites.InfoSign;
 import com.steveflames.javantgarde.sprites.Item;
@@ -33,7 +36,7 @@ import com.steveflames.javantgarde.tools.global.Skins;
  */
 public class Hud implements Disposable {
 
-    static PlayScreen playScreen;
+    public static PlayScreen playScreen;
     private static Toast toast;
 
     //hud components
@@ -195,12 +198,12 @@ public class Hud implements Disposable {
         useBtn.setVisible(false);
     }
 
-    static void showAndroidInputTable() {
+    public static void showAndroidInputTable() {
         if(!MyGdxGame.platformDepended.deviceHasKeyboard())
             androidInputTable.setVisible(true);
     }
 
-    static void hideAndroidInputTable() {
+    public static void hideAndroidInputTable() {
         if(!MyGdxGame.platformDepended.deviceHasKeyboard())
             androidInputTable.setVisible(false);
     }

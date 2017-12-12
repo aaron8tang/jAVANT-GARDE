@@ -46,7 +46,7 @@ public class B2WorldContactListener implements ContactListener {
                         splitter = ((Checkpoint) object.getUserData()).getName().split("-");
                         ((Player)player.getUserData()).setCurrentCheckpointIndex(Integer.parseInt(splitter[2]));
 
-                        if (PlayScreen.currentLevel.getId().equals("1_1")) {
+                        if (playScreen.getCurrentLevelID().equals("1_1")) {
                             if (!((Checkpoint) object.getUserData()).isVisited()) {
                                 Hud.newToast(MyGdxGame.platformDepended.getLevel1Tip());
                             }

@@ -1,4 +1,4 @@
-package com.steveflames.javantgarde.hud;
+package com.steveflames.javantgarde.hud.code_pc;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.steveflames.javantgarde.MyGdxGame;
+import com.steveflames.javantgarde.hud.Hud;
 import com.steveflames.javantgarde.quests.Quest;
 import com.steveflames.javantgarde.tools.global.Cameras;
 import com.steveflames.javantgarde.tools.global.Skins;

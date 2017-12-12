@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -20,12 +19,10 @@ import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.hud.Hud;
 import com.steveflames.javantgarde.sprites.Item;
 import com.steveflames.javantgarde.sprites.Player;
-import com.steveflames.javantgarde.sprites.Quiz;
 import com.steveflames.javantgarde.tools.B2WorldContactListener;
 import com.steveflames.javantgarde.tools.B2WorldCreator;
 import com.steveflames.javantgarde.tools.GameObjectManager;
 import com.steveflames.javantgarde.tools.InputHandler;
-import com.steveflames.javantgarde.tools.LevelListItem;
 import com.steveflames.javantgarde.tools.global.Cameras;
 import com.steveflames.javantgarde.tools.global.Fonts;
 
@@ -38,7 +35,7 @@ public class PlayScreen implements Screen{
     private static float WIDTH; //width of the map
     private static float HEIGHT; //height of the map
     private static final int GRAVITY = -20;
-    public static LevelListItem currentLevel;
+    private LevelListItem currentLevel;
     private Hud hud;
     private World world; //box2D variable
     private TiledMap map;
@@ -358,13 +355,16 @@ public class PlayScreen implements Screen{
         return hud;
     }
 
-
     public GameObjectManager getObjectManager() {
         return objectManager;
     }
 
     public Player getPlayer() {
         return objectManager.getPlayer();
+    }
+
+    public String getCurrentLevelID() {
+        return currentLevel.getId();
     }
 
     public MyGdxGame getGame() {

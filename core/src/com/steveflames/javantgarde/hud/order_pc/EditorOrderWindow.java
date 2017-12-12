@@ -1,4 +1,4 @@
-package com.steveflames.javantgarde.hud;
+package com.steveflames.javantgarde.hud.order_pc;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.steveflames.javantgarde.MyGdxGame;
+import com.steveflames.javantgarde.hud.Hud;
 import com.steveflames.javantgarde.screens.PlayScreen;
 import com.steveflames.javantgarde.sprites.Pc;
 import com.steveflames.javantgarde.sprites.Player;
@@ -38,7 +39,7 @@ public class EditorOrderWindow extends Window {
     private float tempCamX = - 1;
     private boolean showEditor = true;
 
-    EditorOrderWindow(String title, Skin skin, final PlayScreen playScreen) {
+    public EditorOrderWindow(String title, Skin skin, final PlayScreen playScreen) {
         super(title, skin);
         this.playScreen = playScreen;
 
@@ -101,7 +102,7 @@ public class EditorOrderWindow extends Window {
             timer += dt * answered;
             if(timer > 1.5) { //1.5 after the answer
                     tempHideEditor(-1); //hide the editor temporarily to show the result in the map (e.g. open door)
-                if(playScreen.getCurrentLevel().getId().equals("3_1")) {
+                if(playScreen.getCurrentLevelID().equals("3_1")) {
                     switch (currentPc.getQuest().getProgress()) {
                         case 0:
                             playScreen.getObjectManager().getDoors().get(0).open();
@@ -135,7 +136,7 @@ public class EditorOrderWindow extends Window {
         }
     }
 
-    void show(Pc pc) {
+    public void show(Pc pc) {
         currentPc = pc;
 
         //add to stage

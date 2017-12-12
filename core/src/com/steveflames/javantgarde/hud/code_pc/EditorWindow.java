@@ -1,4 +1,4 @@
-package com.steveflames.javantgarde.hud;
+package com.steveflames.javantgarde.hud.code_pc;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -15,7 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.steveflames.javantgarde.MyGdxGame;
-import com.steveflames.javantgarde.screens.PlayScreen;
+import com.steveflames.javantgarde.hud.AndroidExtraKeyboardWindow;
+import com.steveflames.javantgarde.hud.Hud;
 import com.steveflames.javantgarde.sprites.Pc;
 import com.steveflames.javantgarde.sprites.Player;
 import com.steveflames.javantgarde.tools.compiler.MyClass;
@@ -52,7 +53,7 @@ public class EditorWindow extends Window {
     private float tempCamX = - 1;
 
 
-    EditorWindow(String title, Skin skin, final Hud hud) {
+    public EditorWindow(String title, Skin skin, final Hud hud) {
         super(title, skin);
         this.hud = hud;
 
@@ -191,7 +192,7 @@ public class EditorWindow extends Window {
                     myClasses.add(new MyClass(entry.getKey(), entry.getValue()));
 
                 //compile and run
-                if(compiler.compile(myClasses) || (Hud.playScreen.getCurrentLevel().getId().equals("1_1") && currentPc.getQuest().getProgress()==0)) {
+                if(compiler.compile(myClasses) || (Hud.playScreen.getCurrentLevelID().equals("1_1") && currentPc.getQuest().getProgress()==0)) {
                     if (currentPc.getQuest().validateCodeForQuest(Hud.playScreen, myClasses.get(0), currentPc.getQuest().getQuestN())) {
                         questWindow.incrementQuestStep(currentPc.getQuest());
                     }
@@ -255,7 +256,7 @@ public class EditorWindow extends Window {
         }
     }
 
-    void editorKeyTyped(char character) {
+    public void editorKeyTyped(char character) {
         if(character == '\t') {
             int pos = codeTextArea.getCursorPosition();
             StringBuilder stringBuilder = new StringBuilder();
@@ -462,7 +463,7 @@ public class EditorWindow extends Window {
         }
     }
 
-    void show(Pc pc) {
+    public void show(Pc pc) {
         currentPc = pc;
         codeTextArea.setText(pc.getEditorText());
         codeTextArea.setDisabled(false);
@@ -516,7 +517,7 @@ public class EditorWindow extends Window {
         Hud.hideAndroidInputTable();
     }
 
-    void virtualTypeKey(char character) {
+    public void virtualTypeKey(char character) {
         String temp = codeTextArea.getText();
         int pos = codeTextArea.getCursorPosition();
         temp = temp.substring(0, pos) + character + temp.substring(pos, temp.length());

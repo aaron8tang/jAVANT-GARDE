@@ -33,7 +33,7 @@ public class Quiz extends GameObject {
     public Quiz(String name, PlayScreen playScreen, Rectangle bounds) {
         super(name, playScreen.getWorld(), playScreen.getMap(), bounds, true);
         this.playScreen = playScreen;
-        this.id = playScreen.getCurrentLevel().getId();
+        this.id = playScreen.getCurrentLevelID();
         parseQuizString(MyFileReader.readFile("txt/quizes/"+name+".txt"));
     }
 

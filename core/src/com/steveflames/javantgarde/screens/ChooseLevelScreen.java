@@ -15,7 +15,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.steveflames.javantgarde.MyGdxGame;
-import com.steveflames.javantgarde.tools.LevelListItem;
 import com.steveflames.javantgarde.tools.global.Skins;
 
 import java.util.ArrayList;
@@ -202,5 +201,31 @@ public class ChooseLevelScreen implements Screen{
             }
         }
         return null;
+    }
+}
+
+class LevelListItem {
+
+    private String id;
+    private String name;
+    private String categoryName;
+
+    LevelListItem(String categoryName, String id, String name) {
+        this.categoryName = categoryName;
+        this.id = id;
+        this.name = name;
+    }
+
+    String getCategoryName() {
+        return categoryName;
+    }
+    public String getId() {
+        return id;
+    }
+    String getName() {
+        return name;
+    }
+    void setName(String name) {
+        this.name = name;
     }
 }

@@ -1,4 +1,4 @@
-package com.steveflames.javantgarde.hud;
+package com.steveflames.javantgarde.hud.quiz_pc;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -11,6 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.steveflames.javantgarde.MyGdxGame;
+import com.steveflames.javantgarde.hud.AndroidExtraKeyboardWindow;
+import com.steveflames.javantgarde.hud.Hud;
 import com.steveflames.javantgarde.screens.PlayScreen;
 import com.steveflames.javantgarde.sprites.Pc;
 import com.steveflames.javantgarde.sprites.Player;
@@ -35,7 +37,7 @@ public class EditorQuizWindow extends Window {
     private float tempCamX = - 1;
     private boolean showEditor = true;
 
-    EditorQuizWindow(String title, Skin skin, final PlayScreen playScreen) {
+    public EditorQuizWindow(String title, Skin skin, final PlayScreen playScreen) {
         super(title, skin);
         this.playScreen = playScreen;
 
@@ -75,7 +77,7 @@ public class EditorQuizWindow extends Window {
             if(timer > 1.5) { //1.5 after the answer
                 if(correct) { //if it is correct
                     tempHideEditor(-1); //hide the editor temporarily to show the result in the map (e.g. open door)
-                    if(playScreen.getCurrentLevel().getId().equals("3_2")) {
+                    if(playScreen.getCurrentLevelID().equals("3_2")) {
                         switch (currentPc.getQuest().getProgress()) {
                             case 0:
                                 playScreen.getObjectManager().getFloatingPlatforms().get(1).drop(20);
@@ -89,7 +91,7 @@ public class EditorQuizWindow extends Window {
                                 break;
                         }
                     }
-                    else if(playScreen.getCurrentLevel().getId().equals("4_1")) {
+                    else if(playScreen.getCurrentLevelID().equals("4_1")) {
                         switch (currentPc.getQuest().getProgress()) {
                             case 0:
                                 playScreen.getObjectManager().getDoors().get(1).open();
@@ -138,7 +140,7 @@ public class EditorQuizWindow extends Window {
         }
     }
 
-    void btnPressed(String text) {
+    public void btnPressed(String text) {
         if(answered == 0) {
             codeLabel.setText(codeLabel.getText().toString().replaceAll("\\[RED].*\\[]", "[RED]" + text.substring(1) + "[]"));
 
@@ -156,7 +158,7 @@ public class EditorQuizWindow extends Window {
         }
     }
 
-    void show(Pc pc) {
+    public void show(Pc pc) {
         currentPc = pc;
 
         //add to stage
