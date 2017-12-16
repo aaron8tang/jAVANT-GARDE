@@ -12,9 +12,11 @@ import com.steveflames.javantgarde.sprites.GameObject;
 import com.steveflames.javantgarde.sprites.InfoSign;
 import com.steveflames.javantgarde.sprites.Item;
 import com.steveflames.javantgarde.sprites.Lever;
+import com.steveflames.javantgarde.sprites.Marker;
 import com.steveflames.javantgarde.sprites.Pc;
 import com.steveflames.javantgarde.sprites.Player;
 import com.steveflames.javantgarde.sprites.Quiz;
+import com.steveflames.javantgarde.sprites.SensorRobot;
 import com.steveflames.javantgarde.sprites.Teleporter;
 import com.steveflames.javantgarde.sprites.ropes.Rope;
 import com.steveflames.javantgarde.tools.global.Cameras;
@@ -40,9 +42,10 @@ public class GameObjectManager {
     private ArrayList<Checkpoint> checkpoints = new ArrayList<Checkpoint>();
     private ArrayList<FloatingPlatform> floatingPlatforms = new ArrayList<FloatingPlatform>();
     private ArrayList<Lever> levers = new ArrayList<Lever>();
-    private ArrayList<Rectangle> markers = new ArrayList<Rectangle>();
+    private ArrayList<Marker> markers = new ArrayList<Marker>();
     private ArrayList<Quiz> quizes = new ArrayList<Quiz>();
     private Teleporter teleporter;
+    private ArrayList<SensorRobot> sensorRobots = new ArrayList<SensorRobot>();
 
 
     public GameObjectManager(World world) {
@@ -165,7 +168,7 @@ public class GameObjectManager {
         return levers;
     }
 
-    public ArrayList<Rectangle> getMarkers() {
+    public ArrayList<Marker> getMarkers() {
         return markers;
     }
 
@@ -183,5 +186,9 @@ public class GameObjectManager {
 
     public ArrayList<GameObject> getObjectsToRemove() {
         return objectsToRemove;
+    }
+
+    public ArrayList<SensorRobot> getSensorRobots() {
+        return sensorRobots;
     }
 }

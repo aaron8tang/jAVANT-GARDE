@@ -32,7 +32,7 @@ public class InfoSign extends GameObject {
     }
 
     public void setRead(ArrayList<Door> doors) {
-        if(name.equals("info-1_1-0") || name.equals("info-7_1-0") || name.equals("info-4_1-0"))
+        if(name.equals("info-1_1-0") || name.equals("info-7_1-0") || name.equals("info-5_1-0"))
             doors.get(0).open();
         else if(name.equals("info-1_1-1") || name.equals("info-7_1-1"))
             doors.get(1).open();
@@ -55,7 +55,7 @@ public class InfoSign extends GameObject {
 
     public void drawFontScaled(SpriteBatch sb) {
         sb.setColor(1,1,1,alpha);
-        sb.draw(Loader.infoSignT, (bounds.x + 32)/ MyGdxGame.PPM, bounds.y/ MyGdxGame.PPM, 64/ MyGdxGame.PPM, 64/ MyGdxGame.PPM);
+        sb.draw(Loader.infoSignT, position.x - 32/MyGdxGame.PPM, position.y - bounds.height/2/MyGdxGame.PPM, 64/ MyGdxGame.PPM, 64/ MyGdxGame.PPM);
     }
 
     public void drawFont(SpriteBatch sb) {}

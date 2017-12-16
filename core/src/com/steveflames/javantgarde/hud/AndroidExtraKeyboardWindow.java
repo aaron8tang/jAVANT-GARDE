@@ -145,8 +145,8 @@ public class AndroidExtraKeyboardWindow extends Window {
                 editorQuizWindow.btnPressed(text);
             }
         });
-        table.add(btn).height(80).width(120);
-        this.setWidth(10 + table.getChildren().size*120);
+        table.add(btn).height(80).width(140);
+        this.setWidth(10 + table.getChildren().size*140);
         this.setX(Cameras.hudPort.getCamera().viewportWidth/2 - this.getWidth()/2);
     }
 

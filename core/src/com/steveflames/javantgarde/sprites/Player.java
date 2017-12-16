@@ -207,14 +207,6 @@ public class Player extends GameObject {
             return State.STANDING;
     }
 
-    public void setCoding(Rectangle pcBounds) {
-        facingDirection = 1;
-        b2body.setLinearVelocity(0, 0);
-        b2body.setTransform(pcBounds.x / MyGdxGame.PPM + 0.1f, (pcBounds.y + b2body.getPosition().y) / MyGdxGame.PPM + 0.3f, 0);
-        setCurrentState(Player.State.CODING);
-    }
-
-
     public void jump() {
         if (currentState != State.JUMPING  && currentState != State.FALLING) {
             b2body.applyLinearImpulse(0, JUMPSPEED, b2body.getWorldCenter().x, b2body.getWorldCenter().y, true);
@@ -346,6 +338,10 @@ public class Player extends GameObject {
         canMove = !(currentState == State.CODING || currentState == State.READING || currentState == State.DISAPPEARING
                 || currentState == State.DISAPPEARED || currentState == State.DEAD);
         this.currentState = currentState;
+    }
+
+    public void setFacingDirection(int facingDirection) {
+        this.facingDirection = facingDirection;
     }
 
     public float getPlayerMsgAlpha() {

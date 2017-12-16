@@ -56,7 +56,10 @@ public class InputHandler {
                         if (!playScreen.isEnterKeyHandled()) {
                             for (Pc pc : playScreen.getObjectManager().getPcs()) {
                                 if (pc.isUsable()) {
-                                    playScreen.getPlayer().setCoding(pc.getBounds());
+                                    playScreen.getPlayer().setFacingDirection(1);
+                                    playScreen.getPlayer().b2body.setLinearVelocity(0, 0);
+                                    playScreen.getPlayer().b2body.setTransform(pc.position.x - pc.getBounds().width/2/MyGdxGame.PPM + 0.1f, pc.position.y - (pc.getBounds().height/2 + playScreen.getPlayer().b2body.getPosition().y) / MyGdxGame.PPM + 0.3f, 0);
+                                    playScreen.getPlayer().setCurrentState(Player.State.CODING);
                                     switch (pc.getPcType()) {
                                         case 0: //normal pc
                                             Cameras.setCameraTo(pc.getBounds().x / MyGdxGame.PPM + 1.5f);
@@ -117,6 +120,7 @@ public class InputHandler {
                 playScreen.getHud().getEditorWindow().closeCurrentEditor();
                 playScreen.getHud().getEditorQuizWindow().closeCurrentEditor();
                 playScreen.getHud().getEditorOrderWindow().closeCurrentEditor();
+                playScreen.getPlayer().setCurrentState(Player.State.STANDING);
             }
             else if (playScreen.getPlayer().getCurrentState() == Player.State.READING)
                 playScreen.getHud().closeCurrentInfo();

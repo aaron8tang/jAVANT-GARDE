@@ -70,9 +70,10 @@ public class Quiz extends GameObject {
                     if(id.equals("2_2") || id.equals("1_2"))
                         playScreen.getObjectManager().getDoors().get(0).open();
                     else if(id.equals("4_1"))
+                        playScreen.getObjectManager().getDoors().get(0).open();
+                    else if(id.equals("5_1"))
                         playScreen.getObjectManager().getDoors().get(6).open();
                     else if(id.equals("7_2")) {
-                        System.out.println("EDW");
                         playScreen.getObjectManager().getTeleporter().b2body.setTransform(playScreen.getObjectManager().getInfoSigns().get(0).position.x,
                                 playScreen.getObjectManager().getInfoSigns().get(0).position.y, 0);
                         playScreen.getObjectManager().getInfoSigns().get(0).b2body.setTransform(0, -5, 0);

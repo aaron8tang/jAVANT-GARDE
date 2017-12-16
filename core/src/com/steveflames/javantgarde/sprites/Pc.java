@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.quests.Quest;
@@ -60,7 +61,7 @@ public class Pc extends GameObject {
     public void drawUsePrompt(SpriteBatch sb) {
         if(usable) {
             Fonts.medium.setColor(Color.RED);
-            sb.draw(Loader.fixT, bounds.x + bounds.width / 2 - 30 + Cameras.getHudCameraOffsetX(), bounds.y + bounds.height + 20, 60, 60);
+            sb.draw(Loader.fixT, position.x*MyGdxGame.PPM - 30 + Cameras.getHudCameraOffsetX(), position.y*MyGdxGame.PPM + 80 + 20, 60, 60);
         }
     }
 
@@ -71,7 +72,7 @@ public class Pc extends GameObject {
 
     public void drawFontScaled(SpriteBatch sb) {
         sb.setColor(1,1,1,alpha);
-        sb.draw(Loader.pcT, (bounds.x )/ MyGdxGame.PPM, bounds.y/ MyGdxGame.PPM, 96/ MyGdxGame.PPM, 160/ MyGdxGame.PPM);
+        sb.draw(Loader.pcT, position.x - bounds.width/2/MyGdxGame.PPM, position.y - bounds.height/2/MyGdxGame.PPM, bounds.width/ MyGdxGame.PPM, bounds.height/ MyGdxGame.PPM);
     }
 
     public String getEditorText() {

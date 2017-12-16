@@ -111,8 +111,8 @@ public class Quest {
                     for (FloatingPlatform floatingPlatform : playScreen.getObjectManager().getFloatingPlatforms()) {
                         if (floatingPlatform.getName().equals(myVariable.getName())) {
                             if(!myVariable.getValue().equals("null")) {
-                                floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(0).x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(0).width / 2 / MyGdxGame.PPM,
-                                        playScreen.getObjectManager().getMarkers().get(0).y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(0).height / 2 / MyGdxGame.PPM
+                                floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(0).getBounds().x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(0).getBounds().width / 2 / MyGdxGame.PPM,
+                                        playScreen.getObjectManager().getMarkers().get(0).getBounds().y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(0).getBounds().height / 2 / MyGdxGame.PPM
                                                 + 0.64f * Integer.parseInt(myVariable.getValue()), 0);
                                 break;
                             }
@@ -123,8 +123,8 @@ public class Quest {
                     for(FloatingPlatform floatingPlatform: playScreen.getObjectManager().getFloatingPlatforms()) {
                         if(floatingPlatform.getName().equals(myVariable.getName())) {
                             if(!myVariable.getValue().equals("null")) {
-                                floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(1).x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(1).width / 2 / MyGdxGame.PPM,
-                                        playScreen.getObjectManager().getMarkers().get(1).y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(1).height / 2 / MyGdxGame.PPM
+                                floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(1).getBounds().x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(1).getBounds().width / 2 / MyGdxGame.PPM,
+                                        playScreen.getObjectManager().getMarkers().get(1).getBounds().y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(1).getBounds().height / 2 / MyGdxGame.PPM
                                                 + 0.64f * (float) Double.parseDouble(myVariable.getValue()), 0);
                                 break;
                             }
@@ -135,13 +135,13 @@ public class Quest {
                     for(FloatingPlatform floatingPlatform: playScreen.getObjectManager().getFloatingPlatforms()) {
                         if(floatingPlatform.getName().equals(myVariable.getName())) {
                             if(myVariable.getValue().equals("true")) {
-                                floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(2).x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(2).width / 2 / MyGdxGame.PPM,
-                                        playScreen.getObjectManager().getMarkers().get(2).y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(2).height / 2 / MyGdxGame.PPM
+                                floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(2).getBounds().x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(2).getBounds().width / 2 / MyGdxGame.PPM,
+                                        playScreen.getObjectManager().getMarkers().get(2).getBounds().y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(2).getBounds().height / 2 / MyGdxGame.PPM
                                                 + 0.64f*1.5f, 0);
                             }
                             else {
-                                floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(2).x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(2).width / 2 / MyGdxGame.PPM,
-                                        playScreen.getObjectManager().getMarkers().get(2).y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(2).height / 2 / MyGdxGame.PPM
+                                floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(2).getBounds().x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(2).getBounds().width / 2 / MyGdxGame.PPM,
+                                        playScreen.getObjectManager().getMarkers().get(2).getBounds().y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(2).getBounds().height / 2 / MyGdxGame.PPM
                                                 - 0.64f*1.5f, 0);
                             }
                             break;
@@ -152,19 +152,19 @@ public class Quest {
                     for(FloatingPlatform floatingPlatform: playScreen.getObjectManager().getFloatingPlatforms()) {
                         if(floatingPlatform.getName().equals(myVariable.getName())) {
                             if(myVariable.getValue().equals("a")) {
-                                floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(3).x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(3).width / 2 / MyGdxGame.PPM,
-                                        playScreen.getObjectManager().getMarkers().get(3).y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(3).height / 2 / MyGdxGame.PPM
+                                floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(3).getBounds().x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(3).getBounds().width / 2 / MyGdxGame.PPM,
+                                        playScreen.getObjectManager().getMarkers().get(3).getBounds().y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(3).getBounds().height / 2 / MyGdxGame.PPM
                                                 + 0.64f*1.5f, 0);
                                 break;
                             }
                             else if(myVariable.getValue().equals("b")) {
-                                floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(3).x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(3).width / 2 / MyGdxGame.PPM,
-                                        playScreen.getObjectManager().getMarkers().get(3).y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(3).height / 2 / MyGdxGame.PPM, 0);
+                                floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(3).getBounds().x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(3).getBounds().width / 2 / MyGdxGame.PPM,
+                                        playScreen.getObjectManager().getMarkers().get(3).getBounds().y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(3).getBounds().height / 2 / MyGdxGame.PPM, 0);
                                 break;
                             }
                             else if(myVariable.getValue().equals("c")) {
-                                floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(3).x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(3).width / 2 / MyGdxGame.PPM,
-                                        playScreen.getObjectManager().getMarkers().get(3).y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(3).height / 2 / MyGdxGame.PPM
+                                floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(3).getBounds().x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(3).getBounds().width / 2 / MyGdxGame.PPM,
+                                        playScreen.getObjectManager().getMarkers().get(3).getBounds().y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(3).getBounds().height / 2 / MyGdxGame.PPM
                                                 - 0.64f*1.5f, 0);
                                 break;
                             }
@@ -179,8 +179,8 @@ public class Quest {
                     for(FloatingPlatform floatingPlatform: playScreen.getObjectManager().getFloatingPlatforms()) {
                         if(floatingPlatform.getName().equals(myVariable.getName())) {
                             if(myVariable.getValue().equals("hello")) {
-                                floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(4).x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(4).width / 2 / MyGdxGame.PPM,
-                                        playScreen.getObjectManager().getMarkers().get(4).y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(4).height / 2 / MyGdxGame.PPM, 0);
+                                floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(4).getBounds().x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(4).getBounds().width / 2 / MyGdxGame.PPM,
+                                        playScreen.getObjectManager().getMarkers().get(4).getBounds().y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(4).getBounds().height / 2 / MyGdxGame.PPM, 0);
                                 break;
                             }
                             else {
@@ -198,7 +198,7 @@ public class Quest {
                         if(myVariable.getName().equals("a")) {
                             if (myVariable.getType().equals("int")) {
                                 if(myVariable.getValue().equals("2")) {
-                                    playScreen.getHud().getEditorWindow().tempHideEditor(playScreen.getObjectManager().getMarkers().get(0).x/ MyGdxGame.PPM , true);
+                                    playScreen.getHud().getEditorWindow().tempHideEditor(playScreen.getObjectManager().getMarkers().get(0).getBounds().x/ MyGdxGame.PPM , true);
                                     return true;
                                 }
                             }
@@ -210,7 +210,7 @@ public class Quest {
                         if(myVariable.getName().equals("a")) {
                             if (myVariable.getType().equals("int")) {
                                 if(!myVariable.getValue().equals("null")) {
-                                    playScreen.getHud().getEditorWindow().tempHideEditor(playScreen.getObjectManager().getMarkers().get(0).x/ MyGdxGame.PPM, true);
+                                    playScreen.getHud().getEditorWindow().tempHideEditor(playScreen.getObjectManager().getMarkers().get(0).getBounds().x/ MyGdxGame.PPM, true);
                                     return true;
                                 }
                             }
@@ -221,7 +221,7 @@ public class Quest {
                     for(MyVariable myVariable: myClass.getFields()) {
                         if (myVariable.getType().equals("double")) {
                             if(myVariable.getValue().contains(".")) {
-                                playScreen.getHud().getEditorWindow().tempHideEditor(playScreen.getObjectManager().getMarkers().get(1).x/ MyGdxGame.PPM, true);
+                                playScreen.getHud().getEditorWindow().tempHideEditor(playScreen.getObjectManager().getMarkers().get(1).getBounds().x/ MyGdxGame.PPM, true);
                                 return true;
                             }
                         }
@@ -231,7 +231,7 @@ public class Quest {
                     for(MyVariable myVariable: myClass.getFields()) {
                         if (myVariable.getType().equals("boolean")) {
                             if(!myVariable.getValue().equals("null")) {
-                                playScreen.getHud().getEditorWindow().tempHideEditor(playScreen.getObjectManager().getMarkers().get(2).x/ MyGdxGame.PPM, true);
+                                playScreen.getHud().getEditorWindow().tempHideEditor(playScreen.getObjectManager().getMarkers().get(2).getBounds().x/ MyGdxGame.PPM, true);
                                 return true;
                             }
                         }
@@ -241,7 +241,7 @@ public class Quest {
                     for(MyVariable myVariable: myClass.getFields()) {
                         if (myVariable.getType().equals("char")) {
                             if(!myVariable.getValue().equals("null")) {
-                                playScreen.getHud().getEditorWindow().tempHideEditor(playScreen.getObjectManager().getMarkers().get(3).x/ MyGdxGame.PPM, true);
+                                playScreen.getHud().getEditorWindow().tempHideEditor(playScreen.getObjectManager().getMarkers().get(3).getBounds().x/ MyGdxGame.PPM, true);
                                 return true;
                             }
                         }
@@ -251,7 +251,7 @@ public class Quest {
                     for(MyVariable myVariable: myClass.getFields()) {
                         if (myVariable.getType().equals("String")) {
                             if(myVariable.getValue().equals("hello")) {
-                                playScreen.getHud().getEditorWindow().tempHideEditor(playScreen.getObjectManager().getMarkers().get(4).x/ MyGdxGame.PPM, true);
+                                playScreen.getHud().getEditorWindow().tempHideEditor(playScreen.getObjectManager().getMarkers().get(4).getBounds().x/ MyGdxGame.PPM, true);
                                 return true;
                             }
                         }
@@ -277,7 +277,7 @@ public class Quest {
                     if (progress == 1) {
                         for (MyVariable myVariable : myClass.getFields()) {
                             if (myVariable.getType().equals("InfoSign")) {
-                                playScreen.getObjectManager().getInfoSigns().add(new InfoSign("info-7_1-3", playScreen.getWorld(), playScreen.getMap(), playScreen.getObjectManager().getMarkers().get(0), 0));
+                                playScreen.getObjectManager().getInfoSigns().add(new InfoSign("info-7_1-3", playScreen.getWorld(), playScreen.getMap(), playScreen.getObjectManager().getMarkers().get(0).getBounds(), 0));
                                 playScreen.getObjectManager().addGameObjectBeforePlayer(playScreen.getObjectManager().getInfoSigns().get(playScreen.getObjectManager().getInfoSigns().size()-1));
                                 return true;
                             }

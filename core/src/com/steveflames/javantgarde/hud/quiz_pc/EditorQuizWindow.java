@@ -36,6 +36,7 @@ public class EditorQuizWindow extends Window {
 
     private float tempCamX = - 1;
     private boolean showEditor = true;
+    private boolean doOnce = true;
 
     public EditorQuizWindow(String title, Skin skin, final PlayScreen playScreen) {
         super(title, skin);
@@ -62,7 +63,7 @@ public class EditorQuizWindow extends Window {
         codeTable.add(codeLabel).expand().fillX().top();
 
         //add components to window
-        this.setSize(700, MyGdxGame.HEIGHT-240);
+        this.setSize(720, MyGdxGame.HEIGHT-240);
         this.setX(MyGdxGame.WIDTH/2 - this.getWidth()/2);
         this.setY(170);
         this.add(topBarTable).expandX().fillX().top();
@@ -74,7 +75,8 @@ public class EditorQuizWindow extends Window {
     public void update(float dt) {
         if(currentPc != null) {
             timer += dt * answered;
-            if(timer > 1.5) { //1.5 after the answer
+            if(timer > 1.5 && doOnce) { //1.5 after the answer
+                doOnce = false;
                 if(correct) { //if it is correct
                     tempHideEditor(-1); //hide the editor temporarily to show the result in the map (e.g. open door)
                     if(playScreen.getCurrentLevelID().equals("3_2")) {
@@ -91,7 +93,37 @@ public class EditorQuizWindow extends Window {
                                 break;
                         }
                     }
-                    else if(playScreen.getCurrentLevelID().equals("4_1")) {
+
+                    else if(playScreen.getCurrentLevelID().equals("4_2")) {
+                        switch (currentPc.getQuest().getProgress()) {
+                            case 0:
+                                Cameras.setCameraTo(playScreen.getObjectManager().getDoors().get(0).b2body.getPosition().x);
+                                playScreen.getObjectManager().getDoors().get(0).open();
+                                break;
+                            case 1:
+                                Cameras.setCameraTo(playScreen.getObjectManager().getDoors().get(1).b2body.getPosition().x);
+                                playScreen.getObjectManager().getDoors().get(1).open();
+                                break;
+                            case 2:
+                                Cameras.setCameraTo(playScreen.getObjectManager().getDoors().get(2).b2body.getPosition().x);
+                                playScreen.getObjectManager().getDoors().get(2).open();
+                                break;
+                            case 3:
+                                Cameras.setCameraTo(playScreen.getObjectManager().getDoors().get(3).b2body.getPosition().x);
+                                playScreen.getObjectManager().getDoors().get(3).open();
+                                break;
+                            case 4:
+                                Cameras.setCameraTo(playScreen.getObjectManager().getDoors().get(4).b2body.getPosition().x);
+                                playScreen.getObjectManager().getDoors().get(4).open();
+                                break;
+                            case 5:
+                                Cameras.setCameraTo(playScreen.getObjectManager().getDoors().get(5).b2body.getPosition().x);
+                                showEditor = false;
+                                playScreen.getObjectManager().getDoors().get(5).open();
+                                break;
+                        }
+                    }
+                    else if(playScreen.getCurrentLevelID().equals("5_1")) {
                         switch (currentPc.getQuest().getProgress()) {
                             case 0:
                                 playScreen.getObjectManager().getDoors().get(1).open();
@@ -111,11 +143,37 @@ public class EditorQuizWindow extends Window {
                                 break;
                         }
                     }
+                    else if(playScreen.getCurrentLevelID().equals("6_1")) {
+                        switch (currentPc.getQuest().getProgress()) {
+                            case 0:
+                                Cameras.setCameraTo(playScreen.getObjectManager().getFloatingPlatforms().get(1).b2body.getPosition().x);
+                                playScreen.getObjectManager().getFloatingPlatforms().get(1).drop(-10);
+                                break;
+                            case 1:
+                                Cameras.setCameraTo(playScreen.getObjectManager().getFloatingPlatforms().get(2).b2body.getPosition().x);
+                                playScreen.getObjectManager().getFloatingPlatforms().get(2).drop(-12);
+                                break;
+                            case 2:
+                                Cameras.setCameraTo(playScreen.getObjectManager().getFloatingPlatforms().get(3).b2body.getPosition().x);
+                                playScreen.getObjectManager().getFloatingPlatforms().get(3).drop(-14);
+                                break;
+                            case 3:
+                                Cameras.setCameraTo(playScreen.getObjectManager().getFloatingPlatforms().get(4).b2body.getPosition().x);
+                                playScreen.getObjectManager().getFloatingPlatforms().get(4).drop(-10);
+                                break;
+                            case 4:
+                                Cameras.setCameraTo(playScreen.getObjectManager().getFloatingPlatforms().get(5).b2body.getPosition().x);
+                                showEditor = false;
+                                playScreen.getObjectManager().getFloatingPlatforms().get(5).drop(-11);
+                                break;
+                        }
+                    }
                 }
             }
-            if (timer > 2.8) { //now show the editor again
+            else if (timer > 2.8) { //now show the editor again
                 answered = 0;
                 timer = 0;
+                doOnce = true;
                 if(correct) {
                     if (currentPc.getQuest().nextQuestStep()) //quest step completed
                         updateUI();
@@ -142,6 +200,7 @@ public class EditorQuizWindow extends Window {
 
     public void btnPressed(String text) {
         if(answered == 0) {
+            text = text.replaceAll("\\[]","[[]");
             codeLabel.setText(codeLabel.getText().toString().replaceAll("\\[RED].*\\[]", "[RED]" + text.substring(1) + "[]"));
 
             if (text.charAt(0) == '!') { //correct answer

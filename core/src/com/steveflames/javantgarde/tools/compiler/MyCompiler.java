@@ -20,8 +20,6 @@ public class MyCompiler {
     private int currentWordPtr = 0;
     private int lineN = 0;
 
-    private FileHandle classFile;
-
 
     public MyCompiler(Label consoleTextArea) {
         this.consoleTextArea = consoleTextArea;
@@ -49,101 +47,93 @@ public class MyCompiler {
      */
     public boolean compile(ArrayList<MyClass> myClasses) {
         classes = myClasses;
-        //errors.clear();
-        //errors.put("Error: class not defined", 1);
-        //errors.put("Error: main method not found", 1);
         consoleTextArea.setText("");
         int bracketsCounter = 0;
 
-        //for(MyClass myClass: classes) {
-        // parse classes and their codes
-            compilationClass = classes.get(0);
-            compilationClass.addError("Error: class not defined in file " + compilationClass.getName() + ".java");
-            compilationClass.addError("Error: main method not found");
-            //boolean inFieldDeclaration = false;
+        // parse MyClass and its code
+        compilationClass = classes.get(0);
+        compilationClass.addError("Error: class not defined in file " + compilationClass.getName() + ".java");
+        compilationClass.addError("Error: main method not found");
+        //boolean inFieldDeclaration = false;
 
 
-            lineSplitter = compilationClass.getCode().split("\n"); //get the lines of code
+        lineSplitter = compilationClass.getCode().split("\n"); //get the lines of code
 
-            for(int i=0; i<lineSplitter.length; i++) {
-                //prepare lineOfCode
-                lineSplitter[i] = prepareLineOfCode(lineSplitter[i]);
-            }
+        for(int i=0; i<lineSplitter.length; i++) {
+            //prepare lineOfCode
+            lineSplitter[i] = prepareLineOfCode(lineSplitter[i]);
+        }
 
-            lineN = 0;
-            for(String lineOfCode: lineSplitter) { //parse the lines of code
-                lineN++;
+        lineN = 0;
+        for(String lineOfCode: lineSplitter) { //parse the lines of code
+            lineN++;
 
-                //split line and get its words
-                if(!lineOfCode.isEmpty()) {
-                    splitLineToWords(lineOfCode);
+            //split line and get its words
+            if(!lineOfCode.isEmpty()) {
+                splitLineToWords(lineOfCode);
 
-                    currentWordPtr = 0;
-                    String nextWord;
-                    //parse each word of the line
-                    if (wordSplitter.length > 0) {
-                        if (!compilationClass.isClassDeclared()) { //class not yet declared
-                            if(wordSplitter[0].equals("class") || wordSplitter[0].equals("public") && isNextWordStrictlyEqualTo("class")) {
-                                if ((nextWord = getNextWordInLine()) != null && validVarName(nextWord)) { //2nd word
-                                    if (isNextWordStrictlyEqualTo("{")) {
-                                        if(getNextWordInLine()==null) {
-                                            compilationClass.removeError("Error: class not defined in file " + compilationClass.getName() + ".java");
-                                            compilationClass.setClassDeclared(true);
-                                        }
+                currentWordPtr = 0;
+                String nextWord;
+                //parse each word of the line
+                if (wordSplitter.length > 0) {
+                    if (!compilationClass.isClassDeclared()) { //class not yet declared
+                        if(wordSplitter[0].equals("class") || wordSplitter[0].equals("public") && isNextWordStrictlyEqualTo("class")) {
+                            if ((nextWord = getNextWordInLine()) != null && validVarName(nextWord)) { //2nd word
+                                if (isNextWordStrictlyEqualTo("{")) {
+                                    if(getNextWordInLine()==null) {
+                                        compilationClass.removeError("Error: class not defined in file " + compilationClass.getName() + ".java");
+                                        compilationClass.setClassDeclared(true);
                                     }
                                 }
                             }
-                            else
-                                compilationClass.addErrorInLine(null,lineN);
                         }
-                        else { //class is declared previously
-                            if (isMethodDeclaration(wordSplitter[0])) { //check if main method declaration
+                        else
+                            compilationClass.addErrorInLine(null,lineN);
+                    }
+                    else { //class is declared previously
+                        if (isMethodDeclaration(wordSplitter[0])) { //check if main method declaration
 
-                            }
+                        }
 
-                            else if (isSystemOutPrintln()) {
-                            }
+                        else if (isSystemOutPrintln()) {
+                        }
 
-                            else if (variableDeclaration()) {
-                                //DO NOTHING
-                            }
+                        else if (variableDeclaration()) {
+                            //DO NOTHING
+                        }
 
-                            else if (wordSplitter[0].equals("}") && wordSplitter.length == 1) { //1st word: }
-                                //DO NOTHING
-                            }
+                        else if (wordSplitter[0].equals("}") && wordSplitter.length == 1) { //1st word: }
+                            //DO NOTHING
+                        }
 
-                            else if(isVariableAssignment()) {
+                        else if(isVariableAssignment()) {
 
-                            }
+                        }
 
-                            else if(assignClassValue(wordSplitter[0], "null")) {
+                        else if(assignClassValue(wordSplitter[0], "null")) {
 
-                            }
+                        }
 
-                            else if(ifCommand()) {
+                        else if(methodCall()) {
 
-                            }
+                        }
 
-                            else if(methodCall()) {
-
-                            }
-
-                            else {
-                                compilationClass.addErrorInLine(null, lineN);
-                            }
+                        else {
+                            compilationClass.addErrorInLine(null, lineN);
                         }
                     }
                 }
-
-
-                //check if '{' are even with '}'
-                bracketsCounter += lineOfCode.length() - lineOfCode.replace("{", "").length();
-                bracketsCounter -= lineOfCode.length() - lineOfCode.replace("}", "").length();
             }
 
-            if(bracketsCounter != 0)
-                compilationClass.addError("Error: uneven brackets in file " + compilationClass.getName() +".java\n[YELLOW]Remember to close any open curly brackets '{' with '}'[]");
-        //}
+            //check if '{' are even with '}'
+            bracketsCounter += lineOfCode.length() - lineOfCode.replace("{", "").length();
+            bracketsCounter -= lineOfCode.length() - lineOfCode.replace("}", "").length();
+        }
+
+        if(bracketsCounter != 0)
+            compilationClass.addError("Error: uneven brackets in file " + compilationClass.getName() +".java\n[YELLOW]Remember to close any open curly brackets '{' with '}'[]");
+
+
         //append errors in console window
         boolean flag = true;
         for(MyClass myClass: myClasses) {
@@ -155,29 +145,6 @@ public class MyCompiler {
         if(flag)
             consoleTextArea.setText(consoleTextArea.getText() + "\n\n[GREEN](Compilation finished with no errors)[]");
         return flag;
-    }
-
-    private boolean ifCommand() {
-        if(wordSplitter[0].equals("if")) {
-            if(isNextWordStrictlyEqualTo("(")) {
-                if(booleanStatement(getNextWordInLine())) {
-                    if(isNextWordStrictlyEqualTo(")")) {
-                        if(isNextWordStrictlyEqualTo("{")) {
-
-                        }
-                    }
-                }
-                //else error?
-            }
-        } //todo
-
-        return false;
-    }
-
-    private boolean booleanStatement(String firstWord) {
-        //eite boolean var, eite method me return boolean, eite
-        //if(firstWord.equals())
-        return false;
     }
 
     private boolean methodCall() {
@@ -425,6 +392,7 @@ public class MyCompiler {
         currentWordPtr=0;
         String varName;
         boolean flag = false;
+        boolean array = false;
 
         if(validVarType(wordSplitter[0])) { //1st word VARIABLE DECLARATION
             if ((varName = getNextWordInLine()) != null && validVarName(varName)) {

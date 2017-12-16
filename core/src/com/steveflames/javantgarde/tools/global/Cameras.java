@@ -60,8 +60,8 @@ public class Cameras {
     }
 
     public static void setCameraTo(float x) {
-        if(x < 0)
-            x = 0;
+        if(x < playScreenCam.viewportWidth/2)
+            x = playScreenCam.viewportWidth/2;
         else if(x > mapWidth - playScreenCam.viewportWidth/2)
             x = mapWidth - playScreenCam.viewportWidth/2;
         playScreenCam.position.x = x;

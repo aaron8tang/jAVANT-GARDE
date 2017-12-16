@@ -12,7 +12,6 @@ import com.steveflames.javantgarde.tools.global.Skins;
 
 /**
  * TODO:
- *
  * THOUGHTS
  * ARRAYS! parse array k printf k prepei na pas sto swsto. an lathos tote -1 health
  * IF + VARIABLES! na pas px na vlepeis ton kwdika ths portas k na exei if(x > 100) open k na prepei na pas na to kaneis
@@ -24,31 +23,27 @@ import com.steveflames.javantgarde.tools.global.Skins;
  * to className einai ontws MyClass?? check k ERROR
  * variable already declared in scope ERROR
  * method doesn't exist ERROR
- * package? import? prin to class declaration
  *
  *
- * TODO
- * na dw ta TODO
+ * TODO (na dw ta todo)
  * ston editor otan afhnw 1h grammh keno k kanw click varaei error index out of bounds -1
  * ftiakse ton loader me assetmanager gia na borw na valw k progress bar sthn arxh p fortwnei
  * na tonisw oti kathe entolh grafetai se mia kainouria grammh
  * StartMenuScreen
  * asset manager
+ * na prepei na termatiseis mia pista g na ksekleidwseis thn epomenh. html ola ksekleidwmena
  * SOUNDS TODO
  * na perpatan bugs sthn othoni pou se sprwxnoun
+ * add greek
  *
  *
  * ---------------LEVELS TO ADD---------------
  * package? import?
- * METHODS
- * IF
- * LOOP
- * ARRAY
  * LOCAL VARIABLES (SCOPE)
- * CLASSES
- * modifiers
  * getters setters
  * inheritance
+ * interfaces
+ * useful java classes
  * -------------------------------------------
  *
  */

@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.sprites.Item;
+import com.steveflames.javantgarde.sprites.Marker;
 import com.steveflames.javantgarde.sprites.Quiz;
 import com.steveflames.javantgarde.screens.PlayScreen;
 import com.steveflames.javantgarde.sprites.Checkpoint;
@@ -17,6 +18,7 @@ import com.steveflames.javantgarde.sprites.FloatingPlatform;
 import com.steveflames.javantgarde.sprites.InfoSign;
 import com.steveflames.javantgarde.sprites.Lever;
 import com.steveflames.javantgarde.sprites.Pc;
+import com.steveflames.javantgarde.sprites.SensorRobot;
 import com.steveflames.javantgarde.sprites.Teleporter;
 import com.steveflames.javantgarde.sprites.ropes.Rope;
 
@@ -88,16 +90,20 @@ public class B2WorldCreator {
                         Item item = new Item(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect);
                         item.setUsable(true);
                         playScreen.getObjectManager().getItems().add(item);
-                        playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getItems().get(playScreen.getObjectManager().getItems().size()-1));
+                        playScreen.getObjectManager().addGameObject(item);
                     }
                     else if(object.getName().contains("class")) {
                         Item item = new Item(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect);
                         item.setUsable(true);
                         playScreen.getObjectManager().getItems().add(item);
-                        playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getItems().get(playScreen.getObjectManager().getItems().size()-1));
+                        playScreen.getObjectManager().addGameObject(item);
                     }
                     else if(object.getName().contains("marker")) {
-                        playScreen.getObjectManager().getMarkers().add(rect);
+                        playScreen.getObjectManager().getMarkers().add(new Marker(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
+                        if(object.getName().contains("sensorRobotStart")) {
+                            SensorRobot sensorRobot = new SensorRobot(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect);
+                            playScreen.getObjectManager().addGameObject(sensorRobot);
+                        }
                     }
                     else if(object.getName().contains("quiz")) {
                         playScreen.getObjectManager().getQuizes().add(new Quiz(object.getName(), playScreen, rect));

@@ -1,5 +1,6 @@
 package com.steveflames.javantgarde.tools;
 
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -9,10 +10,12 @@ import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.hud.Hud;
 import com.steveflames.javantgarde.screens.PlayScreen;
 import com.steveflames.javantgarde.sprites.Checkpoint;
+import com.steveflames.javantgarde.sprites.FloatingPlatform;
 import com.steveflames.javantgarde.sprites.GameObject;
 import com.steveflames.javantgarde.sprites.InfoSign;
 import com.steveflames.javantgarde.sprites.Item;
 import com.steveflames.javantgarde.sprites.Lever;
+import com.steveflames.javantgarde.sprites.Marker;
 import com.steveflames.javantgarde.sprites.Pc;
 import com.steveflames.javantgarde.sprites.Player;
 import com.steveflames.javantgarde.sprites.Teleporter;
@@ -40,7 +43,6 @@ public class B2WorldContactListener implements ContactListener {
             Fixture object = player == fixA ? fixB : fixA;
 
             if(object.getUserData() instanceof GameObject) {
-
                 if(object.getUserData() instanceof Checkpoint) {
                     if(!((Checkpoint) object.getUserData()).isVisited()) {
                         splitter = ((Checkpoint) object.getUserData()).getName().split("-");
@@ -93,12 +95,6 @@ public class B2WorldContactListener implements ContactListener {
                     if(((Lever) object.getUserData()).isManualPull())
                         playScreen.getHud().showUseBtn("PULL");
                 }
-                /*else if(object.getUserData() instanceof FloatingPlatform) {
-                    ((GameObject) object.getUserData()).setUsable(true);
-                    ((GameObject) object.getUserData()).getB2body().setLinearVelocity(((FloatingPlatform) object.getUserData()).getFacing()*0.7f, -((Player)player.getUserData()).b2body.getLinearVelocity().y);
-                    ((Player)player.getUserData()).b2body.setLinearVelocity(0,0);
-
-                }*/
             }
         }
         else if(fixA.getUserData().equals("bot_lower_sensor") || fixB.getUserData().equals("bot_lower_sensor")) {
@@ -109,13 +105,19 @@ public class B2WorldContactListener implements ContactListener {
                 ((Platform) object.getUserData()).setActive(false);
             }
         }
-        /*else if(fixA.getUserData() instanceof FloatingPlatform || fixB.getUserData() instanceof FloatingPlatform) {
+        else if(fixA.getUserData() instanceof FloatingPlatform || fixB.getUserData() instanceof FloatingPlatform) {
             Fixture floatingPlatform = fixA.getUserData() instanceof FloatingPlatform ? fixA : fixB;
-            //Fixture object = floatingPlatform == fixA ? fixB : fixA;
+            Fixture object = floatingPlatform == fixA ? fixB : fixA;
 
-            ((FloatingPlatform)floatingPlatform.getUserData()).setFacing(-((FloatingPlatform)floatingPlatform.getUserData()).getFacing());
-            ((GameObject) floatingPlatform.getUserData()).getB2body().setLinearVelocity(((FloatingPlatform) floatingPlatform.getUserData()).getFacing()*0.7f, 0);
-        }*/
+            if(object.getUserData() instanceof Marker) {
+                ((FloatingPlatform)floatingPlatform.getUserData()).b2body.setGravityScale(0);
+                ((FloatingPlatform)floatingPlatform.getUserData()).b2body.setLinearVelocity(0,0);
+                if(playScreen.getObjectManager().getPcs().size()>=2) {
+                    playScreen.getObjectManager().getPcs().get(0).b2body.setLinearVelocity(0,0);
+                    playScreen.getObjectManager().getPcs().get(1).b2body.setLinearVelocity(0,0);
+                }
+            }
+        }
     }
 
     @Override

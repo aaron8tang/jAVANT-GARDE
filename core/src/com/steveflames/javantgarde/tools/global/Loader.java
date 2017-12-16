@@ -22,6 +22,7 @@ public class Loader {
     public static final Texture pcT = new Texture(Gdx.files.internal("images/pc.png"));
     public static final Texture leverClosedT = new Texture(Gdx.files.internal("images/lever_closed.png"));
     public static final Texture leverOpenT = new Texture(Gdx.files.internal("images/lever_open.png"));
+    public static final TextureAtlas frogAtlas = new TextureAtlas(Gdx.files.internal("images/frog/frog.pack"));
 
     //hud
     public static final Texture heartT = new Texture(Gdx.files.internal("images/heart.png"));
@@ -49,6 +50,7 @@ public class Loader {
         pcT.dispose();
         leverClosedT.dispose();
         leverOpenT.dispose();
+        frogAtlas.dispose();
 
         //hud
         heartT.dispose();

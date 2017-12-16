@@ -158,14 +158,14 @@ public class ChooseLevelScreen implements Screen{
         categories.get("METHODS").add(new LevelListItem("METHODS", "3_1", "calling a method"));
         categories.get("METHODS").add(new LevelListItem("METHODS", "3_2", "return types"));
 
-        categories.put("CONDITIONALS", new ArrayList<LevelListItem>()); //4
-        categories.get("CONDITIONALS").add(new LevelListItem("CONDITIONALS", "4_1", "if\n&\nlogical operators"));
-        categories.get("CONDITIONALS").add(new LevelListItem("CONDITIONALS", "4_2", "nested if\n&\nif else"));
-        //categories.get("CONDITIONALS").add(new LevelListItem("CONDITIONALS", "4_3", "switch"));
+        categories.put("LOOPS", new ArrayList<LevelListItem>()); //4
+        categories.get("LOOPS").add(new LevelListItem("LOOPS", "4_1", "while\n&\ndo while"));
+        categories.get("LOOPS").add(new LevelListItem("LOOPS", "4_2", "for"));
 
-        categories.put("LOOPS", new ArrayList<LevelListItem>()); //5
-        categories.get("LOOPS").add(new LevelListItem("LOOPS", "5_1", "while\n&\ndo while"));
-        categories.get("LOOPS").add(new LevelListItem("LOOPS", "5_2", "for"));
+        categories.put("CONDITIONALS", new ArrayList<LevelListItem>()); //5
+        categories.get("CONDITIONALS").add(new LevelListItem("CONDITIONALS", "5_1", "if\n&\nlogical operators"));
+        categories.get("CONDITIONALS").add(new LevelListItem("CONDITIONALS", "5_2", "nested if\n&\nif else"));
+        //categories.get("CONDITIONALS").add(new LevelListItem("CONDITIONALS", "4_3", "switch"));
 
         categories.put("ARRAYS", new ArrayList<LevelListItem>()); //6
         categories.get("ARRAYS").add(new LevelListItem("ARRAYS", "6_1", "initialization"));
@@ -177,7 +177,7 @@ public class ChooseLevelScreen implements Screen{
         categories.get("CLASSES").add(new LevelListItem("CLASSES", "7_2", "access modifiers"));
 
         categories.put("EXTRA", new ArrayList<LevelListItem>()); //8
-        categories.get("EXTRA").add(new LevelListItem("EXTRA", "8_1", "user input"));
+        //categories.get("EXTRA").add(new LevelListItem("EXTRA", "8_1", "user input"));
         categories.get("EXTRA").add(new LevelListItem("EXTRA", "8_2", "ALL"));
     }
 

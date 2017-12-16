@@ -1,6 +1,7 @@
 package com.steveflames.javantgarde.hud.order_pc;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -29,7 +30,10 @@ public class EditorOrderWindow extends Window {
     private Pc currentPc;
     private PlayScreen playScreen;
     private Table codeTable;
+    private Table preCodeTable;
+    private Table afterCodeTable;
     private TextButton compileBtn;
+    private Table botBarTable;
 
     private ArrayList<String> linesOfCodeTexts = new ArrayList<String>();
 
@@ -38,13 +42,14 @@ public class EditorOrderWindow extends Window {
 
     private float tempCamX = - 1;
     private boolean showEditor = true;
+    private boolean doOnce = true;
 
     public EditorOrderWindow(String title, Skin skin, final PlayScreen playScreen) {
         super(title, skin);
         this.playScreen = playScreen;
 
         //bot bar
-        Table botBarTable = new Table(Skins.neonSkin);
+        botBarTable = new Table(Skins.neonSkin);
         compileBtn = new TextButton(" compile & run ", Skins.neonSkin);
         TextButton exitBtn = new TextButton("x", Skins.neonSkin);
         Label infoLabel = new Label("[CYAN]Put the code in the correct order![]", Skins.skin);
@@ -54,13 +59,19 @@ public class EditorOrderWindow extends Window {
 
         //code table
         codeTable = new Table(Skins.neonSkin);
+        preCodeTable = new Table(Skins.neonSkin);
+        afterCodeTable = new Table(Skins.neonSkin);
 
         //add components to window
-        this.setSize(800, MyGdxGame.HEIGHT-170);
+        this.setSize(800, MyGdxGame.HEIGHT-120);
         this.setX(MyGdxGame.WIDTH/2 - this.getWidth()/2 + 150);
-        this.setY(100);
+        this.setY(50);
+        this.row();
+        this.add(preCodeTable).expand().fillX().left();
         this.row();
         this.add(codeTable).expand().fillX().top();
+        this.row();
+        this.add(afterCodeTable).expand().fillX().left();
         this.row();
         this.add(botBarTable).expand().fillX().bottom();
 
@@ -85,7 +96,7 @@ public class EditorOrderWindow extends Window {
                 }
                 else { //WRONG ORDER
                     closeCurrentEditor();
-                    playScreen.getPlayer().b2body.applyLinearImpulse(-14, 4, 0, 0, true);
+                    playScreen.getPlayer().b2body.applyLinearImpulse(-14, 6, 0, 0, true);
                 }
             }
         });
@@ -100,8 +111,9 @@ public class EditorOrderWindow extends Window {
     public void update(float dt) {
         if(currentPc != null) {
             timer += dt * answered;
-            if(timer > 1.5) { //1.5 after the answer
-                    tempHideEditor(-1); //hide the editor temporarily to show the result in the map (e.g. open door)
+            if(timer > 1.5 && doOnce) { //1.5 after the answer
+                doOnce = false;
+                tempHideEditor(-1); //hide the editor temporarily to show the result in the map (e.g. open door)
                 if(playScreen.getCurrentLevelID().equals("3_1")) {
                     switch (currentPc.getQuest().getProgress()) {
                         case 0:
@@ -113,25 +125,34 @@ public class EditorOrderWindow extends Window {
                             break;
                     }
                 }
+                else if(playScreen.getCurrentLevelID().equals("4_1")) {
+                    if(currentPc.getName().equals("orderpc-4_1-0")) {
+                        playScreen.getObjectManager().getFloatingPlatforms().get(0).b2body.setLinearVelocity(0, 2);
+                        playScreen.getObjectManager().getPcs().get(0).b2body.setLinearVelocity(0, 2);
+                    }
+                    else {
+                        playScreen.getObjectManager().getFloatingPlatforms().get(1).b2body.setLinearVelocity(0,-2);
+                        playScreen.getObjectManager().getPcs().get(1).b2body.setLinearVelocity(0,-2);
+                    }
+                }
             }
-            if (timer > 2.8f) { //now show the editor again
+            else if (timer > 2.8f) { //now show the editor again
                 answered = 0;
                 timer = 0;
+                doOnce = true;
 
-                if (showEditor)
+                if (showEditor) {
+                    linesOfCodeTexts.clear();
                     tempShowEditor();
+                }
                 else  //dont show editor again
                     Hud.playScreen.getPlayer().setCurrentState(Player.State.STANDING);
 
-                if (currentPc.getQuest().nextQuestStep()) { //quest step completed
-                    linesOfCodeTexts.clear();
-                    initUI();
-                }
-                else {//whole quest completed
+                if (!currentPc.getQuest().nextQuestStep()) { //whole quest completed
                     closeCurrentEditor();
                 }
 
-
+                initUI();
             }
         }
     }
@@ -150,9 +171,22 @@ public class EditorOrderWindow extends Window {
         String questStepText = currentPc.getQuest().getCurrentQuestStepText();
         if (!questStepText.equals("Quest completed!")) { //next quest step
             if (linesOfCodeTexts.size() == 0) {
+                if(!botBarTable.getChildren().contains(compileBtn, false))
+                    botBarTable.add(compileBtn).right();
                 codeTable.clear();
                 linesOfCodeTexts.clear();
+                preCodeTable.clear();
+                afterCodeTable.clear();
 
+                //init immutable code before orderCode
+                for(int i=0; i<currentPc.getQuest().getCurrentQuestStep().getHints().size(); i++) {
+                    if(currentPc.getQuest().getCurrentQuestStep().getHints().get(i).startsWith("[")) {
+                        preCodeTable.add(new Label(currentPc.getQuest().getCurrentQuestStep().getHints().get(i).substring(1), Skins.skin)).expandX().left();
+                        if(i != currentPc.getQuest().getCurrentQuestStep().getHints().size()-1)
+                            preCodeTable.row();
+                    }
+                }
+                //init orderCode
                 String[] s = questStepText.split("\n");
                 for (int i = 0; i < s.length; i++) {
                     linesOfCodeTexts.add(s[i]);
@@ -175,6 +209,8 @@ public class EditorOrderWindow extends Window {
                             }
                         });
                         lineOfCode.add(upBtn).width(70);
+                        if(i==s.length-1)
+                            lineOfCode.add(new Label("", Skins.skin)).width(70);
                     }
                     if (i != s.length - 1) {
                         final TextButton downBtn = new TextButton("v", Skins.neonSkin);
@@ -191,9 +227,20 @@ public class EditorOrderWindow extends Window {
                 }
                 Collections.shuffle(linesOfCodeTexts);
                 updateUIcode();
+                //init immutable code after orderCode
+                for(int i=0; i<currentPc.getQuest().getCurrentQuestStep().getHints().size(); i++) {
+                    if(currentPc.getQuest().getCurrentQuestStep().getHints().get(i).startsWith("]")) {
+                        afterCodeTable.add(new Label(currentPc.getQuest().getCurrentQuestStep().getHints().get(i).substring(1), Skins.skin)).expandX().left();
+                        if(i != currentPc.getQuest().getCurrentQuestStep().getHints().size()-1)
+                            afterCodeTable.row();
+                    }
+                }
             }
         }
         else { //quest completed
+            preCodeTable.remove();
+            afterCodeTable.remove();
+            linesOfCodeTexts.clear();
             codeTable.clear();
             codeTable.add(new Label("[GREEN]Quest completed![]", Skins.skin));
             compileBtn.remove();
