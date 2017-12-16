@@ -1,0 +1,26 @@
+
+frog.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+frog_talk
+  rotate: false
+  xy: 1, 127
+  size: 880, 244
+  orig: 880, 244
+  offset: 0, 0
+  index: -1
+frog_moveEnd
+  rotate: false
+  xy: 1, 64
+  size: 275, 61
+  orig: 275, 61
+  offset: 0, 0
+  index: -1
+frog_moveStart
+  rotate: false
+  xy: 1, 1
+  size: 275, 61
+  orig: 275, 61
+  offset: 0, 0
+  index: -1

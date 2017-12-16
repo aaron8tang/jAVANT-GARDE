@@ -1,0 +1,52 @@
+
+bot.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+bot_talk
+  rotate: false
+  xy: 1, 443
+  size: 972, 528
+  orig: 972, 528
+  offset: 0, 0
+  index: -1
+bot_attract
+  rotate: false
+  xy: 1, 1
+  size: 972, 440
+  orig: 972, 440
+  offset: 0, 0
+  index: -1
+
+bot2.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+bot_idle
+  rotate: false
+  xy: 1, 269
+  size: 972, 176
+  orig: 972, 176
+  offset: 0, 0
+  index: -1
+bot_typing
+  rotate: false
+  xy: 1, 91
+  size: 972, 176
+  orig: 972, 176
+  offset: 0, 0
+  index: -1
+bot_move
+  rotate: false
+  xy: 1, 1
+  size: 81, 88
+  orig: 81, 88
+  offset: 0, 0
+  index: -1
+bot_stand
+  rotate: false
+  xy: 84, 5
+  size: 72, 84
+  orig: 72, 84
+  offset: 0, 0
+  index: -1

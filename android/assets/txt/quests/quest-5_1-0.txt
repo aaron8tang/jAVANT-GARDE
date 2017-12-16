@@ -1,0 +1,116 @@
+//IGNORE FIRST LINE
+~QUEST
+class MyClass {
+    private static boolean openDoor1 = false;
+    private static boolean fall = false;
+	
+    public static void main(String[[] args) {
+        int a = 0;
+        int b = 1;
+        if(a [RED]__[] b) {
+            openDoor1 = true;
+        }
+        else { [LIGHT_GRAY]//more about 'else' soon[]
+            fall = true;
+        }
+    }
+	
+}
+#HELP
+?!
+#HELP
+!<
+#HELP
+?>
+~QUEST
+class MyClass {
+    private static boolean openDoor2 = false;
+    private static boolean fall = false;
+	
+    public static void main(String[[] args) {
+        boolean var = false;
+        if([RED]__[]var) {
+            openDoor2 = true;
+        }
+        else { [LIGHT_GRAY]//more about 'else' soon[]
+            fall = true;
+        }
+    }
+	
+}
+#HELP
+!!
+#HELP
+? 
+#HELP
+??
+~QUEST
+class MyClass {
+    private static boolean openDoor3 = false;
+    private static boolean fall = false;
+	
+    public static void main(String[[] args) {
+        double a = 5;
+        int b = 5;
+        if(a [RED]__[] b) {
+            openDoor3 = true;
+        }
+        else { [LIGHT_GRAY]//more about 'else' soon[]
+            fall = true;
+        }
+    }
+	
+}
+#HELP
+?=
+#HELP
+!==
+#HELP
+?<
+#HELP
+?>
+#HELP
+?!
+~QUEST
+class MyClass {
+    private static boolean openDoor4 = false;
+    private static boolean fall = false;
+	
+    public static void main(String[[] args) {
+        double a = 40;
+        double b = 40;
+        if(a [RED]__[] b) {
+            openDoor4 = true;
+        }
+        else { [LIGHT_GRAY]//more about 'else' soon[]
+            fall = true;
+        }
+    }
+	
+}
+#HELP
+?=
+#HELP
+!<=
+#HELP
+!>=
+~QUEST
+class MyClass {
+    private static boolean openDoor5 = false;
+    private static boolean fall = false;
+	
+    public static void main(String[[] args) {
+        boolean a = !false;
+        if([RED]__[]a) {
+            openDoor5 = !openDoor5;
+        }
+        else { [LIGHT_GRAY]//more about 'else' soon[]
+            fall = !fall;
+        }
+    }
+	
+}
+#HELP
+?!
+#HELP
+!

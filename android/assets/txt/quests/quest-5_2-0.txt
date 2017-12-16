@@ -1,0 +1,11 @@
+//IGNORE FIRST LINE
+~QUEST
+if(frontSensor) {
+turnRight();
+}
+#HELP
+[while(true) {
+#HELP
+[flyForward();
+#HELP
+]}

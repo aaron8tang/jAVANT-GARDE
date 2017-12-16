@@ -1,0 +1,4 @@
+~character
+!char
+?character
+?letter

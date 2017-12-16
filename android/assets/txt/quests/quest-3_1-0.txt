@@ -1,0 +1,19 @@
+//IGNORE FIRST LINE
+~QUEST
+class MyClass {
+public static void main(String[[] args) {
+openDoor(0);
+}
+static void openDoor(int doorNumber) {
+Doors.get(doorNumber).open();
+}
+}
+~QUEST
+class MyClass {
+public static void main(String[[] args) {
+launchRobot();
+}
+static void launchRobot() {
+Robot.launchForward();
+}
+}

@@ -1,0 +1,19 @@
+//IGNORE FIRST LINE
+~QUEST
+while(true) {
+    flyForward();
+    if(frontWall) {
+        if(leftWall) {
+            turnRight();
+        }
+        else {
+            turnLeft();
+        }
+    }
+}
+#HELP
+?
+#HELP
+?
+#HELP
+!

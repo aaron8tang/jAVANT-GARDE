@@ -1,0 +1,61 @@
+//IGNORE FIRST LINE
+~QUIZ
+class IfDemo {
+   public static void main(String[[] args) {
+       int a = 10;
+       if( a != 10 && 1==1) {
+           a = -a;
+       }
+       System.out.println(a);
+   }
+}
+[CYAN]//What will the output be?[]
+#ANSWERS
+?-10
+?error
+!10
+~QUIZ
+class IfDemo {
+   public static void main(String[[] args) {
+       int a = 10;
+       if( a <= 10 && 1==1) {
+           a = -a;
+       }
+       System.out.println(a);
+   }
+}
+[CYAN]//What will the output be?[]
+#ANSWERS
+!-10
+?error
+?10
+~QUIZ
+class IfDemo {
+   public static void main(String[[] args) {
+       int a = 10;
+       if( a != 10 || 1==1) {
+           a = -a;
+       }
+       System.out.println(a);
+   }
+}
+[CYAN]//What will the output be?[]
+#ANSWERS
+!-10
+?error
+?10
+~QUIZ
+class IfDemo {
+   public static void main(String[[] args) {
+       int a = 10;
+       if( a != 10 || 2<1) {
+           a = -a;
+       }
+       System.out.println(a);
+   }
+}
+[CYAN]//What will the output be?[]
+#ANSWERS
+?-10
+?error
+!10

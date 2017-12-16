@@ -1,0 +1,3 @@
+On this level, you will be writing code to navigate the cyberfrog
+Through the code you can either turn the frog left or turn him right checking his wall sensors
+Once you run your program the cyberfrog starts flying forward.

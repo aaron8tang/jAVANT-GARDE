@@ -1,0 +1,25 @@
+[CYAN]SYMBOL    NAME[]
+  [ORANGE]==[]      EQUAL operator       
+                                              
+[CYAN]EXPLANATION[]
+Compares two values. Returns true if the
+two values are equal.
+
+[CYAN]EXAMPLE[]
+int a = 1;
+int b = 1;
+if(a [ORANGE]==[] b) { [LIGHT_GRAY]//true[]
+   [LIGHT_GRAY]//enters here[]
+}
+[RED]----------------------------------------------[]
+[CYAN]SYMBOL    NAME[]
+  [ORANGE]!=[]      NOT EQUAL operator       
+                                              
+[CYAN]EXPLANATION[]
+Compares two values. Returns true if the
+two values are NOT equal.
+
+[CYAN]EXAMPLE[]
+if(1 [ORANGE]!=[] 2) { [LIGHT_GRAY]//true[]
+   [LIGHT_GRAY]//enters here[]
+}

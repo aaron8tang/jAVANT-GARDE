@@ -1,0 +1,22 @@
+Each [RED]class[] consists of groups of code called [BLUE]methods[]
+
+a simple way of writing a method inside our class:
+[CYAN]____________________________________________________________________[]
+
+[RED]class MyClass {[]
+    [BLUE]void myMethod() {[]
+        [LIGHT_GRAY]//CODE OF METHOD GOES HERE[]
+    [BLUE]}[]
+[RED]}[]
+[CYAN]____________________________________________________________________[]
+
+ [ORANGE]*[] [BLUE]void[] means that the method does not return any value (more later)
+ [ORANGE]*[] [BLUE]myMethod[] is the name of our method
+ [ORANGE]*[] the code of the method starts at [BLUE]{[] and ends at [BLUE]}[]
+ [ORANGE]*[] inside the parentheses [BLUE]()[] we define the parameters of the method
+   this method does not take any parameters
+[ORANGE]We will explain more later on the METHODS section![]
+
+ [ORANGE]*[] note the spacing of the code. Every time we open a curly
+  bracket [ORANGE]{[], our next lines of code should be slightly spaced in.
+  This is optional but it helps a lot distinguish the code

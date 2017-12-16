@@ -1,0 +1,21 @@
+To create a [ORANGE]new instance[] of an object, we use its [YELLOW]constructor[].
+Every class has a [YELLOW]constructor[] and even if you do not write one,
+a [PURPLE]default[] is used.
+
+CONSTRUCTOR:
+A [YELLOW]constructor[] is a block of code that is called automatically when an
+[ORANGE]instance[] of an object is created.
+
+Its syntax is similar to a method's but with no return type:
+[CYAN]________________________________________________________________________[]
+
+[YELLOW]public Dog() {
+    [LIGHT_GRAY]//EACH LINE OF CODE IN HERE IS EXECUTED
+    //WHEN A NEW INSTANCE OF AN OBJECT IS CREATED
+    //THIS CONSTRUCTOR DOES NOT CONTAIN ANY CODE, SO IT CAN BE OMITTED[]
+}[]
+[CYAN]________________________________________________________________________[]
+
+[RED]* The name of the constructor must be the same as the name of the class[]
+[RED]*[] If you don't have any specific code to run when your object is
+  created, you can omit the constructor (the [PURPLE]default[] will be used)

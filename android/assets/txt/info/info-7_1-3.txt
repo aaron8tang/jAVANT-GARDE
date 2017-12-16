@@ -1,0 +1,12 @@
+Most of the time we will have to assign this [ORANGE]instance[] of the object we created
+to a variable.
+Until now, we have learned some of the [CYAN]primitive types[] of variables:
+[CYAN]int, double, boolean, char[]
+
+But a variable may have a [RED]class type[] instead.
+To create a variable of class type, we use the [RED]name[] of that class as its type:
+e.g.
+    [RED]Dog[] myDogVariable = [ORANGE]new Dog()[];
+
+Now, we can have access to the [GREEN]fields[] and [BLUE]methods[] of the class through
+the variable 'myDogVariable'. We will get to that soon.

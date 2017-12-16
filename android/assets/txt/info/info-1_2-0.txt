@@ -1,0 +1,19 @@
+SINGLE-LINE COMMENTS:
+Sometimes, when we write our code we may need to add [LIGHT_GRAY]comments[] to it in order
+to make it more understandable to the one who reads it and even to ourselves!
+
+To add a comment we use double slash [LIGHT_GRAY]//[] and then follows our [LIGHT_GRAY]comment[].
+Everything after the [LIGHT_GRAY]//[] and until the end of that line will not be executed.
+
+[CYAN]_________EXAMPLE_____________________________________________________________[]
+
+[RED]class MyClass {[]
+    [LIGHT_GRAY]//this is a comment, and I can write anything I want in this line[]
+	
+    [GREEN]public static void main(String[[] args) {[] [LIGHT_GRAY]//a comment after some code[]
+        System.out.println("Hello World!"); [LIGHT_GRAY]//this line prints "Hello World!"[]
+    [GREEN]}[]
+	
+[RED]}[]
+[CYAN]_____________________________________________________________________________[]
+ [ORANGE]*[] The third comment clarifies what that line of code does.

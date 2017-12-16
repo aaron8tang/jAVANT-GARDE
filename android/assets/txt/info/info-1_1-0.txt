@@ -1,0 +1,13 @@
+In Java, every line of code you write must be inside a [RED]class[]
+
+the code to write a class:
+[CYAN]____________________________________________________________[]
+
+[RED]class MyClass {[]
+    [LIGHT_GRAY]//YOUR CODE GOES HERE[]
+[RED]}[]
+[CYAN]____________________________________________________________[]
+
+ [ORANGE]*[] [RED]class[] is the keyword to define a class
+ [ORANGE]*[] [RED]MyClass[] is the name we chose for our class
+ [ORANGE]*[] the code of the class starts at [RED]{[] and ends at [RED]}

@@ -1,0 +1,16 @@
+DECLARING A VARIABLE:
+To declare (create) a variable in your code you first write its [ORANGE]type[] and
+then its [CYAN]name[]
+
+for example:
+[CYAN]____________________________________________________________________________[]
+
+    [ORANGE]int[] [CYAN]aNumber[][GREEN];[]
+[CYAN]____________________________________________________________________________[]
+
+You are free to use any name for your variable as long as it complies with
+the rules you read before.
+
+ [ORANGE]*[] note that [GREEN]every[] line of code must end with a [GREEN]semicolon[] ([GREEN];[]) or you will
+   get an [RED]error[]. There are some [GREEN]exceptions[] like when a line ends with a '{'
+   for example, 'class aClass {' does not take a semicolon in the end

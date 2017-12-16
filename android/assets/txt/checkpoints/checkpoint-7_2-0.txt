@@ -1,0 +1,4 @@
+You may have noticed the keyword 'public' in the definition of
+the main method.
+public is an access modifier.
+Let's dive into that!

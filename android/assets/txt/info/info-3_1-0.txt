@@ -1,0 +1,16 @@
+METHODS:
+A [BLUE]method[] is a [CYAN]block of code[] that is written for a specific task or function.
+All code is written inside [RED]classes[] and so are the methods.
+
+for example a [BLUE]method[] that prints "Hello World!":
+[CYAN]_______________________________________________________________________________[]
+
+[RED]class MyClass {[]
+    [BLUE]void sayHi() {[]
+        [CYAN]System.out.println("Hello World!");[]
+    [BLUE]}[]
+[RED]}[]
+[CYAN]_______________________________________________________________________________[]
+ [ORANGE]*[] This method only has 1 line of code as it does a very simple task, it prints
+   a sentence. We can have methods with more complex tasks. There is no limit
+   on the lines of code that a method may contain.

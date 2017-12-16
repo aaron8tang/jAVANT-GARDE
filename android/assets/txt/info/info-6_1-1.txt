@@ -1,0 +1,14 @@
+ALTERNATIVE INITIALIZATION:
+Instead of [ORANGE]initializing[] the array like:
+  [ORANGE]int[[] anArray = new int[3];[]
+and then access the elements to assign them a [CYAN]value[]:
+  anArray[0] = [CYAN]5[];
+  anArray[1] = [CYAN]10[];
+  anArray[2] = [CYAN]15[];
+
+if we already know the values we are going to assign, alternatively, we can
+[ORANGE]initialize[] it and store its [CYAN]values[] at the same time:
+[CYAN]____________________________________________________________________________[]
+
+  int[[] anArray = [ORANGE]{ [CYAN]5[], [CYAN]10[], [CYAN]15[] }[];
+[CYAN]____________________________________________________________________________[]

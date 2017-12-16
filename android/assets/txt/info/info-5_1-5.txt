@@ -1,0 +1,23 @@
+[CYAN]SYMBOL    NAME[]
+  [ORANGE]&&[]      logical AND       
+                                              
+[CYAN]EXPLANATION[]
+Goes between 2 boolean expressions and returns true only if BOTH
+expressions (1st AND 2nd) are true, else it returns false.
+
+[CYAN]EXAMPLE[]
+if(2 < 5 [ORANGE]&&[] 8 > 3) { [LIGHT_GRAY]//the 2 expressions are BOTH true[]
+   [LIGHT_GRAY]//enters here[]
+}
+[RED]-------------------------------------------------------------------[]
+[CYAN]SYMBOL    NAME[]
+  [ORANGE]||[]      logical OR       
+                                              
+[CYAN]EXPLANATION[]
+Goes between 2 boolean expressions and returns true if atleast ONE
+of the expressions (1st OR 2nd) is true, else it returns false.
+
+[CYAN]EXAMPLE[]
+if(5 < -2 [ORANGE]||[] 8 > 3) { [LIGHT_GRAY]//the 2nd expression is true (atleast ONE)[]
+   [LIGHT_GRAY]//enters here[]
+}
