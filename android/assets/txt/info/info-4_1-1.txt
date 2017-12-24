@@ -9,7 +9,7 @@ before checking the [BLUE]condition[] of the while.
 [PURPLE]2[]    [YELLOW]do [][RED]{[] [LIGHT_GRAY]//no condition to check yet, the code in brackets is executed[]
 [PURPLE]3[]        [CYAN]System.out.println(x);
 [PURPLE]4[]        x++;[]
-[PURPLE]5[]    [RED]}[] [YELLOW]while([BLUE]x < 3[]);[] [LIGHT_GRAY]//as longs as x is less than 3, loop[]
+[PURPLE]5[]    [RED]}[] [YELLOW]while([BLUE]x < 3[]);[] [LIGHT_GRAY]//as longs as x is less than 3, iterate the loop again[]
 [PURPLE]6[]    [LIGHT_GRAY]//after the loop, the value of x is 3[]
 [CYAN]________________________________________________________________________________[]
 The output is:

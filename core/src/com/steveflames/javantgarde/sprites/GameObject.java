@@ -45,54 +45,72 @@ public abstract class GameObject extends Sprite{
         PolygonShape shape = new PolygonShape();
         FixtureDef fdef = new FixtureDef();
 
-        bdef.type = BodyDef.BodyType.KinematicBody;
-        bdef.position.set((bounds.getX() + bounds.getWidth()/2)/ MyGdxGame.PPM, (bounds.getY() + bounds.getHeight()/2)/ MyGdxGame.PPM);
-        b2body = world.createBody(bdef);
+        if(!(this instanceof Player)) {
+            bdef.type = BodyDef.BodyType.KinematicBody;
+            bdef.position.set((bounds.getX() + bounds.getWidth() / 2) / MyGdxGame.PPM, (bounds.getY() + bounds.getHeight() / 2) / MyGdxGame.PPM);
+            b2body = world.createBody(bdef);
 
-        shape.setAsBox(bounds.getWidth()/ MyGdxGame.PPM/2, bounds.getHeight()/ MyGdxGame.PPM/2);
-        fdef.shape = shape;
-        fixture = b2body.createFixture(fdef);
-        fixture.setUserData(this);
-        fixture.setSensor(sensor);
+            shape.setAsBox(bounds.getWidth() / 2 / MyGdxGame.PPM, bounds.getHeight() / 2 / MyGdxGame.PPM);
+            fdef.shape = shape;
+            fixture = b2body.createFixture(fdef);
+            fixture.setUserData(this);
+            fixture.setSensor(sensor);
 
-        position = new Vector2(b2body.getPosition().x, b2body.getPosition().y);
-        position_previous = new Vector2(b2body.getPosition().x, b2body.getPosition().y);
-    }
+            position = new Vector2(b2body.getPosition().x, b2body.getPosition().y);
+            position_previous = new Vector2(b2body.getPosition().x, b2body.getPosition().y);
 
-    public GameObject() {
-    }
+            //add object specific body parts
+            if(this instanceof SensorRobot) { //cyberfrog
+                shape.setAsBox(0.005f, 0.15f, new Vector2(0.19f, 0.02f), 0);
+                fdef.shape = shape;
+                fixture = b2body.createFixture(fdef);
+                fixture.setUserData("cyberfrogRightSensor");
+                fixture.setSensor(true);
 
-    //define player
-    void definePlayer(World world, float radius) {
-        BodyDef bdef = new BodyDef();
-        bdef.type = BodyDef.BodyType.DynamicBody;
-        b2body = world.createBody(bdef);
+                shape.setAsBox(0.005f, 0.15f, new Vector2(-0.19f, 0.02f), 0);
+                fdef.shape = shape;
+                fixture = b2body.createFixture(fdef);
+                fixture.setUserData("cyberfrogLeftSensor");
+                fixture.setSensor(true);
 
-        //bot upper body
-        FixtureDef fdef = new FixtureDef();
-        PolygonShape polyShape = new PolygonShape();
-        polyShape.setAsBox(0.1f,0.21f, new Vector2(0, 0.13f), 0);
-        fdef.shape = polyShape;
-        b2body.createFixture(fdef).setUserData(this);
+                shape.setAsBox(0.17f, 0.005f, new Vector2(0, 0.2f), 0);
+                fdef.shape = shape;
+                fixture = b2body.createFixture(fdef);
+                fixture.setUserData("cyberfrogUpperSensor");
+                fixture.setSensor(true);
+            }
+        }
+        else { //different body structure for Player sprite
+            bdef = new BodyDef();
+            bdef.type = BodyDef.BodyType.DynamicBody;
+            b2body = world.createBody(bdef);
 
-        fdef = new FixtureDef();
-        polyShape = new PolygonShape();
-        polyShape.setAsBox(0.07f,0.01f, new Vector2(0, -0.3f), 0);
-        fdef.shape = polyShape;
-        Fixture fixture = b2body.createFixture(fdef);
-        fixture.setUserData("bot_lower_sensor"); //bot_lower_sensor
-        fixture.setSensor(true);
+            //bot upper body
+            fdef = new FixtureDef();
+            PolygonShape polyShape = new PolygonShape();
+            polyShape.setAsBox(0.1f,0.21f, new Vector2(0, 0.13f), 0);
+            fdef.shape = polyShape;
+            b2body.createFixture(fdef).setUserData(this);
 
-        //bot wheel
-        fdef = new FixtureDef();
-        CircleShape shape = new CircleShape();
-        shape.setPosition(new Vector2(0,-0.19f));
-        shape.setRadius(radius);
-        fdef.shape = shape;
-        fixture = b2body.createFixture(fdef);
-        fixture.setUserData(this);
+            fdef = new FixtureDef();
+            polyShape = new PolygonShape();
+            polyShape.setAsBox(0.07f,0.01f, new Vector2(0, -0.3f), 0);
+            fdef.shape = polyShape;
+            Fixture fixture = b2body.createFixture(fdef);
+            fixture.setUserData("playerDownSensor"); //bot_lower_sensor
+            fixture.setSensor(true);
 
-        this.bounds = new Rectangle(b2body.getPosition().x, b2body.getPosition().y, 81, 88);
+            //bot wheel
+            fdef = new FixtureDef();
+            CircleShape circleShape = new CircleShape();
+            circleShape.setPosition(new Vector2(0,-0.19f));
+            circleShape.setRadius(Player.radius);
+            fdef.shape = circleShape;
+            fixture = b2body.createFixture(fdef);
+            fixture.setUserData(this);
+
+            this.bounds = new Rectangle(b2body.getPosition().x, b2body.getPosition().y, 81, 88);
+        }
     }
 
     void updateAlpha(float dt) {

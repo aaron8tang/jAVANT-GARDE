@@ -1,6 +1,6 @@
 //IGNORE FIRST LINE
 ~QUIZ
-private class MyClass {
+private class AccessModifiersDemo1 {
     public static void main(String[[] args) {
         if(true) {
             System.out.println("0");
@@ -15,7 +15,7 @@ private class MyClass {
 ?1
 !error
 ~QUIZ
-default class MyClass {
+default class AccessModifiersDemo2 {
     public static void main(String[[] args) {
         if(true) {
             System.out.println("0");
@@ -30,7 +30,7 @@ default class MyClass {
 ?1
 !error
 ~QUIZ
-class MyClass {
+class AccessModifiersDemo3 {
     public static void main(String[[] args) {
         
     }

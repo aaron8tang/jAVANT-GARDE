@@ -15,7 +15,6 @@ import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.hud.Hud;
 import com.steveflames.javantgarde.quests.Quest;
 import com.steveflames.javantgarde.tools.global.Cameras;
-import com.steveflames.javantgarde.tools.global.Skins;
 
 /**
  * Created by Flames on 10/11/2017.
@@ -29,27 +28,27 @@ class QuestWindow extends Window {
     private TextButton helpBtn;
     private ScrollPane questScroll;
 
-    QuestWindow(String title, Skin skin, final Stage stage) {
-        super(title, skin);
+    QuestWindow(String title, Skin neonSkin, Skin lmlSkin, Skin terraSkin, final Hud hud) {
+        super(title, terraSkin);
 
         //quest text area
-        Table table = new Table(Skins.lmlSkin);
-        questTextArea = new Label("", Skins.skin);
+        Table table = new Table(lmlSkin);
+        questTextArea = new Label("", terraSkin);
         questTextArea.setWrap(true);
         table.add(questTextArea).left().top().expand().fillX().padLeft(5);
-        questScroll = new ScrollPane(table, Skins.neonSkin);
+        questScroll = new ScrollPane(table, neonSkin);
         if(MyGdxGame.platformDepended.deviceHasKeyboard())
             questScroll.setFlickScroll(false);
 
         //bottom bar
-        Table bottomBarTable = new Table(Skins.lmlSkin);
-        progressBar = new ProgressBar(0, 3, 1, false, Skins.neonSkin);
-        helpBtn = new TextButton("help", Skins.neonSkin);
+        Table bottomBarTable = new Table(lmlSkin);
+        progressBar = new ProgressBar(0, 3, 1, false, neonSkin);
+        helpBtn = new TextButton("help", neonSkin);
         helpBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Hud.playScreen.getPlayer().reduceHealth(1);
-                Hud.playScreen.getPlayer().setPlayerMsgAlpha(1);
+                hud.playScreen.getPlayer().reduceHealth(1);
+                hud.playScreen.getPlayer().setPlayerMsgAlpha(1);
                 questTextArea.setText(questTextArea.getText() + "\n[CYAN]HELP:[]\n");
                 String text = currentQuest.getNextHint();
                 if(text.contains("\r")) {
@@ -81,27 +80,24 @@ class QuestWindow extends Window {
         this.addListener(new ClickListener() {
             public void enter (InputEvent event, float x, float y, int pointer, Actor fromActor) {
                 super.enter(event, x, y, pointer, fromActor);
-                stage.setScrollFocus(questTextArea);
+                hud.stage.setScrollFocus(questTextArea);
             }
         });
     }
 
-    void incrementQuestStep(Quest quest) {
-
+    void incrementQuestStep(Quest quest, EditorWindow editorWindow) {
         questScroll.scrollTo(0, Cameras.hudPort.getCamera().position.y + Cameras.hudPort.getCamera().viewportHeight, 0, 0);
         if(quest.nextQuestStep()) {
-            questTextArea.setText(quest.getCurrentQuestStep().getText());
             helpBtn.setVisible(false);
             if(quest.getCurrentQuestStep().getHints().size()>0)
                 helpBtn.setVisible(true);
         }
         else { //quest completed
-            questTextArea.setText("[GREEN]Quest completed![]");
             helpBtn.setVisible(false);
-
-            quest.completed(Hud.playScreen);
+            editorWindow.completed();
         }
 
+        questTextArea.setText(quest.getCurrentQuestStepText());
         progressBar.setValue(quest.getProgress());
     }
 

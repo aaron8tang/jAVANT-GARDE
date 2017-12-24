@@ -3,7 +3,9 @@ package com.steveflames.javantgarde.hud;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -15,9 +17,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.hud.code_pc.EditorWindow;
-import com.steveflames.javantgarde.hud.navigation.GameOverWindow;
-import com.steveflames.javantgarde.hud.navigation.LevelCompletedWindow;
-import com.steveflames.javantgarde.hud.navigation.PauseWindow;
+import com.steveflames.javantgarde.hud.navigation_windows.GameOverWindow;
+import com.steveflames.javantgarde.hud.navigation_windows.LevelCompletedWindow;
+import com.steveflames.javantgarde.hud.navigation_windows.PauseWindow;
 import com.steveflames.javantgarde.hud.order_pc.EditorOrderWindow;
 import com.steveflames.javantgarde.hud.quiz_pc.EditorQuizWindow;
 import com.steveflames.javantgarde.screens.PlayScreen;
@@ -25,10 +27,9 @@ import com.steveflames.javantgarde.sprites.InfoSign;
 import com.steveflames.javantgarde.sprites.Item;
 import com.steveflames.javantgarde.sprites.Pc;
 import com.steveflames.javantgarde.sprites.Player;
+import com.steveflames.javantgarde.tools.Assets;
 import com.steveflames.javantgarde.tools.global.Cameras;
 import com.steveflames.javantgarde.tools.global.Fonts;
-import com.steveflames.javantgarde.tools.global.Loader;
-import com.steveflames.javantgarde.tools.global.Skins;
 
 
 /**
@@ -36,8 +37,8 @@ import com.steveflames.javantgarde.tools.global.Skins;
  */
 public class Hud implements Disposable {
 
-    public static PlayScreen playScreen;
-    private static Toast toast;
+    public PlayScreen playScreen;
+    private Toast toast;
 
     //hud components
     public Stage stage;
@@ -52,30 +53,32 @@ public class Hud implements Disposable {
     private InfoSign currentInfoSign;
 
     //android input table
-    private static Table androidInputTable;
+    private Table androidInputTable;
     private TextButton useBtn;
     private boolean leftBtnPressed = false;
     private boolean rightBtnPressed = false;
     private boolean useBtnPressed = false;
     private boolean jumpBtnPressed = false;
 
+    private TextureRegion heartTR;
 
     public Hud(final PlayScreen playScreen, SpriteBatch sb) {
-        Hud.playScreen = playScreen;
+        this.playScreen = playScreen;
         stage = new Stage(Cameras.hudPort, sb);
-        toast = new Toast();
-        editorWindow = new EditorWindow("EDITOR", Skins.skin, this);
-        editorQuizWindow = new EditorQuizWindow("EDITOR", Skins.skin, playScreen);
-        editorOrderWindow = new EditorOrderWindow("EDITOR", Skins.skin, playScreen);
-        pauseWindow = new PauseWindow("GAME PAUSED", Skins.skin, playScreen);
-        gameOverWindow = new GameOverWindow(Skins.neonSkin, playScreen);
-        levelCompletedWindow = new LevelCompletedWindow(Skins.neonSkin, playScreen);
+        toast = new Toast((playScreen.getAssets().getTextureAtlas()));
+        editorWindow = new EditorWindow("EDITOR", playScreen.getAssets().getNeonSkin(), playScreen.getAssets().getLmlSkin(), playScreen.getAssets().getTerraSkin(), this);
+        editorQuizWindow = new EditorQuizWindow("EDITOR", playScreen.getAssets().getTerraSkin(), playScreen);
+        editorOrderWindow = new EditorOrderWindow("EDITOR", playScreen.getAssets().getTerraSkin(), playScreen);
+        pauseWindow = new PauseWindow("GAME PAUSED", playScreen.getAssets().getNeonSkin(), playScreen.getAssets().getTerraSkin(), playScreen);
+        gameOverWindow = new GameOverWindow(playScreen.getAssets().getNeonSkin(), playScreen.getAssets().getLmlSkin(), playScreen);
+        levelCompletedWindow = new LevelCompletedWindow(playScreen.getAssets().getNeonSkin(), playScreen.getAssets().getLmlSkin(), playScreen);
         Gdx.input.setInputProcessor(stage);
+        heartTR = playScreen.getAssets().getTextureAtlas().findRegion(Assets.heartREGION);
     }
 
     public void update(float dt) {
         if(toast.isShowing())
-            toast.update(dt);
+            toast.update(dt, this);
         editorWindow.update(dt);
         editorQuizWindow.update(dt);
         editorOrderWindow.update(dt);
@@ -100,22 +103,22 @@ public class Hud implements Disposable {
                 Fonts.small.draw(sb, "Classes found: " + playScreen.getPlayer().getClasses().size() +"/" + Item.getnOfClasses(), 15, MyGdxGame.HEIGHT - 67);
             }
             for(int i = 0; i< playScreen.getPlayer().getHealth(); i++)
-                sb.draw(Loader.heartT, 20 +(60*i), MyGdxGame.HEIGHT - 60, 50, 50);
+                sb.draw(heartTR, 20 +(60*i), MyGdxGame.HEIGHT - 60, 50, 50);
         }
 
         if(toast.isShowing())
             toast.drawFont(sb);
     }
 
-    public static void newToast(String text) {
+    public void newToast(String text) {
         toast.newToast(text);
         hideAndroidInputTable();
     }
 
     public void newAndroidInputTable() {
-        androidInputTable = new Table(Skins.neonSkin);
+        androidInputTable = new Table(playScreen.getAssets().getNeonSkin());
         androidInputTable.setSize(MyGdxGame.WIDTH, 120);
-        final TextButton leftBtn = new TextButton("<", Skins.neonSkin);
+        final TextButton leftBtn = new TextButton("<", playScreen.getAssets().getNeonSkin());
         leftBtn.addListener(new ClickListener() {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
@@ -135,7 +138,7 @@ public class Hud implements Disposable {
                 }
             }
         });
-        final TextButton rightBtn = new TextButton(">", Skins.neonSkin);
+        final TextButton rightBtn = new TextButton(">", playScreen.getAssets().getNeonSkin());
         rightBtn.addListener(new ClickListener() {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
@@ -155,7 +158,7 @@ public class Hud implements Disposable {
                 }
             }
         });
-        useBtn = new TextButton("USE", Skins.neonSkin);
+        useBtn = new TextButton("USE", playScreen.getAssets().getNeonSkin());
         useBtn.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -168,7 +171,7 @@ public class Hud implements Disposable {
                 useBtnPressed = false;
             }
         });
-        TextButton jumpBtn = new TextButton("JUMP", Skins.neonSkin);
+        TextButton jumpBtn = new TextButton("JUMP", playScreen.getAssets().getNeonSkin());
         jumpBtn.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -183,10 +186,10 @@ public class Hud implements Disposable {
         });
 
 
-        Table leftTable = new Table(Skins.neonSkin);
+        Table leftTable = new Table(playScreen.getAssets().getNeonSkin());
         leftTable.add(leftBtn).left().width(150).height(120).expandX();
         leftTable.add(rightBtn).left().width(150).height(120).expandX();
-        Table rightTable = new Table(Skins.neonSkin);
+        Table rightTable = new Table(playScreen.getAssets().getNeonSkin());
         rightTable.add(useBtn).right().width(200).height(120).expandX();
         rightTable.add(jumpBtn).right().width(200).height(120).expandX();
 
@@ -198,12 +201,12 @@ public class Hud implements Disposable {
         useBtn.setVisible(false);
     }
 
-    public static void showAndroidInputTable() {
+    public void showAndroidInputTable() {
         if(!MyGdxGame.platformDepended.deviceHasKeyboard())
             androidInputTable.setVisible(true);
     }
 
-    public static void hideAndroidInputTable() {
+    public void hideAndroidInputTable() {
         if(!MyGdxGame.platformDepended.deviceHasKeyboard())
             androidInputTable.setVisible(false);
     }
@@ -225,13 +228,15 @@ public class Hud implements Disposable {
     }
 
     public void showInfoWindow(InfoSign infoSign, String text) {
-        infoDialog = new Dialog("", Skins.skin, "dialog") {
+        hideAndroidInputTable();
+        infoDialog = new Dialog("", playScreen.getAssets().getTerraSkin(), "dialog") {
             public void result(Object obj) {
                 closeCurrentInfo();
+                showAndroidInputTable();
             }
         };
         currentInfoSign = infoSign;
-        TextButton dummy = new TextButton("", Skins.neonSkin);
+        TextButton dummy = new TextButton("", playScreen.getAssets().getNeonSkin());
         infoDialog.button("     OK     ", true, dummy.getStyle()).setHeight(100); //sends "true" as the result
         infoDialog.key(Input.Keys.ENTER, true); //sends "true" when the ENTER key is pressed
         infoDialog.text(text);
@@ -240,8 +245,10 @@ public class Hud implements Disposable {
         infoDialog.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if(x<0 || y<0 || x>infoDialog.getWidth() || y>infoDialog.getHeight())
+                if(x<0 || y<0 || x>infoDialog.getWidth() || y>infoDialog.getHeight()) {
                     closeCurrentInfo();
+                    showAndroidInputTable();
+                }
             }
         });
     }
@@ -323,6 +330,14 @@ public class Hud implements Disposable {
     public void setJumpBtnPressed() {
         if(!MyGdxGame.platformDepended.deviceHasKeyboard())
             this.jumpBtnPressed = false;
+    }
+
+    public void handleToastNextPressed() {
+        toast.handleNextPressed();
+    }
+
+    public boolean isToastShowing() {
+        return toast.isShowing();
     }
 
     public EditorQuizWindow getEditorQuizWindow() {

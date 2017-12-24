@@ -1,5 +1,6 @@
 package com.steveflames.javantgarde.sprites.ropes;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -44,12 +45,14 @@ public class Platform extends GameObject {
     }
 
     public void drawFilled(ShapeRenderer sr) {
-        sr.setColor(0.21f, 0.18f, 0.17f, alpha);
+        //sr.setColor(0.21f, 0.18f, 0.17f, alpha);
+        sr.setColor(0, 0, 0, alpha);
         sr.rect(position.x*MyGdxGame.PPM + Cameras.getHudCameraOffsetX() - bounds.width/2 , position.y*MyGdxGame.PPM - bounds.height/2, bounds.width, bounds.height);
     }
 
     public void drawLine(ShapeRenderer sr) {
-        sr.setColor(0, 0, 0, alpha);
+        sr.setColor(0.14f, 0.87f, 0.88f, alpha);
+        //sr.setColor(0, 0, 0, alpha);
         sr.rect(position.x*MyGdxGame.PPM + Cameras.getHudCameraOffsetX() - bounds.width/2 , position.y*MyGdxGame.PPM - bounds.height/2, bounds.width, bounds.height);
     }
 

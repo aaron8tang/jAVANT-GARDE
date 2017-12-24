@@ -25,7 +25,7 @@ public class InputHandler {
     }
 
     public void handleInput() {
-        if (!playScreen.getHud().getCurrentToast().isShowing() || playScreen.getHud().getCurrentToast() == null) {
+        if (!playScreen.getHud().isToastShowing() || playScreen.getHud().getCurrentToast() == null) {
             if (playScreen.getPlayer().canMove) {
                 //move player on key press
                 if (Gdx.input.isKeyJustPressed(Input.Keys.UP) || playScreen.getHud().isJumpBtnPressed()) {
@@ -44,7 +44,7 @@ public class InputHandler {
                     playScreen.getPlayer().setRunLeft(false);
                 }
                 if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-                    Hud.newToast("Use the ARROWS to move around and jump\n" +
+                    playScreen.getHud().newToast("Use the ARROWS to move around and jump\n" +
                             "ENTER to use item\n" +
                             "ESCAPE to exit");
                 }
@@ -93,8 +93,10 @@ public class InputHandler {
                                         playScreen.getPlayer().b2body.setTransform(floatingPlatform.getLever().getB2body().getPosition().x - floatingPlatform.getLever().getBounds().width / 2 / MyGdxGame.PPM + 0.239f,
                                                 floatingPlatform.getLever().getB2body().getPosition().y + 0.08f, 0);
                                         quiz.pull(floatingPlatform);
-                                        if (floatingPlatform.isCorrect())
+                                        if (floatingPlatform.isCorrect()) {
                                             playScreen.getPlayer().showPlayerMsg("correct!");
+                                            playScreen.getHud().hideUseBtn();
+                                        }
                                     }
                                 }
                             }
@@ -111,7 +113,7 @@ public class InputHandler {
             playScreen.getPlayer().setRunRight(false);
             playScreen.getPlayer().setRunLeft(false);
             if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.justTouched())
-                playScreen.getHud().getCurrentToast().handleNextPressed();
+                playScreen.getHud().handleToastNextPressed();
         }
 
         playScreen.setEnterKeyHandled(false);

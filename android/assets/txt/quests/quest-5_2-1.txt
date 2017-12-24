@@ -1,19 +1,77 @@
 //IGNORE FIRST LINE
 ~QUEST
 while(true) {
-    flyForward();
-    if(frontWall) {
-        if(leftWall) {
-            turnRight();
+    [RED]__[](____) {
+        __(____) {
+            flyBackwards();
         }
         else {
-            turnLeft();
+            jump();
         }
+    }
+    else {
+        flyForward();
     }
 }
 #HELP
-?
+!if
 #HELP
-?
+?else
 #HELP
-!
+?while
+~QUEST
+while(true) {
+    if([RED]____[]) {
+        __(____) {
+            flyBackwards();
+        }
+        else {
+            jump();
+        }
+    }
+    else {
+        flyForward();
+    }
+}
+#HELP
+?upperSensorDetectsWall
+#HELP
+!frontSensorDetectsWall
+~QUEST
+while(true) {
+    if(frontSensorDetectsWall) {
+        [RED]__[](____) {
+            flyBackwards();
+        }
+        else {
+            jump();
+        }
+    }
+    else {
+        flyForward();
+    }
+}
+#HELP
+!if
+#HELP
+?else
+#HELP
+?while
+~QUEST
+while(true) {
+    if(frontSensorDetectsWall) {
+        if([RED]____[]) {
+            flyBackwards();
+        }
+        else {
+            jump();
+        }
+    }
+    else {
+        flyForward();
+    }
+}
+#HELP
+!upperSensorDetectsWall
+#HELP
+?frontSensorDetectsWall

@@ -1,18 +1,19 @@
 package com.steveflames.javantgarde.sprites;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.quests.Quest;
-import com.steveflames.javantgarde.screens.PlayScreen;
+import com.steveflames.javantgarde.tools.Assets;
 import com.steveflames.javantgarde.tools.global.Cameras;
 import com.steveflames.javantgarde.tools.global.Fonts;
-import com.steveflames.javantgarde.tools.global.Loader;
 import com.steveflames.javantgarde.tools.global.MyFileReader;
 
 /**
@@ -24,9 +25,13 @@ public class Pc extends GameObject {
     private String editorText;
     private Quest quest;
     private int pcType; //0=code, 1=quiz, 2=order
+    private TextureRegion pcTR;
+    private TextureRegion pcUseTR;
 
-    public Pc(String name, World world, TiledMap map, Rectangle bounds) {
+    public Pc(String name, World world, TiledMap map, Rectangle bounds, TextureAtlas textureAtlas) {
         super(name, world, map, bounds, true);
+        this.pcTR = textureAtlas.findRegion(Assets.pcREGION);
+        this.pcUseTR = textureAtlas.findRegion(Assets.fixREGION);
 
         if(name.startsWith("quiz")) { //quiz pc
             pcType = 1;
@@ -61,7 +66,7 @@ public class Pc extends GameObject {
     public void drawUsePrompt(SpriteBatch sb) {
         if(usable) {
             Fonts.medium.setColor(Color.RED);
-            sb.draw(Loader.fixT, position.x*MyGdxGame.PPM - 30 + Cameras.getHudCameraOffsetX(), position.y*MyGdxGame.PPM + 80 + 20, 60, 60);
+            sb.draw(pcUseTR, position.x*MyGdxGame.PPM - 30 + Cameras.getHudCameraOffsetX(), position.y*MyGdxGame.PPM + 80 + 20, 60, 60);
         }
     }
 
@@ -72,7 +77,7 @@ public class Pc extends GameObject {
 
     public void drawFontScaled(SpriteBatch sb) {
         sb.setColor(1,1,1,alpha);
-        sb.draw(Loader.pcT, position.x - bounds.width/2/MyGdxGame.PPM, position.y - bounds.height/2/MyGdxGame.PPM, bounds.width/ MyGdxGame.PPM, bounds.height/ MyGdxGame.PPM);
+        sb.draw(pcTR, position.x - bounds.width/2/MyGdxGame.PPM, position.y - bounds.height/2/MyGdxGame.PPM, bounds.width/ MyGdxGame.PPM, bounds.height/ MyGdxGame.PPM);
     }
 
     public String getEditorText() {

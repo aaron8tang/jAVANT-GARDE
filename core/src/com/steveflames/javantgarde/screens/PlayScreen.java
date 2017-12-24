@@ -19,6 +19,7 @@ import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.hud.Hud;
 import com.steveflames.javantgarde.sprites.Item;
 import com.steveflames.javantgarde.sprites.Player;
+import com.steveflames.javantgarde.tools.Assets;
 import com.steveflames.javantgarde.tools.B2WorldContactListener;
 import com.steveflames.javantgarde.tools.B2WorldCreator;
 import com.steveflames.javantgarde.tools.GameObjectManager;
@@ -67,6 +68,8 @@ public class PlayScreen implements Screen{
     private GlyphLayout onScreenMsgGlyphLayout1 = new GlyphLayout();
     private GlyphLayout onScreenMsgGlyphLayout2 = new GlyphLayout();
 
+    private boolean restartLevel = false;
+
 
     public PlayScreen(MyGdxGame game, LevelListItem level) {
         this.game = game;
@@ -93,9 +96,9 @@ public class PlayScreen implements Screen{
         //create world
         world = new World(new Vector2(0, GRAVITY), true);
         world.setContactListener(new B2WorldContactListener(this));
-        objectManager = new GameObjectManager(world);
+        objectManager = new GameObjectManager(this);
         new B2WorldCreator(this); //initialize world
-        objectManager.initializePlayer(world); //initialize player
+        objectManager.initializePlayer(world, map); //initialize player
         hud = new Hud(this, game.sb); //initialize hud
 
         //initialize inputHandler
@@ -103,7 +106,7 @@ public class PlayScreen implements Screen{
 
         if(!MyGdxGame.platformDepended.deviceHasKeyboard())
             hud.newAndroidInputTable();
-        //hud.showEditorWindow("1_1-0");
+
     }
 
     private void setMapProperties(TiledMap map) {
@@ -211,6 +214,9 @@ public class PlayScreen implements Screen{
         for (int i = 0; i < objectManager.getQuizes().size(); i++)
             if (Cameras.inLineOfSight(objectManager.getQuizes().get(i)))
                 objectManager.getQuizes().get(i).drawFontInBackground(game.sb);
+        for (int i = 0; i < objectManager.getMarkers().size(); i++)
+            if (Cameras.inLineOfSight(objectManager.getMarkers().get(i)))
+                objectManager.getMarkers().get(i).drawFontInBackground(game.sb);
         game.sb.end();
 
         //disable alpha
@@ -317,17 +323,23 @@ public class PlayScreen implements Screen{
     }
 
     public void pause() {
+        //getAssets().unloadAllPlayScreen();
         if(getPlayer().canMove)
             hud.showPauseWindow();
     }
 
-    public void resume() {}
+    public void resume() {
+        //getAssets().loadAllPlayScreen();
+        //getAssets().finishLoading(); //todo not working prepei na ksanaperasw kathe texture ena ena
+    }
 
     /**
-     * Dispose the unused variables.
+     * Dispose the unused assets.
      */
     @Override
     public void dispose() {
+        if(!restartLevel)
+            game.assets.unloadAllPlayScreen();
         map.dispose();
         renderer.dispose();
         world.dispose();
@@ -377,5 +389,13 @@ public class PlayScreen implements Screen{
 
     public boolean isEnterKeyHandled() {
         return enterKeyHandled;
+    }
+
+    public Assets getAssets() {
+        return game.assets;
+    }
+
+    public void setRestartLevel() {
+        this.restartLevel = true;
     }
 }

@@ -49,14 +49,14 @@ public class B2WorldCreator {
         //initialize pcs
         for(MapObject object: playScreen.getMap().getLayers().get(4).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
-            playScreen.getObjectManager().getPcs().add(new Pc(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
+            playScreen.getObjectManager().getPcs().add(new Pc(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, playScreen.getAssets().getTextureAtlas()));
             playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getPcs().get(playScreen.getObjectManager().getPcs().size()-1));
         }
 
         //initialize info
         for(MapObject object: playScreen.getMap().getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
-            playScreen.getObjectManager().getInfoSigns().add(new InfoSign(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, 1));
+            playScreen.getObjectManager().getInfoSigns().add(new InfoSign(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, 1, playScreen.getAssets().getTextureAtlas()));
             playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getInfoSigns().get(playScreen.getObjectManager().getInfoSigns().size()-1));
         }
 
@@ -77,7 +77,7 @@ public class B2WorldCreator {
         //initialize teleporter
         for(MapObject object: playScreen.getMap().getLayers().get(8).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
-            playScreen.getObjectManager().setTeleporter(new Teleporter(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
+            playScreen.getObjectManager().setTeleporter(new Teleporter(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, playScreen.getAssets().getTextureAtlas()));
             playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getTeleporter());
         }
 
@@ -87,22 +87,25 @@ public class B2WorldCreator {
                 Rectangle rect = ((RectangleMapObject) object).getRectangle();
                 if(object.getName() != null) {
                     if (object.getName().equals("health")) {
-                        Item item = new Item(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect);
+                        Item item = new Item(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, playScreen.getAssets().getTextureAtlas());
                         item.setUsable(true);
                         playScreen.getObjectManager().getItems().add(item);
                         playScreen.getObjectManager().addGameObject(item);
                     }
                     else if(object.getName().contains("class")) {
-                        Item item = new Item(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect);
+                        Item item = new Item(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, playScreen.getAssets().getTextureAtlas());
                         item.setUsable(true);
                         playScreen.getObjectManager().getItems().add(item);
                         playScreen.getObjectManager().addGameObject(item);
                     }
                     else if(object.getName().contains("marker")) {
-                        playScreen.getObjectManager().getMarkers().add(new Marker(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
-                        if(object.getName().contains("sensorRobotStart")) {
-                            SensorRobot sensorRobot = new SensorRobot(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect);
-                            playScreen.getObjectManager().addGameObject(sensorRobot);
+                        if(object.getName().contains("sensorRobot")) {
+                            playScreen.getObjectManager().getSensorRobots().add(new SensorRobot(object.getName().substring(object.getName().length()-1), playScreen.getWorld(), playScreen.getMap(), rect, playScreen.getAssets().getFrogAtlas()));
+                            playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getSensorRobots().get(playScreen.getObjectManager().getSensorRobots().size()-1));
+                        }
+                        else {
+                            playScreen.getObjectManager().getMarkers().add(new Marker(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
+                            playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getMarkers().get(playScreen.getObjectManager().getMarkers().size()-1));
                         }
                     }
                     else if(object.getName().contains("quiz")) {
@@ -112,13 +115,17 @@ public class B2WorldCreator {
                     else if(object.getName().contains("floatingPlatform")) {
                         if(object.getName().contains("-")) { //quiz floatingPlatform
                             String[] splitter = object.getName().split("-");
-                            playScreen.getObjectManager().getQuizes().get(0).addFloatingPlatform(new FloatingPlatform(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect,
-                                    new Lever("lever_" + splitter[1], playScreen.getWorld(), playScreen.getMap(), new Rectangle(rect.x+ rect.width/2-45,
-                                            rect.y + rect.height, 90,90), 1, true)));
-                            playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getQuizes().get(0).getFloatingPlatforms().get(playScreen.getObjectManager().getQuizes().get(0).getFloatingPlatforms().size()-1));// todo OXI get(0) alla auto p einai ontws.. prepei ta floatingPlatforms na len poianou quiz einai
+                            playScreen.getObjectManager().getQuizes().get(0).addFloatingPlatform(new FloatingPlatform(splitter[1], playScreen.getWorld(), playScreen.getMap(), rect,
+                                    new Lever("lever_" + splitter[1], playScreen.getWorld(), playScreen.getMap(), new Rectangle(rect.x+ rect.width/2-45,rect.y + rect.height, 90,90), 1, true, playScreen.getAssets().getTextureAtlas())));
+                            playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getQuizes().get(0).getFloatingPlatforms().get(playScreen.getObjectManager().getQuizes().get(0).getFloatingPlatforms().size()-1));
                         }
                         else {//not a quiz floatingPlatform
-                            playScreen.getObjectManager().getFloatingPlatforms().add(new FloatingPlatform(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, null));
+                            String name;
+                            if(object.getName().contains("_"))
+                                name = object.getName().split("_")[1];
+                                else
+                                    name = "";
+                            playScreen.getObjectManager().getFloatingPlatforms().add(new FloatingPlatform(name, playScreen.getWorld(), playScreen.getMap(), rect, null));
                             playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getFloatingPlatforms().get(playScreen.getObjectManager().getFloatingPlatforms().size()-1));
                         }
                     }

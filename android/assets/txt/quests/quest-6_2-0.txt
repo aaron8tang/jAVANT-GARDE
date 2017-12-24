@@ -1,25 +1,81 @@
 //IGNORE FIRST LINE
 ~QUEST
-Declare a variable suitable to store [CYAN]integer[] numbers and hit the 'compile & run' button.
+class EnhancedForDemo() {
+   public static void main(String[[] args) {
+      boolean[[] myArray = new boolean[12];
+      for(int i=0; i<12; i++) { [LIGHT_GRAY]//normal for[]
+         myArray[i] = false;
+      }
+      myArray[[[YELLOW]_[]] = true; [LIGHT_GRAY]//index is hidden for you[]
+      for([RED]____[] ___ _ ____) { [LIGHT_GRAY]//enhanced for[]
+         System.out.println(myVar);
+      }
+   }
+}
 #HELP
-don't forget to write your code inside the main method
+?int
 #HELP
-don't forget the semicolon  (;) at the end of your line of code
+!boolean
 #HELP
-[ORANGE]int[] varName;
+?myArray
+#HELP
+?myVar
 ~QUEST
-Declare a variable suitable to store [CYAN]decimal[] numbers.
+class EnhancedForDemo() {
+   public static void main(String[[] args) {
+      boolean[[] myArray = new boolean[12];
+      for(int i=0; i<12; i++) { [LIGHT_GRAY]//normal for[]
+         myArray[i] = false;
+      }
+      myArray[[[YELLOW]_[]] = true; [LIGHT_GRAY]//index is hidden for you[]
+      for(boolean [RED]___[] _ ____) { [LIGHT_GRAY]//enhanced for[]
+         System.out.println(myVar);
+      }
+   }
+}
 #HELP
-[ORANGE]double[] varName;
+!myVar
+#HELP
+?myArray
+#HELP
+?var
 ~QUEST
-Declare a variable of type [CYAN]boolean[].
+class EnhancedForDemo() {
+   public static void main(String[[] args) {
+      boolean[[] myArray = new boolean[12];
+      for(int i=0; i<12; i++) { [LIGHT_GRAY]//normal for[]
+         myArray[i] = false;
+      }
+      myArray[[[YELLOW]_[]] = true; [LIGHT_GRAY]//index is hidden for you[]
+      for(boolean myVar [RED]_[] ____) { [LIGHT_GRAY]//enhanced for[]
+         System.out.println(myVar);
+      }
+   }
+}
 #HELP
-[ORANGE]boolean[] varName;
+?!
+#HELP
+?in
+#HELP
+!:
+#HELP
+?myArray
 ~QUEST
-Declare a variable suitable to store a [CYAN]single character[].
+class EnhancedForDemo() {
+   public static void main(String[[] args) {
+      boolean[[] myArray = new boolean[12];
+      for(int i=0; i<12; i++) { [LIGHT_GRAY]//normal for[]
+         myArray[i] = false;
+      }
+      myArray[[[YELLOW]_[]] = true; [LIGHT_GRAY]//index is hidden for you[]
+      for(boolean myVar : [RED]____[]) { [LIGHT_GRAY]//enhanced for[]
+         System.out.println(myVar);
+      }
+   }
+}
 #HELP
-[ORANGE]char[] varName;
-~QUEST
-Declare a variable suitable to store a [CYAN]sequence of characters[].
+?myArray[]
 #HELP
-[ORANGE]String[] varName;
+!myArray
+#HELP
+?myArray;

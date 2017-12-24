@@ -4,13 +4,14 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.steveflames.javantgarde.MyGdxGame;
+import com.steveflames.javantgarde.tools.Assets;
 import com.steveflames.javantgarde.tools.global.Fonts;
-import com.steveflames.javantgarde.tools.global.Loader;
 
 import java.util.ArrayList;
 
@@ -18,7 +19,7 @@ import java.util.ArrayList;
  * Created by Flames on 24/9/2017.
  */
 
-public class Toast {
+class Toast {
     private static final int SPEED = 700;
 
     public enum State { INCOMING, READY, WRITING, NEXT, SKIP, LEAVING, LEFT}
@@ -46,7 +47,7 @@ public class Toast {
     private TextureRegion robotTR;
     private float stateTimer = 0f;
 
-    Toast() {
+    Toast(TextureAtlas textureAtlas) {
         rect = new Rectangle(10, MyGdxGame.HEIGHT + 260, MyGdxGame.WIDTH-20, 160);
         glyphLayout = new GlyphLayout();
         linesOfText = new ArrayList<StringBuilder>();
@@ -55,7 +56,7 @@ public class Toast {
         drawStrings.add(new StringBuilder());
         drawStrings.add(new StringBuilder());
         drawStrings.add(new StringBuilder());
-        robotTalkingAnim = new Animation<TextureRegion>(0.16f, Loader.loadAnim(Loader.robotTalkingAtlas.findRegion("robot-antenna"), 4, 1, 0));
+        robotTalkingAnim = new Animation<TextureRegion>(0.16f, Assets.loadAnim(textureAtlas.findRegion(Assets.robotAntennasREGION),4, 1, 0));
     }
 
     void newToast(String text) {
@@ -77,7 +78,7 @@ public class Toast {
     }
 
     private void breakTextIntoLines() {
-        if(glyphLayout.width > rect.width - 150 || text.contains("\n")) { //more than one line
+        if(glyphLayout.width > rect.width - 135 || text.contains("\n")) { //more than one line
             GlyphLayout tempGlyphLayout = new GlyphLayout();
             StringBuilder currentChar = new StringBuilder();
             for(int i=0; i<text.length(); i++) { //parse each character of the text
@@ -86,7 +87,7 @@ public class Toast {
                         currentChar.append(text.charAt(i));
                         tempGlyphLayout.setText(Fonts.small, currentChar);
                     }
-                    if (tempGlyphLayout.width >= rect.width - 150 && currentChar.length()!=0) { //check characters sum width
+                    if (tempGlyphLayout.width >= rect.width - 135 && currentChar.length()!=0) { //check characters sum width
                         addNewLine(currentChar.toString());
                         currentChar.setLength(0);
                     }
@@ -124,7 +125,7 @@ public class Toast {
             linesOfText.get(numOfPages).append("\n");
     }
 
-    public void update(float dt) {
+    public void update(float dt, Hud hud) {
         setCurrentFrame(dt);
         if (currentState == State.INCOMING) {
             if (rect.y - SPEED * dt > MyGdxGame.HEIGHT - rect.height - 65) {
@@ -143,7 +144,6 @@ public class Toast {
                     linePtr++;
                 else
                     drawStrings.get(linePtr).append(linesOfText.get(currentPage).toString().charAt(letterPtr));
-                //System.out.printf("|"+ linesOfText.get(currentPage).toString().charAt(letterPtr) +"|  ");
 
                 letterPtr++;
                 if(letterPtr >= linesOfText.get(currentPage).length()) {
@@ -154,14 +154,16 @@ public class Toast {
             }
         }
         else if (currentState == State.NEXT) {
-            drawStrings.get(0).setLength(0);
-            drawStrings.get(1).setLength(0);
-            drawStrings.get(2).setLength(0);
             currentState = State.WRITING;
             currentPage++;
             if (currentPage > numOfPages) {
                 currentPage--;
                 currentState = State.LEAVING;
+            }
+            else {
+                drawStrings.get(0).setLength(0);
+                drawStrings.get(1).setLength(0);
+                drawStrings.get(2).setLength(0);
             }
         }
         else if (currentState == State.SKIP) {
@@ -184,7 +186,10 @@ public class Toast {
                 rect.y += SPEED * dt;
                 if (rect.y > MyGdxGame.HEIGHT) {
                     currentState = State.LEFT;
-                    Hud.showAndroidInputTable();
+                    drawStrings.get(0).setLength(0);
+                    drawStrings.get(1).setLength(0);
+                    drawStrings.get(2).setLength(0);
+                    hud.showAndroidInputTable();
                 }
             }
         }
@@ -214,7 +219,7 @@ public class Toast {
     }
 
     void drawFont(SpriteBatch sb) {
-        if(currentState == State.READY || currentState == State.WRITING || currentState == State.LEAVING) {
+        if(currentState != State.INCOMING && currentState != State.LEFT ) {
             Fonts.small.setColor(Color.BLACK);
             Fonts.xsmall.setColor(Color.BLACK);
 

@@ -17,7 +17,7 @@ e.g. [ORANGE]double[] [YELLOW]b[] [CYAN]= 0.5[][GREEN];[]
 You can also store integer values in a double variable
 e.g. [ORANGE]double[] [YELLOW]b[] [CYAN]= 1[][GREEN];[]
 
-In a new line, try assigning a [CYAN]decimal[] value to a double variable!
+[CYAN]In a new line[], try assigning a [CYAN]decimal[] value to a double variable!
 ~QUEST
 A [ORANGE]boolean[] variable can only take 2 values: [CYAN]true[] or [CYAN]false[]
 e.g.

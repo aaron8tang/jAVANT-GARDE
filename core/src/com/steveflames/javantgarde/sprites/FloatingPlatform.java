@@ -29,10 +29,7 @@ public class FloatingPlatform extends GameObject {
 
     public FloatingPlatform(String name, World world, TiledMap map, Rectangle bounds, Lever lever) {
         super(name, world, map, bounds, false);
-        if(name.contains("_")) {
-            String[] splitter = name.split("_");
-            this.name = splitter[1];
-        }
+        this.name = name;
         glyphLayout.setText(Fonts.small, this.name);
         this.lever = lever;
     }
@@ -40,12 +37,14 @@ public class FloatingPlatform extends GameObject {
     public void update(float dt) {}
 
     public void drawFilled(ShapeRenderer sr) {
-        sr.setColor(0.21f, 0.18f, 0.17f, 1);
+        //sr.setColor(0.21f, 0.18f, 0.17f, 1);
+        sr.setColor(Color.BLACK);
         sr.rect(b2body.getPosition().x* MyGdxGame.PPM + Cameras.getHudCameraOffsetX() - bounds.width/2, b2body.getPosition().y* MyGdxGame.PPM - bounds.height/2, bounds.width, bounds.height);
     }
 
     public void drawLine(ShapeRenderer sr) {
-        sr.setColor(Color.BLACK);
+        //sr.setColor(Color.BLACK);
+        sr.setColor(0.14f, 0.87f, 0.88f, 1);
         sr.rect(b2body.getPosition().x* MyGdxGame.PPM + Cameras.getHudCameraOffsetX() - bounds.width/2, b2body.getPosition().y* MyGdxGame.PPM - bounds.height/2, bounds.width, bounds.height);
     }
 
@@ -56,31 +55,29 @@ public class FloatingPlatform extends GameObject {
             lever.drawUsePrompt(sb);
     }
 
-    public void drawFontScaled(SpriteBatch sb) {}
-
-    public void drawLever(SpriteBatch sb) {
-        if(lever != null)
+    public void drawFontScaled(SpriteBatch sb) {
+        if(lever!=null)
             lever.drawFontScaled(sb);
     }
 
-    public void quizReset(String name, Hud hud) {
+    public void quizReset(String name, Hud hud, boolean isCompleted) {
         correct = false;
         resetB2Body();
         if(!name.equals("$")) { //not empty answer
             lever.quizReset();
-            if (lever.isColliding()) {
+            if (lever.isColliding() && !isCompleted) {
                 lever.setUsable(true);
                 hud.showUseBtn("PULL");
             }
 
-            setName(name);
+            setAnswerText(name);
             if (name.equals(" ")) {
                 lever.setUsable(false);
                 lever.setManualPull(false);
             }
         }
         else { //deactivate this floatingPlatform's lever and name
-            setName(" ");
+            setAnswerText(" ");
             lever.b2body.setTransform(-2,-2, 0);
         }
     }
@@ -104,7 +101,7 @@ public class FloatingPlatform extends GameObject {
         b2body.setLinearVelocity(0, -speed);
     }
 
-    public void setName(String name) {
+    public void setAnswerText(String name) {
         if(name.charAt(0) == '!')
             correct = true;
         this.name = name.substring(1);

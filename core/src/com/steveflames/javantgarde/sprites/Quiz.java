@@ -63,11 +63,11 @@ public class Quiz extends GameObject {
             timer = 0;
             incrementCurrentQuestion();
             for(int i=0; i<floatingPlatforms.size(); i++){
-                if(currentQuestion + 1 <questions.size())
-                    floatingPlatforms.get(i).quizReset(answers.get(currentQuestion)[i], playScreen.getHud());
+                if(!isQuizCompleted())
+                    floatingPlatforms.get(i).quizReset(answers.get(currentQuestion)[i], playScreen.getHud(), false);
                 else { //QUIZ COMPLETED
-                    floatingPlatforms.get(i).quizReset(" ", playScreen.getHud());
-                    if(id.equals("2_2") || id.equals("1_2"))
+                    floatingPlatforms.get(i).quizReset(" ", playScreen.getHud(), true);
+                    if(id.equals("2_2") || id.equals("1_2") || id.equals("6_2"))
                         playScreen.getObjectManager().getDoors().get(0).open();
                     else if(id.equals("4_1"))
                         playScreen.getObjectManager().getDoors().get(0).open();
@@ -107,10 +107,7 @@ public class Quiz extends GameObject {
         Fonts.xsmallMonoMarkup.draw(sb, questions.get(currentQuestion), bounds.x + Cameras.getHudCameraOffsetX()+20, bounds.y +bounds.height - 20);
     }
 
-    public void drawFontScaled(SpriteBatch sb) { //draws the quizes levers
-        for(int i=0; i<floatingPlatforms.size(); i++)
-            floatingPlatforms.get(i).drawLever(sb);
-    }
+    public void drawFontScaled(SpriteBatch sb) {}
 
     public void drawFont(SpriteBatch sb) {
         for(int i=0; i<floatingPlatforms.size(); i++) {
@@ -137,13 +134,18 @@ public class Quiz extends GameObject {
             currentQuestion++;
     }
 
+    private boolean isQuizCompleted() {
+        return currentQuestion + 1 >= questions.size();
+    }
+
     public ArrayList<FloatingPlatform> getFloatingPlatforms() {
         return floatingPlatforms;
     }
 
     public void addFloatingPlatform(FloatingPlatform floatingPlatform) {
         floatingPlatforms.add(floatingPlatform);
-        floatingPlatform.setName(answers.get(0)[floatingPlatforms.size()-1]);
+        if(answers.size()>0)
+            floatingPlatform.setAnswerText(answers.get(0)[floatingPlatforms.size()-1]);
     }
 
 }

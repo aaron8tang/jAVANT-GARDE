@@ -4,17 +4,19 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.sprites.ropes.Rope;
+import com.steveflames.javantgarde.tools.Assets;
 import com.steveflames.javantgarde.tools.global.Cameras;
 import com.steveflames.javantgarde.tools.global.Fonts;
-import com.steveflames.javantgarde.tools.global.Loader;
 import com.steveflames.javantgarde.tools.global.MyFileReader;
 
 import java.util.ArrayList;
@@ -39,7 +41,7 @@ public class Player extends GameObject {
     private boolean runLeft = false;
     private boolean runRight = false;
     private int health = 5;
-    private final float radius = 24/MyGdxGame.PPM;
+    public static final float radius = 24/MyGdxGame.PPM;
     private int currentCheckpointIndex = 0;
     private TextureRegion currentTR;
     private LinkedHashMap<String, String> classes = new LinkedHashMap<String, String>();
@@ -63,18 +65,23 @@ public class Player extends GameObject {
     private float stateTimer = 0f;
     private float rotation =0;
 
+    private TextureRegion botWheelTR;
+    private TextureRegion botMoveTR;
 
-    public Player(World world, ArrayList<Checkpoint> checkpoints) {
-        definePlayer(world, radius);
-        currentTR = Loader.botMoveTR;
+
+    public Player(World world, TiledMap map, ArrayList<Checkpoint> checkpoints, TextureAtlas textureAtlas) {
+        super("player", world, map, new Rectangle(), false);
+        currentTR = botMoveTR;
         this.checkpoints = checkpoints;
+        this.botWheelTR = textureAtlas.findRegion(Assets.botWheelREGION);
+        this.botMoveTR = textureAtlas.findRegion(Assets.botMoveREGION);
         setInitialPosition();
 
         currentState = State.STANDING;
         previousState = State.STANDING;
 
-        idleAnim = new Animation<TextureRegion>(0.08f, Loader.loadAnim(Loader.botAtlas.findRegion("bot_talk"), 12, 6, 3));
-        typingAnim = new Animation<TextureRegion>(0.015f, Loader.loadAnim(Loader.botAtlas.findRegion("bot_typing"), 12, 2, 0));
+        idleAnim = new Animation<TextureRegion>(0.08f, Assets.loadAnim(textureAtlas.findRegion(Assets.botTalkREGION), 12, 6, 3) );
+        typingAnim = new Animation<TextureRegion>(0.015f, Assets.loadAnim(textureAtlas.findRegion(Assets.botTypingREGION), 12, 2, 0) );
     }
 
     private void setInitialPosition() {
@@ -92,10 +99,10 @@ public class Player extends GameObject {
     public void drawFontScaled(SpriteBatch sb) {
         sb.setColor(1,1,1,alpha);
         sb.draw(currentTR, position.x - bounds.width/2/MyGdxGame.PPM, position.y - 17/MyGdxGame.PPM, bounds.width/MyGdxGame.PPM, bounds.height/MyGdxGame.PPM);
-        sb.draw(Loader.botWheelTR, position.x - 45/2/MyGdxGame.PPM , position.y - 0.31f
-                , 45/MyGdxGame.PPM/2,  45/MyGdxGame.PPM/2
-                , 45/MyGdxGame.PPM, 45/MyGdxGame.PPM
-                , 1, 1
+        sb.draw(botWheelTR, position.x - 49/2/MyGdxGame.PPM , position.y - 0.32f
+                , 49/MyGdxGame.PPM/2,  49/MyGdxGame.PPM/2
+                , 49/MyGdxGame.PPM, 49/MyGdxGame.PPM
+                , 0.935f, 0.935f
                 , rotation);
     }
 
@@ -165,7 +172,7 @@ public class Player extends GameObject {
                 region = typingAnim.getKeyFrame(stateTimer, true);
                 break;
             case JUMPING:
-                region = Loader.botMoveTR;
+                region = botMoveTR;
                 break;
             default:
                 region = idleAnim.getKeyFrame(stateTimer, true);
@@ -267,7 +274,7 @@ public class Player extends GameObject {
 
     public void addClass(String text) {
         String[] temp = text.split("-");
-        classes.put(temp[2], MyFileReader.readFile("txt/classes/"+text+".txt"));
+        classes.put(temp[2], MyFileReader.readFile("txt/classes/"+text+".txt")); //todo
         playerMsg = "+"+temp[2]+" class";
         playerMsgGlyph.setText(Fonts.small, playerMsg);
         playerMsgVector.x = b2body.getPosition().x;

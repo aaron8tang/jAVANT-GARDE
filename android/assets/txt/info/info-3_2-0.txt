@@ -3,7 +3,7 @@ A [BLUE]method[] can return a value. The keyword [YELLOW]return[] is used to do 
 Until now we have seen the keyword [GREEN]void[] in the declaration of the methods.
 [GREEN]void[] means that the method does not return any value. If we want to return
 a value we must write its [GREEN]return type[] instead of void. It can be a primitive type
-([GREEN]int, long, float, double, boolean, char[]) or a class type.
+([GREEN]int, double, boolean, char[] etc.) or a class type.
 
 for example a method that takes 2 integers as parameters and [YELLOW]returns[] their sum:
 [CYAN]_________________________________________________________________________________[]

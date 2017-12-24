@@ -1,5 +1,4 @@
 OBJECTS:
-Java is an [RED]object-oriented[] programming language. 
 An object in programming is similar to an object in real life.
 Any [YELLOW]object[] in real life has a [CYAN]state[] and a [CYAN]behavior[].
 

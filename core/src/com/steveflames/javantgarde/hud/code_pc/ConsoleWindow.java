@@ -10,7 +10,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.steveflames.javantgarde.MyGdxGame;
-import com.steveflames.javantgarde.tools.global.Skins;
 
 /**
  * Created by Flames on 10/11/2017.
@@ -21,17 +20,17 @@ public class ConsoleWindow extends Window {
     private Label consoleTextArea;
     private ScrollPane consoleScroll;
 
-    ConsoleWindow(String title, Skin skin, final Stage stage) {
-        super(title, skin);
+    ConsoleWindow(String title, Skin neonSkin, Skin terraSkin, final Stage stage ) {
+        super(title, terraSkin);
 
         //textArea of console window
-        Table table = new Table(Skins.neonSkin);
-        consoleTextArea = new Label("", Skins.skin);
+        Table table = new Table(neonSkin);
+        consoleTextArea = new Label("", terraSkin);
         consoleTextArea.setWrap(true);
         //consoleTextArea.setDisabled(true);
         table.add(consoleTextArea).expand().fillX().left().top().padLeft(5);
 
-        consoleScroll = new ScrollPane(table, Skins.neonSkin);
+        consoleScroll = new ScrollPane(table, neonSkin);
         //scroll.setFadeScrollBars(false);
         if(MyGdxGame.platformDepended.deviceHasKeyboard())
             consoleScroll.setFlickScroll(false);

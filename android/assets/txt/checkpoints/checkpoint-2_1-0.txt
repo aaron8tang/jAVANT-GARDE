@@ -4,5 +4,5 @@ It could be a number, a sequence of characters, etc.
 To declare a variable you need to choose a descriptive name
 for it.
 There are certain rules to follow when naming a variable.
-Go ahead, read the rules from the sign and jump on the
+Go ahead, read the rules from the InfoSign and jump on the
 platforms with the correct variable names to move on!

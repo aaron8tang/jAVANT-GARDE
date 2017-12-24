@@ -65,12 +65,18 @@ class ForTest {
 class ForTest {
    public static void main(String[[] args) {
       for(int i=0; i<=10; [RED]___[]) {
-         System.out.println(i + " ");
+         System.out.println(i);
       }
    }
 }
-[CYAN]//Fill in the red blank so that the output is:
-//0 2 4 6 8 10[]
+[CYAN]/*Fill in the red blank so that the output is:
+0
+2
+4
+6
+8
+10
+*/[]
 #HELP
 !i=i+2
 #HELP
@@ -83,12 +89,17 @@ class ForTest {
 class ForTest {
    public static void main(String[[] args) {
       for([RED]___[] i=0; i<0.5; i=i+0.1) {
-         System.out.println(i + " ");
+         System.out.println(i);
       }
    }
 }
-[CYAN]//Fill in the red blank so that the output is:
-//0 0.1 0.2 0.3 0.4[]
+[CYAN]/*Fill in the red blank so that the output is:
+0 
+0.1 
+0.2
+0.3
+0.4
+*/[]
 #HELP
 ?int
 #HELP

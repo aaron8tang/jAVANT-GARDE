@@ -2,9 +2,11 @@ package com.steveflames.javantgarde.tools;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.steveflames.javantgarde.screens.PlayScreen;
 import com.steveflames.javantgarde.sprites.Checkpoint;
 import com.steveflames.javantgarde.sprites.Door;
 import com.steveflames.javantgarde.sprites.FloatingPlatform;
@@ -31,7 +33,7 @@ public class GameObjectManager {
 
     private ArrayList<GameObject> gameObjects;
     private ArrayList<GameObject> objectsToRemove = new ArrayList<GameObject>();
-    private World world;
+    private PlayScreen playScreen;
     //world bodies
     private Player player;
     private ArrayList<Pc> pcs = new ArrayList<Pc>();
@@ -48,8 +50,8 @@ public class GameObjectManager {
     private ArrayList<SensorRobot> sensorRobots = new ArrayList<SensorRobot>();
 
 
-    public GameObjectManager(World world) {
-        this.world = world;
+    public GameObjectManager(PlayScreen playScreen) {
+        this.playScreen = playScreen;
         gameObjects = new ArrayList<GameObject>();
     }
 
@@ -113,7 +115,7 @@ public class GameObjectManager {
     public void destroyUnusedBodies() {
         for(int i = 0; i< objectsToRemove.size(); i++) {
             gameObjects.remove(objectsToRemove.get(i));
-            world.destroyBody(objectsToRemove.get(i).b2body);
+            playScreen.getWorld().destroyBody(objectsToRemove.get(i).b2body);
         }
         objectsToRemove.clear();
     }
@@ -122,8 +124,8 @@ public class GameObjectManager {
         gameObjects.clear();
     }
 
-    public void initializePlayer(World world) {
-        player = new Player(world, checkpoints);
+    public void initializePlayer(World world, TiledMap map) {
+        player = new Player(world, map, checkpoints, playScreen.getAssets().getTextureAtlas());
         gameObjects.add(player);
     }
 

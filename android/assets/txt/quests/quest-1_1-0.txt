@@ -7,6 +7,8 @@ The code to define a class:
 
 Write this code on the editor and hit the '[CYAN]compile & run[]' button
 ~QUEST
+We get an [RED]error[] because our program does not have a main method.
+
 The code of the main method:
 [GREEN]public static void main(String[[] args) {[]
 
@@ -20,13 +22,15 @@ Write this code inside your class and hit the '[CYAN]compile & run[]' button
     [GREEN]}[]
 [RED]}[]
 ~QUEST
-Print the words "[CYAN]Hello World![]" on the console
-Use the [CYAN]help[] button for more info!
+Great, we have our program's starting point.
+
+Now, print the words "[CYAN]Hello World![]" on the console.
+Use the [CYAN]help[] button to learn how to do that!
 #HELP
 To print a message to the console you have to type: [CYAN]System.out.println("");[]
 your message goes between the quotes [CYAN]""[]
 #HELP
-add this code to your main method:
+add this code inside your main method:
 [CYAN]System.out.println("Hello World!");[]
 #HELP
 [RED]public class MyClass {[]

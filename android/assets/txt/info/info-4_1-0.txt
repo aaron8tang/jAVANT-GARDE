@@ -5,9 +5,9 @@ executed over and over again until the condition is false.
 [CYAN]________________________________________________________________________________[]
 
 [PURPLE]1[]    int x = 0;
-[PURPLE]2[]    [YELLOW]while ([BLUE]x < 3[])[][RED]{[] [LIGHT_GRAY]//as longs as x is less than 3, loop[]
+[PURPLE]2[]    [YELLOW]while ([BLUE]x < 3[])[][RED]{[] [LIGHT_GRAY]//as longs as x is less than 3, enter the loop (iteration)[]
 [PURPLE]3[]        [CYAN]System.out.println(x);[]
-[PURPLE]4[]        [CYAN]x++;[]
+[PURPLE]4[]        [CYAN]x = x + 1;[] [LIGHT_GRAY]//or x++;[]
 [PURPLE]5[]    [RED]}[] 
 [PURPLE]6[]    [LIGHT_GRAY]//after the loop, the value of x is 3[]
 [CYAN]________________________________________________________________________________[]

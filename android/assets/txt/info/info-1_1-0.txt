@@ -1,4 +1,5 @@
-In Java, every line of code you write must be inside a [RED]class[]
+In Java, most of the lines of code you write must be inside
+a [RED]class[].
 
 the code to write a class:
 [CYAN]____________________________________________________________[]

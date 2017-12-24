@@ -1,15 +1,23 @@
-IF-ELSE:
-Right after an [YELLOW]if[] statement, we can add an [YELLOW]else[] statement.
-If the condition is false, then the program enters the [YELLOW]else[] statement.
-[CYAN]________________________________________________________________________[]
+NESTED IF:
+It is quite common to use an [YELLOW]if[] statement inside an [YELLOW]if[] statement.
+[CYAN]___________________________________________________________________________[]
 
-boolean myVar = false;
-[YELLOW]if(myVar) { [LIGHT_GRAY]//the condition is false[]
+[YELLOW]if(1 < 2) { [LIGHT_GRAY]//this condition is true[]
     [CYAN]System.out.println("1");[]
-}
-else { [LIGHT_GRAY]//since the above condition is false, the program enters here[]
-    [CYAN]System.out.println("2");[]
+    if(1 == 1) { [LIGHT_GRAY]//this condition is true[]
+        [CYAN]System.out.println("2");[]
+    }
+    if(0 == 1) { [LIGHT_GRAY]//this condition is false[]
+        [CYAN]System.out.println("3");[] [LIGHT_GRAY]//anything in this block won't be executed[]
+        if(0 < 1) { 
+            [CYAN]System.out.println("4");[]
+        }
+        else {
+            [CYAN]System.out.println("5");[]
+        }
+    }
 }[]
-[CYAN]________________________________________________________________________[]
+[CYAN]___________________________________________________________________________[]
 The output of this program is:
+1
 2

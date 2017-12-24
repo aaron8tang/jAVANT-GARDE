@@ -2,12 +2,14 @@ package com.steveflames.javantgarde.sprites;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
 import com.steveflames.javantgarde.MyGdxGame;
-import com.steveflames.javantgarde.tools.global.Loader;
+import com.steveflames.javantgarde.tools.Assets;
 
 /**
  * Created by Flames on 19/10/2017.
@@ -16,15 +18,15 @@ import com.steveflames.javantgarde.tools.global.Loader;
 public class Item extends GameObject {
 
     private int dir = 1;
-    private Texture texture;
+    private TextureRegion textureRegion;
     private static int nOfClasses = 0;
 
-    public Item(String name, World world, TiledMap map, Rectangle bounds) {
+    public Item(String name, World world, TiledMap map, Rectangle bounds, TextureAtlas textureAtlas) {
         super(name, world, map, bounds, true);
         if(name.contains("health"))
-            texture = Loader.heartT;
+            textureRegion = textureAtlas.findRegion(Assets.heartREGION);
         else if(name.contains("class")) {
-            texture = Loader.classT;
+            textureRegion = textureAtlas.findRegion(Assets.classREGION);
             nOfClasses++;
         }
     }
@@ -39,7 +41,7 @@ public class Item extends GameObject {
     }
 
     public void drawFontScaled(SpriteBatch sb) {
-        sb.draw(texture, b2body.getPosition().x - 30/MyGdxGame.PPM, b2body.getPosition().y - 30/MyGdxGame.PPM, 60/MyGdxGame.PPM, 60/MyGdxGame.PPM);
+        sb.draw(textureRegion, b2body.getPosition().x - 30/MyGdxGame.PPM, b2body.getPosition().y - 30/MyGdxGame.PPM, 60/MyGdxGame.PPM, 60/MyGdxGame.PPM);
     }
 
     public void drawFont(SpriteBatch sb) {}

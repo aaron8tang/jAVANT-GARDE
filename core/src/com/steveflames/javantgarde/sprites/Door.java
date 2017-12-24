@@ -24,7 +24,6 @@ public class Door extends GameObject {
 
     public void update(float dt) {
         if(opening) {
-
             if(bounds.height - 400*dt >0) {
                 bounds.y += 400*dt;
                 bounds.height -= 400*dt;
@@ -40,13 +39,18 @@ public class Door extends GameObject {
     public void drawFontScaled(SpriteBatch sb) {}
 
     public void drawFilled(ShapeRenderer sr) {
-        sr.setColor(0.21f, 0.18f, 0.17f, 1);
-        sr.rect(bounds.x + Cameras.getHudCameraOffsetX(), bounds.y, bounds.width, bounds.height);
+        //sr.setColor(0.21f, 0.18f, 0.17f, 1);
+        //sr.setColor(0.93f, 0.9f, 0.88f, 0.8f);
+        //sr.setColor(Color.BLACK);
+        sr.setColor(0, 0, 0, 0.7f);
+        sr.rect(bounds.x + Cameras.getHudCameraOffsetX(), bounds.y+1, bounds.width, bounds.height-1);
     }
 
     public void drawLine(ShapeRenderer sr) {
-        sr.setColor(Color.BLACK);
-        sr.rect(bounds.x + Cameras.getHudCameraOffsetX(), bounds.y, bounds.width, bounds.height);
+        //sr.setColor(Color.BLACK);
+        //sr.setColor(0.93f, 0.9f, 0.88f, 1);
+        sr.setColor(0.14f, 0.87f, 0.88f, 1);
+        sr.rect(bounds.x + Cameras.getHudCameraOffsetX(), bounds.y+1, bounds.width, bounds.height-1);
     }
 
     public void open() {

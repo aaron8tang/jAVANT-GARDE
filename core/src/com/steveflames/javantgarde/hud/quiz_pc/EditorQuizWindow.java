@@ -2,6 +2,7 @@ package com.steveflames.javantgarde.hud.quiz_pc;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -12,12 +13,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.hud.AndroidExtraKeyboardWindow;
-import com.steveflames.javantgarde.hud.Hud;
 import com.steveflames.javantgarde.screens.PlayScreen;
+import com.steveflames.javantgarde.sprites.FloatingPlatform;
+import com.steveflames.javantgarde.sprites.Lever;
 import com.steveflames.javantgarde.sprites.Pc;
 import com.steveflames.javantgarde.sprites.Player;
 import com.steveflames.javantgarde.tools.global.Cameras;
-import com.steveflames.javantgarde.tools.global.Skins;
+
+import java.util.Random;
 
 /**
  * Created by Flames on 3/12/2017.
@@ -37,39 +40,54 @@ public class EditorQuizWindow extends Window {
     private float tempCamX = - 1;
     private boolean showEditor = true;
     private boolean doOnce = true;
+    private boolean[] booleanArray;
 
     public EditorQuizWindow(String title, Skin skin, final PlayScreen playScreen) {
         super(title, skin);
         this.playScreen = playScreen;
 
         //top bar
-        Table topBarTable = new Table(Skins.neonSkin);
-        TextButton exitBtn = new TextButton("x", Skins.neonSkin);
+        Table topBarTable = new Table(playScreen.getAssets().getNeonSkin());
+        TextButton exitBtn = new TextButton("x", playScreen.getAssets().getNeonSkin());
         exitBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 closeCurrentEditor();
             }
         });
-        Label infoLabel = new Label("[CYAN]Fill in the blank![]", Skins.skin);
+        Label infoLabel = new Label("[CYAN]Fill in the blank![]", playScreen.getAssets().getTerraSkin());
         topBarTable.add(infoLabel).expandX().center();
         topBarTable.add(exitBtn).top().right();
 
         //codeLabel
-        codeLabel = new Label("", Skins.skin);
+        codeLabel = new Label("", playScreen.getAssets().getTerraSkin());
         codeLabel.getStyle().fontColor = Color.WHITE;
 
-        Table codeTable = new Table(Skins.neonSkin);
+        Table codeTable = new Table(playScreen.getAssets().getNeonSkin());
         codeTable.add(codeLabel).expand().fillX().top();
 
         //add components to window
-        this.setSize(720, MyGdxGame.HEIGHT-240);
+        this.setSize(740, MyGdxGame.HEIGHT-240);
         this.setX(MyGdxGame.WIDTH/2 - this.getWidth()/2);
         this.setY(170);
         this.add(topBarTable).expandX().fillX().top();
         this.row();
         this.add(codeTable).expand().fillX().top();
-        extraKeyboardWindow = new AndroidExtraKeyboardWindow("", Skins.skin, this);
+        extraKeyboardWindow = new AndroidExtraKeyboardWindow("", playScreen.getAssets().getNeonSkin(), playScreen.getAssets().getTerraSkin(), this);
+
+        //level specific
+        if(playScreen.getCurrentLevelID().equals("6_2")) {
+            playScreen.getObjectManager().getMarkers().get(0).setText("CONSOLE:");
+
+            booleanArray = new boolean[12];
+            for(int i=0; i<booleanArray.length; i++)
+                booleanArray[i] = false;
+            Random rand = new Random();
+            int k = rand.nextInt(12);
+            booleanArray[k] = true;
+
+            playScreen.getObjectManager().getQuizes().get(0).getFloatingPlatforms().get(k).setAnswerText("!"+playScreen.getObjectManager().getQuizes().get(0).getFloatingPlatforms().get(k).getName());
+        }
     }
 
     public void update(float dt) {
@@ -78,18 +96,21 @@ public class EditorQuizWindow extends Window {
             if(timer > 1.5 && doOnce) { //1.5 after the answer
                 doOnce = false;
                 if(correct) { //if it is correct
-                    tempHideEditor(-1); //hide the editor temporarily to show the result in the map (e.g. open door)
+                    if(playScreen.getCurrentLevelID().equals("6_2") || playScreen.getCurrentLevelID().equals("5_2")) //on level 6_2 no need to hide editor
+                        timer = 2.5f;
+                    else
+                        tempHideEditor(-1); //hide the editor temporarily to show the result in the map (e.g. open door)
                     if(playScreen.getCurrentLevelID().equals("3_2")) {
                         switch (currentPc.getQuest().getProgress()) {
                             case 0:
-                                playScreen.getObjectManager().getFloatingPlatforms().get(1).drop(20);
+                                playScreen.getObjectManager().getFloatingPlatforms().get(1).drop(8);
                                 break;
                             case 1:
-                                playScreen.getObjectManager().getFloatingPlatforms().get(2).drop(20);
+                                playScreen.getObjectManager().getFloatingPlatforms().get(2).drop(8);
                                 break;
                             case 2:
                                 showEditor = false;
-                                playScreen.getObjectManager().getFloatingPlatforms().get(3).drop(20);
+                                playScreen.getObjectManager().getFloatingPlatforms().get(3).drop(8);
                                 break;
                         }
                     }
@@ -143,6 +164,13 @@ public class EditorQuizWindow extends Window {
                                 break;
                         }
                     }
+                    else if(playScreen.getCurrentLevelID().equals("5_2")) {
+                        if(currentPc.getQuest().getProgress() == 3) {
+                            timer = 3;
+                            playScreen.getObjectManager().getSensorRobots().get(1).setUpperSensor(true);
+                            playScreen.getObjectManager().getSensorRobots().get(1).setRunRight(true);
+                        }
+                    }
                     else if(playScreen.getCurrentLevelID().equals("6_1")) {
                         switch (currentPc.getQuest().getProgress()) {
                             case 0:
@@ -168,6 +196,14 @@ public class EditorQuizWindow extends Window {
                                 break;
                         }
                     }
+                    else if(playScreen.getCurrentLevelID().equals("6_2")) {
+                        if(currentPc.getQuest().getProgress() == 3) {
+                            timer = 3;
+                            for(boolean b : booleanArray) {
+                                playScreen.getObjectManager().getMarkers().get(0).setText(playScreen.getObjectManager().getMarkers().get(0).getText()+ "\n" + b);
+                            }
+                        }
+                    }
                 }
             }
             else if (timer > 2.8) { //now show the editor again
@@ -180,15 +216,19 @@ public class EditorQuizWindow extends Window {
                     else //whole quest completed
                         closeCurrentEditor();
                 }
-                else
-                    playScreen.getObjectManager().getFloatingPlatforms().get(0).resetB2Body();
+                else {
+                    if(!playScreen.getCurrentLevelID().equals("6_2") && !playScreen.getCurrentLevelID().equals("5_2"))
+                        playScreen.getObjectManager().getFloatingPlatforms().get(0).resetB2Body();
+                }
 
                 if(correct) {
                     correct = false;
                     if (showEditor)
                         tempShowEditor();
-                    else  //dont show editor again
-                        Hud.playScreen.getPlayer().setCurrentState(Player.State.STANDING);
+                    else { //dont show editor again
+                        playScreen.getPlayer().setCurrentState(Player.State.STANDING);
+                        playScreen.getHud().showAndroidInputTable();
+                    }
                 }
             }
         }
@@ -201,7 +241,7 @@ public class EditorQuizWindow extends Window {
     public void btnPressed(String text) {
         if(answered == 0) {
             text = text.replaceAll("\\[]","[[]");
-            codeLabel.setText(codeLabel.getText().toString().replaceAll("\\[RED].*\\[]", "[RED]" + text.substring(1) + "[]"));
+            codeLabel.setText(codeLabel.getText().toString().replaceAll("\\[RED]_*\\[]", "[RED]" + text.substring(1) + "[]"));
 
             if (text.charAt(0) == '!') { //correct answer
                 playScreen.getPlayer().showPlayerMsg("correct!");
@@ -211,7 +251,12 @@ public class EditorQuizWindow extends Window {
             else { //wrong answer
                 closeCurrentEditor();
                 playScreen.getPlayer().setCurrentState(Player.State.CODING); //so that the player can't run
-                playScreen.getObjectManager().getFloatingPlatforms().get(0).drop(6);
+                if(!playScreen.getCurrentLevelID().equals("6_2") && !playScreen.getCurrentLevelID().equals("5_2"))
+                    playScreen.getObjectManager().getFloatingPlatforms().get(0).drop(6);
+                else {
+                    playScreen.getPlayer().setCurrentState(Player.State.STANDING);
+                    playScreen.getPlayer().b2body.applyLinearImpulse(-20, 6, 0, 0, true);
+                }
             }
             answered = 1;
         }
@@ -226,11 +271,12 @@ public class EditorQuizWindow extends Window {
         Gdx.input.setInputProcessor(playScreen.getHud().stage);
 
         updateUI();
+        playScreen.getHud().hideAndroidInputTable();
     }
 
     private void updateUI() {
         String questStepText = currentPc.getQuest().getCurrentQuestStepText();
-        if(!questStepText.equals("Quest completed!")) { //next quest step
+        if(!questStepText.contains("Quest completed!")) { //next quest step
             codeLabel.setText(questStepText);
             extraKeyboardWindow.clearButtons();
             for (String s : currentPc.getQuest().getCurrentQuestStep().getHints()) //add buttons
@@ -253,24 +299,26 @@ public class EditorQuizWindow extends Window {
     }
 
     private void tempShowEditor() {
-        Cameras.playScreenCam.position.x = tempCamX;
-        tempCamX = -1;
-        playScreen.getHud().stage.addActor(this);
-        playScreen.getHud().stage.addActor(extraKeyboardWindow);
-        Gdx.input.setInputProcessor(playScreen.getHud().stage);
+        if(!playScreen.getCurrentLevelID().equals("6_2") && !playScreen.getCurrentLevelID().equals("5_2")) {
+            Cameras.playScreenCam.position.x = tempCamX;
+            tempCamX = -1;
+            playScreen.getHud().stage.addActor(this);
+            playScreen.getHud().stage.addActor(extraKeyboardWindow);
+            Gdx.input.setInputProcessor(playScreen.getHud().stage);
+        }
     }
 
     public void closeCurrentEditor() {
         if(this.getStage()!=null && answered == 0) {
-            Hud.playScreen.getPlayer().setCurrentState(Player.State.STANDING);
+            playScreen.getPlayer().setCurrentState(Player.State.STANDING);
             this.remove();
             extraKeyboardWindow.clearButtons();
             extraKeyboardWindow.remove();
-            Hud.showAndroidInputTable();
+            playScreen.getHud().showAndroidInputTable();
 
             if(currentPc.getQuest().isCompleted()) { //if text completion has a toast, show it
                 if(currentPc.getQuest().getCompletedText()!= null)
-                    Hud.newToast(currentPc.getQuest().getCompletedText());
+                    playScreen.getHud().newToast(currentPc.getQuest().getCompletedText());
             }
         }
     }

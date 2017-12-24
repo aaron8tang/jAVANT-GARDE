@@ -6,44 +6,41 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.steveflames.javantgarde.screens.ChooseLevelScreen;
+import com.steveflames.javantgarde.tools.Assets;
 import com.steveflames.javantgarde.tools.global.Fonts;
-import com.steveflames.javantgarde.tools.global.Loader;
-import com.steveflames.javantgarde.tools.global.Skins;
 
 /**
- * TODO:
  * THOUGHTS
  * ARRAYS! parse array k printf k prepei na pas sto swsto. an lathos tote -1 health
  * IF + VARIABLES! na pas px na vlepeis ton kwdika ths portas k na exei if(x > 100) open k na prepei na pas na to kaneis
  * VARIABLES! na paizeis me tis suntetagmenes tou kleidiou gia na anoikseis thn porta
  * na vriskei polles klaseis k na prepei na tis diavasei k na ktlvei poia einai h swsth gia na xrhsimopoihsei
- *
- *
- * COMPILER
- * to className einai ontws MyClass?? check k ERROR
- * variable already declared in scope ERROR
- * method doesn't exist ERROR
- *
- *
- * TODO (na dw ta todo)
- * ston editor otan afhnw 1h grammh keno k kanw click varaei error index out of bounds -1
- * ftiakse ton loader me assetmanager gia na borw na valw k progress bar sthn arxh p fortwnei
- * na tonisw oti kathe entolh grafetai se mia kainouria grammh
- * StartMenuScreen
- * asset manager
- * na prepei na termatiseis mia pista g na ksekleidwseis thn epomenh. html ola ksekleidwmena
- * SOUNDS TODO
  * na perpatan bugs sthn othoni pou se sprwxnoun
+ *
+ *
+ * TODO
+ * COMPILER: if the user types { or } on a println there's a problem
+ * COMPILER: add compiler errors: (method doesn't exist, var not declared)
+ * EDITOR: ston editor otan afhnw 1h grammh keno k kanw click varaei error index out of bounds -1
+ * StartMenuScreen (play, language, resolution, sound on/off, exit) TODO
  * add greek
+ * sto loading screen na deixnei se poia pista eimai
+ * SOUNDS TODO
+ * na prepei na termatiseis mia pista g na ksekleidwseis thn epomenh. html ola ksekleidwmena
  *
  *
  * ---------------LEVELS TO ADD---------------
+ * na tonisw oti kathe entolh grafetai se mia kainouria grammh
+ * method BODY, class BODY
+ * indentation (spacing)
  * package? import?
  * LOCAL VARIABLES (SCOPE)
  * getters setters
  * inheritance
  * interfaces
  * useful java classes
+ * files
+ * exceptions
  * -------------------------------------------
  *
  */
@@ -58,21 +55,23 @@ public class MyGdxGame extends Game {
 	public ShapeRenderer sr; //used to render shapes
 
 	public static iPlatformDepended platformDepended;
-	//public MyAssetManager assetManager;
+	public Assets assets;
 
 	public MyGdxGame(iPlatformDepended platformDepended) {
 		MyGdxGame.platformDepended = platformDepended;
-		//assetManager  = new MyAssetManager();
+		assets  = new Assets();
 	}
 
 	@Override
 	public void create () {
 		Fonts.load();
-		Skins.load();
+		//Skins.load();
 		sb = new SpriteBatch();
 		sr = new ShapeRenderer();
+		assets.loadSkins();
+		assets.finishLoading();
 		setScreen(new ChooseLevelScreen(this));
-		//setScreen(new PlayScreen(this, new LevelListItem("COMPILER", "3_1", "test")));
+		//setScreen(new LoadingScreen(this, new LevelListItem("COMPILER", "3_1", "test")));
 	}
 
 	@Override
@@ -87,6 +86,6 @@ public class MyGdxGame extends Game {
 		sb.dispose();
 		sr.dispose();
 		Fonts.dispose();
-		Loader.dispose();
+		//Loader.dispose();
 	}
 }

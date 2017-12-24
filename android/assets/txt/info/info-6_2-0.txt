@@ -21,4 +21,4 @@ The output of this program is:
 
 The [YELLOW]enhanced for[] declares a variable ('[BLUE]var[]' in our case) of the
 array's type ([RED]double[]), and this variable is available only inside
-the for's loop. By modifying it we modify the current element.
+the for's loop.

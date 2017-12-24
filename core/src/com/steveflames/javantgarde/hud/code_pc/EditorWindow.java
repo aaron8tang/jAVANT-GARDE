@@ -3,6 +3,7 @@ package com.steveflames.javantgarde.hud.code_pc;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -17,12 +18,16 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.hud.AndroidExtraKeyboardWindow;
 import com.steveflames.javantgarde.hud.Hud;
+import com.steveflames.javantgarde.screens.PlayScreen;
+import com.steveflames.javantgarde.sprites.FloatingPlatform;
+import com.steveflames.javantgarde.sprites.InfoSign;
+import com.steveflames.javantgarde.sprites.Lever;
 import com.steveflames.javantgarde.sprites.Pc;
 import com.steveflames.javantgarde.sprites.Player;
-import com.steveflames.javantgarde.tools.compiler.MyClass;
-import com.steveflames.javantgarde.tools.compiler.MyCompiler;
+import com.steveflames.javantgarde.hud.code_pc.compiler.MyClass;
+import com.steveflames.javantgarde.hud.code_pc.compiler.MyCompiler;
+import com.steveflames.javantgarde.hud.code_pc.compiler.MyVariable;
 import com.steveflames.javantgarde.tools.global.Cameras;
-import com.steveflames.javantgarde.tools.global.Skins;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -40,11 +45,11 @@ public class EditorWindow extends Window {
     private TextArea codeTextArea;
 
     private ArrayList<MyClass> myClasses = new ArrayList<MyClass>();
-    //private String myClassCode;
     private int myClassCursorPosition =-1;
 
     private boolean tempHide = false;
     private float tempHideTimer = 0;
+    private boolean showEditorAgain = true;
 
     private ConsoleWindow consoleWindow;
     private QuestWindow questWindow;
@@ -53,19 +58,19 @@ public class EditorWindow extends Window {
     private float tempCamX = - 1;
 
 
-    public EditorWindow(String title, Skin skin, final Hud hud) {
-        super(title, skin);
+    public EditorWindow(String title, Skin neonSkin, Skin lmlSkin, Skin terraSkin, final Hud hud) {
+        super(title, terraSkin);
         this.hud = hud;
 
         //top bar
-        Table topBarTable = new Table(Skins.neonSkin);
-        TextButton exitBtn = new TextButton("x", Skins.neonSkin);
-        Table dummyTable = new Table(Skins.skin);
-        classesTable = new Table(Skins.skin);
-        TextButton classBtn = new TextButton("MyClass.java", Skins.neonSkin);
+        Table topBarTable = new Table(neonSkin);
+        TextButton exitBtn = new TextButton("x", neonSkin);
+        Table dummyTable = new Table(terraSkin);
+        classesTable = new Table(terraSkin);
+        TextButton classBtn = new TextButton("MyClass.java", neonSkin);
         classesTable.add(classBtn).left().height(50).padLeft(0);
         dummyTable.add(classesTable).left().expandX();
-        ScrollPane classesScroll = new ScrollPane(dummyTable, Skins.neonSkin);
+        ScrollPane classesScroll = new ScrollPane(dummyTable, neonSkin);
         if(MyGdxGame.platformDepended.deviceHasKeyboard())
             classesScroll.setFlickScroll(false);
 
@@ -74,34 +79,34 @@ public class EditorWindow extends Window {
         topBarTable.add(exitBtn).right().fill();
 
         //textArea
-        codeTextArea = new TextArea("", Skins.neonSkin);
+        codeTextArea = new TextArea("", neonSkin);
         codeTextArea.setFocusTraversal(false);
         codeTextArea.getStyle().fontColor = Color.WHITE;
         codeTextArea.getStyle().disabledFontColor = Color.LIGHT_GRAY;
 
         //lineNumTable
-        Table lineNumTable = new Table(Skins.neonSkin);
-        Label label = new Label(1 + "", Skins.neonSkin);
+        Table lineNumTable = new Table(neonSkin);
+        Label label = new Label(1 + "", neonSkin);
         label.setColor(Color.CYAN);
         lineNumTable.add(label).width(60).height(codeTextArea.getStyle().font.getLineHeight());
         for (int i = 1; i < 150; i++) {
             lineNumTable.row();
-            label = new Label(i + 1 + "", Skins.neonSkin);
+            label = new Label(i + 1 + "", neonSkin);
             label.setColor(Color.CYAN);
             lineNumTable.add(label).width(60).height(codeTextArea.getStyle().font.getLineHeight());
         }
 
         //codeTable
-        Table codeTable = new Table(Skins.lmlSkin);
+        Table codeTable = new Table(lmlSkin);
         codeTable.add(lineNumTable).top().left();
         codeTable.add(codeTextArea).top().expand().fill().width(1000).padTop(5); //todo otan pataw 1h grammh enter k meta click indexoutOfBouds
-        ScrollPane codeScroll = new ScrollPane(codeTable, Skins.neonSkin);       //todo kalutero textArea.. na valw height k scroll mono sto textArea
+        ScrollPane codeScroll = new ScrollPane(codeTable, neonSkin);       //todo kalutero textArea.. na valw height k scroll mono sto textArea
         if(MyGdxGame.platformDepended.deviceHasKeyboard())
             codeScroll.setFlickScroll(false);
 
         //bottom bar
-        TextButton compileAndRunBtn = new TextButton(" compile & run ", Skins.neonSkin);
-        Table bottomBarTable = new Table(Skins.neonSkin);
+        TextButton compileAndRunBtn = new TextButton(" compile & run ", neonSkin);
+        Table bottomBarTable = new Table(neonSkin);
         bottomBarTable.add(compileAndRunBtn).right().expandX().pad(0).height(60);
 
         //add components to window
@@ -117,12 +122,11 @@ public class EditorWindow extends Window {
         this.row();
         this.add(bottomBarTable).expandX().fillX();
 
-        consoleWindow = new ConsoleWindow("CONSOLE", Skins.skin, hud.stage);
-        questWindow = new QuestWindow("QUEST", Skins.skin, hud.stage);
+        consoleWindow = new ConsoleWindow("CONSOLE", neonSkin, terraSkin, hud.stage);
+        questWindow = new QuestWindow("QUEST", neonSkin, lmlSkin, terraSkin, hud);
         if(!MyGdxGame.platformDepended.deviceHasKeyboard())
-            androidExtraKeyboardWindow = new AndroidExtraKeyboardWindow("+KEYBOARD", Skins.skin, this);
+            androidExtraKeyboardWindow = new AndroidExtraKeyboardWindow("+KEYBOARD", neonSkin, terraSkin, this);
         compiler = new MyCompiler(consoleWindow.getConsoleTextArea());
-
 
         //ADD LISTENERS
         exitBtn.addListener(new ClickListener() {
@@ -188,13 +192,13 @@ public class EditorWindow extends Window {
                 //store the class names and code
                 myClasses.clear();
                 myClasses.add(new MyClass("MyClass", currentPc.getEditorText()));
-                for(Map.Entry<String, String> entry: Hud.playScreen.getPlayer().getClasses().entrySet())
+                for(Map.Entry<String, String> entry: hud.playScreen.getPlayer().getClasses().entrySet())
                     myClasses.add(new MyClass(entry.getKey(), entry.getValue()));
 
                 //compile and run
-                if(compiler.compile(myClasses) || (Hud.playScreen.getCurrentLevelID().equals("1_1") && currentPc.getQuest().getProgress()==0)) {
-                    if (currentPc.getQuest().validateCodeForQuest(Hud.playScreen, myClasses.get(0), currentPc.getQuest().getQuestN())) {
-                        questWindow.incrementQuestStep(currentPc.getQuest());
+                if(compiler.compile(myClasses) || (hud.playScreen.getCurrentLevelID().equals("1_1") && currentPc.getQuest().getProgress()==0)) {
+                    if (validateCodeForQuest(hud.playScreen, myClasses.get(0), currentPc.getQuest().getQuestN())) {
+                        questWindow.incrementQuestStep(currentPc.getQuest(), EditorWindow.this);
                     }
                 }
             }
@@ -207,7 +211,18 @@ public class EditorWindow extends Window {
             if(tempHideTimer > 2.5) {
                 tempHide = false;
                 tempHideTimer = 0;
-                tempShowEditor();
+                if(showEditorAgain)
+                    tempShowEditor();
+                else { //dont show editor again
+                    showEditorAgain = true;
+                    consoleWindow.remove();
+                    hud.playScreen.getPlayer().setCurrentState(Player.State.STANDING);
+                    hud.showAndroidInputTable();
+                    if(currentPc.getQuest().isCompleted()) { //if text completion has a toast, show it
+                        if(currentPc.getQuest().getCompletedText()!= null)
+                            hud.newToast(currentPc.getQuest().getCompletedText());
+                    }
+                }
             }
         }
     }
@@ -415,9 +430,8 @@ public class EditorWindow extends Window {
         }
     }
 
-    public void tempHideEditor(float camX, boolean hideConsole) {
-        if(tempCamX == -1)
-            tempCamX = Cameras.playScreenCam.position.x;
+    private void tempHideEditor(float camX, boolean hideConsole) {
+        tempCamX = Cameras.playScreenCam.position.x;
         if(camX != -1)
             Cameras.playScreenCam.position.x = camX;
         this.remove();
@@ -444,22 +458,17 @@ public class EditorWindow extends Window {
 
     public void closeCurrentEditor() {
         if(this.getStage()!=null) {
-            Hud.playScreen.getPlayer().setCurrentState(Player.State.STANDING);
+            hud.playScreen.getPlayer().setCurrentState(Player.State.STANDING);
             this.remove();
             consoleWindow.remove();
             questWindow.remove();
             if(!MyGdxGame.platformDepended.deviceHasKeyboard())
                 androidExtraKeyboardWindow.remove();
-            Hud.showAndroidInputTable();
+            hud.showAndroidInputTable();
 
             //save text to pc
             if(!codeTextArea.isDisabled())
                 currentPc.setEditorText(codeTextArea.getText());
-
-            if(currentPc.getQuest().isCompleted()) { //if text completion has a toast, show it
-                if(currentPc.getQuest().getCompletedText()!= null)
-                    Hud.newToast(currentPc.getQuest().getCompletedText());
-            }
         }
     }
 
@@ -475,7 +484,7 @@ public class EditorWindow extends Window {
 
         //add the myClasses that the player found in the editor
         boolean flag;
-        for(final Map.Entry<String, String> s : Hud.playScreen.getPlayer().getClasses().entrySet()) {
+        for(final Map.Entry<String, String> s : hud.playScreen.getPlayer().getClasses().entrySet()) {
             flag = true;
             for(Actor textBtn: classesTable.getChildren()) {
                 if(((TextButton)textBtn).getText().toString().equals(s.getKey()+".java")) {
@@ -484,7 +493,7 @@ public class EditorWindow extends Window {
                 }
             }
             if(flag) {
-                final TextButton btn = new TextButton(s.getKey() + ".java", Skins.neonSkin);
+                final TextButton btn = new TextButton(s.getKey() + ".java", hud.playScreen.getAssets().getNeonSkin());
                 btn.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
@@ -496,11 +505,11 @@ public class EditorWindow extends Window {
                         codeTextArea.setDisabled(true);
                         if(currentPc.getQuest().getQuestN()==0) {
                             if (currentPc.getQuest().getProgress() == 0 && btn.getText().toString().equals("InfoSign.java"))
-                                questWindow.incrementQuestStep(currentPc.getQuest());
+                                questWindow.incrementQuestStep(currentPc.getQuest(), EditorWindow.this);
                         }
                         else {
                             if (currentPc.getQuest().getProgress() == 0 && btn.getText().toString().equals("Lever.java"))
-                                questWindow.incrementQuestStep(currentPc.getQuest());
+                                questWindow.incrementQuestStep(currentPc.getQuest(), EditorWindow.this);
                         }
                     }
                 });
@@ -514,7 +523,7 @@ public class EditorWindow extends Window {
         questWindow.show(hud.stage, currentPc.getQuest());
         if(!MyGdxGame.platformDepended.deviceHasKeyboard())
             androidExtraKeyboardWindow.show(hud.stage);
-        Hud.hideAndroidInputTable();
+        hud.hideAndroidInputTable();
     }
 
     public void virtualTypeKey(char character) {
@@ -525,15 +534,289 @@ public class EditorWindow extends Window {
         codeTextArea.setCursorPosition(pos+1);
     }
 
+
+    private boolean validateCodeForQuest(PlayScreen playScreen, MyClass myClass, int questN) {
+        if(playScreen.getCurrentLevelID().equals("1_1")) {
+            switch (currentPc.getQuest().getProgress()) {
+                case 0:
+                    if (consoleWindow.getConsoleTextArea().getText().toString().equals("[RED]Error: main method not found[]\n"))
+                        return true;
+                    break;
+                case 1:
+                    return true;
+                case 2:
+                    if(myClass.getCode().contains("System.out.println(\"Hello World!\");")) {
+                        showEditorAgain = false;
+                        return true;
+                    }
+                    break;
+            }
+        }
+        else if(playScreen.getCurrentLevelID().equals("2_1")) {
+            switch (currentPc.getQuest().getProgress()) {
+                case 0:
+                    for(MyVariable variable : myClass.getVariables()) {
+                        if(variable.getType().equals("int"))
+                            return true;
+                    }
+                    break;
+
+                case 1:
+                    for(MyVariable variable : myClass.getVariables()) {
+                        if(variable.getType().equals("double"))
+                            return true;
+                    }
+                    break;
+                case 2:
+                    for(MyVariable variable : myClass.getVariables()) {
+                        if(variable.getType().equals("boolean"))
+                            return true;
+                    }
+                    break;
+                case 3:
+                    for(MyVariable variable : myClass.getVariables()) {
+                        if(variable.getType().equals("char"))
+                            return true;
+                    }
+                    break;
+                case 4:
+                    for(MyVariable variable : myClass.getVariables()) {
+                        if(variable.getType().equals("String")) {
+                            return true;
+                        }
+                    }
+                    break;
+            }
+        }
+        else if(playScreen.getCurrentLevelID().equals("2_2")) {
+
+            for(MyVariable myVariable: myClass.getVariables()) {
+                if(myVariable.getType().equals("int")) {
+                    for (FloatingPlatform floatingPlatform : playScreen.getObjectManager().getFloatingPlatforms()) {
+                        if (floatingPlatform.getName().equals(myVariable.getName())) {
+                            if(!myVariable.getValue().equals("null")) {
+                                floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(0).getBounds().x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(0).getBounds().width / 2 / MyGdxGame.PPM,
+                                        playScreen.getObjectManager().getMarkers().get(0).getBounds().y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(0).getBounds().height / 2 / MyGdxGame.PPM
+                                                + 0.64f * Integer.parseInt(myVariable.getValue()), 0);
+                                break;
+                            }
+                        }
+                    }
+                }
+                else if(myVariable.getType().equals("double")) {
+                    for(FloatingPlatform floatingPlatform: playScreen.getObjectManager().getFloatingPlatforms()) {
+                        if(floatingPlatform.getName().equals(myVariable.getName())) {
+                            if(!myVariable.getValue().equals("null")) {
+                                floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(1).getBounds().x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(1).getBounds().width / 2 / MyGdxGame.PPM,
+                                        playScreen.getObjectManager().getMarkers().get(1).getBounds().y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(1).getBounds().height / 2 / MyGdxGame.PPM
+                                                + 0.64f * (float) Double.parseDouble(myVariable.getValue()), 0);
+                                break;
+                            }
+                        }
+                    }
+                }
+                else if(myVariable.getType().equals("boolean")) {
+                    for(FloatingPlatform floatingPlatform: playScreen.getObjectManager().getFloatingPlatforms()) {
+                        if(floatingPlatform.getName().equals(myVariable.getName())) {
+                            if(myVariable.getValue().equals("true")) {
+                                floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(2).getBounds().x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(2).getBounds().width / 2 / MyGdxGame.PPM,
+                                        playScreen.getObjectManager().getMarkers().get(2).getBounds().y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(2).getBounds().height / 2 / MyGdxGame.PPM
+                                                + 0.64f*1.5f, 0);
+                            }
+                            else {
+                                floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(2).getBounds().x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(2).getBounds().width / 2 / MyGdxGame.PPM,
+                                        playScreen.getObjectManager().getMarkers().get(2).getBounds().y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(2).getBounds().height / 2 / MyGdxGame.PPM
+                                                - 0.64f*1.5f, 0);
+                            }
+                            break;
+                        }
+                    }
+                }
+                else if(myVariable.getType().equals("char")) {
+                    for(FloatingPlatform floatingPlatform: playScreen.getObjectManager().getFloatingPlatforms()) {
+                        if(floatingPlatform.getName().equals(myVariable.getName())) {
+                            if(myVariable.getValue().equals("a")) {
+                                floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(3).getBounds().x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(3).getBounds().width / 2 / MyGdxGame.PPM,
+                                        playScreen.getObjectManager().getMarkers().get(3).getBounds().y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(3).getBounds().height / 2 / MyGdxGame.PPM
+                                                + 0.64f*1.5f, 0);
+                                break;
+                            }
+                            else if(myVariable.getValue().equals("b")) {
+                                floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(3).getBounds().x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(3).getBounds().width / 2 / MyGdxGame.PPM,
+                                        playScreen.getObjectManager().getMarkers().get(3).getBounds().y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(3).getBounds().height / 2 / MyGdxGame.PPM, 0);
+                                break;
+                            }
+                            else if(myVariable.getValue().equals("c")) {
+                                floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(3).getBounds().x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(3).getBounds().width / 2 / MyGdxGame.PPM,
+                                        playScreen.getObjectManager().getMarkers().get(3).getBounds().y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(3).getBounds().height / 2 / MyGdxGame.PPM
+                                                - 0.64f*1.5f, 0);
+                                break;
+                            }
+                            else {
+                                floatingPlatform.setTransform(-5, -5, 0);
+                                break;
+                            }
+                        }
+                    }
+                }
+                else if(myVariable.getType().equals("String")) {
+                    for(FloatingPlatform floatingPlatform: playScreen.getObjectManager().getFloatingPlatforms()) {
+                        if(floatingPlatform.getName().equals(myVariable.getName())) {
+                            if(myVariable.getValue().equals("hello")) {
+                                floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(4).getBounds().x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(4).getBounds().width / 2 / MyGdxGame.PPM,
+                                        playScreen.getObjectManager().getMarkers().get(4).getBounds().y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(4).getBounds().height / 2 / MyGdxGame.PPM, 0);
+                                break;
+                            }
+                            else {
+                                floatingPlatform.setTransform(-5, -5, 0);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            switch (currentPc.getQuest().getProgress()) {
+                case 0:
+                    for(MyVariable myVariable: myClass.getVariables()) {
+                        if(myVariable.getName().equals("a")) {
+                            if (myVariable.getType().equals("int")) {
+                                if(myVariable.getValue().equals("2")) {
+                                    tempHideEditor(playScreen.getObjectManager().getMarkers().get(0).getBounds().x/ MyGdxGame.PPM , true);
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case 1:
+                    for(MyVariable myVariable: myClass.getVariables()) {
+                        if(myVariable.getName().equals("a")) {
+                            if (myVariable.getType().equals("int")) {
+                                if(!myVariable.getValue().equals("null")) {
+                                    tempHideEditor(playScreen.getObjectManager().getMarkers().get(0).getBounds().x/ MyGdxGame.PPM, true);
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case 2:
+                    for(MyVariable myVariable: myClass.getVariables()) {
+                        if (myVariable.getType().equals("double")) {
+                            if(myVariable.getValue().contains(".")) {
+                                tempHideEditor(playScreen.getObjectManager().getMarkers().get(1).getBounds().x/ MyGdxGame.PPM, true);
+                                return true;
+                            }
+                        }
+                    }
+                    break;
+                case 3:
+                    for(MyVariable myVariable: myClass.getVariables()) {
+                        if (myVariable.getType().equals("boolean")) {
+                            if(!myVariable.getValue().equals("null")) {
+                                tempHideEditor(playScreen.getObjectManager().getMarkers().get(2).getBounds().x/ MyGdxGame.PPM, true);
+                                return true;
+                            }
+                        }
+                    }
+                    break;
+                case 4:
+                    for(MyVariable myVariable: myClass.getVariables()) {
+                        if (myVariable.getType().equals("char")) {
+                            if(!myVariable.getValue().equals("null")) {
+                                tempHideEditor(playScreen.getObjectManager().getMarkers().get(3).getBounds().x/ MyGdxGame.PPM, true);
+                                return true;
+                            }
+                        }
+                    }
+                    break;
+                case 5:
+                    for(MyVariable myVariable: myClass.getVariables()) {
+                        if (myVariable.getType().equals("String")) {
+                            if(myVariable.getValue().equals("hello")) {
+                                showEditorAgain = false;
+                                tempHideEditor(playScreen.getObjectManager().getMarkers().get(4).getBounds().x/ MyGdxGame.PPM, true);
+                                return true;
+                            }
+                        }
+                    }
+                    break;
+            }
+        }
+        else if(playScreen.getCurrentLevelID().equals("4_1")) {
+            switch (currentPc.getQuest().getProgress()) {
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+            }
+        }
+        else if(playScreen.getCurrentLevelID().equals("7_1")) {
+            switch (questN) {
+                case 0: //1st quest
+                    if (currentPc.getQuest().getProgress() == 1) {
+                        for (MyVariable myVariable : myClass.getVariables()) {
+                            if (myVariable.getType().equals("InfoSign")) {
+                                playScreen.getObjectManager().getInfoSigns().add(new InfoSign("info-7_1-3", playScreen.getWorld(), playScreen.getMap(), playScreen.getObjectManager().getMarkers().get(0).getBounds(), 0, playScreen.getAssets().getTextureAtlas()));
+                                playScreen.getObjectManager().addGameObjectBeforePlayer(playScreen.getObjectManager().getInfoSigns().get(playScreen.getObjectManager().getInfoSigns().size()-1));
+                                showEditorAgain = false;
+                                return true;
+                            }
+                        }
+                    }
+                    break;
+                case 1: //2nd quest
+                    if (currentPc.getQuest().getProgress() == 1) {
+                        for (MyVariable myVariable : myClass.getVariables()) {
+                            if (myVariable.getType().equals("Lever") && !myVariable.getName().equals("null")) {
+                                tempHideEditor(-1, true);
+                                playScreen.getObjectManager().getLevers().add(new Lever("lever-7_1-0", playScreen.getWorld(), playScreen.getMap(), new Rectangle(currentPc.getBounds().x + 200,
+                                        currentPc.getBounds().y, 90, 90), 0, false, playScreen.getAssets().getTextureAtlas()));
+                                playScreen.getObjectManager().addGameObjectBeforePlayer(playScreen.getObjectManager().getLevers().get(playScreen.getObjectManager().getLevers().size()-1));
+                                return true;
+                            }
+                        }
+                    }
+                    else if (currentPc.getQuest().getProgress()==2) {
+                        if(myClass.getMethodsCalled().contains("Lever.pull"))
+                            return true;
+                    }
+                    break;
+            }
+        }
+        return false;
+    }
+
+    public void completed() {
+        if(hud.playScreen.getCurrentLevelID().equals("1_1")) {
+            tempHideEditor(-1, false);
+            hud.playScreen.getObjectManager().getDoors().get(3).open();
+        }
+        else if(hud.playScreen.getCurrentLevelID().equals("2_1")) {
+            closeCurrentEditor();
+            hud.playScreen.getObjectManager().getDoors().get(0).open();
+        }
+
+        else if(hud.playScreen.getCurrentLevelID().equals("7_1")) {
+            tempHideEditor(-1, true);
+            if(currentPc.getQuest().getQuestN()!=0) {
+                hud.playScreen.getObjectManager().getLevers().get(0).pull();
+                hud.playScreen.getObjectManager().getDoors().get(4).open();
+                showEditorAgain = false;
+            }
+        }
+    }
+
     public Window getQuestWindow() {
         return questWindow;
     }
 
-    public ConsoleWindow getConsoleWindow() {
-        return consoleWindow;
-    }
-
-    public Pc getCurrentPc() {
-        return currentPc;
+    public Hud getHud() {
+        return hud;
     }
 }

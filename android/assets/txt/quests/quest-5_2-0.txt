@@ -1,11 +1,12 @@
 //IGNORE FIRST LINE
 ~QUEST
-if(frontSensor) {
-turnRight();
+if(frontSensorDetectsWall) {
+jump();
+}
+else {
+flyForward();
 }
 #HELP
 [while(true) {
-#HELP
-[flyForward();
 #HELP
 ]}
