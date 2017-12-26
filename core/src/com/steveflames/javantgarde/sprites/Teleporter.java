@@ -1,5 +1,6 @@
 package com.steveflames.javantgarde.sprites;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -25,13 +26,16 @@ public class Teleporter extends GameObject {
     private Animation<TextureRegion> disappearingAnim;
     private float stateTimer = 0f;
 
-    public Teleporter(String name, World world, TiledMap map, Rectangle bounds, TextureAtlas textureAtlas) {
+    private Sound teleporterSound;
+
+    public Teleporter(String name, World world, TiledMap map, Rectangle bounds, Assets assets) {
         super(name, world, map, bounds, true);
         currentState = State.IDLE;
         previousState = State.IDLE;
+        teleporterSound = assets.get(Assets.teleportSOUND, Sound.class);
 
-        idleAnim = new Animation<TextureRegion>(0.08f, Assets.loadAnim(textureAtlas.findRegion(Assets.teleporterIdleREGION), 4, 4, 3));
-        disappearingAnim = new Animation<TextureRegion>(0.12f, Assets.loadAnim(textureAtlas.findRegion(Assets.teleporterDisappearREGION), 4, 4, 1 ));
+        idleAnim = new Animation<TextureRegion>(0.08f, Assets.loadAnim(assets.getTextureAtlas().findRegion(Assets.teleporterIdleREGION), 4, 4, 3));
+        disappearingAnim = new Animation<TextureRegion>(0.12f, Assets.loadAnim(assets.getTextureAtlas().findRegion(Assets.teleporterDisappearREGION), 4, 4, 1 ));
 
         currentTR = idleAnim.getKeyFrame(0);
 
@@ -71,6 +75,7 @@ public class Teleporter extends GameObject {
     }
 
     public void disappear() {
+        teleporterSound.play();
         stateTimer = 0;
         currentState = State.DISAPPEARING;
     }

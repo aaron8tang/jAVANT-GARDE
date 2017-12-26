@@ -2,6 +2,7 @@ package com.steveflames.javantgarde.hud;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -61,17 +62,23 @@ public class Hud implements Disposable {
     private boolean jumpBtnPressed = false;
 
     private TextureRegion heartTR;
+    private Sound clickSound;
+    private Sound useItemSound;
+    private Sound levelCompletedSound;
 
     public Hud(final PlayScreen playScreen, SpriteBatch sb) {
         this.playScreen = playScreen;
+        clickSound = playScreen.getAssets().get(Assets.clickSOUND, Sound.class);
+        useItemSound = playScreen.getAssets().get(Assets.useItemSOUND, Sound.class);
+        levelCompletedSound = playScreen.getAssets().get(Assets.levelCompletedSOUND, Sound.class);
         stage = new Stage(Cameras.hudPort, sb);
-        toast = new Toast((playScreen.getAssets().getTextureAtlas()));
-        editorWindow = new EditorWindow("EDITOR", playScreen.getAssets().getNeonSkin(), playScreen.getAssets().getLmlSkin(), playScreen.getAssets().getTerraSkin(), this);
-        editorQuizWindow = new EditorQuizWindow("EDITOR", playScreen.getAssets().getTerraSkin(), playScreen);
-        editorOrderWindow = new EditorOrderWindow("EDITOR", playScreen.getAssets().getTerraSkin(), playScreen);
-        pauseWindow = new PauseWindow("GAME PAUSED", playScreen.getAssets().getNeonSkin(), playScreen.getAssets().getTerraSkin(), playScreen);
-        gameOverWindow = new GameOverWindow(playScreen.getAssets().getNeonSkin(), playScreen.getAssets().getLmlSkin(), playScreen);
-        levelCompletedWindow = new LevelCompletedWindow(playScreen.getAssets().getNeonSkin(), playScreen.getAssets().getLmlSkin(), playScreen);
+        toast = new Toast((playScreen.getAssets()));
+        editorWindow = new EditorWindow("EDITOR", playScreen.getAssets(), this);
+        editorQuizWindow = new EditorQuizWindow("EDITOR", playScreen);
+        editorOrderWindow = new EditorOrderWindow("EDITOR", playScreen);
+        pauseWindow = new PauseWindow("GAME PAUSED", playScreen);
+        gameOverWindow = new GameOverWindow(playScreen);
+        levelCompletedWindow = new LevelCompletedWindow(playScreen);
         Gdx.input.setInputProcessor(stage);
         heartTR = playScreen.getAssets().getTextureAtlas().findRegion(Assets.heartREGION);
     }
@@ -216,18 +223,22 @@ public class Hud implements Disposable {
     }
 
     public void showEditorWindow(Pc pc) {
+        useItemSound.play();
         editorWindow.show(pc);
     }
 
     public void showEditorQuizWindow(Pc pc) {
+        useItemSound.play();
         editorQuizWindow.show(pc);
     }
 
     public void showEditorOrderWindow(Pc pc) {
+        useItemSound.play();
         editorOrderWindow.show(pc);
     }
 
     public void showInfoWindow(InfoSign infoSign, String text) {
+        useItemSound.play();
         hideAndroidInputTable();
         infoDialog = new Dialog("", playScreen.getAssets().getTerraSkin(), "dialog") {
             public void result(Object obj) {
@@ -254,17 +265,21 @@ public class Hud implements Disposable {
     }
 
     public void showGameOverWindow() {
+        playScreen.getPlayscreenMusic().stop();
         stage.addActor(gameOverWindow);
         editorWindow.closeCurrentEditor();
         hideAndroidInputTable();
     }
 
     public void showLevelCompletedWindow() {
+        playScreen.getPlayscreenMusic().stop();
+        levelCompletedSound.play();
         stage.addActor(levelCompletedWindow);
         hideAndroidInputTable();
     }
 
     public void closeCurrentInfo() {
+        clickSound.play();
         if(infoDialog.getStage()!=null)
             infoDialog.remove();
         playScreen.getPlayer().setCurrentState(Player.State.STANDING);

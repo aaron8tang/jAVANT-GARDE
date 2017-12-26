@@ -1,5 +1,6 @@
 package com.steveflames.javantgarde.sprites;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -35,15 +36,18 @@ public class SensorRobot extends GameObject {
     private boolean runRight = false;
     private boolean runLeft = false;
 
+    private Sound frogSound;
 
-    public SensorRobot(String name, World world, TiledMap map, Rectangle bounds, TextureAtlas textureAtlas) {
+
+    public SensorRobot(String name, World world, TiledMap map, Rectangle bounds, Assets assets) {
         super(name, world, map, bounds, false);
         b2body.setType(BodyDef.BodyType.DynamicBody);
         b2body.setGravityScale(0.8f);
+        frogSound = assets.get(Assets.frogSOUND, Sound.class);
 
         currentState = State.IDLE;
         previousState = State.IDLE;
-        idleAnim = new Animation<TextureRegion>(0.06f , Assets.loadAnim(textureAtlas.findRegion(Assets.frogTalkREGION), 16,4,2));
+        idleAnim = new Animation<TextureRegion>(0.06f , Assets.loadAnim(assets.getFrogAtlas().findRegion(Assets.frogTalkREGION), 16,4,2));
     }
 
     @Override
@@ -118,6 +122,7 @@ public class SensorRobot extends GameObject {
     }
 
     public void jump() {
+        frogSound.play();
         if(upperSensorDetectsObject == 0 && currentState != State.JUMPING) {
             b2body.applyLinearImpulse(0, JUMPSPEED, b2body.getWorldCenter().x, b2body.getWorldCenter().y, true);
             currentState = State.JUMPING;

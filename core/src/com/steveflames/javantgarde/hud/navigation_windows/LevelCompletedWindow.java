@@ -1,5 +1,6 @@
 package com.steveflames.javantgarde.hud.navigation_windows;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -10,6 +11,7 @@ import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.screens.ChooseLevelScreen;
 import com.steveflames.javantgarde.screens.LoadingScreen;
 import com.steveflames.javantgarde.screens.PlayScreen;
+import com.steveflames.javantgarde.tools.Assets;
 
 /**
  * Created by Flames on 11/11/2017.
@@ -17,8 +19,14 @@ import com.steveflames.javantgarde.screens.PlayScreen;
 
 public class LevelCompletedWindow extends Table {
 
-    public LevelCompletedWindow(Skin neonSkin, Skin lmlSkin,  final PlayScreen playScreen) {
-        super(neonSkin);
+    private Sound clickSound;
+
+    public LevelCompletedWindow(final PlayScreen playScreen) {
+        super(playScreen.getAssets().getNeonSkin());
+        clickSound = playScreen.getAssets().get(Assets.clickSOUND, Sound.class);
+        Skin neonSkin = playScreen.getAssets().getNeonSkin();
+        Skin lmlSkin = playScreen.getAssets().getLmlSkin();
+
         this.setSize(400,260);
         this.setPosition(MyGdxGame.WIDTH/2 - 200, MyGdxGame.HEIGHT/2 - 110);
 
@@ -32,6 +40,7 @@ public class LevelCompletedWindow extends Table {
         restartBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                clickSound.play();
                 playScreen.setRestartLevel();
                 playScreen.dispose();
                 playScreen.getGame().setScreen(new PlayScreen(playScreen.getGame(), playScreen.getCurrentLevel()));
@@ -41,6 +50,7 @@ public class LevelCompletedWindow extends Table {
         exitBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                clickSound.play();
                 playScreen.getGame().setScreen(new ChooseLevelScreen(playScreen.getGame()));
                 playScreen.dispose();
             }
@@ -49,6 +59,7 @@ public class LevelCompletedWindow extends Table {
         nextLvlBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                clickSound.play();
                 playScreen.dispose();
                 playScreen.getGame().setScreen(new LoadingScreen(playScreen.getGame(), ChooseLevelScreen.getNextLevel(playScreen.getCurrentLevel())));
             }

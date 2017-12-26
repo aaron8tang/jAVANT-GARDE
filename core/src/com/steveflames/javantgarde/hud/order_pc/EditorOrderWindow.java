@@ -1,10 +1,10 @@
 package com.steveflames.javantgarde.hud.order_pc;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
@@ -13,6 +13,7 @@ import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.screens.PlayScreen;
 import com.steveflames.javantgarde.sprites.Pc;
 import com.steveflames.javantgarde.sprites.Player;
+import com.steveflames.javantgarde.tools.Assets;
 import com.steveflames.javantgarde.tools.global.Cameras;
 
 import java.util.ArrayList;
@@ -41,9 +42,16 @@ public class EditorOrderWindow extends Window {
     private boolean showEditor = true;
     private boolean doOnce = true;
 
-    public EditorOrderWindow(String title, Skin skin, final PlayScreen playScreen) {
-        super(title, skin);
+    private Sound clickSound;
+    private Sound correctSound;
+    private Sound wrongSound;
+
+    public EditorOrderWindow(String title, final PlayScreen playScreen) {
+        super(title, playScreen.getAssets().getTerraSkin());
         this.playScreen = playScreen;
+        clickSound = playScreen.getAssets().get(Assets.clickSOUND, Sound.class);
+        correctSound = playScreen.getAssets().get(Assets.correctSOUND, Sound.class);
+        wrongSound = playScreen.getAssets().get(Assets.wrongAnswerSOUND, Sound.class);
 
         //bot bar
         botBarTable = new Table(playScreen.getAssets().getNeonSkin());
@@ -77,6 +85,7 @@ public class EditorOrderWindow extends Window {
         compileBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                clickSound.play();
                 StringBuilder temp = new StringBuilder();
                 for(int i=0; i<linesOfCodeTexts.size(); i++) {
                     temp.append(linesOfCodeTexts.get(i));
@@ -85,6 +94,7 @@ public class EditorOrderWindow extends Window {
                 }
                 if(temp.toString().equals(currentPc.getQuest().getCurrentQuestStepText())
                         || (temp.toString()+"\n").equals(currentPc.getQuest().getCurrentQuestStepText())) { //CORRECT ORDER
+                    correctSound.play();
                     answered =1;
                     playScreen.getPlayer().showPlayerMsg("correct!");
                     for(int i=0; i<linesOfCodeTexts.size(); i++)
@@ -92,6 +102,7 @@ public class EditorOrderWindow extends Window {
                     updateUIcode();
                 }
                 else { //WRONG ORDER
+                    wrongSound.play();
                     closeCurrentEditor();
                     playScreen.getPlayer().b2body.applyLinearImpulse(-14, 6, 0, 0, true);
                 }
@@ -212,6 +223,7 @@ public class EditorOrderWindow extends Window {
                         upBtn.addListener(new ClickListener() {
                             @Override
                             public void clicked(InputEvent event, float x, float y) {
+                                clickSound.play();
                                 Collections.swap(linesOfCodeTexts, Integer.parseInt(upBtn.getName()), Integer.parseInt(upBtn.getName()) - 1);
                                 updateUIcode();
                             }
@@ -226,6 +238,7 @@ public class EditorOrderWindow extends Window {
                         downBtn.addListener(new ClickListener() {
                             @Override
                             public void clicked(InputEvent event, float x, float y) {
+                                clickSound.play();
                                 Collections.swap(linesOfCodeTexts, Integer.parseInt(downBtn.getName()), Integer.parseInt(downBtn.getName()) + 1);
                                 updateUIcode();
                             }
@@ -280,6 +293,7 @@ public class EditorOrderWindow extends Window {
 
     public void closeCurrentEditor() {
         if(this.getStage()!=null && answered==0) {
+            clickSound.play();
             playScreen.getPlayer().setCurrentState(Player.State.STANDING);
             this.remove();
             playScreen.getHud().showAndroidInputTable();

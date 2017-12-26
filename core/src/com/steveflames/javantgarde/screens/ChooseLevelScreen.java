@@ -3,13 +3,13 @@ package com.steveflames.javantgarde.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
@@ -28,9 +28,11 @@ import java.util.LinkedHashMap;
 
 public class ChooseLevelScreen implements Screen{
 
+    private MyGdxGame game;
     private Stage stage;
     private Viewport viewport;
     private static LinkedHashMap<String, ArrayList<LevelListItem>> categories = new LinkedHashMap<String, ArrayList<LevelListItem>>();
+    private Sound clickSound;
 
     /**
      * The components Hierarchy:
@@ -46,42 +48,55 @@ public class ChooseLevelScreen implements Screen{
      *             LevelTables
      */
     public ChooseLevelScreen(final MyGdxGame game) {
+        this.game = game;
+        clickSound = game.assets.get(Assets.clickSOUND, Sound.class);
         loadCategories();
         viewport = new StretchViewport(MyGdxGame.WIDTH, MyGdxGame.HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, game.sb);
-        game.assets.get(Assets.mainMenuMUSIC, Music.class);
+        Skin neonSkin = game.assets.getNeonSkin();
+        Skin terraSkin = game.assets.getTerraSkin();
 
-        Window window = new Window("", game.assets.getTerraSkin());
+        Window window = new Window("", terraSkin);
         window.setFillParent(true);
         window.top();
 
-        Table topTable = new Table(game.assets.getNeonSkin());
-        TextButton backBtn = new TextButton("< BACK  ", game.assets.getNeonSkin());
+        Table topTable = new Table(neonSkin);
+        TextButton backBtn = new TextButton("< BACK  ", neonSkin);
+        backBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                clickSound.play();
+                game.setScreen(new MainMenuScreen(game));
+                dispose();
+            }
+        });
         topTable.add(backBtn).expandX().left();
         topTable.top();
         window.add(topTable).expandX().left();
         window.row();
 
-        Table mainTable = new Table(game.assets.getTerraSkin());
-        ScrollPane scroll = new ScrollPane(mainTable, game.assets.getNeonSkin());
+        Table mainTable = new Table(terraSkin);
+        ScrollPane scroll = new ScrollPane(mainTable, neonSkin);
         window.add(scroll).expandX().fillX().left();
 
         ArrayList<Table> categoryTables = new ArrayList<Table>();
         for(String category : categories.keySet()) {
             //new categoryTable
-            categoryTables.add(new Table(game.assets.getTerraSkin()));
-            categoryTables.get(categoryTables.size()-1).add(new Label(category, game.assets.getNeonSkin())).expandX().fillX().left().top();
+            categoryTables.add(new Table(terraSkin));
+            categoryTables.get(categoryTables.size()-1).add(new Label(category, neonSkin)).expandX().fillX().left().top();
             categoryTables.get(categoryTables.size()-1).row();
 
             ArrayList<Table> levelTables = new ArrayList<Table>();
-            Table levelsTable = new Table(game.assets.getTerraSkin());
+            Table levelsTable = new Table(terraSkin);
             for(final LevelListItem level : categories.get(category)) {
                 //create new level table
-                levelTables.add(new Table(game.assets.getTerraSkin()).padRight(20));
-                final TextButton levelBtn = new TextButton(level.getName(), game.assets.getNeonSkin());
+                levelTables.add(new Table(terraSkin).padRight(20));
+                final TextButton levelBtn = new TextButton(level.getName(), neonSkin);
                 levelBtn.addListener(new ClickListener() {
                      @Override
                      public void clicked(InputEvent event, float x, float y) {
+                         clickSound.play();
+                         game.mainMenuMusic.stop();
                          game.setScreen(new LoadingScreen(game, level));
                          dispose();
                      }
@@ -115,7 +130,9 @@ public class ChooseLevelScreen implements Screen{
 
     private void handleInput() {
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
-            Gdx.app.exit();
+            clickSound.play();
+            game.setScreen(new MainMenuScreen(game));
+            dispose();
         }
     }
 
@@ -133,12 +150,12 @@ public class ChooseLevelScreen implements Screen{
 
     @Override
     public void pause() {
-
+        game.mainMenuMusic.pause();
     }
 
     @Override
     public void resume() {
-
+        game.mainMenuMusic.play();
     }
 
     @Override

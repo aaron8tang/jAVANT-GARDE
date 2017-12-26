@@ -1,5 +1,6 @@
 package com.steveflames.javantgarde.sprites;
 
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -7,6 +8,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
 import com.steveflames.javantgarde.screens.PlayScreen;
+import com.steveflames.javantgarde.tools.Assets;
 import com.steveflames.javantgarde.tools.global.Cameras;
 
 /**
@@ -16,9 +18,12 @@ import com.steveflames.javantgarde.tools.global.Cameras;
 public class Door extends GameObject {
 
     private boolean opening = false;
+    private Music doorSound;
 
-    public Door(String name, World world, TiledMap map, Rectangle bounds) {
+    public Door(String name, World world, TiledMap map, Rectangle bounds, Assets assets) {
         super(name, world, map, bounds, false);
+        this.doorSound = assets.get(Assets.doorSOUND, Music.class);
+        doorSound.setLooping(true);
     }
 
 
@@ -29,6 +34,7 @@ public class Door extends GameObject {
                 bounds.height -= 400*dt;
             }
             else {
+                doorSound.stop();
                 opening = false;
                 bounds.height = 0;
             }
@@ -54,6 +60,7 @@ public class Door extends GameObject {
     }
 
     public void open() {
+        doorSound.play();
         opening = true;
         b2body.getFixtureList().get(0).setSensor(true);
     }

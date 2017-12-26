@@ -125,7 +125,7 @@ public class GameObjectManager {
     }
 
     public void initializePlayer(World world, TiledMap map) {
-        player = new Player(world, map, checkpoints, playScreen.getAssets().getTextureAtlas());
+        player = new Player(world, map, checkpoints, playScreen.getAssets());
         gameObjects.add(player);
     }
 

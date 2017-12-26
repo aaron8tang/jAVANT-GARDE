@@ -2,6 +2,7 @@ package com.steveflames.javantgarde.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
@@ -41,6 +42,7 @@ public class PlayScreen implements Screen{
     private World world; //box2D variable
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
+    private Music playscreenMusic;
 
     //fixed timestep with interpolation variables
     private double accumulator = 0;
@@ -103,6 +105,11 @@ public class PlayScreen implements Screen{
 
         //initialize inputHandler
         inputHandler = new InputHandler(this);
+
+        //play music
+        playscreenMusic = game.assets.get(Assets.playScreenMUSIC, Music.class);
+        playscreenMusic.setLooping(true);
+        playscreenMusic.play();
 
         if(!MyGdxGame.platformDepended.deviceHasKeyboard())
             hud.newAndroidInputTable();
@@ -180,10 +187,14 @@ public class PlayScreen implements Screen{
         if(!hud.isPauseWindowShowing()) { //game not paused
             inputHandler.handleInput();
 
-            if (getPlayer().getCurrentState() == Player.State.DISAPPEARED)
+            if (getPlayer().getCurrentState() == Player.State.DISAPPEARED) {
+                getPlayer().setCurrentState(Player.State.READING);
                 hud.showLevelCompletedWindow();
-            else if (getPlayer().getCurrentState() == Player.State.DEAD)
+            }
+            else if (getPlayer().getCurrentState() == Player.State.DEAD) {
+                getPlayer().setCurrentState(Player.State.READING);
                 hud.showGameOverWindow();
+            }
             else if (getPlayer().getCurrentState() != Player.State.CODING)
                 Cameras.updateCameraPosition(getPlayer());
 
@@ -323,14 +334,16 @@ public class PlayScreen implements Screen{
     }
 
     public void pause() {
-        //getAssets().unloadAllPlayScreen();
+        getAssets().unloadAllPlayScreenAssets();
+        playscreenMusic.pause();
         if(getPlayer().canMove)
             hud.showPauseWindow();
     }
 
     public void resume() {
-        //getAssets().loadAllPlayScreen();
-        //getAssets().finishLoading(); //todo not working prepei na ksanaperasw kathe texture ena ena
+        playscreenMusic.play();
+        getAssets().loadAllPlayScreenAssets();
+        getAssets().finishLoading(); //todo not working prepei na ksanaperasw kathe texture ena ena
     }
 
     /**
@@ -339,7 +352,7 @@ public class PlayScreen implements Screen{
     @Override
     public void dispose() {
         if(!restartLevel)
-            game.assets.unloadAllPlayScreen();
+            game.assets.unloadAllPlayScreenAssets();
         map.dispose();
         renderer.dispose();
         world.dispose();
@@ -397,5 +410,9 @@ public class PlayScreen implements Screen{
 
     public void setRestartLevel() {
         this.restartLevel = true;
+    }
+
+    public Music getPlayscreenMusic() {
+        return playscreenMusic;
     }
 }

@@ -3,6 +3,7 @@ package com.steveflames.javantgarde.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -15,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.steveflames.javantgarde.MyGdxGame;
+import com.steveflames.javantgarde.tools.Assets;
 
 /**
  * Created by Flames on 19/12/2017.
@@ -31,12 +33,15 @@ public class LoadingScreen extends Window implements Screen {
     private Stage stage;
     private Viewport viewport;
 
+    private Sound clickSound;
+
 
     public LoadingScreen(final MyGdxGame game, LevelListItem levelListItem) {
         super("", game.assets.getNeonSkin());
+        clickSound = game.assets.get(Assets.clickSOUND, Sound.class);
         this.game = game;
         this.level = levelListItem;
-        game.assets.loadAllPlayScreen();
+        game.assets.loadAllPlayScreenAssets();
         float queuedAssets = game.assets.getQueuedAssets();
 
         //loading table
@@ -68,7 +73,8 @@ public class LoadingScreen extends Window implements Screen {
         exitBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.assets.unloadAllPlayScreen();
+                clickSound.play();
+                game.assets.unloadAllPlayScreenAssets();
                 game.setScreen(new ChooseLevelScreen(game));
             }
         });
@@ -89,13 +95,17 @@ public class LoadingScreen extends Window implements Screen {
         if(game.assets.update()) {
             if(MyGdxGame.platformDepended.deviceHasKeyboard()) {
                 loadingLabel.setText("Press ENTER to begin!");
-                if(Gdx.input.isKeyPressed(Input.Keys.ENTER))
+                if(Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
+                    clickSound.play();
                     game.setScreen(new PlayScreen(game, level));
+                }
             }
             else {
                 loadingLabel.setText("Tap to begin!");
-                if(Gdx.input.isTouched())
+                if(Gdx.input.isTouched()) {
+                    clickSound.play();
                     game.setScreen(new PlayScreen(game, level));
+                }
             }
         }
         else {

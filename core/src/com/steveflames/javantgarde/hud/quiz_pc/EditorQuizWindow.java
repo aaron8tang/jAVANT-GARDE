@@ -1,12 +1,11 @@
 package com.steveflames.javantgarde.hud.quiz_pc;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
@@ -14,10 +13,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.hud.AndroidExtraKeyboardWindow;
 import com.steveflames.javantgarde.screens.PlayScreen;
-import com.steveflames.javantgarde.sprites.FloatingPlatform;
-import com.steveflames.javantgarde.sprites.Lever;
 import com.steveflames.javantgarde.sprites.Pc;
 import com.steveflames.javantgarde.sprites.Player;
+import com.steveflames.javantgarde.tools.Assets;
 import com.steveflames.javantgarde.tools.global.Cameras;
 
 import java.util.Random;
@@ -42,9 +40,16 @@ public class EditorQuizWindow extends Window {
     private boolean doOnce = true;
     private boolean[] booleanArray;
 
-    public EditorQuizWindow(String title, Skin skin, final PlayScreen playScreen) {
-        super(title, skin);
+    private Sound clickSound;
+    private Sound correctSound;
+    private Sound wrongSound;
+
+    public EditorQuizWindow(String title, final PlayScreen playScreen) {
+        super(title, playScreen.getAssets().getTerraSkin());
         this.playScreen = playScreen;
+        clickSound = playScreen.getAssets().get(Assets.clickSOUND, Sound.class);
+        correctSound = playScreen.getAssets().get(Assets.correctSOUND, Sound.class);
+        wrongSound = playScreen.getAssets().get(Assets.wrongAnswerSOUND, Sound.class);
 
         //top bar
         Table topBarTable = new Table(playScreen.getAssets().getNeonSkin());
@@ -73,7 +78,7 @@ public class EditorQuizWindow extends Window {
         this.add(topBarTable).expandX().fillX().top();
         this.row();
         this.add(codeTable).expand().fillX().top();
-        extraKeyboardWindow = new AndroidExtraKeyboardWindow("", playScreen.getAssets().getNeonSkin(), playScreen.getAssets().getTerraSkin(), this);
+        extraKeyboardWindow = new AndroidExtraKeyboardWindow("", playScreen.getAssets(), this);
 
         //level specific
         if(playScreen.getCurrentLevelID().equals("6_2")) {
@@ -244,11 +249,13 @@ public class EditorQuizWindow extends Window {
             codeLabel.setText(codeLabel.getText().toString().replaceAll("\\[RED]_*\\[]", "[RED]" + text.substring(1) + "[]"));
 
             if (text.charAt(0) == '!') { //correct answer
+                correctSound.play();
                 playScreen.getPlayer().showPlayerMsg("correct!");
                 codeLabel.getText().replace("RED", "GREEN");
                 correct = true;
             }
             else { //wrong answer
+                wrongSound.play();
                 closeCurrentEditor();
                 playScreen.getPlayer().setCurrentState(Player.State.CODING); //so that the player can't run
                 if(!playScreen.getCurrentLevelID().equals("6_2") && !playScreen.getCurrentLevelID().equals("5_2"))
@@ -310,6 +317,7 @@ public class EditorQuizWindow extends Window {
 
     public void closeCurrentEditor() {
         if(this.getStage()!=null && answered == 0) {
+            clickSound.play();
             playScreen.getPlayer().setCurrentState(Player.State.STANDING);
             this.remove();
             extraKeyboardWindow.clearButtons();

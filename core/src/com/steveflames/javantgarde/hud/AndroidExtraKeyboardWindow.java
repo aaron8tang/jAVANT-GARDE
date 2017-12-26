@@ -1,6 +1,7 @@
 package com.steveflames.javantgarde.hud;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
@@ -27,10 +28,12 @@ public class AndroidExtraKeyboardWindow extends Window {
     private Table table;
     private EditorQuizWindow editorQuizWindow;
     private Skin neonSkin;
+    private Sound clickSound;
 
-    public AndroidExtraKeyboardWindow(String title, Skin neonSkin, Skin terraSkin, final EditorWindow editorWindow) {
-        super(title, terraSkin);
-        this.neonSkin = neonSkin;
+    public AndroidExtraKeyboardWindow(String title, Assets assets, final EditorWindow editorWindow) {
+        super(title, assets.getTerraSkin());
+        this.neonSkin = assets.getNeonSkin();
+        clickSound = assets.get(Assets.clickSOUND, Sound.class);
         this.setSize(700,85);
         this.setX(MyGdxGame.WIDTH - this.getWidth());
         this.setY(MyGdxGame.HEIGHT - this.getHeight() - 10);
@@ -40,6 +43,7 @@ public class AndroidExtraKeyboardWindow extends Window {
         tabBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                clickSound.play();
                 editorWindow.editorKeyTyped('\t');
             }
         });
@@ -47,6 +51,7 @@ public class AndroidExtraKeyboardWindow extends Window {
         leftBracketBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                clickSound.play();
                 editorWindow.virtualTypeKey('{');
             }
         });
@@ -54,6 +59,7 @@ public class AndroidExtraKeyboardWindow extends Window {
         rightBracketBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                clickSound.play();
                 editorWindow.virtualTypeKey('}');
                 editorWindow.editorKeyTyped('}');
             }
@@ -62,6 +68,7 @@ public class AndroidExtraKeyboardWindow extends Window {
         leftParBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                clickSound.play();
                 editorWindow.virtualTypeKey('(');
                 editorWindow.editorKeyTyped('(');
             }
@@ -70,6 +77,7 @@ public class AndroidExtraKeyboardWindow extends Window {
         rightParBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                clickSound.play();
                 editorWindow.virtualTypeKey(')');
                 editorWindow.editorKeyTyped(')');
             }
@@ -78,6 +86,7 @@ public class AndroidExtraKeyboardWindow extends Window {
         semicolonBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                clickSound.play();
                 editorWindow.virtualTypeKey(';');
             }
         });
@@ -85,6 +94,7 @@ public class AndroidExtraKeyboardWindow extends Window {
         singleQuoteBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                clickSound.play();
                 editorWindow.virtualTypeKey('\'');
                 editorWindow.editorKeyTyped('\'');
             }
@@ -93,6 +103,7 @@ public class AndroidExtraKeyboardWindow extends Window {
         quoteBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                clickSound.play();
                 editorWindow.virtualTypeKey('"');
                 editorWindow.editorKeyTyped('"');
             }
@@ -101,6 +112,7 @@ public class AndroidExtraKeyboardWindow extends Window {
         equalsBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                clickSound.play();
                 editorWindow.virtualTypeKey('=');
             }
         });
@@ -109,6 +121,7 @@ public class AndroidExtraKeyboardWindow extends Window {
         keyBoardBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                clickSound.play();
                 keyboardShown = !keyboardShown;
                 setKeyboardShown(keyboardShown);
             }
@@ -128,9 +141,10 @@ public class AndroidExtraKeyboardWindow extends Window {
         this.add(keyBoardBtn).right().width(90).height(70);
     }
 
-    public AndroidExtraKeyboardWindow(String title, Skin neonSkin, Skin terraSkin, final EditorQuizWindow editorQuizWindow) {
-        super(title, terraSkin);
-        this.neonSkin = neonSkin;
+    public AndroidExtraKeyboardWindow(String title, Assets assets, final EditorQuizWindow editorQuizWindow) {
+        super(title, assets.getTerraSkin());
+        this.neonSkin = assets.getNeonSkin();
+        clickSound = assets.get(Assets.clickSOUND, Sound.class);
         this.editorQuizWindow = editorQuizWindow;
         this.setSize(10,85);
         this.setX(editorQuizWindow.getX() - this.getWidth());
@@ -145,6 +159,7 @@ public class AndroidExtraKeyboardWindow extends Window {
         btn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                clickSound.play();
                 editorQuizWindow.btnPressed(text);
             }
         });

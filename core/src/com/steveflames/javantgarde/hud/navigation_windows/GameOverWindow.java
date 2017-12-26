@@ -1,5 +1,6 @@
 package com.steveflames.javantgarde.hud.navigation_windows;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -9,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.screens.ChooseLevelScreen;
 import com.steveflames.javantgarde.screens.PlayScreen;
+import com.steveflames.javantgarde.tools.Assets;
 
 /**
  * Created by Flames on 10/11/2017.
@@ -16,8 +18,13 @@ import com.steveflames.javantgarde.screens.PlayScreen;
 
 public class GameOverWindow extends Table {
 
-    public GameOverWindow(Skin neonSkin, Skin lmlSkin, final PlayScreen playScreen) {
-        super(neonSkin);
+    private Sound clickSound;
+
+    public GameOverWindow(final PlayScreen playScreen) {
+        super(playScreen.getAssets().getNeonSkin());
+        clickSound = playScreen.getAssets().get(Assets.clickSOUND, Sound.class);
+        Skin neonSkin = playScreen.getAssets().getNeonSkin();
+        Skin lmlSkin = playScreen.getAssets().getLmlSkin();
         this.setSize(400,260);
         this.setPosition(MyGdxGame.WIDTH/2 - 200, MyGdxGame.HEIGHT/2 - 130);
 
@@ -31,6 +38,7 @@ public class GameOverWindow extends Table {
         tryAgainBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                clickSound.play();
                 playScreen.setRestartLevel();
                 playScreen.dispose();
                 playScreen.getGame().setScreen(new PlayScreen(playScreen.getGame(), playScreen.getCurrentLevel()));
@@ -40,6 +48,7 @@ public class GameOverWindow extends Table {
         exitBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                clickSound.play();
                 playScreen.getGame().setScreen(new ChooseLevelScreen(playScreen.getGame()));
                 playScreen.dispose();
             }

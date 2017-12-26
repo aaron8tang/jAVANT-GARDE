@@ -1,5 +1,7 @@
 package com.steveflames.javantgarde.sprites;
 
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -29,13 +31,20 @@ public class Lever extends GameObject {
 
     private boolean manualPull;
 
-    public Lever(String name, World world, TiledMap map, Rectangle bounds, float alpha, boolean manualPull, TextureAtlas textureAtlas) {
+    private Sound useSound;
+    private Sound materializeSound;
+
+    public Lever(String name, World world, TiledMap map, Rectangle bounds, float alpha, boolean manualPull, Assets assets) {
         super(name, world, map, bounds, true);
         this.alpha = alpha;
         this.manualPull = manualPull;
-        this.leverClosedTR = textureAtlas.findRegion(Assets.leverClosedREGION);
-        this.leverOpenTR = textureAtlas.findRegion(Assets.leverOpenREGION);
-        this.leverUseTR = textureAtlas.findRegion(Assets.handREGION);
+        this.leverClosedTR = assets.getTextureAtlas().findRegion(Assets.leverClosedREGION);
+        this.leverOpenTR = assets.getTextureAtlas().findRegion(Assets.leverOpenREGION);
+        this.leverUseTR = assets.getTextureAtlas().findRegion(Assets.handREGION);
+        useSound = assets.get(Assets.leverSOUND, Sound.class);
+        materializeSound = assets.get(Assets.materializeSOUND, Sound.class);
+        if(alpha==0)
+            materializeSound.loop();
         currentTR = leverClosedTR;
     }
 
@@ -47,7 +56,7 @@ public class Lever extends GameObject {
     }
 
     public void update(float dt) {
-        updateAlpha(dt);
+        updateAlpha(dt, materializeSound);
     }
 
     public void drawFontScaled(SpriteBatch sb) {
@@ -60,6 +69,7 @@ public class Lever extends GameObject {
     public void drawFilled(ShapeRenderer sr) {}
 
     public void pull() {
+        useSound.play();
         open = !open;
         currentTR = open ? leverOpenTR : leverClosedTR;
     }

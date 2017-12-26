@@ -1,5 +1,7 @@
 package com.steveflames.javantgarde.sprites;
 
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -26,12 +28,17 @@ public class InfoSign extends GameObject {
     private String text = "";
     private TextureRegion infoSignTR;
     private TextureRegion infoSignUseTR;
+    private Sound materializeSound;
 
-    public InfoSign(String name, World world, TiledMap map, Rectangle bounds, float alpha, TextureAtlas textureAtlas) {
+    public InfoSign(String name, World world, TiledMap map, Rectangle bounds, float alpha, Assets assets) {
         super(name, world, map, bounds, true);
         this.alpha = alpha;
-        this.infoSignTR = textureAtlas.findRegion(Assets.infoSignREGION);
-        this.infoSignUseTR = textureAtlas.findRegion(Assets.eyeREGION);
+        this.infoSignTR = assets.getTextureAtlas().findRegion(Assets.infoSignREGION);
+        this.infoSignUseTR = assets.getTextureAtlas().findRegion(Assets.eyeREGION);
+        materializeSound = assets.get(Assets.materializeSOUND, Sound.class);
+        if(alpha==0) {
+            materializeSound.loop();
+        }
 
         if (MyFileReader.exists("txt/info/" + name + ".txt"))
             text = MyFileReader.readFile("txt/info/" + name + ".txt");
@@ -56,7 +63,7 @@ public class InfoSign extends GameObject {
     }
 
     public void update(float dt) {
-        updateAlpha(dt);
+        updateAlpha(dt, materializeSound);
     }
 
     public void drawFontScaled(SpriteBatch sb) {

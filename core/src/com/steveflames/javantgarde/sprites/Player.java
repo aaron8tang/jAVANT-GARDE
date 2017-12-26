@@ -1,6 +1,8 @@
 package com.steveflames.javantgarde.sprites;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -68,20 +70,26 @@ public class Player extends GameObject {
     private TextureRegion botWheelTR;
     private TextureRegion botMoveTR;
 
+    private Sound jumpSound;
+    private Sound deadSound;
+    private Sound loseHealthSound;
 
-    public Player(World world, TiledMap map, ArrayList<Checkpoint> checkpoints, TextureAtlas textureAtlas) {
+    public Player(World world, TiledMap map, ArrayList<Checkpoint> checkpoints, Assets assets) {
         super("player", world, map, new Rectangle(), false);
+        jumpSound = assets.get(Assets.jumpSOUND, Sound.class);
+        deadSound = assets.get(Assets.deadSOUND, Sound.class);
+        loseHealthSound = assets.get(Assets.loseHealthSOUND, Sound.class);
         currentTR = botMoveTR;
         this.checkpoints = checkpoints;
-        this.botWheelTR = textureAtlas.findRegion(Assets.botWheelREGION);
-        this.botMoveTR = textureAtlas.findRegion(Assets.botMoveREGION);
+        this.botWheelTR = assets.getTextureAtlas().findRegion(Assets.botWheelREGION);
+        this.botMoveTR = assets.getTextureAtlas().findRegion(Assets.botMoveREGION);
         setInitialPosition();
 
         currentState = State.STANDING;
         previousState = State.STANDING;
 
-        idleAnim = new Animation<TextureRegion>(0.08f, Assets.loadAnim(textureAtlas.findRegion(Assets.botTalkREGION), 12, 6, 3) );
-        typingAnim = new Animation<TextureRegion>(0.015f, Assets.loadAnim(textureAtlas.findRegion(Assets.botTypingREGION), 12, 2, 0) );
+        idleAnim = new Animation<TextureRegion>(0.08f, Assets.loadAnim(assets.getTextureAtlas().findRegion(Assets.botTalkREGION), 12, 6, 3) );
+        typingAnim = new Animation<TextureRegion>(0.015f, Assets.loadAnim(assets.getTextureAtlas().findRegion(Assets.botTypingREGION), 12, 2, 0) );
     }
 
     private void setInitialPosition() {
@@ -207,7 +215,7 @@ public class Player extends GameObject {
         else if(b2body.getLinearVelocity().y < 0)
             return State.FALLING;
             //if player is positive or negative in the X axis he is running
-        else if(b2body.getLinearVelocity().x < -1.2 || b2body.getLinearVelocity().x > 1.2)
+        else if (b2body.getLinearVelocity().x < -1.2 || b2body.getLinearVelocity().x > 1.2)
             return State.RUNNING;
             //if none of these return then he must be standing
         else
@@ -218,6 +226,7 @@ public class Player extends GameObject {
         if (currentState != State.JUMPING  && currentState != State.FALLING) {
             b2body.applyLinearImpulse(0, JUMPSPEED, b2body.getWorldCenter().x, b2body.getWorldCenter().y, true);
             setCurrentState(State.JUMPING);
+            jumpSound.play();
         }
     }
 
@@ -259,13 +268,16 @@ public class Player extends GameObject {
     }
 
     public void reduceHealth(int k) {
+        loseHealthSound.play();
         health -= k;
         playerMsg = "-"+k+" health";
         playerMsgGlyph.setText(Fonts.small, playerMsg);
         playerMsgVector.x = b2body.getPosition().x;
         playerMsgVector.y = b2body.getPosition().y + 0.25f;
-        if(health <= 0)
+        if(health <= 0) {
             setCurrentState(State.DEAD);
+            deadSound.play();
+        }
         green = 0;
         red = 1;
         blue = 0;

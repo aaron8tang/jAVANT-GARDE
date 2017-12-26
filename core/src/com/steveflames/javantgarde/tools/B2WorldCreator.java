@@ -1,5 +1,6 @@
 package com.steveflames.javantgarde.tools;
 
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Rectangle;
@@ -56,14 +57,14 @@ public class B2WorldCreator {
         //initialize info
         for(MapObject object: playScreen.getMap().getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
-            playScreen.getObjectManager().getInfoSigns().add(new InfoSign(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, 1, playScreen.getAssets().getTextureAtlas()));
+            playScreen.getObjectManager().getInfoSigns().add(new InfoSign(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, 1, playScreen.getAssets()));
             playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getInfoSigns().get(playScreen.getObjectManager().getInfoSigns().size()-1));
         }
 
         //initialize doors
         for(MapObject object: playScreen.getMap().getLayers().get(6).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
-            playScreen.getObjectManager().getDoors().add(new Door(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect));
+            playScreen.getObjectManager().getDoors().add(new Door(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, playScreen.getAssets()));
             playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getDoors().get(playScreen.getObjectManager().getDoors().size()-1));
         }
 
@@ -77,7 +78,7 @@ public class B2WorldCreator {
         //initialize teleporter
         for(MapObject object: playScreen.getMap().getLayers().get(8).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
-            playScreen.getObjectManager().setTeleporter(new Teleporter(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, playScreen.getAssets().getTextureAtlas()));
+            playScreen.getObjectManager().setTeleporter(new Teleporter(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, playScreen.getAssets()));
             playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getTeleporter());
         }
 
@@ -100,7 +101,7 @@ public class B2WorldCreator {
                     }
                     else if(object.getName().contains("marker")) {
                         if(object.getName().contains("sensorRobot")) {
-                            playScreen.getObjectManager().getSensorRobots().add(new SensorRobot(object.getName().substring(object.getName().length()-1), playScreen.getWorld(), playScreen.getMap(), rect, playScreen.getAssets().getFrogAtlas()));
+                            playScreen.getObjectManager().getSensorRobots().add(new SensorRobot(object.getName().substring(object.getName().length()-1), playScreen.getWorld(), playScreen.getMap(), rect, playScreen.getAssets()));
                             playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getSensorRobots().get(playScreen.getObjectManager().getSensorRobots().size()-1));
                         }
                         else {
@@ -116,7 +117,7 @@ public class B2WorldCreator {
                         if(object.getName().contains("-")) { //quiz floatingPlatform
                             String[] splitter = object.getName().split("-");
                             playScreen.getObjectManager().getQuizes().get(0).addFloatingPlatform(new FloatingPlatform(splitter[1], playScreen.getWorld(), playScreen.getMap(), rect,
-                                    new Lever("lever_" + splitter[1], playScreen.getWorld(), playScreen.getMap(), new Rectangle(rect.x+ rect.width/2-45,rect.y + rect.height, 90,90), 1, true, playScreen.getAssets().getTextureAtlas())));
+                                    new Lever("lever_" + splitter[1], playScreen.getWorld(), playScreen.getMap(), new Rectangle(rect.x+ rect.width/2-45,rect.y + rect.height, 90,90), 1, true, playScreen.getAssets()), playScreen.getAssets()));
                             playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getQuizes().get(0).getFloatingPlatforms().get(playScreen.getObjectManager().getQuizes().get(0).getFloatingPlatforms().size()-1));
                         }
                         else {//not a quiz floatingPlatform
@@ -125,7 +126,7 @@ public class B2WorldCreator {
                                 name = object.getName().split("_")[1];
                                 else
                                     name = "";
-                            playScreen.getObjectManager().getFloatingPlatforms().add(new FloatingPlatform(name, playScreen.getWorld(), playScreen.getMap(), rect, null));
+                            playScreen.getObjectManager().getFloatingPlatforms().add(new FloatingPlatform(name, playScreen.getWorld(), playScreen.getMap(), rect, null, playScreen.getAssets()));
                             playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getFloatingPlatforms().get(playScreen.getObjectManager().getFloatingPlatforms().size()-1));
                         }
                     }
@@ -136,7 +137,7 @@ public class B2WorldCreator {
                 //initialize ropes
                 for (MapObject object : playScreen.getMap().getLayers().get(10).getObjects().getByType(RectangleMapObject.class)) {
                     Rectangle rect = ((RectangleMapObject) object).getRectangle();
-                    playScreen.getObjectManager().getRopes().add(new Rope(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, playScreen.getObjectManager()));
+                    playScreen.getObjectManager().getRopes().add(new Rope(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, playScreen.getObjectManager(), playScreen.getAssets()));
                     playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getRopes().get(playScreen.getObjectManager().getRopes().size()-1));
                 }
             }

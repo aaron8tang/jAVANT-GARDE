@@ -1,5 +1,6 @@
 package com.steveflames.javantgarde.sprites.ropes;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -10,6 +11,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.screens.PlayScreen;
 import com.steveflames.javantgarde.sprites.GameObject;
+import com.steveflames.javantgarde.tools.Assets;
 import com.steveflames.javantgarde.tools.GameObjectManager;
 import com.steveflames.javantgarde.tools.global.Cameras;
 import com.steveflames.javantgarde.tools.global.Fonts;
@@ -32,7 +34,10 @@ public class Rope extends GameObject {
     private String prompt = "";
     private GlyphLayout glyphLayout = new GlyphLayout();
 
-    public Rope(String name, World world, TiledMap map, Rectangle bounds, GameObjectManager objectManager) {
+    private Sound correctSound;
+    private Sound wrongSound;
+
+    public Rope(String name, World world, TiledMap map, Rectangle bounds, GameObjectManager objectManager, Assets assets) {
         super(name, world, map, bounds, true);
         String text = MyFileReader.readFile("txt/ropes/"+name+".txt");
         String[] lineSplitter = text.split("\r\n");
@@ -40,6 +45,8 @@ public class Rope extends GameObject {
         Random random = new Random();
         float randExtraY = random.nextFloat()*3;
         ArrayList<String> platformTexts = new ArrayList<String>();
+        correctSound = assets.get(Assets.correctSOUND, Sound. class);
+        wrongSound = assets.get(Assets.wrongAnswerSOUND, Sound. class);
 
         //get the rope group from the name
         attributeSplitter = name.split("-");
@@ -69,6 +76,10 @@ public class Rope extends GameObject {
         if(active) { //if rope is currently active
             for(int i=0; i<platforms.size(); i++) {
                 if(!platforms.get(i).isActive()) { //if player touched this platform
+                    if(platforms.get(i).isFlag())
+                        correctSound.play();
+                    else
+                        wrongSound.play();
                     active = false; //deactivate the rope
                     for(int j=0; j<platforms.size(); j++) { //fade all platforms
                         platforms.get(j).getB2body().setLinearVelocity(0, 0);

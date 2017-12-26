@@ -1,5 +1,6 @@
 package com.steveflames.javantgarde.hud;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
@@ -47,16 +48,19 @@ class Toast {
     private TextureRegion robotTR;
     private float stateTimer = 0f;
 
-    Toast(TextureAtlas textureAtlas) {
+    private Sound robotTalkSound;
+
+    Toast(Assets assets) {
         rect = new Rectangle(10, MyGdxGame.HEIGHT + 260, MyGdxGame.WIDTH-20, 160);
         glyphLayout = new GlyphLayout();
         linesOfText = new ArrayList<StringBuilder>();
+        robotTalkSound = assets.get(Assets.robotTalkingSOUND, Sound.class);
         if(!MyGdxGame.platformDepended.deviceHasKeyboard())
             nextPromptOffset = 90;
         drawStrings.add(new StringBuilder());
         drawStrings.add(new StringBuilder());
         drawStrings.add(new StringBuilder());
-        robotTalkingAnim = new Animation<TextureRegion>(0.16f, Assets.loadAnim(textureAtlas.findRegion(Assets.robotAntennasREGION),4, 1, 0));
+        robotTalkingAnim = new Animation<TextureRegion>(0.16f, Assets.loadAnim(assets.getTextureAtlas().findRegion(Assets.robotAntennasREGION),4, 1, 0));
     }
 
     void newToast(String text) {
@@ -131,6 +135,7 @@ class Toast {
             if (rect.y - SPEED * dt > MyGdxGame.HEIGHT - rect.height - 65) {
                 rect.y -= SPEED * dt;
             } else {
+                robotTalkSound.play();
                 rect.y = MyGdxGame.HEIGHT - rect.height - 65;
                 currentState = State.WRITING;
                 timerMillis = TimeUtils.millis();
@@ -150,10 +155,12 @@ class Toast {
                     letterPtr = 0;
                     linePtr = 0;
                     currentState = State.READY;
+                    robotTalkSound.stop();
                 }
             }
         }
         else if (currentState == State.NEXT) {
+            robotTalkSound.play();
             currentState = State.WRITING;
             currentPage++;
             if (currentPage > numOfPages) {
@@ -167,6 +174,7 @@ class Toast {
             }
         }
         else if (currentState == State.SKIP) {
+            robotTalkSound.stop();
             drawStrings.get(0).setLength(0); //reset drawStrings
             drawStrings.get(1).setLength(0);
             drawStrings.get(2).setLength(0);
@@ -182,6 +190,7 @@ class Toast {
             currentState = State.READY;
         }
         else if (currentState == State.LEAVING) {
+            robotTalkSound.stop();
             if (currentState != State.LEFT) {
                 rect.y += SPEED * dt;
                 if (rect.y > MyGdxGame.HEIGHT) {

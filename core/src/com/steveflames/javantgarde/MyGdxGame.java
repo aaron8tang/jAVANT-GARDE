@@ -2,10 +2,12 @@ package com.steveflames.javantgarde;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.steveflames.javantgarde.screens.ChooseLevelScreen;
+import com.steveflames.javantgarde.screens.MainMenuScreen;
 import com.steveflames.javantgarde.tools.Assets;
 import com.steveflames.javantgarde.tools.global.Fonts;
 
@@ -19,10 +21,10 @@ import com.steveflames.javantgarde.tools.global.Fonts;
  *
  *
  * TODO
+ * unload skins?
  * COMPILER: if the user types { or } on a println there's a problem
  * COMPILER: add compiler errors: (method doesn't exist, var not declared)
  * EDITOR: ston editor otan afhnw 1h grammh keno k kanw click varaei error index out of bounds -1
- * StartMenuScreen (play, language, resolution, sound on/off, exit) TODO
  * add greek
  * sto loading screen na deixnei se poia pista eimai
  * SOUNDS TODO
@@ -50,12 +52,15 @@ public class MyGdxGame extends Game {
 	public static final int HEIGHT = 768; //600, 480,  1080, 768
 	public static final float PPM = 200; //pixels per meter. has to do with b2body scaling
 	public static final String TITLE = "jAVANT-GARDE";
+	public static boolean musicOn = true;
+	public static boolean sfxOn = true;
 
 	public SpriteBatch sb; //used to render textures
 	public ShapeRenderer sr; //used to render shapes
 
 	public static iPlatformDepended platformDepended;
 	public Assets assets;
+	public Music mainMenuMusic;
 
 	public MyGdxGame(iPlatformDepended platformDepended) {
 		MyGdxGame.platformDepended = platformDepended;
@@ -68,10 +73,12 @@ public class MyGdxGame extends Game {
 		//Skins.load();
 		sb = new SpriteBatch();
 		sr = new ShapeRenderer();
-		assets.loadSkins();
+		assets.loadAllMainMenuAssets();
 		assets.finishLoading();
-		setScreen(new ChooseLevelScreen(this));
-		//setScreen(new LoadingScreen(this, new LevelListItem("COMPILER", "3_1", "test")));
+		mainMenuMusic = assets.get(Assets.mainMenuMUSIC, Music.class);
+		mainMenuMusic.setLooping(true);
+		mainMenuMusic.play();
+		setScreen(new MainMenuScreen(this));
 	}
 
 	@Override

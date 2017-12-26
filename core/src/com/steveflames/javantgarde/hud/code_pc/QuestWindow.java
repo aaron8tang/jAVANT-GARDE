@@ -1,5 +1,6 @@
 package com.steveflames.javantgarde.hud.code_pc;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -14,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.hud.Hud;
 import com.steveflames.javantgarde.quests.Quest;
+import com.steveflames.javantgarde.tools.Assets;
 import com.steveflames.javantgarde.tools.global.Cameras;
 
 /**
@@ -28,8 +30,12 @@ class QuestWindow extends Window {
     private TextButton helpBtn;
     private ScrollPane questScroll;
 
-    QuestWindow(String title, Skin neonSkin, Skin lmlSkin, Skin terraSkin, final Hud hud) {
-        super(title, terraSkin);
+    QuestWindow(String title, Assets assets, final Hud hud) {
+        super(title, assets.getTerraSkin());
+        final Sound clickSound = assets.get(Assets.clickSOUND, Sound.class);
+        Skin neonSkin = assets.getNeonSkin();
+        Skin terraSkin = assets.getTerraSkin();
+        Skin lmlSkin = assets.getLmlSkin();
 
         //quest text area
         Table table = new Table(lmlSkin);
@@ -47,6 +53,7 @@ class QuestWindow extends Window {
         helpBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                clickSound.play();
                 hud.playScreen.getPlayer().reduceHealth(1);
                 hud.playScreen.getPlayer().setPlayerMsgAlpha(1);
                 questTextArea.setText(questTextArea.getText() + "\n[CYAN]HELP:[]\n");

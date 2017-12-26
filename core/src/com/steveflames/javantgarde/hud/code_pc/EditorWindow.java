@@ -2,6 +2,7 @@ package com.steveflames.javantgarde.hud.code_pc;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -27,6 +28,7 @@ import com.steveflames.javantgarde.sprites.Player;
 import com.steveflames.javantgarde.hud.code_pc.compiler.MyClass;
 import com.steveflames.javantgarde.hud.code_pc.compiler.MyCompiler;
 import com.steveflames.javantgarde.hud.code_pc.compiler.MyVariable;
+import com.steveflames.javantgarde.tools.Assets;
 import com.steveflames.javantgarde.tools.global.Cameras;
 
 import java.util.ArrayList;
@@ -57,13 +59,22 @@ public class EditorWindow extends Window {
 
     private float tempCamX = - 1;
 
+    private Sound clickSound;
+    private Sound errorSound;
+    private Sound correctSound;
 
-    public EditorWindow(String title, Skin neonSkin, Skin lmlSkin, Skin terraSkin, final Hud hud) {
-        super(title, terraSkin);
+    public EditorWindow(String title, Assets assets, final Hud hud) {
+        super(title, assets.getTerraSkin());
         this.hud = hud;
+        errorSound = assets.get(Assets.errorSOUND, Sound.class);
+        correctSound = assets.get(Assets.correctSOUND, Sound.class);
+        clickSound = assets.get(Assets.clickSOUND, Sound.class);
+        Skin neonSkin = assets.getNeonSkin();
+        Skin terraSkin = assets.getTerraSkin();
+        Skin lmlSkin = assets.getLmlSkin();
 
         //top bar
-        Table topBarTable = new Table(neonSkin);
+        Table topBarTable = new Table(assets.getNeonSkin());
         TextButton exitBtn = new TextButton("x", neonSkin);
         Table dummyTable = new Table(terraSkin);
         classesTable = new Table(terraSkin);
@@ -123,9 +134,9 @@ public class EditorWindow extends Window {
         this.add(bottomBarTable).expandX().fillX();
 
         consoleWindow = new ConsoleWindow("CONSOLE", neonSkin, terraSkin, hud.stage);
-        questWindow = new QuestWindow("QUEST", neonSkin, lmlSkin, terraSkin, hud);
+        questWindow = new QuestWindow("QUEST", assets, hud);
         if(!MyGdxGame.platformDepended.deviceHasKeyboard())
-            androidExtraKeyboardWindow = new AndroidExtraKeyboardWindow("+KEYBOARD", neonSkin, terraSkin, this);
+            androidExtraKeyboardWindow = new AndroidExtraKeyboardWindow("+KEYBOARD", assets, this);
         compiler = new MyCompiler(consoleWindow.getConsoleTextArea());
 
         //ADD LISTENERS
@@ -140,6 +151,7 @@ public class EditorWindow extends Window {
         classBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                clickSound.play();
                 if(!codeTextArea.isDisabled())
                     currentPc.setEditorText(codeTextArea.getText());
                 if(!currentPc.getEditorText().isEmpty())
@@ -184,6 +196,7 @@ public class EditorWindow extends Window {
         compileAndRunBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                clickSound.play();
                 if(!codeTextArea.isDisabled())
                     currentPc.setEditorText(codeTextArea.getText());
                 consoleWindow.getConsoleTextArea().setText("");
@@ -198,9 +211,12 @@ public class EditorWindow extends Window {
                 //compile and run
                 if(compiler.compile(myClasses) || (hud.playScreen.getCurrentLevelID().equals("1_1") && currentPc.getQuest().getProgress()==0)) {
                     if (validateCodeForQuest(hud.playScreen, myClasses.get(0), currentPc.getQuest().getQuestN())) {
+                        correctSound.play();
                         questWindow.incrementQuestStep(currentPc.getQuest(), EditorWindow.this);
                     }
                 }
+                else
+                    errorSound.play();
             }
         });
     }
@@ -458,6 +474,7 @@ public class EditorWindow extends Window {
 
     public void closeCurrentEditor() {
         if(this.getStage()!=null) {
+            clickSound.play();
             hud.playScreen.getPlayer().setCurrentState(Player.State.STANDING);
             this.remove();
             consoleWindow.remove();
@@ -762,7 +779,7 @@ public class EditorWindow extends Window {
                     if (currentPc.getQuest().getProgress() == 1) {
                         for (MyVariable myVariable : myClass.getVariables()) {
                             if (myVariable.getType().equals("InfoSign")) {
-                                playScreen.getObjectManager().getInfoSigns().add(new InfoSign("info-7_1-3", playScreen.getWorld(), playScreen.getMap(), playScreen.getObjectManager().getMarkers().get(0).getBounds(), 0, playScreen.getAssets().getTextureAtlas()));
+                                playScreen.getObjectManager().getInfoSigns().add(new InfoSign("info-7_1-3", playScreen.getWorld(), playScreen.getMap(), playScreen.getObjectManager().getMarkers().get(0).getBounds(), 0, playScreen.getAssets()));
                                 playScreen.getObjectManager().addGameObjectBeforePlayer(playScreen.getObjectManager().getInfoSigns().get(playScreen.getObjectManager().getInfoSigns().size()-1));
                                 showEditorAgain = false;
                                 return true;
@@ -776,7 +793,7 @@ public class EditorWindow extends Window {
                             if (myVariable.getType().equals("Lever") && !myVariable.getName().equals("null")) {
                                 tempHideEditor(-1, true);
                                 playScreen.getObjectManager().getLevers().add(new Lever("lever-7_1-0", playScreen.getWorld(), playScreen.getMap(), new Rectangle(currentPc.getBounds().x + 200,
-                                        currentPc.getBounds().y, 90, 90), 0, false, playScreen.getAssets().getTextureAtlas()));
+                                        currentPc.getBounds().y, 90, 90), 0, false, playScreen.getAssets()));
                                 playScreen.getObjectManager().addGameObjectBeforePlayer(playScreen.getObjectManager().getLevers().get(playScreen.getObjectManager().getLevers().size()-1));
                                 return true;
                             }
