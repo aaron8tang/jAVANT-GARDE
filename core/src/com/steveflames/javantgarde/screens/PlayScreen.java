@@ -42,7 +42,6 @@ public class PlayScreen implements Screen{
     private World world; //box2D variable
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
-    private Music playscreenMusic;
 
     //fixed timestep with interpolation variables
     private double accumulator = 0;
@@ -95,6 +94,7 @@ public class PlayScreen implements Screen{
         //initialize camera and viewport
         Cameras.load(WIDTH, HEIGHT);
 
+        game.assets.refreshPlayScreenAssets();
         //create world
         world = new World(new Vector2(0, GRAVITY), true);
         world.setContactListener(new B2WorldContactListener(this));
@@ -107,9 +107,7 @@ public class PlayScreen implements Screen{
         inputHandler = new InputHandler(this);
 
         //play music
-        playscreenMusic = game.assets.get(Assets.playScreenMUSIC, Music.class);
-        playscreenMusic.setLooping(true);
-        playscreenMusic.play();
+        game.assets.playMusic(game.assets.playScreenMusic);
 
         if(!MyGdxGame.platformDepended.deviceHasKeyboard())
             hud.newAndroidInputTable();
@@ -334,16 +332,26 @@ public class PlayScreen implements Screen{
     }
 
     public void pause() {
-        getAssets().unloadAllPlayScreenAssets();
-        playscreenMusic.pause();
         if(getPlayer().canMove)
             hud.showPauseWindow();
+        getAssets().unloadAllMainMenuAssets();
+        getAssets().unloadAllPlayScreenAssets();
+        getAssets().pauseMusic(getAssets().playScreenMusic);
     }
 
     public void resume() {
-        playscreenMusic.play();
+        getAssets().playMusic(getAssets().playScreenMusic);
+        getAssets().loadAllMainMenuAssets();
         getAssets().loadAllPlayScreenAssets();
-        getAssets().finishLoading(); //todo not working prepei na ksanaperasw kathe texture ena ena
+        getAssets().finishLoading();
+        game.assets.refreshPlayScreenAssets();
+
+        //update once to refresh each currentTR
+        float dt = Gdx.graphics.getDeltaTime();
+        getPlayer().update(dt);
+        hud.update(dt);
+        for(int i=0; i<objectManager.getSensorRobots().size(); i++)
+            objectManager.getSensorRobots().get(i).update(dt);
     }
 
     /**
@@ -351,6 +359,7 @@ public class PlayScreen implements Screen{
      */
     @Override
     public void dispose() {
+        game.assets.stopMusic(game.assets.playScreenMusic);
         if(!restartLevel)
             game.assets.unloadAllPlayScreenAssets();
         map.dispose();
@@ -410,9 +419,5 @@ public class PlayScreen implements Screen{
 
     public void setRestartLevel() {
         this.restartLevel = true;
-    }
-
-    public Music getPlayscreenMusic() {
-        return playscreenMusic;
     }
 }

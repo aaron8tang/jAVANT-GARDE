@@ -25,13 +25,12 @@ public class Pc extends GameObject {
     private String editorText;
     private Quest quest;
     private int pcType; //0=code, 1=quiz, 2=order
-    private TextureRegion pcTR;
-    private TextureRegion pcUseTR;
 
-    public Pc(String name, World world, TiledMap map, Rectangle bounds, TextureAtlas textureAtlas) {
+    private Assets assets;
+
+    public Pc(String name, World world, TiledMap map, Rectangle bounds, Assets assets) {
         super(name, world, map, bounds, true);
-        this.pcTR = textureAtlas.findRegion(Assets.pcREGION);
-        this.pcUseTR = textureAtlas.findRegion(Assets.fixREGION);
+        this.assets = assets;
 
         if(name.startsWith("quiz")) { //quiz pc
             pcType = 1;
@@ -65,8 +64,7 @@ public class Pc extends GameObject {
 
     public void drawUsePrompt(SpriteBatch sb) {
         if(usable) {
-            Fonts.medium.setColor(Color.RED);
-            sb.draw(pcUseTR, position.x*MyGdxGame.PPM - 30 + Cameras.getHudCameraOffsetX(), position.y*MyGdxGame.PPM + 80 + 20, 60, 60);
+            sb.draw(assets.fixTR, position.x*MyGdxGame.PPM - 30 + Cameras.getHudCameraOffsetX(), position.y*MyGdxGame.PPM + 80 + 20, 60, 60);
         }
     }
 
@@ -77,7 +75,7 @@ public class Pc extends GameObject {
 
     public void drawFontScaled(SpriteBatch sb) {
         sb.setColor(1,1,1,alpha);
-        sb.draw(pcTR, position.x - bounds.width/2/MyGdxGame.PPM, position.y - bounds.height/2/MyGdxGame.PPM, bounds.width/ MyGdxGame.PPM, bounds.height/ MyGdxGame.PPM);
+        sb.draw(assets.pcTR, position.x - bounds.width/2/MyGdxGame.PPM, position.y - bounds.height/2/MyGdxGame.PPM, bounds.width/ MyGdxGame.PPM, bounds.height/ MyGdxGame.PPM);
     }
 
     public String getEditorText() {

@@ -34,8 +34,7 @@ public class Rope extends GameObject {
     private String prompt = "";
     private GlyphLayout glyphLayout = new GlyphLayout();
 
-    private Sound correctSound;
-    private Sound wrongSound;
+    private Assets assets;
 
     public Rope(String name, World world, TiledMap map, Rectangle bounds, GameObjectManager objectManager, Assets assets) {
         super(name, world, map, bounds, true);
@@ -45,8 +44,7 @@ public class Rope extends GameObject {
         Random random = new Random();
         float randExtraY = random.nextFloat()*3;
         ArrayList<String> platformTexts = new ArrayList<String>();
-        correctSound = assets.get(Assets.correctSOUND, Sound. class);
-        wrongSound = assets.get(Assets.wrongAnswerSOUND, Sound. class);
+        this.assets = assets;
 
         //get the rope group from the name
         attributeSplitter = name.split("-");
@@ -77,9 +75,9 @@ public class Rope extends GameObject {
             for(int i=0; i<platforms.size(); i++) {
                 if(!platforms.get(i).isActive()) { //if player touched this platform
                     if(platforms.get(i).isFlag())
-                        correctSound.play();
+                        assets.playSound(assets.correctSound);
                     else
-                        wrongSound.play();
+                        assets.playSound(assets.wrongSound);
                     active = false; //deactivate the rope
                     for(int j=0; j<platforms.size(); j++) { //fade all platforms
                         platforms.get(j).getB2body().setLinearVelocity(0, 0);

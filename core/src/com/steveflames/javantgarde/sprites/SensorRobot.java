@@ -26,9 +26,6 @@ public class SensorRobot extends GameObject {
     private State currentState;
     private State previousState;
     private TextureRegion currentTR;
-    private Animation<TextureRegion> idleAnim;
-    private Animation<TextureRegion> startAnim;
-    private Animation<TextureRegion> endAnim;
     private float stateTimer = 0f;
 
     private boolean upperSensorEnabled = false;
@@ -36,18 +33,17 @@ public class SensorRobot extends GameObject {
     private boolean runRight = false;
     private boolean runLeft = false;
 
-    private Sound frogSound;
+    private Assets assets;
 
 
     public SensorRobot(String name, World world, TiledMap map, Rectangle bounds, Assets assets) {
         super(name, world, map, bounds, false);
         b2body.setType(BodyDef.BodyType.DynamicBody);
         b2body.setGravityScale(0.8f);
-        frogSound = assets.get(Assets.frogSOUND, Sound.class);
+        this.assets = assets;
 
         currentState = State.IDLE;
         previousState = State.IDLE;
-        idleAnim = new Animation<TextureRegion>(0.06f , Assets.loadAnim(assets.getFrogAtlas().findRegion(Assets.frogTalkREGION), 16,4,2));
     }
 
     @Override
@@ -95,7 +91,7 @@ public class SensorRobot extends GameObject {
                 region = endAnim.getKeyFrame(stateTimer, false);
                 break;*/
             default:
-                region = idleAnim.getKeyFrame(stateTimer, true);
+                region = assets.frogIdleAnimation.getKeyFrame(stateTimer, true);
                 break;
         }
 
@@ -122,7 +118,7 @@ public class SensorRobot extends GameObject {
     }
 
     public void jump() {
-        frogSound.play();
+        assets.playSound(assets.frogSound);
         if(upperSensorDetectsObject == 0 && currentState != State.JUMPING) {
             b2body.applyLinearImpulse(0, JUMPSPEED, b2body.getWorldCenter().x, b2body.getWorldCenter().y, true);
             currentState = State.JUMPING;

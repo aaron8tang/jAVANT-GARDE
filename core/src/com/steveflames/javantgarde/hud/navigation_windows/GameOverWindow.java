@@ -18,37 +18,31 @@ import com.steveflames.javantgarde.tools.Assets;
 
 public class GameOverWindow extends Table {
 
-    private Sound clickSound;
-
     public GameOverWindow(final PlayScreen playScreen) {
-        super(playScreen.getAssets().getNeonSkin());
-        clickSound = playScreen.getAssets().get(Assets.clickSOUND, Sound.class);
-        Skin neonSkin = playScreen.getAssets().getNeonSkin();
-        Skin lmlSkin = playScreen.getAssets().getLmlSkin();
         this.setSize(400,260);
         this.setPosition(MyGdxGame.WIDTH/2 - 200, MyGdxGame.HEIGHT/2 - 130);
 
-        Label gameOverLabel = new Label("GAME OVER", lmlSkin);
+        Label gameOverLabel = new Label("GAME OVER", playScreen.getAssets().lmlSkin);
         gameOverLabel.scaleBy(1.4f, 1.4f);
         this.add(gameOverLabel).top().expandX().padTop(5);
         this.row();
 
-        Table optionsTable = new Table(neonSkin);
-        TextButton tryAgainBtn = new TextButton(" RESTART ", neonSkin);
+        Table optionsTable = new Table(playScreen.getAssets().neonSkin);
+        TextButton tryAgainBtn = new TextButton(" RESTART ", playScreen.getAssets().neonSkin);
         tryAgainBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play();
+                playScreen.getAssets().playSound(playScreen.getAssets().clickSound);
                 playScreen.setRestartLevel();
                 playScreen.dispose();
                 playScreen.getGame().setScreen(new PlayScreen(playScreen.getGame(), playScreen.getCurrentLevel()));
             }
         });
-        TextButton exitBtn = new TextButton(" EXIT ", neonSkin);
+        TextButton exitBtn = new TextButton(" EXIT ", playScreen.getAssets().neonSkin);
         exitBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play();
+                playScreen.getAssets().playSound(playScreen.getAssets().clickSound);
                 playScreen.getGame().setScreen(new ChooseLevelScreen(playScreen.getGame()));
                 playScreen.dispose();
             }

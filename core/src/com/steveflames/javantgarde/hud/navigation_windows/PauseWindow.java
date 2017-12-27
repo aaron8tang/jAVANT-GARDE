@@ -19,39 +19,38 @@ import com.steveflames.javantgarde.tools.Assets;
 
 public class PauseWindow extends Window {
 
-    private Sound clickSound;
+    private Assets assets;
 
     public PauseWindow(String title, final PlayScreen playScreen) {
-        super(title, playScreen.getAssets().getTerraSkin());
-        clickSound = playScreen.getAssets().get(Assets.clickSOUND, Sound.class);
-        Skin neonSkin = playScreen.getAssets().getNeonSkin();
+        super(title, playScreen.getAssets().terraSkin);
+        this.assets = playScreen.getAssets();
 
         this.setSize(800,500);
         this.setPosition(MyGdxGame.WIDTH/2 - this.getWidth()/2, MyGdxGame.HEIGHT/2 - this.getHeight()/2);
 
-        TextButton resumeBtn = new TextButton("RESUME", neonSkin);
+        TextButton resumeBtn = new TextButton("RESUME", playScreen.getAssets().neonSkin);
         resumeBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play();
+                playScreen.getAssets().playSound(playScreen.getAssets().clickSound);
                 remove();
             }
         });
-        TextButton restartBtn = new TextButton("RESTART LEVEL", neonSkin);
+        TextButton restartBtn = new TextButton("RESTART LEVEL", playScreen.getAssets().neonSkin);
         restartBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play();
+                playScreen.getAssets().playSound(playScreen.getAssets().clickSound);
                 playScreen.setRestartLevel();
                 playScreen.dispose();
                 playScreen.getGame().setScreen(new PlayScreen(playScreen.getGame(), playScreen.getCurrentLevel()));
             }
         });
-        TextButton exitBtn = new TextButton("EXIT", neonSkin);
+        TextButton exitBtn = new TextButton("EXIT", playScreen.getAssets().neonSkin);
         exitBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play();
+                playScreen.getAssets().playSound(playScreen.getAssets().clickSound);
                 playScreen.dispose();
                 playScreen.getGame().setScreen(new ChooseLevelScreen(playScreen.getGame()));
             }
@@ -67,13 +66,13 @@ public class PauseWindow extends Window {
     public void handleExitFromPauseMenuInput() {
         if(MyGdxGame.platformDepended.deviceHasKeyboard()) {
             if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-                clickSound.play();
+                assets.playSound(assets.clickSound);
                 this.remove();
             }
         }
         else {
             if(Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
-                clickSound.play();
+                assets.playSound(assets.clickSound);
                 this.remove();
             }
         }

@@ -23,45 +23,35 @@ import com.steveflames.javantgarde.tools.global.Fonts;
 public class Lever extends GameObject {
 
     private boolean open = false;
-    private TextureRegion currentTR;
-    private TextureRegion leverClosedTR;
-    private TextureRegion leverOpenTR;
-    private TextureRegion leverUseTR;
     private boolean colliding = false;
 
     private boolean manualPull;
+    private Assets assets;
 
-    private Sound useSound;
-    private Sound materializeSound;
 
     public Lever(String name, World world, TiledMap map, Rectangle bounds, float alpha, boolean manualPull, Assets assets) {
         super(name, world, map, bounds, true);
+        this.assets = assets;
         this.alpha = alpha;
         this.manualPull = manualPull;
-        this.leverClosedTR = assets.getTextureAtlas().findRegion(Assets.leverClosedREGION);
-        this.leverOpenTR = assets.getTextureAtlas().findRegion(Assets.leverOpenREGION);
-        this.leverUseTR = assets.getTextureAtlas().findRegion(Assets.handREGION);
-        useSound = assets.get(Assets.leverSOUND, Sound.class);
-        materializeSound = assets.get(Assets.materializeSOUND, Sound.class);
-        if(alpha==0)
-            materializeSound.loop();
-        currentTR = leverClosedTR;
     }
 
     public void drawUsePrompt(SpriteBatch sb) {
         if(usable) {
-            Fonts.medium.setColor(Color.RED);
-            sb.draw(leverUseTR, b2body.getPosition().x*MyGdxGame.PPM - 25 + Cameras.getHudCameraOffsetX(), b2body.getPosition().y*MyGdxGame.PPM + bounds.height/2 + 40, 50, 50);
+            sb.draw(assets.handTR, b2body.getPosition().x*MyGdxGame.PPM - 25 + Cameras.getHudCameraOffsetX(), b2body.getPosition().y*MyGdxGame.PPM + bounds.height/2 + 40, 50, 50);
         }
     }
 
     public void update(float dt) {
-        updateAlpha(dt, materializeSound);
+        updateAlpha(dt);
     }
 
     public void drawFontScaled(SpriteBatch sb) {
         sb.setColor(1,1,1, alpha);
-        sb.draw(currentTR, b2body.getPosition().x - bounds.width/2/MyGdxGame.PPM, b2body.getPosition().y - bounds.height/2/MyGdxGame.PPM, bounds.width/MyGdxGame.PPM, bounds.height/MyGdxGame.PPM);
+        if(open)
+            sb.draw(assets.leverOpenTR, b2body.getPosition().x - bounds.width/2/MyGdxGame.PPM, b2body.getPosition().y - bounds.height/2/MyGdxGame.PPM, bounds.width/MyGdxGame.PPM, bounds.height/MyGdxGame.PPM);
+        else
+            sb.draw(assets.leverClosedTR, b2body.getPosition().x - bounds.width/2/MyGdxGame.PPM, b2body.getPosition().y - bounds.height/2/MyGdxGame.PPM, bounds.width/MyGdxGame.PPM, bounds.height/MyGdxGame.PPM);
     }
 
     public void drawFont(SpriteBatch sb) {}
@@ -69,15 +59,12 @@ public class Lever extends GameObject {
     public void drawFilled(ShapeRenderer sr) {}
 
     public void pull() {
-        useSound.play();
         open = !open;
-        currentTR = open ? leverOpenTR : leverClosedTR;
     }
 
     void quizReset() {
         open = false;
         manualPull = true;
-        currentTR = leverClosedTR;
         b2body.setLinearVelocity(0,0);
         b2body.setTransform((bounds.getX() + bounds.getWidth()/2)/ MyGdxGame.PPM, (bounds.getY() + bounds.getHeight()/2)/ MyGdxGame.PPM, 0);
     }

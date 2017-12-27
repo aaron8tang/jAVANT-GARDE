@@ -115,13 +115,11 @@ public abstract class GameObject extends Sprite{
         }
     }
 
-    void updateAlpha(float dt, Sound sound) {
+    void updateAlpha(float dt) {
         if(alpha + dt*0.65f < 1)
             alpha += dt*0.65f;
-        else {
+        else
             alpha = 1;
-            sound.stop(); //todo de paizei
-        }
     }
 
     public abstract void update(float dt);

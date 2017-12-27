@@ -22,22 +22,17 @@ public class Teleporter extends GameObject {
     private State currentState;
     public State previousState;
     private TextureRegion currentTR;
-    private Animation<TextureRegion> idleAnim;
-    private Animation<TextureRegion> disappearingAnim;
     private float stateTimer = 0f;
 
-    private Sound teleporterSound;
+    private Assets assets;
 
     public Teleporter(String name, World world, TiledMap map, Rectangle bounds, Assets assets) {
         super(name, world, map, bounds, true);
+        this.assets = assets;
         currentState = State.IDLE;
         previousState = State.IDLE;
-        teleporterSound = assets.get(Assets.teleportSOUND, Sound.class);
 
-        idleAnim = new Animation<TextureRegion>(0.08f, Assets.loadAnim(assets.getTextureAtlas().findRegion(Assets.teleporterIdleREGION), 4, 4, 3));
-        disappearingAnim = new Animation<TextureRegion>(0.12f, Assets.loadAnim(assets.getTextureAtlas().findRegion(Assets.teleporterDisappearREGION), 4, 4, 1 ));
-
-        currentTR = idleAnim.getKeyFrame(0);
+        currentTR = assets.teleporterIdleAnimation.getKeyFrame(0);
 
         setBounds(b2body.getPosition().x - currentTR.getRegionWidth()/4/ MyGdxGame.PPM/2,
                 b2body.getPosition().y - 170/ MyGdxGame.PPM/2,
@@ -54,10 +49,10 @@ public class Teleporter extends GameObject {
         TextureRegion region;
         switch (currentState) {
             case DISAPPEARING:
-                region = disappearingAnim.getKeyFrame(stateTimer, false);
+                region = assets.teleporterDisappearingAnimation.getKeyFrame(stateTimer, false);
                 break;
             default:
-                region = idleAnim.getKeyFrame(stateTimer, true);
+                region = assets.teleporterIdleAnimation.getKeyFrame(stateTimer, true);
                 break;
         }
 
@@ -75,7 +70,7 @@ public class Teleporter extends GameObject {
     }
 
     public void disappear() {
-        teleporterSound.play();
+        assets.playSound(assets.teleportSound);
         stateTimer = 0;
         currentState = State.DISAPPEARING;
     }

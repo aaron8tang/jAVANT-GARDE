@@ -40,35 +40,31 @@ public class EditorQuizWindow extends Window {
     private boolean doOnce = true;
     private boolean[] booleanArray;
 
-    private Sound clickSound;
-    private Sound correctSound;
-    private Sound wrongSound;
+    private Assets assets;
 
     public EditorQuizWindow(String title, final PlayScreen playScreen) {
-        super(title, playScreen.getAssets().getTerraSkin());
+        super(title, playScreen.getAssets().terraSkin);
         this.playScreen = playScreen;
-        clickSound = playScreen.getAssets().get(Assets.clickSOUND, Sound.class);
-        correctSound = playScreen.getAssets().get(Assets.correctSOUND, Sound.class);
-        wrongSound = playScreen.getAssets().get(Assets.wrongAnswerSOUND, Sound.class);
+        this.assets = playScreen.getAssets();
 
         //top bar
-        Table topBarTable = new Table(playScreen.getAssets().getNeonSkin());
-        TextButton exitBtn = new TextButton("x", playScreen.getAssets().getNeonSkin());
+        Table topBarTable = new Table(playScreen.getAssets().neonSkin);
+        TextButton exitBtn = new TextButton("x", playScreen.getAssets().neonSkin);
         exitBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 closeCurrentEditor();
             }
         });
-        Label infoLabel = new Label("[CYAN]Fill in the blank![]", playScreen.getAssets().getTerraSkin());
+        Label infoLabel = new Label("[CYAN]Fill in the blank![]", playScreen.getAssets().terraSkin);
         topBarTable.add(infoLabel).expandX().center();
         topBarTable.add(exitBtn).top().right();
 
         //codeLabel
-        codeLabel = new Label("", playScreen.getAssets().getTerraSkin());
+        codeLabel = new Label("", playScreen.getAssets().terraSkin);
         codeLabel.getStyle().fontColor = Color.WHITE;
 
-        Table codeTable = new Table(playScreen.getAssets().getNeonSkin());
+        Table codeTable = new Table(playScreen.getAssets().neonSkin);
         codeTable.add(codeLabel).expand().fillX().top();
 
         //add components to window
@@ -249,13 +245,13 @@ public class EditorQuizWindow extends Window {
             codeLabel.setText(codeLabel.getText().toString().replaceAll("\\[RED]_*\\[]", "[RED]" + text.substring(1) + "[]"));
 
             if (text.charAt(0) == '!') { //correct answer
-                correctSound.play();
+                assets.playSound(assets.correctSound);
                 playScreen.getPlayer().showPlayerMsg("correct!");
                 codeLabel.getText().replace("RED", "GREEN");
                 correct = true;
             }
             else { //wrong answer
-                wrongSound.play();
+                assets.playSound(assets.wrongSound);
                 closeCurrentEditor();
                 playScreen.getPlayer().setCurrentState(Player.State.CODING); //so that the player can't run
                 if(!playScreen.getCurrentLevelID().equals("6_2") && !playScreen.getCurrentLevelID().equals("5_2"))
@@ -317,7 +313,7 @@ public class EditorQuizWindow extends Window {
 
     public void closeCurrentEditor() {
         if(this.getStage()!=null && answered == 0) {
-            clickSound.play();
+            assets.playSound(assets.clickSound);
             playScreen.getPlayer().setCurrentState(Player.State.STANDING);
             this.remove();
             extraKeyboardWindow.clearButtons();

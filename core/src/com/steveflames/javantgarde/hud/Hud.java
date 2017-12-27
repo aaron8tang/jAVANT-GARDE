@@ -2,11 +2,8 @@ package com.steveflames.javantgarde.hud;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -61,16 +58,11 @@ public class Hud implements Disposable {
     private boolean useBtnPressed = false;
     private boolean jumpBtnPressed = false;
 
-    private TextureRegion heartTR;
-    private Sound clickSound;
-    private Sound useItemSound;
-    private Sound levelCompletedSound;
+    private Assets assets;
 
     public Hud(final PlayScreen playScreen, SpriteBatch sb) {
         this.playScreen = playScreen;
-        clickSound = playScreen.getAssets().get(Assets.clickSOUND, Sound.class);
-        useItemSound = playScreen.getAssets().get(Assets.useItemSOUND, Sound.class);
-        levelCompletedSound = playScreen.getAssets().get(Assets.levelCompletedSOUND, Sound.class);
+        this.assets = playScreen.getAssets();
         stage = new Stage(Cameras.hudPort, sb);
         toast = new Toast((playScreen.getAssets()));
         editorWindow = new EditorWindow("EDITOR", playScreen.getAssets(), this);
@@ -80,7 +72,6 @@ public class Hud implements Disposable {
         gameOverWindow = new GameOverWindow(playScreen);
         levelCompletedWindow = new LevelCompletedWindow(playScreen);
         Gdx.input.setInputProcessor(stage);
-        heartTR = playScreen.getAssets().getTextureAtlas().findRegion(Assets.heartREGION);
     }
 
     public void update(float dt) {
@@ -110,7 +101,7 @@ public class Hud implements Disposable {
                 Fonts.small.draw(sb, "Classes found: " + playScreen.getPlayer().getClasses().size() +"/" + Item.getnOfClasses(), 15, MyGdxGame.HEIGHT - 67);
             }
             for(int i = 0; i< playScreen.getPlayer().getHealth(); i++)
-                sb.draw(heartTR, 20 +(60*i), MyGdxGame.HEIGHT - 60, 50, 50);
+                sb.draw(assets.heartTR, 20 +(60*i), MyGdxGame.HEIGHT - 60, 50, 50);
         }
 
         if(toast.isShowing())
@@ -123,9 +114,9 @@ public class Hud implements Disposable {
     }
 
     public void newAndroidInputTable() {
-        androidInputTable = new Table(playScreen.getAssets().getNeonSkin());
+        androidInputTable = new Table(playScreen.getAssets().neonSkin);
         androidInputTable.setSize(MyGdxGame.WIDTH, 120);
-        final TextButton leftBtn = new TextButton("<", playScreen.getAssets().getNeonSkin());
+        final TextButton leftBtn = new TextButton("<", playScreen.getAssets().neonSkin);
         leftBtn.addListener(new ClickListener() {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
@@ -145,7 +136,7 @@ public class Hud implements Disposable {
                 }
             }
         });
-        final TextButton rightBtn = new TextButton(">", playScreen.getAssets().getNeonSkin());
+        final TextButton rightBtn = new TextButton(">", playScreen.getAssets().neonSkin);
         rightBtn.addListener(new ClickListener() {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
@@ -165,7 +156,7 @@ public class Hud implements Disposable {
                 }
             }
         });
-        useBtn = new TextButton("USE", playScreen.getAssets().getNeonSkin());
+        useBtn = new TextButton("USE", playScreen.getAssets().neonSkin);
         useBtn.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -178,7 +169,7 @@ public class Hud implements Disposable {
                 useBtnPressed = false;
             }
         });
-        TextButton jumpBtn = new TextButton("JUMP", playScreen.getAssets().getNeonSkin());
+        TextButton jumpBtn = new TextButton("JUMP", playScreen.getAssets().neonSkin);
         jumpBtn.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -193,10 +184,10 @@ public class Hud implements Disposable {
         });
 
 
-        Table leftTable = new Table(playScreen.getAssets().getNeonSkin());
+        Table leftTable = new Table(playScreen.getAssets().neonSkin);
         leftTable.add(leftBtn).left().width(150).height(120).expandX();
         leftTable.add(rightBtn).left().width(150).height(120).expandX();
-        Table rightTable = new Table(playScreen.getAssets().getNeonSkin());
+        Table rightTable = new Table(playScreen.getAssets().neonSkin);
         rightTable.add(useBtn).right().width(200).height(120).expandX();
         rightTable.add(jumpBtn).right().width(200).height(120).expandX();
 
@@ -223,31 +214,31 @@ public class Hud implements Disposable {
     }
 
     public void showEditorWindow(Pc pc) {
-        useItemSound.play();
+        assets.playSound(assets.useItemSound);
         editorWindow.show(pc);
     }
 
     public void showEditorQuizWindow(Pc pc) {
-        useItemSound.play();
+        assets.playSound(assets.useItemSound);
         editorQuizWindow.show(pc);
     }
 
     public void showEditorOrderWindow(Pc pc) {
-        useItemSound.play();
+        assets.playSound(assets.useItemSound);
         editorOrderWindow.show(pc);
     }
 
     public void showInfoWindow(InfoSign infoSign, String text) {
-        useItemSound.play();
+        assets.playSound(assets.useItemSound);
         hideAndroidInputTable();
-        infoDialog = new Dialog("", playScreen.getAssets().getTerraSkin(), "dialog") {
+        infoDialog = new Dialog("", playScreen.getAssets().terraSkin, "dialog") {
             public void result(Object obj) {
                 closeCurrentInfo();
                 showAndroidInputTable();
             }
         };
         currentInfoSign = infoSign;
-        TextButton dummy = new TextButton("", playScreen.getAssets().getNeonSkin());
+        TextButton dummy = new TextButton("", playScreen.getAssets().neonSkin);
         infoDialog.button("     OK     ", true, dummy.getStyle()).setHeight(100); //sends "true" as the result
         infoDialog.key(Input.Keys.ENTER, true); //sends "true" when the ENTER key is pressed
         infoDialog.text(text);
@@ -265,21 +256,21 @@ public class Hud implements Disposable {
     }
 
     public void showGameOverWindow() {
-        playScreen.getPlayscreenMusic().stop();
+        assets.stopMusic(assets.playScreenMusic);
         stage.addActor(gameOverWindow);
         editorWindow.closeCurrentEditor();
         hideAndroidInputTable();
     }
 
     public void showLevelCompletedWindow() {
-        playScreen.getPlayscreenMusic().stop();
-        levelCompletedSound.play();
+        assets.stopMusic(assets.playScreenMusic);
+        assets.playSound(assets.levelCompletedSound);
         stage.addActor(levelCompletedWindow);
         hideAndroidInputTable();
     }
 
     public void closeCurrentInfo() {
-        clickSound.play();
+        assets.playSound(assets.clickSound);
         if(infoDialog.getStage()!=null)
             infoDialog.remove();
         playScreen.getPlayer().setCurrentState(Player.State.STANDING);

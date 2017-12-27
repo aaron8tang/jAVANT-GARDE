@@ -26,6 +26,6 @@ public class PlatformDepended implements com.steveflames.javantgarde.iPlatformDe
 
     @Override
     public boolean isHTML() {
-        return true;
+        return false;
     }
 }

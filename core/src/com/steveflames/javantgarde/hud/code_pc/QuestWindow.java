@@ -30,30 +30,26 @@ class QuestWindow extends Window {
     private TextButton helpBtn;
     private ScrollPane questScroll;
 
-    QuestWindow(String title, Assets assets, final Hud hud) {
-        super(title, assets.getTerraSkin());
-        final Sound clickSound = assets.get(Assets.clickSOUND, Sound.class);
-        Skin neonSkin = assets.getNeonSkin();
-        Skin terraSkin = assets.getTerraSkin();
-        Skin lmlSkin = assets.getLmlSkin();
+    QuestWindow(String title, final Assets assets, final Hud hud) {
+        super(title, assets.terraSkin);
 
         //quest text area
-        Table table = new Table(lmlSkin);
-        questTextArea = new Label("", terraSkin);
+        Table table = new Table(assets.lmlSkin);
+        questTextArea = new Label("", assets.terraSkin);
         questTextArea.setWrap(true);
         table.add(questTextArea).left().top().expand().fillX().padLeft(5);
-        questScroll = new ScrollPane(table, neonSkin);
+        questScroll = new ScrollPane(table, assets.neonSkin);
         if(MyGdxGame.platformDepended.deviceHasKeyboard())
             questScroll.setFlickScroll(false);
 
         //bottom bar
-        Table bottomBarTable = new Table(lmlSkin);
-        progressBar = new ProgressBar(0, 3, 1, false, neonSkin);
-        helpBtn = new TextButton("help", neonSkin);
+        Table bottomBarTable = new Table(assets.lmlSkin);
+        progressBar = new ProgressBar(0, 3, 1, false, assets.neonSkin);
+        helpBtn = new TextButton("help", assets.neonSkin);
         helpBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play();
+                assets.playSound(assets.clickSound);
                 hud.playScreen.getPlayer().reduceHealth(1);
                 hud.playScreen.getPlayer().setPlayerMsgAlpha(1);
                 questTextArea.setText(questTextArea.getText() + "\n[CYAN]HELP:[]\n");

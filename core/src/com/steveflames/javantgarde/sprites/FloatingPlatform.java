@@ -28,18 +28,14 @@ public class FloatingPlatform extends GameObject {
     private Lever lever;
     private boolean correct = false;
 
-    private Sound correctSound;
-    private Sound wrongSound;
-    private Sound riseSound;
+    private Assets assets;
 
     public FloatingPlatform(String name, World world, TiledMap map, Rectangle bounds, Lever lever, Assets assets) {
         super(name, world, map, bounds, false);
         this.name = name;
         glyphLayout.setText(Fonts.small, this.name);
         this.lever = lever;
-        correctSound = assets.get(Assets.correctSOUND, Sound.class);
-        wrongSound = assets.get(Assets.wrongAnswerSOUND, Sound.class);
-        riseSound = assets.get(Assets.riseSOUND, Sound.class);
+        this.assets = assets;
     }
 
     public void update(float dt) {}
@@ -99,17 +95,17 @@ public class FloatingPlatform extends GameObject {
     public void quizPull() {
         lever.pull();
         if(correct) {
-            correctSound.play();
+            assets.playSound(assets.correctSound);
         }
         else {
-            wrongSound.play();
+            assets.playSound(assets.wrongSound);
             b2body.setLinearVelocity(0, -6);
             lever.b2body.setLinearVelocity(0, -6);
         }
     }
 
     public void drop(float speed) {
-        riseSound.play();
+        assets.playSound(assets.riseSound);
         b2body.setType(BodyDef.BodyType.DynamicBody);
         b2body.setLinearVelocity(0, -speed);
     }

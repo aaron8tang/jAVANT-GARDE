@@ -30,16 +30,11 @@ public class B2WorldContactListener implements ContactListener {
 
     private String[] splitter;
     private PlayScreen playScreen;
-
-    private Sound bumpSound;
-    private Sound getItemSound;
-    private Sound frogSound;
+    private Assets assets;
 
     public B2WorldContactListener(PlayScreen playScreen) {
         this.playScreen = playScreen;
-        bumpSound = playScreen.getAssets().get(Assets.bumpSOUND, Sound.class);
-        getItemSound = playScreen.getAssets().get(Assets.getItemSOUND, Sound.class);
-        frogSound = playScreen.getAssets().get(Assets.frogSOUND, Sound.class);
+        this.assets = playScreen.getAssets();
     }
 
     @Override
@@ -72,7 +67,7 @@ public class B2WorldContactListener implements ContactListener {
                     playScreen.getObjectManager().getObjectsToRemove().add((Item)object.getUserData());
                     playScreen.getObjectManager().getItems().remove(object.getUserData());
                     if(((Item) object.getUserData()).isUsable()) {
-                        getItemSound.play();
+                        assets.playSound(assets.getItemSound);
                         if (((Item) object.getUserData()).getName().equals("health"))
                             ((Player) player.getUserData()).addHealth();
                         else if (((Item) object.getUserData()).getName().contains("class")) {
@@ -110,15 +105,15 @@ public class B2WorldContactListener implements ContactListener {
 
             }
             else if(object.getUserData().equals("cyberfrogLeftSensor")) {
-                frogSound.play();
+                assets.playSound(assets.frogSound);
                 ((Player)player.getUserData()).b2body.applyLinearImpulse(-5,0,0,0,true);
             }
             else if(object.getUserData().equals("cyberfrogRightSensor")) {
-                frogSound.play();
+                assets.playSound(assets.frogSound);
                 ((Player)player.getUserData()).b2body.applyLinearImpulse(5,0,0,0,true);
             }
             else if(object.getUserData().equals("cyberfrogUpperSensor")) {
-                frogSound.play();
+                assets.playSound(assets.frogSound);
                 ((Player)player.getUserData()).setCurrentState(Player.State.JUMPING);
                 ((Player)player.getUserData()).b2body.applyLinearImpulse(0,20,0,0,true);
             }
@@ -147,7 +142,7 @@ public class B2WorldContactListener implements ContactListener {
                 if(((Marker) object.getUserData()).getName().contains("destination")) {
                     for(SensorRobot cyberfrog: playScreen.getObjectManager().getSensorRobots()) {
                         if (cyberfrog.b2body.getFixtureList().contains(cyberfrogSensor, true)) {
-                            frogSound.play();
+                            assets.playSound(assets.frogSound);
                             cyberfrog.completed(playScreen);
                             break;
                         }
@@ -181,7 +176,7 @@ public class B2WorldContactListener implements ContactListener {
             }
         }
         if(fixA.getUserData().equals("ground") || fixB.getUserData().equals("ground")) {
-            bumpSound.play();
+            assets.playSound(assets.bumpSound);
         }
     }
 

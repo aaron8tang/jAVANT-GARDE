@@ -50,7 +50,7 @@ public class B2WorldCreator {
         //initialize pcs
         for(MapObject object: playScreen.getMap().getLayers().get(4).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
-            playScreen.getObjectManager().getPcs().add(new Pc(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, playScreen.getAssets().getTextureAtlas()));
+            playScreen.getObjectManager().getPcs().add(new Pc(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, playScreen.getAssets()));
             playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getPcs().get(playScreen.getObjectManager().getPcs().size()-1));
         }
 
@@ -88,13 +88,13 @@ public class B2WorldCreator {
                 Rectangle rect = ((RectangleMapObject) object).getRectangle();
                 if(object.getName() != null) {
                     if (object.getName().equals("health")) {
-                        Item item = new Item(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, playScreen.getAssets().getTextureAtlas());
+                        Item item = new Item(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, playScreen.getAssets());
                         item.setUsable(true);
                         playScreen.getObjectManager().getItems().add(item);
                         playScreen.getObjectManager().addGameObject(item);
                     }
                     else if(object.getName().contains("class")) {
-                        Item item = new Item(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, playScreen.getAssets().getTextureAtlas());
+                        Item item = new Item(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, playScreen.getAssets());
                         item.setUsable(true);
                         playScreen.getObjectManager().getItems().add(item);
                         playScreen.getObjectManager().addGameObject(item);

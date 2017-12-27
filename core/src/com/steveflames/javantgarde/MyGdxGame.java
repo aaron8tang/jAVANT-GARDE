@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.steveflames.javantgarde.screens.ChooseLevelScreen;
 import com.steveflames.javantgarde.screens.MainMenuScreen;
 import com.steveflames.javantgarde.tools.Assets;
+import com.steveflames.javantgarde.tools.MyPreferences;
 import com.steveflames.javantgarde.tools.global.Fonts;
 
 /**
@@ -26,13 +27,10 @@ import com.steveflames.javantgarde.tools.global.Fonts;
  * COMPILER: add compiler errors: (method doesn't exist, var not declared)
  * EDITOR: ston editor otan afhnw 1h grammh keno k kanw click varaei error index out of bounds -1
  * add greek
- * sto loading screen na deixnei se poia pista eimai
- * SOUNDS TODO
- * na prepei na termatiseis mia pista g na ksekleidwseis thn epomenh. html ola ksekleidwmena
  *
  *
  * ---------------LEVELS TO ADD---------------
- * na tonisw oti kathe entolh grafetai se mia kainouria grammh
+ * point out that each command is written on a new line (line of code)
  * method BODY, class BODY
  * indentation (spacing)
  * package? import?
@@ -52,32 +50,29 @@ public class MyGdxGame extends Game {
 	public static final int HEIGHT = 768; //600, 480,  1080, 768
 	public static final float PPM = 200; //pixels per meter. has to do with b2body scaling
 	public static final String TITLE = "jAVANT-GARDE";
-	public static boolean musicOn = true;
-	public static boolean sfxOn = true;
+	public static boolean musicOn;
+	public static boolean sfxOn;
 
 	public SpriteBatch sb; //used to render textures
 	public ShapeRenderer sr; //used to render shapes
 
 	public static iPlatformDepended platformDepended;
 	public Assets assets;
-	public Music mainMenuMusic;
+	public MyPreferences preferences;
 
 	public MyGdxGame(iPlatformDepended platformDepended) {
 		MyGdxGame.platformDepended = platformDepended;
 		assets  = new Assets();
+		preferences = new MyPreferences();
 	}
 
 	@Override
 	public void create () {
 		Fonts.load();
-		//Skins.load();
 		sb = new SpriteBatch();
 		sr = new ShapeRenderer();
-		assets.loadAllMainMenuAssets();
-		assets.finishLoading();
-		mainMenuMusic = assets.get(Assets.mainMenuMUSIC, Music.class);
-		mainMenuMusic.setLooping(true);
-		mainMenuMusic.play();
+		musicOn = preferences.isMusicEnabled();
+		sfxOn = preferences.isSoundEffectsEnabled();
 		setScreen(new MainMenuScreen(this));
 	}
 
@@ -92,7 +87,8 @@ public class MyGdxGame extends Game {
 	public void dispose () {
 		sb.dispose();
 		sr.dispose();
+		assets.unloadAllMainMenuAssets();
+		assets.unloadAllPlayScreenAssets();
 		Fonts.dispose();
-		//Loader.dispose();
 	}
 }

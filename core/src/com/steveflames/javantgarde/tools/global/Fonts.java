@@ -32,6 +32,7 @@ public class Fonts {
 
             xsmall.getData().markupEnabled = true;
             xsmallMonoMarkup.getData().markupEnabled = true;
+            medium.getData().markupEnabled = true;
             big.getData().markupEnabled = true;
         }
         else {

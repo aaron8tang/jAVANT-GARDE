@@ -26,19 +26,12 @@ import java.util.ArrayList;
 public class InfoSign extends GameObject {
 
     private String text = "";
-    private TextureRegion infoSignTR;
-    private TextureRegion infoSignUseTR;
-    private Sound materializeSound;
+    private Assets assets;
 
     public InfoSign(String name, World world, TiledMap map, Rectangle bounds, float alpha, Assets assets) {
         super(name, world, map, bounds, true);
+        this.assets = assets;
         this.alpha = alpha;
-        this.infoSignTR = assets.getTextureAtlas().findRegion(Assets.infoSignREGION);
-        this.infoSignUseTR = assets.getTextureAtlas().findRegion(Assets.eyeREGION);
-        materializeSound = assets.get(Assets.materializeSOUND, Sound.class);
-        if(alpha==0) {
-            materializeSound.loop();
-        }
 
         if (MyFileReader.exists("txt/info/" + name + ".txt"))
             text = MyFileReader.readFile("txt/info/" + name + ".txt");
@@ -57,18 +50,17 @@ public class InfoSign extends GameObject {
 
     public void drawUsePrompt(SpriteBatch sb) {
         if(usable) {
-            Fonts.medium.setColor(Color.RED);
-            sb.draw(infoSignUseTR, bounds.x + bounds.width / 2 - 25 + Cameras.getHudCameraOffsetX(), bounds.y + bounds.height + 40, 50, 50);
+            sb.draw(assets.eyeTR, bounds.x + bounds.width / 2 - 25 + Cameras.getHudCameraOffsetX(), bounds.y + bounds.height + 40, 50, 50);
         }
     }
 
     public void update(float dt) {
-        updateAlpha(dt, materializeSound);
+        updateAlpha(dt);
     }
 
     public void drawFontScaled(SpriteBatch sb) {
         sb.setColor(1,1,1,alpha);
-        sb.draw(infoSignTR, position.x - 32/MyGdxGame.PPM, position.y - bounds.height/2/MyGdxGame.PPM, 64/ MyGdxGame.PPM, 64/ MyGdxGame.PPM);
+        sb.draw(assets.infoSignTR, position.x - 32/MyGdxGame.PPM, position.y - bounds.height/2/MyGdxGame.PPM, 64/ MyGdxGame.PPM, 64/ MyGdxGame.PPM);
     }
 
     public void drawFont(SpriteBatch sb) {}

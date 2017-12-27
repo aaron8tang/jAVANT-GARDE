@@ -19,48 +19,48 @@ import com.steveflames.javantgarde.tools.Assets;
 
 public class LevelCompletedWindow extends Table {
 
-    private Sound clickSound;
 
     public LevelCompletedWindow(final PlayScreen playScreen) {
-        super(playScreen.getAssets().getNeonSkin());
-        clickSound = playScreen.getAssets().get(Assets.clickSOUND, Sound.class);
-        Skin neonSkin = playScreen.getAssets().getNeonSkin();
-        Skin lmlSkin = playScreen.getAssets().getLmlSkin();
+        super(playScreen.getAssets().neonSkin);
 
         this.setSize(400,260);
         this.setPosition(MyGdxGame.WIDTH/2 - 200, MyGdxGame.HEIGHT/2 - 110);
 
-        Label levelCompletedLabel = new Label("LEVEL COMPLETED", lmlSkin);
+        Label levelCompletedLabel = new Label("LEVEL COMPLETED", playScreen.getAssets().lmlSkin);
         levelCompletedLabel.scaleBy(1.2f, 1.2f);
         this.add(levelCompletedLabel).top().expandX().padTop(5);
         this.row();
 
-        Table optionsTable = new Table(neonSkin);
-        TextButton restartBtn = new TextButton(" RESTART ", neonSkin);
+        Table optionsTable = new Table(playScreen.getAssets().neonSkin);
+        TextButton restartBtn = new TextButton(" RESTART ", playScreen.getAssets().neonSkin);
         restartBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play();
+                playScreen.getAssets().playSound(playScreen.getAssets().clickSound);
                 playScreen.setRestartLevel();
                 playScreen.dispose();
+                playScreen.getGame().preferences.setLevelProgress((ChooseLevelScreen.getNextLevelId(playScreen.getCurrentLevel())));
                 playScreen.getGame().setScreen(new PlayScreen(playScreen.getGame(), playScreen.getCurrentLevel()));
             }
         });
-        TextButton exitBtn = new TextButton(" EXIT ", neonSkin);
+        TextButton exitBtn = new TextButton(" EXIT ", playScreen.getAssets().neonSkin);
         exitBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play();
-                playScreen.getGame().setScreen(new ChooseLevelScreen(playScreen.getGame()));
+                playScreen.getAssets().playSound(playScreen.getAssets().clickSound);
                 playScreen.dispose();
+                playScreen.getGame().preferences.setLevelProgress((ChooseLevelScreen.getNextLevelId(playScreen.getCurrentLevel())));
+                playScreen.getGame().setScreen(new ChooseLevelScreen(playScreen.getGame()));
+
             }
         });
-        TextButton nextLvlBtn = new TextButton(" NEXT ", neonSkin);
+        TextButton nextLvlBtn = new TextButton(" NEXT ", playScreen.getAssets().neonSkin);
         nextLvlBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play();
+                playScreen.getAssets().playSound(playScreen.getAssets().clickSound);
                 playScreen.dispose();
+                playScreen.getGame().preferences.setLevelProgress((ChooseLevelScreen.getNextLevelId(playScreen.getCurrentLevel())));
                 playScreen.getGame().setScreen(new LoadingScreen(playScreen.getGame(), ChooseLevelScreen.getNextLevel(playScreen.getCurrentLevel())));
             }
         });

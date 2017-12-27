@@ -27,101 +27,102 @@ public class AndroidExtraKeyboardWindow extends Window {
     private ImageButton keyBoardBtn;
     private Table table;
     private EditorQuizWindow editorQuizWindow;
-    private Skin neonSkin;
-    private Sound clickSound;
 
-    public AndroidExtraKeyboardWindow(String title, Assets assets, final EditorWindow editorWindow) {
-        super(title, assets.getTerraSkin());
-        this.neonSkin = assets.getNeonSkin();
-        clickSound = assets.get(Assets.clickSOUND, Sound.class);
+    private Assets assets;
+
+    public AndroidExtraKeyboardWindow(String title, final Assets assets, final EditorWindow editorWindow) {
+        super(title, assets.terraSkin);
+        this.assets = assets;
         this.setSize(700,85);
         this.setX(MyGdxGame.WIDTH - this.getWidth());
         this.setY(MyGdxGame.HEIGHT - this.getHeight() - 10);
 
-        Table table = new Table(neonSkin);
-        TextButton tabBtn = new TextButton("TAB", neonSkin);
+        Table table = new Table(assets.neonSkin);
+        TextButton tabBtn = new TextButton("TAB", assets.neonSkin);
         tabBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play();
+                assets.playSound(assets.clickSound);
                 editorWindow.editorKeyTyped('\t');
             }
         });
-        TextButton leftBracketBtn = new TextButton("{", neonSkin);
+        TextButton leftBracketBtn = new TextButton("{", assets.neonSkin);
         leftBracketBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play();
+                assets.playSound(assets.clickSound);
                 editorWindow.virtualTypeKey('{');
             }
         });
-        TextButton rightBracketBtn = new TextButton("}", neonSkin);
+        TextButton rightBracketBtn = new TextButton("}", assets.neonSkin);
         rightBracketBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play();
+                assets.playSound(assets.clickSound);
                 editorWindow.virtualTypeKey('}');
                 editorWindow.editorKeyTyped('}');
             }
         });
-        TextButton leftParBtn = new TextButton("(", neonSkin);
+        TextButton leftParBtn = new TextButton("(", assets.neonSkin);
         leftParBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play();
+                assets.playSound(assets.clickSound);
                 editorWindow.virtualTypeKey('(');
                 editorWindow.editorKeyTyped('(');
             }
         });
-        TextButton rightParBtn = new TextButton(")", neonSkin);
+        TextButton rightParBtn = new TextButton(")", assets.neonSkin);
         rightParBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play();
+                assets.playSound(assets.clickSound);
                 editorWindow.virtualTypeKey(')');
                 editorWindow.editorKeyTyped(')');
             }
         });
-        TextButton semicolonBtn = new TextButton(";", neonSkin);
+        TextButton semicolonBtn = new TextButton(";", assets.neonSkin);
         semicolonBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play();
+                assets.playSound(assets.clickSound);
                 editorWindow.virtualTypeKey(';');
             }
         });
-        TextButton singleQuoteBtn = new TextButton("'", neonSkin);
+        TextButton singleQuoteBtn = new TextButton("'", assets.neonSkin);
         singleQuoteBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play();
+                assets.playSound(assets.clickSound);
                 editorWindow.virtualTypeKey('\'');
                 editorWindow.editorKeyTyped('\'');
             }
         });
-        TextButton quoteBtn = new TextButton("\"", neonSkin);
+        TextButton quoteBtn = new TextButton("\"", assets.neonSkin);
         quoteBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play();
+                assets.playSound(assets.clickSound);
                 editorWindow.virtualTypeKey('"');
                 editorWindow.editorKeyTyped('"');
             }
         });
-        TextButton equalsBtn = new TextButton("=", neonSkin);
+        TextButton equalsBtn = new TextButton("=", assets.neonSkin);
         equalsBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play();
+                assets.playSound(assets.clickSound);
                 editorWindow.virtualTypeKey('=');
             }
         });
 
-        keyBoardBtn = new ImageButton(new TextureRegionDrawable(editorWindow.getHud().playScreen.getAssets().getTextureAtlas().findRegion(Assets.keyboardUpREGION)), new TextureRegionDrawable(editorWindow.getHud().playScreen.getAssets().getTextureAtlas().findRegion(Assets.keyboardDownREGION)), new TextureRegionDrawable(editorWindow.getHud().playScreen.getAssets().getTextureAtlas().findRegion(Assets.keyboardDownREGION)));
+        keyBoardBtn = new ImageButton(new TextureRegionDrawable(editorWindow.getHud().playScreen.getAssets().keyboardUpTR),
+                new TextureRegionDrawable(editorWindow.getHud().playScreen.getAssets().keyboardDownTR),
+                new TextureRegionDrawable(editorWindow.getHud().playScreen.getAssets().keyboardDownTR));
         keyBoardBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play();
+                assets.playSound(assets.clickSound);
                 keyboardShown = !keyboardShown;
                 setKeyboardShown(keyboardShown);
             }
@@ -135,31 +136,31 @@ public class AndroidExtraKeyboardWindow extends Window {
         table.add(singleQuoteBtn).height(69).width(100).left();
         table.add(quoteBtn).height(69).width(100).left();
         table.add(tabBtn).height(69).width(100).left();
-        ScrollPane scrollPane = new ScrollPane(table, neonSkin);
+        ScrollPane scrollPane = new ScrollPane(table, assets.neonSkin);
 
         this.add(scrollPane).expand().fill();
         this.add(keyBoardBtn).right().width(90).height(70);
     }
 
     public AndroidExtraKeyboardWindow(String title, Assets assets, final EditorQuizWindow editorQuizWindow) {
-        super(title, assets.getTerraSkin());
-        this.neonSkin = assets.getNeonSkin();
-        clickSound = assets.get(Assets.clickSOUND, Sound.class);
+        super(title, assets.terraSkin);
+        assets.neonSkin = assets.neonSkin;
+        this.assets = assets;
         this.editorQuizWindow = editorQuizWindow;
         this.setSize(10,85);
         this.setX(editorQuizWindow.getX() - this.getWidth());
         this.setY(editorQuizWindow.getY() - this.getHeight() - 5);
 
-        table = new Table(neonSkin);
+        table = new Table(assets.neonSkin);
         this.add(table).expand().fill();
     }
 
     public void addButton(final String text) {
-        TextButton btn = new TextButton(text.substring(1), neonSkin);
+        TextButton btn = new TextButton(text.substring(1), assets.neonSkin);
         btn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play();
+                assets.playSound(assets.clickSound);
                 editorQuizWindow.btnPressed(text);
             }
         });

@@ -2,7 +2,6 @@ package com.steveflames.javantgarde.hud.code_pc;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -59,29 +58,22 @@ public class EditorWindow extends Window {
 
     private float tempCamX = - 1;
 
-    private Sound clickSound;
-    private Sound errorSound;
-    private Sound correctSound;
+    private Assets assets;
 
-    public EditorWindow(String title, Assets assets, final Hud hud) {
-        super(title, assets.getTerraSkin());
+    public EditorWindow(String title, final Assets assets, final Hud hud) {
+        super(title, assets.terraSkin);
         this.hud = hud;
-        errorSound = assets.get(Assets.errorSOUND, Sound.class);
-        correctSound = assets.get(Assets.correctSOUND, Sound.class);
-        clickSound = assets.get(Assets.clickSOUND, Sound.class);
-        Skin neonSkin = assets.getNeonSkin();
-        Skin terraSkin = assets.getTerraSkin();
-        Skin lmlSkin = assets.getLmlSkin();
+        this.assets = assets;
 
         //top bar
-        Table topBarTable = new Table(assets.getNeonSkin());
-        TextButton exitBtn = new TextButton("x", neonSkin);
-        Table dummyTable = new Table(terraSkin);
-        classesTable = new Table(terraSkin);
-        TextButton classBtn = new TextButton("MyClass.java", neonSkin);
+        Table topBarTable = new Table(assets.neonSkin);
+        TextButton exitBtn = new TextButton("x", assets.neonSkin);
+        Table dummyTable = new Table(assets.terraSkin);
+        classesTable = new Table(assets.terraSkin);
+        TextButton classBtn = new TextButton("MyClass.java", assets.neonSkin);
         classesTable.add(classBtn).left().height(50).padLeft(0);
         dummyTable.add(classesTable).left().expandX();
-        ScrollPane classesScroll = new ScrollPane(dummyTable, neonSkin);
+        ScrollPane classesScroll = new ScrollPane(dummyTable, assets.neonSkin);
         if(MyGdxGame.platformDepended.deviceHasKeyboard())
             classesScroll.setFlickScroll(false);
 
@@ -90,34 +82,34 @@ public class EditorWindow extends Window {
         topBarTable.add(exitBtn).right().fill();
 
         //textArea
-        codeTextArea = new TextArea("", neonSkin);
+        codeTextArea = new TextArea("", assets.neonSkin);
         codeTextArea.setFocusTraversal(false);
         codeTextArea.getStyle().fontColor = Color.WHITE;
         codeTextArea.getStyle().disabledFontColor = Color.LIGHT_GRAY;
 
         //lineNumTable
-        Table lineNumTable = new Table(neonSkin);
-        Label label = new Label(1 + "", neonSkin);
+        Table lineNumTable = new Table(assets.neonSkin);
+        Label label = new Label(1 + "", assets.neonSkin);
         label.setColor(Color.CYAN);
         lineNumTable.add(label).width(60).height(codeTextArea.getStyle().font.getLineHeight());
         for (int i = 1; i < 150; i++) {
             lineNumTable.row();
-            label = new Label(i + 1 + "", neonSkin);
+            label = new Label(i + 1 + "", assets.neonSkin);
             label.setColor(Color.CYAN);
             lineNumTable.add(label).width(60).height(codeTextArea.getStyle().font.getLineHeight());
         }
 
         //codeTable
-        Table codeTable = new Table(lmlSkin);
+        Table codeTable = new Table(assets.lmlSkin);
         codeTable.add(lineNumTable).top().left();
         codeTable.add(codeTextArea).top().expand().fill().width(1000).padTop(5); //todo otan pataw 1h grammh enter k meta click indexoutOfBouds
-        ScrollPane codeScroll = new ScrollPane(codeTable, neonSkin);       //todo kalutero textArea.. na valw height k scroll mono sto textArea
+        ScrollPane codeScroll = new ScrollPane(codeTable, assets.neonSkin);       //todo kalutero textArea.. na valw height k scroll mono sto textArea
         if(MyGdxGame.platformDepended.deviceHasKeyboard())
             codeScroll.setFlickScroll(false);
 
         //bottom bar
-        TextButton compileAndRunBtn = new TextButton(" compile & run ", neonSkin);
-        Table bottomBarTable = new Table(neonSkin);
+        TextButton compileAndRunBtn = new TextButton(" compile & run ", assets.neonSkin);
+        Table bottomBarTable = new Table(assets.neonSkin);
         bottomBarTable.add(compileAndRunBtn).right().expandX().pad(0).height(60);
 
         //add components to window
@@ -133,7 +125,7 @@ public class EditorWindow extends Window {
         this.row();
         this.add(bottomBarTable).expandX().fillX();
 
-        consoleWindow = new ConsoleWindow("CONSOLE", neonSkin, terraSkin, hud.stage);
+        consoleWindow = new ConsoleWindow("CONSOLE", assets.neonSkin, assets.terraSkin, hud.stage);
         questWindow = new QuestWindow("QUEST", assets, hud);
         if(!MyGdxGame.platformDepended.deviceHasKeyboard())
             androidExtraKeyboardWindow = new AndroidExtraKeyboardWindow("+KEYBOARD", assets, this);
@@ -151,7 +143,7 @@ public class EditorWindow extends Window {
         classBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play();
+                assets.playSound(assets.clickSound);
                 if(!codeTextArea.isDisabled())
                     currentPc.setEditorText(codeTextArea.getText());
                 if(!currentPc.getEditorText().isEmpty())
@@ -196,7 +188,7 @@ public class EditorWindow extends Window {
         compileAndRunBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play();
+                assets.playSound(assets.clickSound);
                 if(!codeTextArea.isDisabled())
                     currentPc.setEditorText(codeTextArea.getText());
                 consoleWindow.getConsoleTextArea().setText("");
@@ -211,12 +203,12 @@ public class EditorWindow extends Window {
                 //compile and run
                 if(compiler.compile(myClasses) || (hud.playScreen.getCurrentLevelID().equals("1_1") && currentPc.getQuest().getProgress()==0)) {
                     if (validateCodeForQuest(hud.playScreen, myClasses.get(0), currentPc.getQuest().getQuestN())) {
-                        correctSound.play();
+                        assets.playSound(assets.correctSound);
                         questWindow.incrementQuestStep(currentPc.getQuest(), EditorWindow.this);
                     }
                 }
                 else
-                    errorSound.play();
+                    assets.playSound(assets.errorSound);
             }
         });
     }
@@ -474,7 +466,7 @@ public class EditorWindow extends Window {
 
     public void closeCurrentEditor() {
         if(this.getStage()!=null) {
-            clickSound.play();
+            assets.playSound(assets.clickSound);
             hud.playScreen.getPlayer().setCurrentState(Player.State.STANDING);
             this.remove();
             consoleWindow.remove();
@@ -510,7 +502,7 @@ public class EditorWindow extends Window {
                 }
             }
             if(flag) {
-                final TextButton btn = new TextButton(s.getKey() + ".java", hud.playScreen.getAssets().getNeonSkin());
+                final TextButton btn = new TextButton(s.getKey() + ".java", hud.playScreen.getAssets().neonSkin);
                 btn.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {

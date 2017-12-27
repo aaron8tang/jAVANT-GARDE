@@ -42,30 +42,26 @@ public class EditorOrderWindow extends Window {
     private boolean showEditor = true;
     private boolean doOnce = true;
 
-    private Sound clickSound;
-    private Sound correctSound;
-    private Sound wrongSound;
+    private Assets assets;
 
     public EditorOrderWindow(String title, final PlayScreen playScreen) {
-        super(title, playScreen.getAssets().getTerraSkin());
+        super(title, playScreen.getAssets().terraSkin);
         this.playScreen = playScreen;
-        clickSound = playScreen.getAssets().get(Assets.clickSOUND, Sound.class);
-        correctSound = playScreen.getAssets().get(Assets.correctSOUND, Sound.class);
-        wrongSound = playScreen.getAssets().get(Assets.wrongAnswerSOUND, Sound.class);
+        this.assets = playScreen.getAssets();
 
         //bot bar
-        botBarTable = new Table(playScreen.getAssets().getNeonSkin());
-        compileBtn = new TextButton(" compile & run ", playScreen.getAssets().getNeonSkin());
-        TextButton exitBtn = new TextButton("x", playScreen.getAssets().getNeonSkin());
-        Label infoLabel = new Label("[CYAN]Put the code in the correct order![]", playScreen.getAssets().getTerraSkin());
+        botBarTable = new Table(playScreen.getAssets().neonSkin);
+        compileBtn = new TextButton(" compile & run ", playScreen.getAssets().neonSkin);
+        TextButton exitBtn = new TextButton("x", playScreen.getAssets().neonSkin);
+        Label infoLabel = new Label("[CYAN]Put the code in the correct order![]", playScreen.getAssets().terraSkin);
         botBarTable.add(exitBtn).left();
         botBarTable.add(infoLabel).expandX().center();
         botBarTable.add(compileBtn).right();
 
         //code table
-        codeTable = new Table(playScreen.getAssets().getNeonSkin());
-        preCodeTable = new Table(playScreen.getAssets().getNeonSkin());
-        afterCodeTable = new Table(playScreen.getAssets().getNeonSkin());
+        codeTable = new Table(playScreen.getAssets().neonSkin);
+        preCodeTable = new Table(playScreen.getAssets().neonSkin);
+        afterCodeTable = new Table(playScreen.getAssets().neonSkin);
 
         //add components to window
         this.setSize(800, MyGdxGame.HEIGHT-120);
@@ -85,7 +81,7 @@ public class EditorOrderWindow extends Window {
         compileBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play();
+                assets.playSound(assets.clickSound);
                 StringBuilder temp = new StringBuilder();
                 for(int i=0; i<linesOfCodeTexts.size(); i++) {
                     temp.append(linesOfCodeTexts.get(i));
@@ -94,7 +90,7 @@ public class EditorOrderWindow extends Window {
                 }
                 if(temp.toString().equals(currentPc.getQuest().getCurrentQuestStepText())
                         || (temp.toString()+"\n").equals(currentPc.getQuest().getCurrentQuestStepText())) { //CORRECT ORDER
-                    correctSound.play();
+                    assets.playSound(assets.correctSound);
                     answered =1;
                     playScreen.getPlayer().showPlayerMsg("correct!");
                     for(int i=0; i<linesOfCodeTexts.size(); i++)
@@ -102,7 +98,7 @@ public class EditorOrderWindow extends Window {
                     updateUIcode();
                 }
                 else { //WRONG ORDER
-                    wrongSound.play();
+                    assets.playSound(assets.wrongSound);
                     closeCurrentEditor();
                     playScreen.getPlayer().b2body.applyLinearImpulse(-14, 6, 0, 0, true);
                 }
@@ -200,7 +196,7 @@ public class EditorOrderWindow extends Window {
                 //init immutable code before orderCode
                 for(int i=0; i<currentPc.getQuest().getCurrentQuestStep().getHints().size(); i++) {
                     if(currentPc.getQuest().getCurrentQuestStep().getHints().get(i).startsWith("[")) {
-                        preCodeTable.add(new Label(currentPc.getQuest().getCurrentQuestStep().getHints().get(i).substring(1), playScreen.getAssets().getTerraSkin())).expandX().left();
+                        preCodeTable.add(new Label(currentPc.getQuest().getCurrentQuestStep().getHints().get(i).substring(1), playScreen.getAssets().terraSkin)).expandX().left();
                         if(i != currentPc.getQuest().getCurrentQuestStep().getHints().size()-1)
                             preCodeTable.row();
                     }
@@ -212,33 +208,33 @@ public class EditorOrderWindow extends Window {
                     if (i > 0)
                         codeTable.row();
 
-                    Table lineOfCode = new Table(playScreen.getAssets().getNeonSkin());
-                    Label codeLabel = new Label(s[i], playScreen.getAssets().getTerraSkin());
+                    Table lineOfCode = new Table(playScreen.getAssets().neonSkin);
+                    Label codeLabel = new Label(s[i], playScreen.getAssets().terraSkin);
                     lineOfCode.add(codeLabel).expandX().left();
                     codeTable.add(lineOfCode).expand().fill();
 
                     if (i > 0) {
-                        final TextButton upBtn = new TextButton("^", playScreen.getAssets().getNeonSkin());
+                        final TextButton upBtn = new TextButton("^", playScreen.getAssets().neonSkin);
                         upBtn.setName(i + "");
                         upBtn.addListener(new ClickListener() {
                             @Override
                             public void clicked(InputEvent event, float x, float y) {
-                                clickSound.play();
+                                assets.playSound(assets.clickSound);
                                 Collections.swap(linesOfCodeTexts, Integer.parseInt(upBtn.getName()), Integer.parseInt(upBtn.getName()) - 1);
                                 updateUIcode();
                             }
                         });
                         lineOfCode.add(upBtn).width(70);
                         if(i==s.length-1)
-                            lineOfCode.add(new Label("", playScreen.getAssets().getTerraSkin())).width(70);
+                            lineOfCode.add(new Label("", playScreen.getAssets().terraSkin)).width(70);
                     }
                     if (i != s.length - 1) {
-                        final TextButton downBtn = new TextButton("v", playScreen.getAssets().getNeonSkin());
+                        final TextButton downBtn = new TextButton("v", playScreen.getAssets().neonSkin);
                         downBtn.setName(i + "");
                         downBtn.addListener(new ClickListener() {
                             @Override
                             public void clicked(InputEvent event, float x, float y) {
-                                clickSound.play();
+                                assets.playSound(assets.clickSound);
                                 Collections.swap(linesOfCodeTexts, Integer.parseInt(downBtn.getName()), Integer.parseInt(downBtn.getName()) + 1);
                                 updateUIcode();
                             }
@@ -251,7 +247,7 @@ public class EditorOrderWindow extends Window {
                 //init immutable code after orderCode
                 for(int i=0; i<currentPc.getQuest().getCurrentQuestStep().getHints().size(); i++) {
                     if(currentPc.getQuest().getCurrentQuestStep().getHints().get(i).startsWith("]")) {
-                        afterCodeTable.add(new Label(currentPc.getQuest().getCurrentQuestStep().getHints().get(i).substring(1), playScreen.getAssets().getTerraSkin())).expandX().left();
+                        afterCodeTable.add(new Label(currentPc.getQuest().getCurrentQuestStep().getHints().get(i).substring(1), playScreen.getAssets().terraSkin)).expandX().left();
                         if(i != currentPc.getQuest().getCurrentQuestStep().getHints().size()-1)
                             afterCodeTable.row();
                     }
@@ -263,7 +259,7 @@ public class EditorOrderWindow extends Window {
             afterCodeTable.remove();
             linesOfCodeTexts.clear();
             codeTable.clear();
-            codeTable.add(new Label("[GREEN]Quest completed![]", playScreen.getAssets().getTerraSkin()));
+            codeTable.add(new Label("[GREEN]Quest completed![]", playScreen.getAssets().terraSkin));
             compileBtn.remove();
         }
     }
@@ -293,7 +289,7 @@ public class EditorOrderWindow extends Window {
 
     public void closeCurrentEditor() {
         if(this.getStage()!=null && answered==0) {
-            clickSound.play();
+            assets.playSound(assets.clickSound);
             playScreen.getPlayer().setCurrentState(Player.State.STANDING);
             this.remove();
             playScreen.getHud().showAndroidInputTable();

@@ -5,12 +5,12 @@ import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.steveflames.javantgarde.MyGdxGame;
-import com.steveflames.javantgarde.screens.MainMenuScreen;
 import com.steveflames.javantgarde.tools.global.Fonts;
 
 /**
@@ -20,61 +20,115 @@ import com.steveflames.javantgarde.tools.global.Fonts;
 public class Assets {
 
     private AssetManager manager = new AssetManager();
+
     //GRAPHICS - TEXTURE REGIONS
-    public static final String teleporterDisappearREGION = "teleporter_disappear";
-    public static final String botTypingREGION = "bot_typing";
-    public static final String pcREGION = "pc";
-    public static final String leverClosedREGION = "lever_closed";
-    public static final String leverOpenREGION = "lever_open";
-    public static final String botMoveREGION = "bot_move";
-    public static final String infoSignREGION = "infoSign";
-    public static final String diplomaREGION = "diploma";
-    public static final String scrollREGION = "scroll";
-    public static final String botWheelREGION = "bot_wheel";
-    public static final String keyboardDownREGION = "keyboardDown";
-    public static final String keyboardUpREGION = "keyboardUp";
-    public static final String robotAntennasREGION = "robot-antennas";
-    public static final String classREGION = "class";
-    public static final String eyeREGION = "eye";
-    public static final String fixREGION = "fix";
-    public static final String handREGION = "hand";
-    public static final String heartREGION = "heart";
-    public static final String teleporterIdleREGION = "teleporter_idle";
-    public static final String botTalkREGION = "bot_talk";
-    public static final String frogTalkREGION = "frog_talk";
-    public static final String aboutUpT = "images/helpUp.png";
-    public static final String aboutDownT = "images/helpDown.png";
-    public static final String audioT = "images/audio.png";
-    public static final String playT = "images/play.png";
+    private static final String texturesATLAS = "images/textures.pack";
+    private static final String frogATLAS = "images/frog/frog.pack";
+    private static final String mainMenuTexturesATLAS = "images/mainMenuTextures.pack";
+    private static final String teleporterDisappearREGION = "teleporter_disappear";
+    private static final String botTypingREGION = "bot_typing";
+    private static final String pcREGION = "pc";
+    private static final String leverClosedREGION = "lever_closed";
+    private static final String leverOpenREGION = "lever_open";
+    private static final String botMoveREGION = "bot_move";
+    private static final String infoSignREGION = "infoSign";
+    private static final String diplomaREGION = "diploma";
+    private static final String scrollREGION = "scroll";
+    private static final String botWheelREGION = "bot_wheel";
+    private static final String keyboardDownREGION = "keyboardDown";
+    private static final String keyboardUpREGION = "keyboardUp";
+    private static final String robotAntennasREGION = "robot-antennas";
+    private static final String classREGION = "class";
+    private static final String eyeREGION = "eye";
+    private static final String fixREGION = "fix";
+    private static final String handREGION = "hand";
+    private static final String heartREGION = "heart";
+    private static final String teleporterIdleREGION = "teleporter_idle";
+    private static final String botTalkREGION = "bot_talk";
+    private static final String frogTalkREGION = "frog_talk";
+    private static final String aboutUpREGION = "helpUp";
+    private static final String audioREGION = "audio";
+    private static final String playREGION = "play";
+    private static final String lockTEXTURE = "images/lock.png";
+
+    private TextureAtlas textureAtlas;
+    private TextureAtlas frogAtlas;
+    private TextureAtlas mainMenuTexturesAtlas;
+    public Animation<TextureRegion> botIdleAnimation;
+    public Animation<TextureRegion> botTypingAnimation;
+    public Animation<TextureRegion> robotTalkinAnimation;
+    public Animation<TextureRegion> frogIdleAnimation;
+    public Animation<TextureRegion> teleporterIdleAnimation;
+    public Animation<TextureRegion> teleporterDisappearingAnimation;
+    public TextureRegion pcTR;
+    public TextureRegion leverClosedTR;
+    public TextureRegion leverOpenTR;
+    public TextureRegion botMoveTR;
+    public TextureRegion infoSignTR;
+    public TextureRegion diplomaTR;
+    public TextureRegion scrollTR;
+    public TextureRegion botWheelTR;
+    public TextureRegion keyboardDownTR;
+    public TextureRegion keyboardUpTR;
+    public TextureRegion classTR;
+    public TextureRegion eyeTR;
+    public TextureRegion fixTR;
+    public TextureRegion handTR;
+    public TextureRegion heartTR;
+    public TextureRegion aboutUpT;
+    public TextureRegion audioT;
+    public TextureRegion playT;
+    public Texture lockT;
+
 
     //AUDIO
-    public static final String mainMenuMUSIC = "audio/music/jewelbeat - electro dance.wav";
-    public static final String playScreenMUSIC = "audio/music/jewelbeat - stepping stones.wav";
-    public static final String jumpSOUND = "audio/sounds/jump.wav";
-    public static final String correctSOUND = "audio/sounds/correct.wav";
-    public static final String levelCompletedSOUND = "audio/sounds/levelCompleted.wav";
-    public static final String wrongAnswerSOUND = "audio/sounds/wrong.wav";
-    public static final String errorSOUND = "audio/sounds/error.wav";
-    public static final String loseHealthSOUND = "audio/sounds/loseHealth.wav";
-    public static final String deadSOUND = "audio/sounds/dead.wav";
-    public static final String clickSOUND = "audio/sounds/click.wav";
-    public static final String bumpSOUND = "audio/sounds/bump.wav";
-    public static final String robotTalkingSOUND = "audio/sounds/robotTalk.wav";
-    public static final String useItemSOUND = "audio/sounds/useItem.wav";
-    public static final String leverSOUND = "audio/sounds/lever.wav";
-    public static final String doorSOUND = "audio/sounds/door.wav";
-    public static final String teleportSOUND = "audio/sounds/teleport.wav";
-    public static final String getItemSOUND = "audio/sounds/coin.wav";
-    public static final String frogSOUND = "audio/sounds/frog.wav";
-    public static final String materializeSOUND = "audio/sounds/materialize.wav";
-    public static final String riseSOUND = "audio/sounds/rise.wav";
-    public static final String musicAnnouncerSOUND = "audio/sounds/musicAnnouncer.wav";
+    private static final String mainMenuMUSIC = "audio/music/jewelbeat_electro_dance.ogg";
+    private static final String playScreenMUSIC = "audio/music/jewelbeat_stepping_stones.ogg";
+    private static final String jumpSOUND = "audio/sounds/jump.wav";
+    private static final String correctSOUND = "audio/sounds/correct.wav";
+    private static final String levelCompletedSOUND = "audio/sounds/levelCompleted.wav";
+    private static final String wrongAnswerSOUND = "audio/sounds/wrong.wav";
+    private static final String errorSOUND = "audio/sounds/error.wav";
+    private static final String loseHealthSOUND = "audio/sounds/loseHealth.wav";
+    private static final String deadSOUND = "audio/sounds/dead.wav";
+    private static final String clickSOUND = "audio/sounds/click.wav";
+    private static final String bumpSOUND = "audio/sounds/bump.wav";
+    private static final String robotTalkingSOUND = "audio/sounds/robotTalk.wav";
+    private static final String useItemSOUND = "audio/sounds/useItem.wav";
+    private static final String doorSOUND = "audio/sounds/door.wav";
+    private static final String teleportSOUND = "audio/sounds/teleport.wav";
+    private static final String getItemSOUND = "audio/sounds/coin.wav";
+    private static final String frogSOUND = "audio/sounds/frog.wav";
+    private static final String riseSOUND = "audio/sounds/rise.wav";
+
+    public Music mainMenuMusic;
+    public Music playScreenMusic;
+    public Sound clickSound;
+    public Sound jumpSound;
+    public Sound correctSound;
+    public Sound levelCompletedSound;
+    public Sound wrongSound;
+    public Sound errorSound;
+    public Sound loseHealthSound;
+    public Sound deadSound;
+    public Sound bumpSound;
+    public Sound robotTalkingSound;
+    public Sound useItemSound;
+    public Sound doorSound;
+    public Sound teleportSound;
+    public Sound getItemSound;
+    public Sound frogSound;
+    public Sound riseSound;
 
 
     //SKINS
-    public static final String neonSKIN = "skins/neon/skin/neon-ui.json";
-    public static final String terraSKIN = "skins/terra-mother/skin/terra-mother-ui.json";
-    public static final String lmlSKIN = "skins/lml/skin/skin.json";
+    private static final String neonSKIN = "skins/neon/skin/neon-ui.json";
+    private static final String terraSKIN = "skins/terra-mother/skin/terra-mother-ui.json";
+    private static final String lmlSKIN = "skins/lml/skin/skin.json";
+
+    public Skin neonSkin;
+    public Skin terraSkin;
+    public Skin lmlSkin;
 
 
     public <T> T get(String path, Class<T> tClass) {
@@ -93,49 +147,10 @@ public class Assets {
         return manager.getQueuedAssets();
     }
 
-    public void loadAllMainMenuAssets() {
-        manager.load(playT, Texture.class);
-        manager.load(aboutUpT, Texture.class);
-        manager.load(aboutDownT, Texture.class);
-        manager.load(audioT, Texture.class);
-        if(MyGdxGame.musicOn)
-            loadMainMenuMusic();
-        if(MyGdxGame.sfxOn)
-            loadMainMenuSounds();
-        loadSkins();
-    }
-
-    public void unloadAllMainMenuAssets() {
-        manager.unload(playT);
-        manager.unload(aboutUpT);
-        manager.unload(aboutDownT);
-        manager.unload(audioT);
-        if(MyGdxGame.musicOn)
-            manager.unload(mainMenuMUSIC);
-        if(MyGdxGame.sfxOn)
-            manager.unload(clickSOUND);
-        //todo unload skins?
-    }
-
-    public void loadMainMenuMusic() {
-        manager.load(mainMenuMUSIC, Music.class);
-    }
-
-    public void loadMainMenuSounds() {
-        manager.load(clickSOUND, Sound.class);
-    }
-
-    public void unloadMainMenuMusic() {
-        manager.unload(mainMenuMUSIC);
-    }
-
-    public void unloadMainMenuSounds() {
-        manager.unload(clickSOUND);
-    }
 
     public void loadAllPlayScreenAssets() {
-        manager.load("images/textures.pack", TextureAtlas.class);
-        manager.load("images/frog/frog.pack", TextureAtlas.class);
+        manager.load(texturesATLAS, TextureAtlas.class);
+        manager.load(frogATLAS, TextureAtlas.class);
         if(MyGdxGame.musicOn)
             manager.load(playScreenMUSIC, Music.class);
         if(MyGdxGame.sfxOn) {
@@ -144,25 +159,24 @@ public class Assets {
             manager.load(getItemSOUND, Sound.class);
             manager.load(bumpSOUND, Sound.class);
             manager.load(frogSOUND, Sound.class);
-            manager.load(doorSOUND, Music.class);
-            manager.load(materializeSOUND, Sound.class);
+            manager.load(doorSOUND, Sound.class);
             manager.load(robotTalkingSOUND, Sound.class);
             manager.load(errorSOUND, Sound.class);
             manager.load(correctSOUND, Sound.class);
-            manager.load(leverSOUND, Sound.class);
             manager.load(wrongAnswerSOUND, Sound.class);
             manager.load(loseHealthSOUND, Sound.class);
             manager.load(teleportSOUND, Sound.class);
             manager.load(useItemSOUND, Sound.class);
             manager.load(levelCompletedSOUND, Sound.class);
             manager.load(riseSOUND, Sound.class);
-            manager.load(musicAnnouncerSOUND, Sound.class);
         }
     }
 
     public void unloadAllPlayScreenAssets() {
-        manager.unload("images/textures.pack");
-        manager.unload("images/frog/frog.pack");
+        if(manager.isLoaded(texturesATLAS)) {
+            manager.unload(texturesATLAS);
+            manager.unload(frogATLAS);
+        }
         if(manager.isLoaded(bumpSOUND)) {
             manager.unload(jumpSOUND);
             manager.unload(deadSOUND);
@@ -170,41 +184,147 @@ public class Assets {
             manager.unload(bumpSOUND);
             manager.unload(frogSOUND);
             manager.unload(doorSOUND);
-            manager.unload(materializeSOUND);
             manager.unload(robotTalkingSOUND);
             manager.unload(errorSOUND);
             manager.unload(correctSOUND);
-            manager.unload(leverSOUND);
             manager.unload(wrongAnswerSOUND);
             manager.unload(loseHealthSOUND);
             manager.unload(teleportSOUND);
             manager.unload(useItemSOUND);
             manager.unload(levelCompletedSOUND);
             manager.unload(riseSOUND);
-            manager.unload(musicAnnouncerSOUND);
         }
     }
 
-    private void loadSkins() {
-        ObjectMap<String, Object> resources = new ObjectMap<String, Object>();
-        resources.put("LiberationMono", Fonts.xsmallMono);
-
-        manager.load("skins/neon/skin/neon-ui.atlas", TextureAtlas.class);
-        manager.load("skins/neon/skin/neon-ui.json", Skin.class, new SkinLoader.SkinParameter("skins/neon/skin/neon-ui.atlas", resources));
-
-        resources = new ObjectMap<String, Object>();
-        resources.put("LiberationMono", Fonts.big);
-        manager.load("skins/lml/skin/skin.atlas", TextureAtlas.class);
-        manager.load("skins/lml/skin/skin.json", Skin.class, new SkinLoader.SkinParameter("skins/lml/skin/skin.atlas", resources));
-
-        resources = new ObjectMap<String, Object>();
-        resources.put("LiberationMono", Fonts.xsmallMonoMarkup);
-        resources.put("mvboli", Fonts.xsmall);
-        manager.load("skins/terra-mother/skin/terra-mother-ui.atlas", TextureAtlas.class);
-        manager.load("skins/terra-mother/skin/terra-mother-ui.json", Skin.class, new SkinLoader.SkinParameter("skins/terra-mother/skin/terra-mother-ui.atlas", resources));
+    public void refreshPlayScreenAssets() {
+        if(MyGdxGame.musicOn) {
+            playScreenMusic = manager.get(playScreenMUSIC, Music.class);
+            playScreenMusic.setLooping(true);
+        }
+        if(MyGdxGame.sfxOn) {
+            jumpSound = manager.get(jumpSOUND, Sound.class);
+            correctSound = manager.get(correctSOUND, Sound.class);
+            levelCompletedSound = manager.get(levelCompletedSOUND, Sound.class);
+            wrongSound = manager.get(wrongAnswerSOUND, Sound.class);
+            errorSound = manager.get(errorSOUND, Sound.class);
+            loseHealthSound = manager.get(loseHealthSOUND, Sound.class);
+            deadSound = manager.get(deadSOUND, Sound.class);
+            bumpSound = manager.get(bumpSOUND, Sound.class);
+            robotTalkingSound = manager.get(robotTalkingSOUND, Sound.class);
+            useItemSound = manager.get(useItemSOUND, Sound.class);
+            doorSound = manager.get(doorSOUND, Sound.class);
+            teleportSound = manager.get(teleportSOUND, Sound.class);
+            getItemSound = manager.get(getItemSOUND, Sound.class);
+            frogSound = manager.get(frogSOUND, Sound.class);
+            riseSound = manager.get(riseSOUND, Sound.class);
+        }
+        if(manager.isLoaded(neonSKIN)) {
+            neonSkin = manager.get(neonSKIN, Skin.class);
+            terraSkin = manager.get(terraSKIN, Skin.class);
+            lmlSkin = manager.get(lmlSKIN, Skin.class);
+        }
+        textureAtlas = manager.get("images/textures.pack");
+        frogAtlas = manager.get("images/frog/frog.pack");
+        pcTR = textureAtlas.findRegion(pcREGION);
+        leverClosedTR = textureAtlas.findRegion(leverClosedREGION);
+        leverOpenTR = textureAtlas.findRegion(leverOpenREGION);
+        botMoveTR = textureAtlas.findRegion(botMoveREGION);
+        infoSignTR = textureAtlas.findRegion(infoSignREGION);
+        diplomaTR = textureAtlas.findRegion(diplomaREGION);
+        scrollTR = textureAtlas.findRegion(scrollREGION);
+        botWheelTR = textureAtlas.findRegion(botWheelREGION);
+        keyboardDownTR = textureAtlas.findRegion(keyboardDownREGION);
+        keyboardUpTR = textureAtlas.findRegion(keyboardUpREGION);
+        classTR = textureAtlas.findRegion(classREGION);
+        eyeTR = textureAtlas.findRegion(eyeREGION);
+        fixTR = textureAtlas.findRegion(fixREGION);
+        handTR = textureAtlas.findRegion(handREGION);
+        heartTR = textureAtlas.findRegion(heartREGION);
+        botIdleAnimation = new Animation<TextureRegion>(0.08f, loadAnim(textureAtlas.findRegion(botTalkREGION), 12, 6, 3 ));
+        botTypingAnimation = new Animation<TextureRegion>(0.015f, loadAnim(textureAtlas.findRegion(botTypingREGION), 12, 2, 0 ));
+        robotTalkinAnimation = new Animation<TextureRegion>(0.16f, loadAnim(textureAtlas.findRegion(Assets.robotAntennasREGION),4, 1, 0));
+        frogIdleAnimation = new Animation<TextureRegion>(0.06f , loadAnim(frogAtlas.findRegion(Assets.frogTalkREGION), 16,4,2));
+        teleporterIdleAnimation = new Animation<TextureRegion>(0.08f, loadAnim(textureAtlas.findRegion(Assets.teleporterIdleREGION), 4, 4, 3));
+        teleporterDisappearingAnimation = new Animation<TextureRegion>(0.12f, loadAnim(textureAtlas.findRegion(Assets.teleporterDisappearREGION), 4, 4, 1 ));
     }
 
-    public static TextureRegion[] loadAnim(TextureAtlas.AtlasRegion region, int columns, int rows, int lastNoImageN) {
+    public void loadAllMainMenuAssets() {
+        if(!manager.isLoaded(mainMenuTexturesATLAS)) {
+            manager.load(mainMenuTexturesATLAS, TextureAtlas.class);
+            manager.load(lockTEXTURE, Texture.class);
+        }
+        if(MyGdxGame.musicOn)
+            loadMainMenuMusic();
+        if(MyGdxGame.sfxOn)
+            loadMainMenuSounds();
+        loadSkins();
+    }
+
+    public void unloadAllMainMenuAssets() {
+        if(manager.isLoaded(mainMenuTexturesATLAS)) {
+            manager.unload(mainMenuTexturesATLAS);
+        }
+        if(manager.isLoaded(mainMenuMUSIC))
+            manager.unload(mainMenuMUSIC);
+        if(manager.isLoaded(clickSOUND))
+            manager.unload(clickSOUND);
+    }
+
+    public void refreshMainMenuAssets() {
+        if(MyGdxGame.musicOn) {
+            mainMenuMusic = manager.get(mainMenuMUSIC, Music.class);
+            mainMenuMusic.setLooping(true);
+        }
+        if(MyGdxGame.sfxOn) {
+            clickSound = manager.get(clickSOUND, Sound.class);
+        }
+        if(manager.isLoaded(neonSKIN)) {
+            neonSkin = manager.get(neonSKIN, Skin.class);
+            terraSkin = manager.get(terraSKIN, Skin.class);
+            lmlSkin = manager.get(lmlSKIN, Skin.class);
+        }
+        mainMenuTexturesAtlas = manager.get(mainMenuTexturesATLAS);
+        playT = mainMenuTexturesAtlas.findRegion(playREGION);
+        aboutUpT = mainMenuTexturesAtlas.findRegion(aboutUpREGION);
+        audioT = mainMenuTexturesAtlas.findRegion(audioREGION);
+        lockT = manager.get(lockTEXTURE, Texture.class);
+    }
+
+    public void loadMainMenuMusic() {
+        manager.load(mainMenuMUSIC, Music.class);
+    }
+    public void loadMainMenuSounds() {
+        manager.load(clickSOUND, Sound.class);
+    }
+    public void unloadMainMenuMusic() {
+        manager.unload(mainMenuMUSIC);
+    }
+    public void unloadMainMenuSounds() {
+        manager.unload(clickSOUND);
+    }
+
+    private void loadSkins() {
+        if(!manager.isLoaded(neonSKIN)) {
+            ObjectMap<String, Object> resources = new ObjectMap<String, Object>();
+            resources.put("LiberationMono", Fonts.xsmallMono);
+
+            manager.load("skins/neon/skin/neon-ui.atlas", TextureAtlas.class);
+            manager.load("skins/neon/skin/neon-ui.json", Skin.class, new SkinLoader.SkinParameter("skins/neon/skin/neon-ui.atlas", resources));
+
+            resources = new ObjectMap<String, Object>();
+            resources.put("LiberationMono", Fonts.big);
+            manager.load("skins/lml/skin/skin.atlas", TextureAtlas.class);
+            manager.load("skins/lml/skin/skin.json", Skin.class, new SkinLoader.SkinParameter("skins/lml/skin/skin.atlas", resources));
+
+            resources = new ObjectMap<String, Object>();
+            resources.put("LiberationMono", Fonts.xsmallMonoMarkup);
+            resources.put("mvboli", Fonts.xsmall);
+            manager.load("skins/terra-mother/skin/terra-mother-ui.atlas", TextureAtlas.class);
+            manager.load("skins/terra-mother/skin/terra-mother-ui.json", Skin.class, new SkinLoader.SkinParameter("skins/terra-mother/skin/terra-mother-ui.atlas", resources));
+        }
+    }
+
+    private TextureRegion[] loadAnim(TextureAtlas.AtlasRegion region, int columns, int rows, int lastNoImageN) {
         TextureRegion[] temp = new TextureRegion[columns * rows - lastNoImageN];
 
         TextureRegion[][] tmp = region.split(region.getRegionWidth() / columns,
@@ -224,20 +344,30 @@ public class Assets {
         return temp;
     }
 
-    public TextureAtlas getTextureAtlas() {
-        return manager.get("images/textures.pack");
-    }
-    public TextureAtlas getFrogAtlas() {
-        return manager.get("images/frog/frog.pack");
-    }
-    public Skin getNeonSkin() {
-        return manager.get(neonSKIN, Skin.class);
-    }
-    public Skin getTerraSkin() {
-        return manager.get(terraSKIN, Skin.class);
-    }
-    public Skin getLmlSkin() {
-        return manager.get(lmlSKIN, Skin.class);
+    public void playSound(Sound sound) {
+        if(MyGdxGame.sfxOn)
+            sound.play();
     }
 
+    public void playMusic(Music music) {
+        if(MyGdxGame.musicOn) {
+            if(!music.isPlaying())
+                music.play();
+        }
+    }
+
+    public void stopSound(Sound sound) {
+        if(MyGdxGame.sfxOn)
+            sound.stop();
+    }
+
+    public void stopMusic(Music music) {
+        if(MyGdxGame.musicOn)
+            music.stop();
+    }
+
+    public void pauseMusic(Music music) {
+        if(MyGdxGame.musicOn)
+            music.pause();
+    }
 }

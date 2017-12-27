@@ -62,34 +62,20 @@ public class Player extends GameObject {
 
     public static boolean colliding = false;
 
-    private Animation<TextureRegion> idleAnim;
-    private Animation<TextureRegion> typingAnim;
     private float stateTimer = 0f;
     private float rotation =0;
 
-    private TextureRegion botWheelTR;
-    private TextureRegion botMoveTR;
-
-    private Sound jumpSound;
-    private Sound deadSound;
-    private Sound loseHealthSound;
+    private Assets assets;
 
     public Player(World world, TiledMap map, ArrayList<Checkpoint> checkpoints, Assets assets) {
         super("player", world, map, new Rectangle(), false);
-        jumpSound = assets.get(Assets.jumpSOUND, Sound.class);
-        deadSound = assets.get(Assets.deadSOUND, Sound.class);
-        loseHealthSound = assets.get(Assets.loseHealthSOUND, Sound.class);
-        currentTR = botMoveTR;
+        this.assets = assets;
+        currentTR = assets.botMoveTR;
         this.checkpoints = checkpoints;
-        this.botWheelTR = assets.getTextureAtlas().findRegion(Assets.botWheelREGION);
-        this.botMoveTR = assets.getTextureAtlas().findRegion(Assets.botMoveREGION);
         setInitialPosition();
 
         currentState = State.STANDING;
         previousState = State.STANDING;
-
-        idleAnim = new Animation<TextureRegion>(0.08f, Assets.loadAnim(assets.getTextureAtlas().findRegion(Assets.botTalkREGION), 12, 6, 3) );
-        typingAnim = new Animation<TextureRegion>(0.015f, Assets.loadAnim(assets.getTextureAtlas().findRegion(Assets.botTypingREGION), 12, 2, 0) );
     }
 
     private void setInitialPosition() {
@@ -107,7 +93,7 @@ public class Player extends GameObject {
     public void drawFontScaled(SpriteBatch sb) {
         sb.setColor(1,1,1,alpha);
         sb.draw(currentTR, position.x - bounds.width/2/MyGdxGame.PPM, position.y - 17/MyGdxGame.PPM, bounds.width/MyGdxGame.PPM, bounds.height/MyGdxGame.PPM);
-        sb.draw(botWheelTR, position.x - 49/2/MyGdxGame.PPM , position.y - 0.32f
+        sb.draw(assets.botWheelTR, position.x - 49/2/MyGdxGame.PPM , position.y - 0.32f
                 , 49/MyGdxGame.PPM/2,  49/MyGdxGame.PPM/2
                 , 49/MyGdxGame.PPM, 49/MyGdxGame.PPM
                 , 0.935f, 0.935f
@@ -177,13 +163,13 @@ public class Player extends GameObject {
             case RUNNING:
             case FALLING:
             case CODING:
-                region = typingAnim.getKeyFrame(stateTimer, true);
+                region = assets.botTypingAnimation.getKeyFrame(stateTimer, true);
                 break;
             case JUMPING:
-                region = botMoveTR;
+                region = assets.botMoveTR;
                 break;
             default:
-                region = idleAnim.getKeyFrame(stateTimer, true);
+                region = assets.botIdleAnimation.getKeyFrame(stateTimer, true);
                 break;
         }
 
@@ -226,7 +212,7 @@ public class Player extends GameObject {
         if (currentState != State.JUMPING  && currentState != State.FALLING) {
             b2body.applyLinearImpulse(0, JUMPSPEED, b2body.getWorldCenter().x, b2body.getWorldCenter().y, true);
             setCurrentState(State.JUMPING);
-            jumpSound.play();
+            assets.playSound(assets.jumpSound);
         }
     }
 
@@ -268,7 +254,7 @@ public class Player extends GameObject {
     }
 
     public void reduceHealth(int k) {
-        loseHealthSound.play();
+        assets.playSound(assets.loseHealthSound);
         health -= k;
         playerMsg = "-"+k+" health";
         playerMsgGlyph.setText(Fonts.small, playerMsg);
@@ -276,7 +262,7 @@ public class Player extends GameObject {
         playerMsgVector.y = b2body.getPosition().y + 0.25f;
         if(health <= 0) {
             setCurrentState(State.DEAD);
-            deadSound.play();
+            assets.playSound(assets.deadSound);
         }
         green = 0;
         red = 1;

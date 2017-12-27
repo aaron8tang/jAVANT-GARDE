@@ -18,15 +18,17 @@ import com.steveflames.javantgarde.tools.Assets;
 public class Item extends GameObject {
 
     private int dir = 1;
-    private TextureRegion textureRegion;
+    private int itemID;
     private static int nOfClasses = 0;
+    private Assets assets;
 
-    public Item(String name, World world, TiledMap map, Rectangle bounds, TextureAtlas textureAtlas) {
+    public Item(String name, World world, TiledMap map, Rectangle bounds, Assets assets) {
         super(name, world, map, bounds, true);
+        this.assets = assets;
         if(name.contains("health"))
-            textureRegion = textureAtlas.findRegion(Assets.heartREGION);
+            itemID = 1;
         else if(name.contains("class")) {
-            textureRegion = textureAtlas.findRegion(Assets.classREGION);
+            itemID = 2;
             nOfClasses++;
         }
     }
@@ -41,7 +43,10 @@ public class Item extends GameObject {
     }
 
     public void drawFontScaled(SpriteBatch sb) {
-        sb.draw(textureRegion, b2body.getPosition().x - 30/MyGdxGame.PPM, b2body.getPosition().y - 30/MyGdxGame.PPM, 60/MyGdxGame.PPM, 60/MyGdxGame.PPM);
+        if(itemID == 1)
+            sb.draw(assets.heartTR, b2body.getPosition().x - 30/MyGdxGame.PPM, b2body.getPosition().y - 30/MyGdxGame.PPM, 60/MyGdxGame.PPM, 60/MyGdxGame.PPM);
+        else
+            sb.draw(assets.classTR, b2body.getPosition().x - 30/MyGdxGame.PPM, b2body.getPosition().y - 30/MyGdxGame.PPM, 60/MyGdxGame.PPM, 60/MyGdxGame.PPM);
     }
 
     public void drawFont(SpriteBatch sb) {}
