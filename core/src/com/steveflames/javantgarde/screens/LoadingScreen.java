@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.steveflames.javantgarde.MyGdxGame;
@@ -47,14 +48,12 @@ public class LoadingScreen extends Window implements Screen {
         this.game = game;
         this.level = levelListItem;
         game.assets.loadAllPlayScreenAssets();
-        float queuedAssets = game.assets.getQueuedAssets();
         glyphLayout = new GlyphLayout(Fonts.medium, loadingString);
 
         //loading table
         TextButton exitBtn = new TextButton("< BACK", game.assets.neonSkin);
-        progressBar = new ProgressBar(0, queuedAssets, 1/queuedAssets, false, game.assets.neonSkin);
+        progressBar = new ProgressBar(0, 1, 1/game.assets.getQueuedAssets(), false, game.assets.neonSkin);
         Table table = new Table(game.assets.neonSkin);
-
 
         table.add(exitBtn).expandX().right().width(200).height(100);
         table.row().space(180);
@@ -67,7 +66,7 @@ public class LoadingScreen extends Window implements Screen {
         this.setY(0);
         this.add(table).expand().fill();
 
-        viewport = new StretchViewport(MyGdxGame.WIDTH, MyGdxGame.HEIGHT, new OrthographicCamera());
+        viewport = new FitViewport(MyGdxGame.WIDTH, MyGdxGame.HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, game.sb);
         Gdx.input.setInputProcessor(stage);
         stage.addActor(this);
@@ -122,14 +121,14 @@ public class LoadingScreen extends Window implements Screen {
         game.sb.setColor(1,1,1,1);
 
         if(game.assets.update()) {
+            progressBar.setValue(game.assets.getProgress());
             if(MyGdxGame.platformDepended.deviceHasKeyboard()) {
                 loadingString = "[GREEN]Press ENTER to begin![]";
                 glyphLayout = new GlyphLayout(Fonts.medium, loadingString);
                 if(Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
                     assets.playSound(assets.clickSound);
-                    game.setScreen(new PlayScreen(game, level));
                     dispose();
-                    game.assets.refreshPlayScreenAssets();
+                    game.setScreen(new PlayScreen(game, level));
                 }
             }
             else {
@@ -137,14 +136,15 @@ public class LoadingScreen extends Window implements Screen {
                 glyphLayout = new GlyphLayout(Fonts.medium, loadingString);
                 if(!xPressed && Gdx.input.isTouched()) {
                     assets.playSound(assets.clickSound);
+                    dispose();
                     game.setScreen(new PlayScreen(game, level));
                 }
             }
         }
         else {
-            if(game.assets.getLoadedAssets() > game.assets.getQueuedAssets()/2)
+            if(game.assets.getProgress() > 0.5f)
                 loadingString = "[YELLOW]LOADING[]";
-            progressBar.setValue(game.assets.getLoadedAssets());
+            progressBar.setValue(game.assets.getProgress());
         }
 
     }

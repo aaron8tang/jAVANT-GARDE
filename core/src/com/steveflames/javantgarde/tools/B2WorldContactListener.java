@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.hud.Hud;
 import com.steveflames.javantgarde.screens.PlayScreen;
@@ -31,6 +32,7 @@ public class B2WorldContactListener implements ContactListener {
     private String[] splitter;
     private PlayScreen playScreen;
     private Assets assets;
+    private long bumpSoundMillis = TimeUtils.millis();
 
     public B2WorldContactListener(PlayScreen playScreen) {
         this.playScreen = playScreen;
@@ -176,7 +178,10 @@ public class B2WorldContactListener implements ContactListener {
             }
         }
         if(fixA.getUserData().equals("ground") || fixB.getUserData().equals("ground")) {
-            assets.playSound(assets.bumpSound);
+            if(TimeUtils.timeSinceMillis(bumpSoundMillis) > 100) {
+                bumpSoundMillis = TimeUtils.millis();
+                assets.playSound(assets.bumpSound);
+            }
         }
     }
 

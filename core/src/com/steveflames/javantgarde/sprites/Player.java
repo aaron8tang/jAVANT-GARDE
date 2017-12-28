@@ -201,7 +201,7 @@ public class Player extends GameObject {
         else if(b2body.getLinearVelocity().y < 0)
             return State.FALLING;
             //if player is positive or negative in the X axis he is running
-        else if (b2body.getLinearVelocity().x < -1.2 || b2body.getLinearVelocity().x > 1.2)
+        else if (b2body.getLinearVelocity().x < -0.8 || b2body.getLinearVelocity().x > 0.8)
             return State.RUNNING;
             //if none of these return then he must be standing
         else

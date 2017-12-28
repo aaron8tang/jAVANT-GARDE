@@ -21,8 +21,8 @@ public class Fonts {
 
     public static void load() {
 
-        //if(MyGdxGame.platformDepended.isHTML()) {
-        if(true) {
+        if(MyGdxGame.platformDepended.isHTML()) {
+        //if(true) {
             xsmallMono = new BitmapFont(Gdx.files.internal("fonts/LiberationMono23.fnt"));
             xsmallMonoMarkup = new BitmapFont(Gdx.files.internal("fonts/LiberationMono23.fnt"));
             xsmall = new BitmapFont(Gdx.files.internal("fonts/mvboli24.fnt"));
@@ -58,9 +58,10 @@ public class Fonts {
             small = generator.generateFont(parameter);
             parameter.size = 100;
             big = generator.generateFont(parameter);
+            big.getData().markupEnabled = true;
             parameter.size = 50;
             medium = generator.generateFont(parameter);
-
+            medium.getData().markupEnabled = true;
 
             fontFile = Gdx.files.internal("fonts/LiberationMono-Regular.ttf");
             generator = new FreeTypeFontGenerator(fontFile);

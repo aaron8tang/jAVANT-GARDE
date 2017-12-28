@@ -19,10 +19,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.steveflames.javantgarde.MyGdxGame;
@@ -55,7 +57,7 @@ public class MainMenuScreen implements Screen {
 
     public MainMenuScreen(final MyGdxGame game) {
         this.game = game;
-        viewport = new StretchViewport(MyGdxGame.WIDTH, MyGdxGame.HEIGHT, new OrthographicCamera());
+        viewport = new FitViewport(MyGdxGame.WIDTH, MyGdxGame.HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, game.sb);
         dialogStage = new Stage(viewport, game.sb);
         glyphLayout = new GlyphLayout(Fonts.big, MyGdxGame.TITLE);
@@ -249,7 +251,6 @@ public class MainMenuScreen implements Screen {
         game.assets.finishLoading();
         game.assets.refreshMainMenuAssets();
         game.assets.playMusic(game.assets.mainMenuMusic);
-
     }
 
     @Override

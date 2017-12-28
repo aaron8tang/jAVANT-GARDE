@@ -22,11 +22,13 @@ import com.steveflames.javantgarde.tools.global.Fonts;
  *
  *
  * TODO
- * unload skins?
- * COMPILER: if the user types { or } on a println there's a problem
+ * unload skins? if i unload and reload i must refresh all stage actors
+ * COMPILER: if the user types { or } on a println, uneven brackets error is triggered
  * COMPILER: add compiler errors: (method doesn't exist, var not declared)
  * EDITOR: ston editor otan afhnw 1h grammh keno k kanw click varaei error index out of bounds -1
  * add greek
+ * javalanche rename?
+ * fix resolution (use FitViewport? instead of StretchViewport)
  *
  *
  * ---------------LEVELS TO ADD---------------

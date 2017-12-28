@@ -336,7 +336,7 @@ public class PlayScreen implements Screen{
             hud.showPauseWindow();
         getAssets().unloadAllMainMenuAssets();
         getAssets().unloadAllPlayScreenAssets();
-        getAssets().pauseMusic(getAssets().playScreenMusic);
+        getAssets().stopMusic(getAssets().playScreenMusic);
     }
 
     public void resume() {

@@ -54,7 +54,7 @@ public class Door extends GameObject {
 
     public void open() {
         if(MyGdxGame.sfxOn)
-            assets.doorSound.loop();
+            assets.doorSound.loop(Assets.SFXVOLUME);
         opening = true;
         b2body.getFixtureList().get(0).setSensor(true);
     }

@@ -93,8 +93,8 @@
   <object id="85" x="1345.33" y="-312.121" width="318.667" height="760.121"/>
   <object id="86" x="1600" y="448" width="64" height="192"/>
   <object id="89" x="192" y="352" width="160" height="32"/>
-  <object id="90" x="320" y="128" width="32" height="222.667"/>
-  <object id="91" x="352" y="128" width="768" height="32"/>
+  <object id="90" x="320" y="162" width="32" height="188.667"/>
+  <object id="91" x="321" y="128" width="799" height="32"/>
   <object id="92" x="1088" y="160" width="32" height="32"/>
   <object id="93" x="1060" y="192" width="169.334" height="32"/>
   <object id="100" x="768" y="640" width="128" height="128"/>

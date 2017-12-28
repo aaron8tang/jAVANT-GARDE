@@ -20,6 +20,8 @@ import com.steveflames.javantgarde.tools.global.Fonts;
 public class Assets {
 
     private AssetManager manager = new AssetManager();
+    public static final float SFXVOLUME = 0.3f;
+    private static final float MUSICVOLUME = 0.2f;
 
     //GRAPHICS - TEXTURE REGIONS
     private static final String texturesATLAS = "images/textures.pack";
@@ -32,8 +34,8 @@ public class Assets {
     private static final String leverOpenREGION = "lever_open";
     private static final String botMoveREGION = "bot_move";
     private static final String infoSignREGION = "infoSign";
-    private static final String diplomaREGION = "diploma";
-    private static final String scrollREGION = "scroll";
+    //private static final String diplomaREGION = "diploma";
+    //private static final String scrollREGION = "scroll";
     private static final String botWheelREGION = "bot_wheel";
     private static final String keyboardDownREGION = "keyboardDown";
     private static final String keyboardUpREGION = "keyboardUp";
@@ -65,8 +67,8 @@ public class Assets {
     public TextureRegion leverOpenTR;
     public TextureRegion botMoveTR;
     public TextureRegion infoSignTR;
-    public TextureRegion diplomaTR;
-    public TextureRegion scrollTR;
+    //public TextureRegion diplomaTR;
+    //public TextureRegion scrollTR;
     public TextureRegion botWheelTR;
     public TextureRegion keyboardDownTR;
     public TextureRegion keyboardUpTR;
@@ -75,31 +77,31 @@ public class Assets {
     public TextureRegion fixTR;
     public TextureRegion handTR;
     public TextureRegion heartTR;
+    public TextureRegion playT;
     public TextureRegion aboutUpT;
     public TextureRegion audioT;
-    public TextureRegion playT;
     public Texture lockT;
 
 
     //AUDIO
     private static final String mainMenuMUSIC = "audio/music/jewelbeat_electro_dance.ogg";
-    private static final String playScreenMUSIC = "audio/music/jewelbeat_stepping_stones.ogg";
-    private static final String jumpSOUND = "audio/sounds/jump.wav";
-    private static final String correctSOUND = "audio/sounds/correct.wav";
-    private static final String levelCompletedSOUND = "audio/sounds/levelCompleted.wav";
-    private static final String wrongAnswerSOUND = "audio/sounds/wrong.wav";
-    private static final String errorSOUND = "audio/sounds/error.wav";
-    private static final String loseHealthSOUND = "audio/sounds/loseHealth.wav";
-    private static final String deadSOUND = "audio/sounds/dead.wav";
-    private static final String clickSOUND = "audio/sounds/click.wav";
-    private static final String bumpSOUND = "audio/sounds/bump.wav";
-    private static final String robotTalkingSOUND = "audio/sounds/robotTalk.wav";
-    private static final String useItemSOUND = "audio/sounds/useItem.wav";
-    private static final String doorSOUND = "audio/sounds/door.wav";
-    private static final String teleportSOUND = "audio/sounds/teleport.wav";
-    private static final String getItemSOUND = "audio/sounds/coin.wav";
-    private static final String frogSOUND = "audio/sounds/frog.wav";
-    private static final String riseSOUND = "audio/sounds/rise.wav";
+    private static final String playScreenMUSIC = "audio/music/jewelbeat_stepping_stones.wav";
+    private static final String jumpSOUND = "audio/sounds/jump.ogg";
+    private static final String correctSOUND = "audio/sounds/correct.ogg";
+    private static final String levelCompletedSOUND = "audio/sounds/levelCompleted.ogg";
+    private static final String wrongAnswerSOUND = "audio/sounds/wrong.ogg";
+    private static final String errorSOUND = "audio/sounds/error.ogg";
+    private static final String loseHealthSOUND = "audio/sounds/loseHealth.ogg";
+    private static final String deadSOUND = "audio/sounds/dead.ogg";
+    private static final String clickSOUND = "audio/sounds/click.ogg";
+    private static final String bumpSOUND = "audio/sounds/bump.ogg";
+    private static final String robotTalkingSOUND = "audio/sounds/robotTalk.ogg";
+    private static final String useItemSOUND = "audio/sounds/useItem.ogg";
+    private static final String doorSOUND = "audio/sounds/door.ogg";
+    private static final String teleportSOUND = "audio/sounds/teleport.ogg";
+    private static final String getItemSOUND = "audio/sounds/coin.ogg";
+    private static final String frogSOUND = "audio/sounds/frog.ogg";
+    private static final String riseSOUND = "audio/sounds/rise.ogg";
 
     public Music mainMenuMusic;
     public Music playScreenMusic;
@@ -140,17 +142,16 @@ public class Assets {
     public void finishLoading() {
         manager.finishLoading();
     }
-    public float getLoadedAssets() {
-        return manager.getLoadedAssets();
-    }
-    public int getQueuedAssets() {
+    public float getQueuedAssets() {
         return manager.getQueuedAssets();
     }
-
+    public float getProgress() {
+        return manager.getProgress();
+    }
 
     public void loadAllPlayScreenAssets() {
-        manager.load(texturesATLAS, TextureAtlas.class);
         manager.load(frogATLAS, TextureAtlas.class);
+        manager.load(texturesATLAS, TextureAtlas.class);
         if(MyGdxGame.musicOn)
             manager.load(playScreenMUSIC, Music.class);
         if(MyGdxGame.sfxOn) {
@@ -198,7 +199,9 @@ public class Assets {
 
     public void refreshPlayScreenAssets() {
         if(MyGdxGame.musicOn) {
-            playScreenMusic = manager.get(playScreenMUSIC, Music.class);
+            //playScreenMusic = manager.get(playScreenMUSIC, Music.class);
+            playScreenMusic = manager.get(playScreenMUSIC);
+            playScreenMusic.setVolume(MUSICVOLUME);
             playScreenMusic.setLooping(true);
         }
         if(MyGdxGame.sfxOn) {
@@ -230,8 +233,8 @@ public class Assets {
         leverOpenTR = textureAtlas.findRegion(leverOpenREGION);
         botMoveTR = textureAtlas.findRegion(botMoveREGION);
         infoSignTR = textureAtlas.findRegion(infoSignREGION);
-        diplomaTR = textureAtlas.findRegion(diplomaREGION);
-        scrollTR = textureAtlas.findRegion(scrollREGION);
+        //diplomaTR = textureAtlas.findRegion(diplomaREGION);
+        //scrollTR = textureAtlas.findRegion(scrollREGION);
         botWheelTR = textureAtlas.findRegion(botWheelREGION);
         keyboardDownTR = textureAtlas.findRegion(keyboardDownREGION);
         keyboardUpTR = textureAtlas.findRegion(keyboardUpREGION);
@@ -261,18 +264,23 @@ public class Assets {
     }
 
     public void unloadAllMainMenuAssets() {
-        if(manager.isLoaded(mainMenuTexturesATLAS)) {
+        if(manager.isLoaded(mainMenuTexturesATLAS))
             manager.unload(mainMenuTexturesATLAS);
-        }
         if(manager.isLoaded(mainMenuMUSIC))
             manager.unload(mainMenuMUSIC);
         if(manager.isLoaded(clickSOUND))
             manager.unload(clickSOUND);
+        /*if(manager.isLoaded(neonSKIN)) {
+            manager.unload(neonSKIN);
+            manager.unload(terraSKIN);
+            manager.unload(lmlSKIN);
+        }*/
     }
 
     public void refreshMainMenuAssets() {
         if(MyGdxGame.musicOn) {
             mainMenuMusic = manager.get(mainMenuMUSIC, Music.class);
+            mainMenuMusic.setVolume(MUSICVOLUME);
             mainMenuMusic.setLooping(true);
         }
         if(MyGdxGame.sfxOn) {
@@ -346,13 +354,19 @@ public class Assets {
 
     public void playSound(Sound sound) {
         if(MyGdxGame.sfxOn)
-            sound.play();
+            sound.play(SFXVOLUME);
     }
 
     public void playMusic(Music music) {
         if(MyGdxGame.musicOn) {
             if(!music.isPlaying())
                 music.play();
+        }
+    }
+
+    public void playMusic(Sound music) {
+        if(MyGdxGame.musicOn) {
+            music.loop(MUSICVOLUME);
         }
     }
 
@@ -366,8 +380,14 @@ public class Assets {
             music.stop();
     }
 
+    public void stopMusic(Sound music) {
+        if(MyGdxGame.musicOn)
+            music.stop();
+    }
+
     public void pauseMusic(Music music) {
         if(MyGdxGame.musicOn)
             music.pause();
     }
+
 }
