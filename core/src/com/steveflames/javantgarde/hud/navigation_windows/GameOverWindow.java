@@ -11,6 +11,7 @@ import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.screens.ChooseLevelScreen;
 import com.steveflames.javantgarde.screens.PlayScreen;
 import com.steveflames.javantgarde.tools.Assets;
+import com.steveflames.javantgarde.tools.global.Cameras;
 
 /**
  * Created by Flames on 10/11/2017.
@@ -20,7 +21,7 @@ public class GameOverWindow extends Table {
 
     public GameOverWindow(final PlayScreen playScreen) {
         this.setSize(400,260);
-        this.setPosition(MyGdxGame.WIDTH/2 - 200, MyGdxGame.HEIGHT/2 - 130);
+        this.setPosition(Cameras.hudPort.getCamera().viewportWidth/2 - 200, Cameras.hudPort.getCamera().viewportHeight/2 - 130);
 
         Label gameOverLabel = new Label("GAME OVER", playScreen.getAssets().lmlSkin);
         gameOverLabel.scaleBy(1.4f, 1.4f);

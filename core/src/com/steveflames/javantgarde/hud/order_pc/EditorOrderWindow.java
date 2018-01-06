@@ -64,8 +64,8 @@ public class EditorOrderWindow extends Window {
         afterCodeTable = new Table(playScreen.getAssets().neonSkin);
 
         //add components to window
-        this.setSize(800, MyGdxGame.HEIGHT-120);
-        this.setX(MyGdxGame.WIDTH/2 - this.getWidth()/2 + 150);
+        this.setSize(800, Cameras.hudPort.getCamera().viewportHeight-120);
+        this.setX(Cameras.hudPort.getCamera().viewportWidth/2 - this.getWidth()/2 + 150);
         this.setY(50);
         this.row();
         this.add(preCodeTable).expand().fillX().left();
@@ -100,7 +100,7 @@ public class EditorOrderWindow extends Window {
                 else { //WRONG ORDER
                     assets.playSound(assets.wrongSound);
                     closeCurrentEditor();
-                    playScreen.getPlayer().b2body.applyLinearImpulse(-14, 6, 0, 0, true);
+                    playScreen.getPlayer().b2body.applyLinearImpulse(-2800/MyGdxGame.PPM, 1200/MyGdxGame.PPM, 0, 0, true);
                 }
             }
         });
@@ -150,19 +150,19 @@ public class EditorOrderWindow extends Window {
                     playScreen.getObjectManager().getDoors().get(0).open();
                     break;
                 case 1:
-                    playScreen.getPlayer().b2body.applyLinearImpulse(16,6,0,0,true);
+                    playScreen.getPlayer().b2body.applyLinearImpulse(3200/MyGdxGame.PPM,1200/MyGdxGame.PPM,0,0,true);
                     timer = 2.9f;
                     break;
             }
         }
         else if(playScreen.getCurrentLevelID().equals("4_1")) {
             if(currentPc.getName().equals("orderpc-4_1-0")) {
-                playScreen.getObjectManager().getFloatingPlatforms().get(0).b2body.setLinearVelocity(0, 2);
-                playScreen.getObjectManager().getPcs().get(0).b2body.setLinearVelocity(0, 2);
+                playScreen.getObjectManager().getFloatingPlatforms().get(0).b2body.setLinearVelocity(0, 400/MyGdxGame.PPM);
+                playScreen.getObjectManager().getPcs().get(0).b2body.setLinearVelocity(0, 400/MyGdxGame.PPM);
             }
             else {
-                playScreen.getObjectManager().getFloatingPlatforms().get(1).b2body.setLinearVelocity(0,-2);
-                playScreen.getObjectManager().getPcs().get(1).b2body.setLinearVelocity(0,-2);
+                playScreen.getObjectManager().getFloatingPlatforms().get(1).b2body.setLinearVelocity(0,-400/MyGdxGame.PPM);
+                playScreen.getObjectManager().getPcs().get(1).b2body.setLinearVelocity(0,-400/MyGdxGame.PPM);
             }
         }
         else if(playScreen.getCurrentLevelID().equals("5_2")) {

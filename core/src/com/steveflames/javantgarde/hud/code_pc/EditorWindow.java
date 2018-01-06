@@ -114,10 +114,10 @@ public class EditorWindow extends Window {
 
         //add components to window
         if(MyGdxGame.platformDepended.deviceHasKeyboard())
-            this.setSize(700, MyGdxGame.HEIGHT-213);
+            this.setSize(700, Cameras.hudPort.getCamera().viewportHeight-213);
         else
-            this.setSize(700, MyGdxGame.HEIGHT-295);
-        this.setX(MyGdxGame.WIDTH - this.getWidth());
+            this.setSize(700, Cameras.hudPort.getCamera().viewportHeight-295);
+        this.setX(Cameras.hudPort.getCamera().viewportWidth - this.getWidth());
         this.setY(195);
         this.add(topBarTable).expandX().fillX().top();
         this.row().padTop(5);
@@ -606,7 +606,7 @@ public class EditorWindow extends Window {
                             if(!myVariable.getValue().equals("null")) {
                                 floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(0).getBounds().x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(0).getBounds().width / 2 / MyGdxGame.PPM,
                                         playScreen.getObjectManager().getMarkers().get(0).getBounds().y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(0).getBounds().height / 2 / MyGdxGame.PPM
-                                                + 0.64f * Integer.parseInt(myVariable.getValue()), 0);
+                                                + 128/MyGdxGame.PPM * Integer.parseInt(myVariable.getValue()), 0);
                                 break;
                             }
                         }
@@ -618,7 +618,7 @@ public class EditorWindow extends Window {
                             if(!myVariable.getValue().equals("null")) {
                                 floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(1).getBounds().x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(1).getBounds().width / 2 / MyGdxGame.PPM,
                                         playScreen.getObjectManager().getMarkers().get(1).getBounds().y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(1).getBounds().height / 2 / MyGdxGame.PPM
-                                                + 0.64f * (float) Double.parseDouble(myVariable.getValue()), 0);
+                                                + 128/MyGdxGame.PPM * (float) Double.parseDouble(myVariable.getValue()), 0);
                                 break;
                             }
                         }
@@ -630,12 +630,12 @@ public class EditorWindow extends Window {
                             if(myVariable.getValue().equals("true")) {
                                 floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(2).getBounds().x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(2).getBounds().width / 2 / MyGdxGame.PPM,
                                         playScreen.getObjectManager().getMarkers().get(2).getBounds().y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(2).getBounds().height / 2 / MyGdxGame.PPM
-                                                + 0.64f*1.5f, 0);
+                                                + 128/MyGdxGame.PPM*300/MyGdxGame.PPM, 0);
                             }
                             else {
                                 floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(2).getBounds().x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(2).getBounds().width / 2 / MyGdxGame.PPM,
                                         playScreen.getObjectManager().getMarkers().get(2).getBounds().y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(2).getBounds().height / 2 / MyGdxGame.PPM
-                                                - 0.64f*1.5f, 0);
+                                                - 128/MyGdxGame.PPM*300/MyGdxGame.PPM, 0);
                             }
                             break;
                         }
@@ -647,7 +647,7 @@ public class EditorWindow extends Window {
                             if(myVariable.getValue().equals("a")) {
                                 floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(3).getBounds().x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(3).getBounds().width / 2 / MyGdxGame.PPM,
                                         playScreen.getObjectManager().getMarkers().get(3).getBounds().y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(3).getBounds().height / 2 / MyGdxGame.PPM
-                                                + 0.64f*1.5f, 0);
+                                                + 128/MyGdxGame.PPM*300/MyGdxGame.PPM, 0);
                                 break;
                             }
                             else if(myVariable.getValue().equals("b")) {
@@ -658,11 +658,11 @@ public class EditorWindow extends Window {
                             else if(myVariable.getValue().equals("c")) {
                                 floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(3).getBounds().x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(3).getBounds().width / 2 / MyGdxGame.PPM,
                                         playScreen.getObjectManager().getMarkers().get(3).getBounds().y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(3).getBounds().height / 2 / MyGdxGame.PPM
-                                                - 0.64f*1.5f, 0);
+                                                - 128/MyGdxGame.PPM*300/MyGdxGame.PPM, 0);
                                 break;
                             }
                             else {
-                                floatingPlatform.setTransform(-5, -5, 0);
+                                floatingPlatform.setTransform(-1000/MyGdxGame.PPM, -1000/MyGdxGame.PPM, 0);
                                 break;
                             }
                         }
@@ -677,7 +677,7 @@ public class EditorWindow extends Window {
                                 break;
                             }
                             else {
-                                floatingPlatform.setTransform(-5, -5, 0);
+                                floatingPlatform.setTransform(-1000/MyGdxGame.PPM, -1000/MyGdxGame.PPM, 0);
                                 break;
                             }
                         }

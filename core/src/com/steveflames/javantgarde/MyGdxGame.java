@@ -2,11 +2,9 @@ package com.steveflames.javantgarde;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.steveflames.javantgarde.screens.ChooseLevelScreen;
 import com.steveflames.javantgarde.screens.MainMenuScreen;
 import com.steveflames.javantgarde.tools.Assets;
 import com.steveflames.javantgarde.tools.MyPreferences;
@@ -29,6 +27,7 @@ import com.steveflames.javantgarde.tools.global.Fonts;
  * add greek
  * javalanche rename?
  * fix resolution (use FitViewport? instead of StretchViewport)
+ * POOL objects
  *
  *
  * ---------------LEVELS TO ADD---------------
@@ -48,9 +47,9 @@ import com.steveflames.javantgarde.tools.global.Fonts;
  */
 public class MyGdxGame extends Game {
 
-	public static final int WIDTH = 1280; //1185, 854, 1920, 1280
-	public static final int HEIGHT = 768; //600, 480,  1080, 768
-	public static final float PPM = 200; //pixels per meter. has to do with b2body scaling
+	public static final int WIDTH = 1280; //800, 1920, 1280, 32
+	public static final int HEIGHT = 768; //480,  1080, 768, 16
+	public static final float PPM = 100; //pixels per meter. has to do with b2body and world scaling
 	public static final String TITLE = "jAVANT-GARDE";
 	public static boolean musicOn;
 	public static boolean sfxOn;
@@ -70,6 +69,9 @@ public class MyGdxGame extends Game {
 
 	@Override
 	public void create () {
+		/*WIDTH = (Gdx.graphics.getWidth()/Gdx.graphics.getHeight())*HEIGHT*2;
+		if(WIDTH > Gdx.graphics.getWidth())
+			WIDTH = Gdx.graphics.getWidth();*/
 		Fonts.load();
 		sb = new SpriteBatch();
 		sr = new ShapeRenderer();

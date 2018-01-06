@@ -104,7 +104,8 @@ public class Assets {
     private static final String riseSOUND = "audio/sounds/rise.ogg";
 
     public Music mainMenuMusic;
-    public Music playScreenMusic;
+    private Music playScreenMusic;
+    private Sound playScreenMusicSound; //Music on pc makes the game lag, so im using a looping Sound for pc
     public Sound clickSound;
     public Sound jumpSound;
     public Sound correctSound;
@@ -152,8 +153,12 @@ public class Assets {
     public void loadAllPlayScreenAssets() {
         manager.load(frogATLAS, TextureAtlas.class);
         manager.load(texturesATLAS, TextureAtlas.class);
-        if(MyGdxGame.musicOn)
-            manager.load(playScreenMUSIC, Music.class);
+        if(MyGdxGame.musicOn) {
+            if(MyGdxGame.platformDepended.isPC())
+                manager.load(playScreenMUSIC, Sound.class);
+            else
+                manager.load(playScreenMUSIC, Music.class);
+        }
         if(MyGdxGame.sfxOn) {
             manager.load(jumpSOUND, Sound.class);
             manager.load(deadSOUND, Sound.class);
@@ -200,9 +205,14 @@ public class Assets {
     public void refreshPlayScreenAssets() {
         if(MyGdxGame.musicOn) {
             //playScreenMusic = manager.get(playScreenMUSIC, Music.class);
-            playScreenMusic = manager.get(playScreenMUSIC);
-            playScreenMusic.setVolume(MUSICVOLUME);
-            playScreenMusic.setLooping(true);
+            if(MyGdxGame.platformDepended.isPC()) {
+                playScreenMusicSound = manager.get(playScreenMUSIC);
+            }
+            else {
+                playScreenMusic = manager.get(playScreenMUSIC);
+                playScreenMusic.setVolume(MUSICVOLUME);
+                playScreenMusic.setLooping(true);
+            }
         }
         if(MyGdxGame.sfxOn) {
             jumpSound = manager.get(jumpSOUND, Sound.class);
@@ -364,9 +374,12 @@ public class Assets {
         }
     }
 
-    public void playMusic(Sound music) {
+    public void playPlayScreenMusic() {
         if(MyGdxGame.musicOn) {
-            music.loop(MUSICVOLUME);
+            if(MyGdxGame.platformDepended.isPC())
+                playScreenMusicSound.loop(MUSICVOLUME);
+            else
+                playScreenMusic.play();
         }
     }
 
@@ -380,9 +393,13 @@ public class Assets {
             music.stop();
     }
 
-    public void stopMusic(Sound music) {
-        if(MyGdxGame.musicOn)
-            music.stop();
+    public void stopPlayScreenMusic() {
+        if(MyGdxGame.musicOn) {
+            if(MyGdxGame.platformDepended.isPC())
+                playScreenMusicSound.stop();
+            else
+                playScreenMusic.stop();
+        }
     }
 
     public void pauseMusic(Music music) {

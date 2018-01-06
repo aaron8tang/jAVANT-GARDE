@@ -59,17 +59,17 @@ public class LoadingScreen extends Window implements Screen {
         table.row().space(180);
         table.add(progressBar).expand().fillX().padLeft(400).padRight(100).height(200).top();
 
-
-        //add components to window
-        this.setSize(MyGdxGame.WIDTH, MyGdxGame.HEIGHT);
-        this.setX(0);
-        this.setY(0);
-        this.add(table).expand().fill();
-
         viewport = new FitViewport(MyGdxGame.WIDTH, MyGdxGame.HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, game.sb);
         Gdx.input.setInputProcessor(stage);
         stage.addActor(this);
+
+        //add components to window
+        this.setSize(viewport.getCamera().viewportWidth, viewport.getCamera().viewportHeight);
+        this.setX(0);
+        this.setY(0);
+        this.add(table).expand().fill();
+
 
         exitBtn.addListener(new ClickListener() {
             @Override
@@ -103,13 +103,13 @@ public class LoadingScreen extends Window implements Screen {
         for(String category : ChooseLevelScreen.categories.keySet()) {
             i++;
             Fonts.xsmall.setColor(Color.WHITE);
-            Fonts.xsmall.draw(game.sb, category, 30, MyGdxGame.HEIGHT - i*30);
+            Fonts.xsmall.draw(game.sb, category, 30, viewport.getCamera().viewportHeight - i*30);
             for(final LevelListItem level : ChooseLevelScreen.categories.get(category)) {
                 i++;
                 levelName = level.getName().replaceAll("\n", " ");
                 if(this.level.getName().equals(level.getName()))
                     levelName = "[GREEN]"+levelName+"[]";
-                Fonts.xsmall.draw(game.sb, levelName, 80, MyGdxGame.HEIGHT - i*30);
+                Fonts.xsmall.draw(game.sb, levelName, 80, viewport.getCamera().viewportHeight - i*30);
             }
         }
         Fonts.medium.draw(game.sb, loadingString, 780 - glyphLayout.width/2, 450);

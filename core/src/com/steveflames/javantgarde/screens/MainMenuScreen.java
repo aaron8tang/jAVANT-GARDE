@@ -219,8 +219,7 @@ public class MainMenuScreen implements Screen {
         game.sb.draw(game.assets.playT, playBtn.localToStageCoordinates(new Vector2(0,0)).x + 30, playBtn.localToStageCoordinates(new Vector2(0,0)).y+ 35);
         game.sb.draw(game.assets.aboutUpT, aboutBtn.localToStageCoordinates(new Vector2(0,0)).x + 30, aboutBtn.localToStageCoordinates(new Vector2(0,0)).y+ 35);
         Fonts.big.setColor(Color.RED);
-        Fonts.big.draw(game.sb, MyGdxGame.TITLE, MyGdxGame.WIDTH/2 - glyphLayout.width/2, MyGdxGame.HEIGHT-60);
-        game.sb.end();
+        Fonts.big.draw(game.sb, MyGdxGame.TITLE, viewport.getCamera().viewportWidth/2 - glyphLayout.width/2, viewport.getCamera().viewportHeight-60);        game.sb.end();
 
         dialogStage.act(delta);
         dialogStage.draw();

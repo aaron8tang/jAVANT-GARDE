@@ -63,19 +63,19 @@ public abstract class GameObject extends Sprite{
 
             //add object specific body parts
             if(this instanceof SensorRobot) { //cyberfrog
-                shape.setAsBox(0.005f, 0.15f, new Vector2(0.19f, 0.02f), 0);
+                shape.setAsBox(1/MyGdxGame.PPM, 30/MyGdxGame.PPM, new Vector2(38/MyGdxGame.PPM, 4/MyGdxGame.PPM), 0);
                 fdef.shape = shape;
                 fixture = b2body.createFixture(fdef);
                 fixture.setUserData("cyberfrogRightSensor");
                 fixture.setSensor(true);
 
-                shape.setAsBox(0.005f, 0.15f, new Vector2(-0.19f, 0.02f), 0);
+                shape.setAsBox(1/MyGdxGame.PPM, 30/MyGdxGame.PPM, new Vector2(-38/MyGdxGame.PPM, 4/MyGdxGame.PPM), 0);
                 fdef.shape = shape;
                 fixture = b2body.createFixture(fdef);
                 fixture.setUserData("cyberfrogLeftSensor");
                 fixture.setSensor(true);
 
-                shape.setAsBox(0.17f, 0.005f, new Vector2(0, 0.2f), 0);
+                shape.setAsBox(34/MyGdxGame.PPM, 1/MyGdxGame.PPM, new Vector2(0, 40/MyGdxGame.PPM), 0);
                 fdef.shape = shape;
                 fixture = b2body.createFixture(fdef);
                 fixture.setUserData("cyberfrogUpperSensor");
@@ -90,13 +90,13 @@ public abstract class GameObject extends Sprite{
             //bot upper body
             fdef = new FixtureDef();
             PolygonShape polyShape = new PolygonShape();
-            polyShape.setAsBox(0.1f,0.21f, new Vector2(0, 0.13f), 0);
+            polyShape.setAsBox(20/MyGdxGame.PPM,42/MyGdxGame.PPM, new Vector2(0, 26/MyGdxGame.PPM), 0);
             fdef.shape = polyShape;
             b2body.createFixture(fdef).setUserData(this);
 
             fdef = new FixtureDef();
             polyShape = new PolygonShape();
-            polyShape.setAsBox(0.07f,0.01f, new Vector2(0, -0.3f), 0);
+            polyShape.setAsBox(14/MyGdxGame.PPM,2/MyGdxGame.PPM, new Vector2(0, -60/MyGdxGame.PPM), 0);
             fdef.shape = polyShape;
             Fixture fixture = b2body.createFixture(fdef);
             fixture.setUserData("playerDownSensor"); //bot_lower_sensor
@@ -105,7 +105,7 @@ public abstract class GameObject extends Sprite{
             //bot wheel
             fdef = new FixtureDef();
             CircleShape circleShape = new CircleShape();
-            circleShape.setPosition(new Vector2(0,-0.19f));
+            circleShape.setPosition(new Vector2(0,-38/MyGdxGame.PPM));
             circleShape.setRadius(Player.radius);
             fdef.shape = circleShape;
             fixture = b2body.createFixture(fdef);

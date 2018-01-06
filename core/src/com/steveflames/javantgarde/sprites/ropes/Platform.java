@@ -1,6 +1,5 @@
 package com.steveflames.javantgarde.sprites.ropes;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -8,7 +7,6 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
 import com.steveflames.javantgarde.MyGdxGame;
-import com.steveflames.javantgarde.screens.PlayScreen;
 import com.steveflames.javantgarde.sprites.GameObject;
 import com.steveflames.javantgarde.tools.global.Cameras;
 import com.steveflames.javantgarde.tools.global.Fonts;
@@ -19,7 +17,7 @@ import com.steveflames.javantgarde.tools.global.Fonts;
 
 public class Platform extends GameObject {
 
-    private static final float SPEED = 0.8f;
+    private static final float SPEED = 160/MyGdxGame.PPM;
     private String text;
     private GlyphLayout glyphLayout = new GlyphLayout();
     private boolean flag;
@@ -39,7 +37,7 @@ public class Platform extends GameObject {
 
     public void update(float dt) {
         if(b2body.getPosition().y <= -bounds.getHeight()/2/MyGdxGame.PPM)
-            b2body.setTransform(b2body.getPosition().x, b2body.getPosition().y + 7.5f, 0);
+            b2body.setTransform(b2body.getPosition().x, b2body.getPosition().y + 1500/MyGdxGame.PPM, 0);
         if(alpha < 1 && alpha >= 0)
             alpha -= 2 * dt;
     }

@@ -72,10 +72,10 @@ class QuestWindow extends Window {
         //add components to window
         this.setSize(580, 340);
         this.setX(0);
-        this.setY(MyGdxGame.HEIGHT-408);
+        this.setY(Cameras.hudPort.getCamera().viewportHeight-408);
         if(!MyGdxGame.platformDepended.deviceHasKeyboard()) {
             this.setHeight(320);
-            this.setY(MyGdxGame.HEIGHT-421);
+            this.setY(Cameras.hudPort.getCamera().viewportHeight-421);
         }
         this.add(questScroll).expand().fill().top().left().padTop(10);
         this.row();

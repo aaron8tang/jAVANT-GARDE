@@ -98,10 +98,10 @@ public class Hud implements Disposable {
         if(playScreen.getPlayer().getHealth() > 0) {
             if(Item.getnOfClasses() > 0) {
                 Fonts.small.setColor(Color.WHITE);
-                Fonts.small.draw(sb, "Classes found: " + playScreen.getPlayer().getClasses().size() +"/" + Item.getnOfClasses(), 15, MyGdxGame.HEIGHT - 67);
+                Fonts.small.draw(sb, "Classes found: " + playScreen.getPlayer().getClasses().size() +"/" + Item.getnOfClasses(), 15, Cameras.hudPort.getCamera().viewportHeight - 67);
             }
             for(int i = 0; i< playScreen.getPlayer().getHealth(); i++)
-                sb.draw(assets.heartTR, 20 +(60*i), MyGdxGame.HEIGHT - 60, 50, 50);
+                sb.draw(assets.heartTR, 20 +(60*i), Cameras.hudPort.getCamera().viewportHeight - 60, 50, 50);
         }
 
         if(toast.isShowing())
@@ -115,7 +115,7 @@ public class Hud implements Disposable {
 
     public void newAndroidInputTable() {
         androidInputTable = new Table(playScreen.getAssets().neonSkin);
-        androidInputTable.setSize(MyGdxGame.WIDTH, 120);
+        androidInputTable.setSize(Cameras.hudPort.getCamera().viewportWidth, 120);
         final TextButton leftBtn = new TextButton("<", playScreen.getAssets().neonSkin);
         leftBtn.addListener(new ClickListener() {
             @Override
@@ -256,14 +256,14 @@ public class Hud implements Disposable {
     }
 
     public void showGameOverWindow() {
-        assets.stopMusic(assets.playScreenMusic);
+        assets.stopPlayScreenMusic();
         stage.addActor(gameOverWindow);
         editorWindow.closeCurrentEditor();
         hideAndroidInputTable();
     }
 
     public void showLevelCompletedWindow() {
-        assets.stopMusic(assets.playScreenMusic);
+        assets.stopPlayScreenMusic();
         assets.playSound(assets.levelCompletedSound);
         stage.addActor(levelCompletedWindow);
         hideAndroidInputTable();

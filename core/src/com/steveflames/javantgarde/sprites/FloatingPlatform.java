@@ -82,7 +82,7 @@ public class FloatingPlatform extends GameObject {
         }
         else { //deactivate this floatingPlatform's lever and name
             setAnswerText(" ");
-            lever.b2body.setTransform(-2,-2, 0);
+            lever.b2body.setTransform(-400/MyGdxGame.PPM,-400/MyGdxGame.PPM, 0);
         }
     }
 
@@ -99,8 +99,8 @@ public class FloatingPlatform extends GameObject {
         }
         else {
             assets.playSound(assets.wrongSound);
-            b2body.setLinearVelocity(0, -6);
-            lever.b2body.setLinearVelocity(0, -6);
+            b2body.setLinearVelocity(0, -1200/MyGdxGame.PPM);
+            lever.b2body.setLinearVelocity(0, -1200/MyGdxGame.PPM);
         }
     }
 

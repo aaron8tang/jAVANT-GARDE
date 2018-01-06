@@ -36,7 +36,7 @@ public class PlayScreen implements Screen{
     private MyGdxGame game;
     private static float WIDTH; //width of the map
     private static float HEIGHT; //height of the map
-    private static final int GRAVITY = -20;
+    private static final int GRAVITY = -Math.round(4000/MyGdxGame.PPM);
     private LevelListItem currentLevel;
     private Hud hud;
     private World world; //box2D variable
@@ -45,7 +45,10 @@ public class PlayScreen implements Screen{
 
     //fixed timestep with interpolation variables
     private double accumulator = 0;
-    private final float delta = 0.0133f; //logic updates 1/75f
+    private final float step = 0.0133f; //logic updates 1/75f
+    public static final long RENDERER_SLEEP_MS = 0; // 34 -> limits to 30 fps, 30 -> 34 fps, 22 gives ~46 FPS, 20 = 100, 10 = 50
+    private long now2, diff, start;
+
 
     //**************DEBUG**************
     private final static int logic_FPSupdateIntervall = 1;
@@ -88,7 +91,7 @@ public class PlayScreen implements Screen{
         //initialize map
         TmxMapLoader mapLoader = new TmxMapLoader();
         map = mapLoader.load("tiled/level-"+level.getId()+".tmx");
-        renderer = new OrthogonalTiledMapRenderer(map, 1 / MyGdxGame.PPM);
+        renderer = new OrthogonalTiledMapRenderer(map, 1 / MyGdxGame.PPM, game.sb);
         setMapProperties(map);
 
         //initialize camera and viewport
@@ -107,7 +110,7 @@ public class PlayScreen implements Screen{
         inputHandler = new InputHandler(this);
 
         //play music
-        game.assets.playMusic(game.assets.playScreenMusic);
+        game.assets.playPlayScreenMusic();
 
         if(!MyGdxGame.platformDepended.deviceHasKeyboard())
             hud.newAndroidInputTable();
@@ -134,11 +137,11 @@ public class PlayScreen implements Screen{
 
         //*************************FIXED TIMESTEP METHOD*************************
         accumulator += dt;
-        while (accumulator >= delta) {
+        while (accumulator >= step) {
             objectManager.copyCurrentPosition(); //INTERPOLATION
-            updatePhysics(delta);
-            accumulator -= delta;
-            objectManager.interpolateCurrentPosition((float)(accumulator / delta)); //INTERPOLATION
+            updatePhysics(step);
+            accumulator -= step;
+            objectManager.interpolateCurrentPosition((float)(accumulator / step)); //INTERPOLATION
 
             // FPS check
             /*logic_frameCount ++;
@@ -297,13 +300,27 @@ public class PlayScreen implements Screen{
 
         //*************************DEBUG*************************
         //b2dr.render(world, Cameras.playScreenCam.combined);
-        //fpsLogger.log();
+        fpsLogger.log();
         /*System.out.println("GL calls: " + GLProfiler.calls);
         System.out.println("GL drawCalls: " + GLProfiler.drawCalls);
         System.out.println("GL shaderSwitches: " + GLProfiler.shaderSwitches);
         System.out.println("GL textureBindings: " + GLProfiler.textureBindings);
         System.out.println("GL vertexCount: " + GLProfiler.vertexCount);
         GLProfiler.reset();*/
+
+        //LIMIT FPS
+        if (RENDERER_SLEEP_MS > 0) {
+            now2 = System.currentTimeMillis();
+            diff = now2 - start;
+
+            if (diff < RENDERER_SLEEP_MS) {
+                try {
+                    Thread.sleep(RENDERER_SLEEP_MS - diff);
+                } catch (InterruptedException e) {
+                }
+            }
+            start = System.currentTimeMillis();
+        }
     }
 
     private void drawOnScreenMsg() {
@@ -336,11 +353,11 @@ public class PlayScreen implements Screen{
             hud.showPauseWindow();
         getAssets().unloadAllMainMenuAssets();
         getAssets().unloadAllPlayScreenAssets();
-        getAssets().stopMusic(getAssets().playScreenMusic);
+        getAssets().stopPlayScreenMusic();
     }
 
     public void resume() {
-        getAssets().playMusic(getAssets().playScreenMusic);
+        getAssets().playPlayScreenMusic();
         getAssets().loadAllMainMenuAssets();
         getAssets().loadAllPlayScreenAssets();
         getAssets().finishLoading();
@@ -359,7 +376,7 @@ public class PlayScreen implements Screen{
      */
     @Override
     public void dispose() {
-        game.assets.stopMusic(game.assets.playScreenMusic);
+        game.assets.stopPlayScreenMusic();
         if(!restartLevel)
             game.assets.unloadAllPlayScreenAssets();
         map.dispose();

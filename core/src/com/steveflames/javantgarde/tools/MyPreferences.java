@@ -45,7 +45,19 @@ public class MyPreferences {
     }
 
     public void setLevelProgress(String id) {
-        getPrefs().putString(LEVEL_PROGRESS, id);
-        getPrefs().flush();
+        int levelN = Integer.parseInt(id.split("_")[1]);
+        int categoryN = Integer.parseInt(id.split("_")[0]);
+        int savedLevelN = Integer.parseInt(getPrefs().getString(LEVEL_PROGRESS, id).split("_")[1]);
+        int savedCategoryN = Integer.parseInt(getPrefs().getString(LEVEL_PROGRESS, id).split("_")[0]);
+        if(categoryN > savedCategoryN) {
+            getPrefs().putString(LEVEL_PROGRESS, id);
+            getPrefs().flush();
+        }
+        else if(categoryN == savedCategoryN) {
+            if(levelN>savedLevelN) {
+                getPrefs().putString(LEVEL_PROGRESS, id);
+                getPrefs().flush();
+            }
+        }
     }
 }

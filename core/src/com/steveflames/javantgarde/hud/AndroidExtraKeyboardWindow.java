@@ -1,18 +1,15 @@
 package com.steveflames.javantgarde.hud;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.hud.code_pc.EditorWindow;
 import com.steveflames.javantgarde.hud.quiz_pc.EditorQuizWindow;
 import com.steveflames.javantgarde.tools.Assets;
@@ -34,8 +31,8 @@ public class AndroidExtraKeyboardWindow extends Window {
         super(title, assets.terraSkin);
         this.assets = assets;
         this.setSize(700,85);
-        this.setX(MyGdxGame.WIDTH - this.getWidth());
-        this.setY(MyGdxGame.HEIGHT - this.getHeight() - 10);
+        this.setX(Cameras.hudPort.getCamera().viewportWidth - this.getWidth());
+        this.setY(Cameras.hudPort.getCamera().viewportHeight - this.getHeight() - 10);
 
         Table table = new Table(assets.neonSkin);
         TextButton tabBtn = new TextButton("TAB", assets.neonSkin);
@@ -144,7 +141,6 @@ public class AndroidExtraKeyboardWindow extends Window {
 
     public AndroidExtraKeyboardWindow(String title, Assets assets, final EditorQuizWindow editorQuizWindow) {
         super(title, assets.terraSkin);
-        assets.neonSkin = assets.neonSkin;
         this.assets = assets;
         this.editorQuizWindow = editorQuizWindow;
         this.setSize(10,85);

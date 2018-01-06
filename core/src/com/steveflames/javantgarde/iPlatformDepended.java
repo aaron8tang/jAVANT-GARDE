@@ -9,4 +9,5 @@ public interface iPlatformDepended {
     String getLevel1Tip();
     boolean deviceHasKeyboard();
     boolean isHTML();
+    boolean isPC();
 }

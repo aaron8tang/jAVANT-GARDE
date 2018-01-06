@@ -73,7 +73,7 @@ public class B2WorldContactListener implements ContactListener {
                         if (((Item) object.getUserData()).getName().equals("health"))
                             ((Player) player.getUserData()).addHealth();
                         else if (((Item) object.getUserData()).getName().contains("class")) {
-                            ((Player) player.getUserData()).addClass(((Item) object.getUserData()).getName());
+                            ((Player) player.getUserData()).addClass(((Item) object.getUserData()).getName(), ((Item) object.getUserData()).getText());
                         }
                     }
                     ((Item) object.getUserData()).setUsable(false);
@@ -108,16 +108,16 @@ public class B2WorldContactListener implements ContactListener {
             }
             else if(object.getUserData().equals("cyberfrogLeftSensor")) {
                 assets.playSound(assets.frogSound);
-                ((Player)player.getUserData()).b2body.applyLinearImpulse(-5,0,0,0,true);
+                ((Player)player.getUserData()).b2body.applyLinearImpulse(-1000/MyGdxGame.PPM,0,0,0,true);
             }
             else if(object.getUserData().equals("cyberfrogRightSensor")) {
                 assets.playSound(assets.frogSound);
-                ((Player)player.getUserData()).b2body.applyLinearImpulse(5,0,0,0,true);
+                ((Player)player.getUserData()).b2body.applyLinearImpulse(1000/MyGdxGame.PPM,0,0,0,true);
             }
             else if(object.getUserData().equals("cyberfrogUpperSensor")) {
                 assets.playSound(assets.frogSound);
                 ((Player)player.getUserData()).setCurrentState(Player.State.JUMPING);
-                ((Player)player.getUserData()).b2body.applyLinearImpulse(0,20,0,0,true);
+                ((Player)player.getUserData()).b2body.applyLinearImpulse(0,4000/MyGdxGame.PPM,0,0,true);
             }
         }
         else if(fixA.getUserData().equals("playerDownSensor") || fixB.getUserData().equals("playerDownSensor")) {
@@ -135,6 +135,7 @@ public class B2WorldContactListener implements ContactListener {
             if(object.getUserData().equals("ground")) {
                 for(SensorRobot cyberfrog: playScreen.getObjectManager().getSensorRobots()) {
                     if (cyberfrog.b2body.getFixtureList().contains(cyberfrogSensor, true)) {
+                        System.out.println("EDW");
                         cyberfrog.jump();
                         break;
                     }

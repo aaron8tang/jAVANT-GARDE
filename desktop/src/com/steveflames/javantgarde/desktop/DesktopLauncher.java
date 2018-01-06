@@ -8,8 +8,8 @@ import com.steveflames.javantgarde.MyGdxGame;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.width = MyGdxGame.WIDTH; //1220
-		config.height = MyGdxGame.HEIGHT; //630
+		config.width = 1280;
+		config.height = 768;
 		config.title = MyGdxGame.TITLE;
 		config.y = 0;
 		//config.resizable = false;

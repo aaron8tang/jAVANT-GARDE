@@ -12,6 +12,7 @@ import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.screens.ChooseLevelScreen;
 import com.steveflames.javantgarde.screens.PlayScreen;
 import com.steveflames.javantgarde.tools.Assets;
+import com.steveflames.javantgarde.tools.global.Cameras;
 
 /**
  * Created by Flames on 10/11/2017.
@@ -26,7 +27,7 @@ public class PauseWindow extends Window {
         this.assets = playScreen.getAssets();
 
         this.setSize(800,500);
-        this.setPosition(MyGdxGame.WIDTH/2 - this.getWidth()/2, MyGdxGame.HEIGHT/2 - this.getHeight()/2);
+        this.setPosition(Cameras.hudPort.getCamera().viewportWidth/2 - this.getWidth()/2, Cameras.hudPort.getCamera().viewportHeight/2 - this.getHeight()/2);
 
         TextButton resumeBtn = new TextButton("RESUME", playScreen.getAssets().neonSkin);
         resumeBtn.addListener(new ClickListener() {

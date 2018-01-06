@@ -1,9 +1,6 @@
 package com.steveflames.javantgarde.sprites;
 
-import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -20,7 +17,7 @@ import com.steveflames.javantgarde.tools.Assets;
 
 public class SensorRobot extends GameObject {
 
-    private static final float JUMPSPEED = 5.5f;
+    private static final float JUMPSPEED = 1100/MyGdxGame.PPM;
 
     public enum State { IDLE, MOVING, JUMPING, COMPLETEDTASK}
     private State currentState;
@@ -52,10 +49,10 @@ public class SensorRobot extends GameObject {
         setCurrentState(getState());
         previousState = currentState;
 
-        if(runRight && b2body.getLinearVelocity().x < 0.5)
-            b2body.applyLinearImpulse(0.1f, 0,0,0,true);
-        else if(runLeft && b2body.getLinearVelocity().x > -0.5)
-            b2body.applyLinearImpulse(-0.1f, 0,0,0,true);
+        if(runRight && b2body.getLinearVelocity().x < 100/MyGdxGame.PPM)
+            b2body.applyLinearImpulse(20/MyGdxGame.PPM, 0,0,0,true);
+        else if(runLeft && b2body.getLinearVelocity().x > -100/MyGdxGame.PPM)
+            b2body.applyLinearImpulse(-20/MyGdxGame.PPM, 0,0,0,true);
 
         if(upperSensorEnabled) {
             if(upperSensorDetectsObject == 2){ //jump
@@ -84,21 +81,10 @@ public class SensorRobot extends GameObject {
     private TextureRegion getFrame(float dt) {
         TextureRegion region;
         switch (currentState) {
-            /*case STARTMOVE:
-                region = startAnim.getKeyFrame(stateTimer, false);
-                break;
-            case ENDMOVE:
-                region = endAnim.getKeyFrame(stateTimer, false);
-                break;*/
             default:
                 region = assets.frogIdleAnimation.getKeyFrame(stateTimer, true);
                 break;
         }
-
-        /*if(facingDirection ==1 && !region.isFlipX())
-            region.flip(true, false);
-        else if(facingDirection ==-1 && region.isFlipX())
-            region.flip(true, false);*/
 
         stateTimer = currentState == previousState ? stateTimer + dt : 0;
         previousState = currentState;
@@ -153,7 +139,7 @@ public class SensorRobot extends GameObject {
         }
     }
 
-    public void setCurrentState(State currentState) {
+    private void setCurrentState(State currentState) {
         if(currentState == State.COMPLETEDTASK) {
             setRunRight(false);
             b2body.setLinearVelocity(0, 0);

@@ -30,9 +30,9 @@ import java.util.LinkedHashMap;
 
 public class Player extends GameObject {
 
-    private static final float PLAYERSPEED = 10f; //multiplied by dt
-    private static final float MAXSPEED = 2.4f;
-    private static final float JUMPSPEED = 8.3f;
+    private static final float PLAYERSPEED = 2000/MyGdxGame.PPM; //multiplied by dt
+    private static final float MAXSPEED = 480/MyGdxGame.PPM;
+    private static final float JUMPSPEED = 1660/MyGdxGame.PPM;
 
     public enum State { FALLING, JUMPING, STANDING, RUNNING, DEAD, CODING, READING, DISAPPEARING, DISAPPEARED }
     private State currentState;
@@ -93,7 +93,7 @@ public class Player extends GameObject {
     public void drawFontScaled(SpriteBatch sb) {
         sb.setColor(1,1,1,alpha);
         sb.draw(currentTR, position.x - bounds.width/2/MyGdxGame.PPM, position.y - 17/MyGdxGame.PPM, bounds.width/MyGdxGame.PPM, bounds.height/MyGdxGame.PPM);
-        sb.draw(assets.botWheelTR, position.x - 49/2/MyGdxGame.PPM , position.y - 0.32f
+        sb.draw(assets.botWheelTR, position.x - 49/2/MyGdxGame.PPM , position.y - 64/MyGdxGame.PPM
                 , 49/MyGdxGame.PPM/2,  49/MyGdxGame.PPM/2
                 , 49/MyGdxGame.PPM, 49/MyGdxGame.PPM
                 , 0.935f, 0.935f
@@ -139,7 +139,7 @@ public class Player extends GameObject {
             if(alpha - 0.9f*dt > 0) {
                 alpha -= 0.9f*dt;
             }
-            else { //todo kamia fora de bainei
+            else {
                 setCurrentState(State.DISAPPEARED);
                 alpha = 0;
                 b2body.setLinearVelocity(0,0);
@@ -201,7 +201,7 @@ public class Player extends GameObject {
         else if(b2body.getLinearVelocity().y < 0)
             return State.FALLING;
             //if player is positive or negative in the X axis he is running
-        else if (b2body.getLinearVelocity().x < -0.8 || b2body.getLinearVelocity().x > 0.8)
+        else if (b2body.getLinearVelocity().x < -160/MyGdxGame.PPM || b2body.getLinearVelocity().x > 160/MyGdxGame.PPM)
             return State.RUNNING;
             //if none of these return then he must be standing
         else
@@ -246,7 +246,7 @@ public class Player extends GameObject {
         playerMsg = "+1 health";
         playerMsgGlyph.setText(Fonts.small, playerMsg);
         playerMsgVector.x = b2body.getPosition().x;
-        playerMsgVector.y = b2body.getPosition().y + 0.25f;
+        playerMsgVector.y = b2body.getPosition().y + 50/MyGdxGame.PPM;
         red = 0;
         green = 1;
         blue = 0;
@@ -259,7 +259,7 @@ public class Player extends GameObject {
         playerMsg = "-"+k+" health";
         playerMsgGlyph.setText(Fonts.small, playerMsg);
         playerMsgVector.x = b2body.getPosition().x;
-        playerMsgVector.y = b2body.getPosition().y + 0.25f;
+        playerMsgVector.y = b2body.getPosition().y + 50/MyGdxGame.PPM;
         if(health <= 0) {
             setCurrentState(State.DEAD);
             assets.playSound(assets.deadSound);
@@ -270,13 +270,13 @@ public class Player extends GameObject {
         playerMsgAlpha = 1;
     }
 
-    public void addClass(String text) {
-        String[] temp = text.split("-");
-        classes.put(temp[2], MyFileReader.readFile("txt/classes/"+text+".txt")); //todo
+    public void addClass(String name, String text) {
+        String[] temp = name.split("-");
+        classes.put(temp[2], text);
         playerMsg = "+"+temp[2]+" class";
         playerMsgGlyph.setText(Fonts.small, playerMsg);
         playerMsgVector.x = b2body.getPosition().x;
-        playerMsgVector.y = b2body.getPosition().y + 0.25f;
+        playerMsgVector.y = b2body.getPosition().y + 50/MyGdxGame.PPM;
         red = 1;
         green = 0;
         blue = 0;
@@ -287,7 +287,7 @@ public class Player extends GameObject {
         playerMsg = msg;
         playerMsgGlyph.setText(Fonts.small, playerMsg);
         playerMsgVector.x = b2body.getPosition().x;
-        playerMsgVector.y = b2body.getPosition().y + 0.25f;
+        playerMsgVector.y = b2body.getPosition().y + 50/MyGdxGame.PPM;
         red = 0;
         green = 1;
         blue = 0;
@@ -297,17 +297,17 @@ public class Player extends GameObject {
     public void fadeOut() {
         float sign = Math.signum(b2body.getLinearVelocity().x);
         b2body.setLinearVelocity(0,0);
-        b2body.applyLinearImpulse(1.88f*sign, 0, 0, 0, false);
+        b2body.applyLinearImpulse(376/MyGdxGame.PPM*sign, 0, 0, 0, false);
         setCurrentState(State.DISAPPEARING);
     }
 
     private void playerMsgTick(float dt) {
-        if(playerMsgVector.y + 0.8f*dt < MyGdxGame.HEIGHT/MyGdxGame.PPM - 0.15) {
+        if(playerMsgVector.y + 160/MyGdxGame.PPM*dt < Cameras.playScreenCam.viewportHeight - 30/MyGdxGame.PPM) {
             if(currentState!=State.CODING)
-                playerMsgVector.y += 0.8f * dt;
+                playerMsgVector.y += 160/MyGdxGame.PPM * dt;
         }
         else
-            playerMsgVector.y = MyGdxGame.HEIGHT/MyGdxGame.PPM - 0.14f + 0.8f*dt;
+            playerMsgVector.y = Cameras.playScreenCam.viewportHeight - 28/MyGdxGame.PPM + 160/MyGdxGame.PPM*dt;
         playerMsgAlpha -= 0.4f * dt;
         if(playerMsgAlpha<=0) { //when playerMsgAlpha reaches 0 stop rendering the msg
             playerMsg = null;

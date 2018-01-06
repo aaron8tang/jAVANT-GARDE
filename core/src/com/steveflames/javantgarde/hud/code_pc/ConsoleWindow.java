@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.steveflames.javantgarde.MyGdxGame;
+import com.steveflames.javantgarde.tools.global.Cameras;
 
 /**
  * Created by Flames on 10/11/2017.
@@ -37,7 +38,7 @@ public class ConsoleWindow extends Window {
 
         //add components to window
         this.setSize(700, 190);
-        this.setX(MyGdxGame.WIDTH - this.getWidth());
+        this.setX(Cameras.hudPort.getCamera().viewportWidth - this.getWidth());
         this.setY(0);
         this.add(consoleScroll).expand().fill().top().left().padTop(5);
         this.addListener(new ClickListener() {

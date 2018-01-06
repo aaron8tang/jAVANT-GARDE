@@ -1,9 +1,6 @@
 package com.steveflames.javantgarde.sprites;
 
-import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -20,7 +17,7 @@ public class Teleporter extends GameObject {
 
     public enum State { HIDDEN, IDLE, DISAPPEARING }
     private State currentState;
-    public State previousState;
+    private State previousState;
     private TextureRegion currentTR;
     private float stateTimer = 0f;
 

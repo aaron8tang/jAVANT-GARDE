@@ -12,6 +12,7 @@ import com.steveflames.javantgarde.screens.ChooseLevelScreen;
 import com.steveflames.javantgarde.screens.LoadingScreen;
 import com.steveflames.javantgarde.screens.PlayScreen;
 import com.steveflames.javantgarde.tools.Assets;
+import com.steveflames.javantgarde.tools.global.Cameras;
 
 /**
  * Created by Flames on 11/11/2017.
@@ -24,7 +25,7 @@ public class LevelCompletedWindow extends Table {
         super(playScreen.getAssets().neonSkin);
 
         this.setSize(400,260);
-        this.setPosition(MyGdxGame.WIDTH/2 - 200, MyGdxGame.HEIGHT/2 - 110);
+        this.setPosition(Cameras.hudPort.getCamera().viewportWidth/2 - 200, Cameras.hudPort.getCamera().viewportHeight/2 - 110);
 
         Label levelCompletedLabel = new Label("LEVEL COMPLETED", playScreen.getAssets().lmlSkin);
         levelCompletedLabel.scaleBy(1.2f, 1.2f);

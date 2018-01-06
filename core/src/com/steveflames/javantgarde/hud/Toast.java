@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.tools.Assets;
+import com.steveflames.javantgarde.tools.global.Cameras;
 import com.steveflames.javantgarde.tools.global.Fonts;
 
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ class Toast {
     private Assets assets;
 
     Toast(Assets assets) {
-        rect = new Rectangle(10, MyGdxGame.HEIGHT + 260, MyGdxGame.WIDTH-20, 160);
+        rect = new Rectangle(10, Cameras.hudPort.getCamera().viewportHeight + 260, Cameras.hudPort.getCamera().viewportWidth-20, 160);
         glyphLayout = new GlyphLayout();
         linesOfText = new ArrayList<StringBuilder>();
         this.assets = assets;
@@ -130,11 +131,11 @@ class Toast {
     public void update(float dt, Hud hud) {
         setCurrentFrame(dt);
         if (currentState == State.INCOMING) {
-            if (rect.y - SPEED * dt > MyGdxGame.HEIGHT - rect.height - 65) {
+            if (rect.y - SPEED * dt > Cameras.hudPort.getCamera().viewportHeight - rect.height - 65) {
                 rect.y -= SPEED * dt;
             } else {
                 assets.playSound(assets.robotTalkingSound);
-                rect.y = MyGdxGame.HEIGHT - rect.height - 65;
+                rect.y = Cameras.hudPort.getCamera().viewportHeight - rect.height - 65;
                 currentState = State.WRITING;
                 timerMillis = TimeUtils.millis();
             }
@@ -191,7 +192,7 @@ class Toast {
             assets.stopSound(assets.robotTalkingSound);
             if (currentState != State.LEFT) {
                 rect.y += SPEED * dt;
-                if (rect.y > MyGdxGame.HEIGHT) {
+                if (rect.y > Cameras.hudPort.getCamera().viewportHeight) {
                     currentState = State.LEFT;
                     drawStrings.get(0).setLength(0);
                     drawStrings.get(1).setLength(0);

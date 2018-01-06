@@ -21,8 +21,8 @@ public class Fonts {
 
     public static void load() {
 
-        if(MyGdxGame.platformDepended.isHTML()) {
-        //if(true) {
+        //if(MyGdxGame.platformDepended.isHTML()) {
+        if(true) {
             xsmallMono = new BitmapFont(Gdx.files.internal("fonts/LiberationMono23.fnt"));
             xsmallMonoMarkup = new BitmapFont(Gdx.files.internal("fonts/LiberationMono23.fnt"));
             xsmall = new BitmapFont(Gdx.files.internal("fonts/mvboli24.fnt"));
