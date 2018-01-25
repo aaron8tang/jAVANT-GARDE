@@ -1,15 +1,5 @@
-def keystorePropertiesFile = rootProject.file("android/keystore.properties")
-def keystoreProperties = new Properties()
-keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 android {
-    signingConfigs {
-        config {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile file(keystoreProperties['storeFile'])
-            storePassword keystoreProperties['storePassword']
-        }
-    }
+    
     buildToolsVersion '26.0.2'
     compileSdkVersion 25
     sourceSets {
@@ -39,7 +29,6 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
         }
         debug {
         }
