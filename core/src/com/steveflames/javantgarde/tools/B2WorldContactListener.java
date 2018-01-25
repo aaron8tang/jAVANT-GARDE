@@ -157,6 +157,7 @@ public class B2WorldContactListener implements ContactListener {
             if(object.getUserData().equals("ground")) {
                 for(SensorRobot cyberfrog: objectManager.getSensorRobots()) {
                     if (cyberfrog.b2body.getFixtureList().contains(cyberfrogSensor, true)) {
+                        System.out.println("EDW");
                         cyberfrog.jump();
                         break;
                     }
