@@ -1,0 +1,3 @@
+Now, try to write your first program!
+We need a class which must contain the main method and in
+the main method we will write our code!

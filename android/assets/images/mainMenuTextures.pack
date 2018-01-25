@@ -1,0 +1,33 @@
+
+mainMenuTextures.png
+format: RGBA8888
+filter: MipMapNearestLinear,Linear
+repeat: none
+audio
+  rotate: false
+  xy: 1, 67
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+helpUp
+  rotate: false
+  xy: 131, 67
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+play
+  rotate: false
+  xy: 261, 67
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+lock
+  rotate: false
+  xy: 1, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1

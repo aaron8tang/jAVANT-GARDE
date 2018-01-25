@@ -1,0 +1,3 @@
+In programming, we write code to create our programs.
+A program could be pc software, an app, a website etc.
+Read the 1st Info Sign to move on.

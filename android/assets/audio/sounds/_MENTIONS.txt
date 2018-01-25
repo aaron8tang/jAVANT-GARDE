@@ -1,0 +1,22 @@
+********************NoiseForFun********************
+coin = NFF-coin-04
+jump = NFF-cyborg-jump
+bump = NFF-spit
+fall = NFF-magic-drop
+dead = NFF-chromatic-fall
+lever = NFF-click-switch
+frog = NFF-frog
+door = NFF-blaster
+materialize = NFF-materialize
+robotTalk = NFF-cyber-bubbles-long
+error = NFF-alert-03
+correct = NFF-choice-good
+quest = NFF-cool-success
+wrong = NFF-deny-02
+loseHealth = NFF-lose
+teleport = NFF-pick
+useItem = NFF-wood-accepted
+click = NFF-home-switch-on
+levelCompleted = NFF-bulletin
+rise = NFF-chromatic-rise
+musicAnnouncer = NFF-music-robot
