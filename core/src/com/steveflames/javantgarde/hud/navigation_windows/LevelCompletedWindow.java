@@ -1,20 +1,18 @@
 package com.steveflames.javantgarde.hud.navigation_windows;
 
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.screens.ChooseLevelScreen;
 import com.steveflames.javantgarde.screens.LoadingScreen;
 import com.steveflames.javantgarde.screens.PlayScreen;
-import com.steveflames.javantgarde.tools.Assets;
+import com.steveflames.javantgarde.tools.global.Cameras;
 
 /**
- * Created by Flames on 11/11/2017.
+ * This class implements the screen that pops up
+ * when the player completes a level.
  */
 
 public class LevelCompletedWindow extends Table {
@@ -24,9 +22,9 @@ public class LevelCompletedWindow extends Table {
         super(playScreen.getAssets().neonSkin);
 
         this.setSize(400,260);
-        this.setPosition(MyGdxGame.WIDTH/2 - 200, MyGdxGame.HEIGHT/2 - 110);
+        this.setPosition(Cameras.hudPort.getCamera().viewportWidth/2 - 200, Cameras.hudPort.getCamera().viewportHeight/2 - 110);
 
-        Label levelCompletedLabel = new Label("LEVEL COMPLETED", playScreen.getAssets().lmlSkin);
+        Label levelCompletedLabel = new Label("LEVEL COMPLETED", playScreen.getAssets().neonSkin, "big");
         levelCompletedLabel.scaleBy(1.2f, 1.2f);
         this.add(levelCompletedLabel).top().expandX().padTop(5);
         this.row();
@@ -39,7 +37,6 @@ public class LevelCompletedWindow extends Table {
                 playScreen.getAssets().playSound(playScreen.getAssets().clickSound);
                 playScreen.setRestartLevel();
                 playScreen.dispose();
-                playScreen.getGame().preferences.setLevelProgress((ChooseLevelScreen.getNextLevelId(playScreen.getCurrentLevel())));
                 playScreen.getGame().setScreen(new PlayScreen(playScreen.getGame(), playScreen.getCurrentLevel()));
             }
         });
@@ -49,7 +46,6 @@ public class LevelCompletedWindow extends Table {
             public void clicked(InputEvent event, float x, float y) {
                 playScreen.getAssets().playSound(playScreen.getAssets().clickSound);
                 playScreen.dispose();
-                playScreen.getGame().preferences.setLevelProgress((ChooseLevelScreen.getNextLevelId(playScreen.getCurrentLevel())));
                 playScreen.getGame().setScreen(new ChooseLevelScreen(playScreen.getGame()));
 
             }
@@ -59,8 +55,8 @@ public class LevelCompletedWindow extends Table {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 playScreen.getAssets().playSound(playScreen.getAssets().clickSound);
+                playScreen.setRestartLevel();
                 playScreen.dispose();
-                playScreen.getGame().preferences.setLevelProgress((ChooseLevelScreen.getNextLevelId(playScreen.getCurrentLevel())));
                 playScreen.getGame().setScreen(new LoadingScreen(playScreen.getGame(), ChooseLevelScreen.getNextLevel(playScreen.getCurrentLevel())));
             }
         });

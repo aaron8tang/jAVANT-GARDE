@@ -1,13 +1,11 @@
 package com.steveflames.javantgarde.hud.code_pc;
 
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
@@ -19,7 +17,7 @@ import com.steveflames.javantgarde.tools.Assets;
 import com.steveflames.javantgarde.tools.global.Cameras;
 
 /**
- * Created by Flames on 10/11/2017.
+ * This class implements the Quest window of the code-pc.
  */
 
 class QuestWindow extends Window {
@@ -31,11 +29,11 @@ class QuestWindow extends Window {
     private ScrollPane questScroll;
 
     QuestWindow(String title, final Assets assets, final Hud hud) {
-        super(title, assets.terraSkin);
+        super(title, assets.neonSkin, "window2");
 
         //quest text area
-        Table table = new Table(assets.lmlSkin);
-        questTextArea = new Label("", assets.terraSkin);
+        Table table = new Table(assets.neonSkin);
+        questTextArea = new Label("", assets.neonSkin);
         questTextArea.setWrap(true);
         table.add(questTextArea).left().top().expand().fillX().padLeft(5);
         questScroll = new ScrollPane(table, assets.neonSkin);
@@ -43,7 +41,7 @@ class QuestWindow extends Window {
             questScroll.setFlickScroll(false);
 
         //bottom bar
-        Table bottomBarTable = new Table(assets.lmlSkin);
+        Table bottomBarTable = new Table(assets.neonSkin);
         progressBar = new ProgressBar(0, 3, 1, false, assets.neonSkin);
         helpBtn = new TextButton("help", assets.neonSkin);
         helpBtn.addListener(new ClickListener() {
@@ -72,10 +70,10 @@ class QuestWindow extends Window {
         //add components to window
         this.setSize(580, 340);
         this.setX(0);
-        this.setY(MyGdxGame.HEIGHT-408);
+        this.setY(Cameras.hudPort.getCamera().viewportHeight-408);
         if(!MyGdxGame.platformDepended.deviceHasKeyboard()) {
             this.setHeight(320);
-            this.setY(MyGdxGame.HEIGHT-421);
+            this.setY(Cameras.hudPort.getCamera().viewportHeight-421);
         }
         this.add(questScroll).expand().fill().top().left().padTop(10);
         this.row();

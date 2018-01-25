@@ -1,7 +1,8 @@
 package com.steveflames.javantgarde.hud.code_pc.compiler;
 
 /**
- * Created by Flames on 5/11/2017.
+ * The custom variable implementation.
+ * Utilized by the compiler (MyCompiler class).
  */
 
 public class MyVariable {
@@ -11,7 +12,7 @@ public class MyVariable {
     private String name;
     private String value;
 
-    public MyVariable(String type, String name, String value) {
+    MyVariable(String type, String name, String value) {
         this.type = type;
         this.name = name;
         this.value = value;

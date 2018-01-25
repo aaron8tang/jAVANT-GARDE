@@ -4,7 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 
 /**
- * Created by Flames on 27/12/2017.
+ * This class utilizes the Preferences class provided by LibGDX
+ * in order to save user settings like audio on/off and game progress.
  */
 
 public class MyPreferences {
@@ -44,8 +45,24 @@ public class MyPreferences {
         return getPrefs().getString(LEVEL_PROGRESS, "1_1");
     }
 
+    /**
+     * Saves the game level progress.
+     * @param id The id of the completed level.
+     */
     public void setLevelProgress(String id) {
-        getPrefs().putString(LEVEL_PROGRESS, id);
-        getPrefs().flush();
+        int levelN = Integer.parseInt(id.split("_")[1]);
+        int categoryN = Integer.parseInt(id.split("_")[0]);
+        int savedLevelN = Integer.parseInt(getPrefs().getString(LEVEL_PROGRESS, id).split("_")[1]);
+        int savedCategoryN = Integer.parseInt(getPrefs().getString(LEVEL_PROGRESS, id).split("_")[0]);
+        if(categoryN > savedCategoryN) {
+            getPrefs().putString(LEVEL_PROGRESS, id);
+            getPrefs().flush();
+        }
+        else if(categoryN == savedCategoryN) {
+            if(levelN>=savedLevelN) {
+                getPrefs().putString(LEVEL_PROGRESS, id);
+                getPrefs().flush();
+            }
+        }
     }
 }

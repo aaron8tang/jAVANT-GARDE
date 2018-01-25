@@ -1,14 +1,15 @@
 package com.steveflames.javantgarde.tools.global;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.steveflames.javantgarde.MyGdxGame;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 /**
- * Created by Flames on 24/9/2017.
+ * Global class that loads the fonts and provides access to them.
+ * TODO: make non-global, embed into the assets
+ * TODO: use only one big font and scale accordingly
  */
 
 public class Fonts {
@@ -20,62 +21,34 @@ public class Fonts {
     public static BitmapFont big;
 
     public static void load() {
+        Texture texture = new Texture(Gdx.files.internal("fonts/LiberationMono23.png"), true); // true enables mipmaps
+        texture.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Linear);
+        TextureRegion textureRegion = new TextureRegion(texture);
+        xsmallMono = new BitmapFont(Gdx.files.internal("fonts/LiberationMono23.fnt"), textureRegion);
+        xsmallMonoMarkup = new BitmapFont(Gdx.files.internal("fonts/LiberationMono23.fnt"), textureRegion);
 
-        if(MyGdxGame.platformDepended.isHTML()) {
-        //if(true) {
-            xsmallMono = new BitmapFont(Gdx.files.internal("fonts/LiberationMono23.fnt"));
-            xsmallMonoMarkup = new BitmapFont(Gdx.files.internal("fonts/LiberationMono23.fnt"));
-            xsmall = new BitmapFont(Gdx.files.internal("fonts/mvboli24.fnt"));
-            small = new BitmapFont(Gdx.files.internal("fonts/mvboli36.fnt"));
-            medium = new BitmapFont(Gdx.files.internal("fonts/mvboli50.fnt"));
-            big = new BitmapFont(Gdx.files.internal("fonts/mvboli100.fnt"));
+        texture = new Texture(Gdx.files.internal("fonts/mvboli24.png"), true);
+        texture.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Linear);
+        textureRegion = new TextureRegion(texture);
+        xsmall = new BitmapFont(Gdx.files.internal("fonts/mvboli24.fnt"), textureRegion);
 
-            xsmall.getData().markupEnabled = true;
-            xsmallMonoMarkup.getData().markupEnabled = true;
-            medium.getData().markupEnabled = true;
-            big.getData().markupEnabled = true;
-        }
-        else {
+        texture = new Texture(Gdx.files.internal("fonts/mvboli36.png"), true);
+        texture.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Linear);
+        textureRegion = new TextureRegion(texture);
+        small = new BitmapFont(Gdx.files.internal("fonts/mvboli36.fnt"), textureRegion);
 
-            xsmallMono = new BitmapFont();
-            xsmallMonoMarkup = new BitmapFont();
-            xsmall = new BitmapFont();
-            small = new BitmapFont();
-            medium = new BitmapFont();
-            big = new BitmapFont();
+        texture = new Texture(Gdx.files.internal("fonts/mvboli50.png"), true);
+        texture.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Linear);
+        textureRegion = new TextureRegion(texture);
+        medium = new BitmapFont(Gdx.files.internal("fonts/mvboli50.fnt"), textureRegion);
+        big = new BitmapFont(Gdx.files.internal("fonts/mvboli50.fnt"), textureRegion);
+        big.getData().setScale(2f);
 
-            FileHandle fontFile = Gdx.files.internal("fonts/mvboli.ttf");
-            FreeTypeFontGenerator generator = new FreeTypeFontGenerator(fontFile);
-            FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-            parameter.size = 24;
-            parameter.characters = "1234567890" +
-                    "`~!@#$%^&*()-=_+,<.>/?;:'\"{\\}|[]" +
-                    "abcdefghijklmnopqrstuvwxyz" +
-                    "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            xsmall = generator.generateFont(parameter);
-            xsmall.getData().markupEnabled = true;
-            parameter.size = 36;
-            small = generator.generateFont(parameter);
-            parameter.size = 100;
-            big = generator.generateFont(parameter);
-            big.getData().markupEnabled = true;
-            parameter.size = 50;
-            medium = generator.generateFont(parameter);
-            medium.getData().markupEnabled = true;
-
-            fontFile = Gdx.files.internal("fonts/LiberationMono-Regular.ttf");
-            generator = new FreeTypeFontGenerator(fontFile);
-            parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-            parameter.size = 24;
-            parameter.characters = "1234567890" +
-                    "`~!@#$%^&*()-=_+,<.>/?;:'\"{\\}|[]" +
-                    "abcdefghijklmnopqrstuvwxyz" +
-                    "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            xsmallMono = generator.generateFont(parameter);
-            xsmallMonoMarkup = generator.generateFont(parameter);
-            xsmallMonoMarkup.getData().markupEnabled = true;
-            generator.dispose();
-        }
+        //enable markup
+        xsmall.getData().markupEnabled = true;
+        xsmallMonoMarkup.getData().markupEnabled = true;
+        medium.getData().markupEnabled = true;
+        big.getData().markupEnabled = true;
 
         Fonts.xsmallMono.setColor(Color.BLACK);
         Fonts.xsmallMonoMarkup.setColor(Color.BLACK);

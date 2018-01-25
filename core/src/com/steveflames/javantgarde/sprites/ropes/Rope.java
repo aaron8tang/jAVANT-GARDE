@@ -1,6 +1,5 @@
 package com.steveflames.javantgarde.sprites.ropes;
 
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -9,7 +8,6 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
 import com.steveflames.javantgarde.MyGdxGame;
-import com.steveflames.javantgarde.screens.PlayScreen;
 import com.steveflames.javantgarde.sprites.GameObject;
 import com.steveflames.javantgarde.tools.Assets;
 import com.steveflames.javantgarde.tools.GameObjectManager;
@@ -22,7 +20,8 @@ import java.util.Collections;
 import java.util.Random;
 
 /**
- * Created by Flames on 10/10/2017.
+ * Implements the Rope sprites
+ * (jump on the correct platform elevators e.g. level 2_1)
  */
 
 public class Rope extends GameObject {
@@ -61,7 +60,7 @@ public class Rope extends GameObject {
             }
             else
                 platforms.add(new Platform(s, world, map, new Rectangle(bounds.x + bounds.width/2 - 100,
-                        bounds.y + bounds.height + (randExtraY + 2.5f*i)* MyGdxGame.PPM, 200, 50)));
+                        bounds.y + bounds.height + (randExtraY + 500/MyGdxGame.PPM*i)* MyGdxGame.PPM, 200, 50)));
             i++;
         }
         glyphLayout.setText(Fonts.small, prompt);

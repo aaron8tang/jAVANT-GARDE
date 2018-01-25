@@ -3,7 +3,8 @@ package com.steveflames.javantgarde.hud.code_pc.compiler;
 import java.util.ArrayList;
 
 /**
- * Created by Flames on 5/11/2017.
+ * The custom class implementation.
+ * Utilized by the compiler (MyCompiler class).
  */
 
 public class MyClass {

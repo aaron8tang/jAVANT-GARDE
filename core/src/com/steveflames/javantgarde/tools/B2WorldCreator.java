@@ -1,6 +1,5 @@
 package com.steveflames.javantgarde.tools;
 
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Rectangle;
@@ -24,7 +23,9 @@ import com.steveflames.javantgarde.sprites.Teleporter;
 import com.steveflames.javantgarde.sprites.ropes.Rope;
 
 /**
- * Created by Flames on 23/9/2017.
+ * In this class, the dynamic objects of the Tiled map
+ * are utilized. The creation of the world is done
+ * with the help of the Box2D physics engine.
  */
 
 public class B2WorldCreator {
@@ -101,7 +102,7 @@ public class B2WorldCreator {
                     }
                     else if(object.getName().contains("marker")) {
                         if(object.getName().contains("sensorRobot")) {
-                            playScreen.getObjectManager().getSensorRobots().add(new SensorRobot(object.getName().substring(object.getName().length()-1), playScreen.getWorld(), playScreen.getMap(), rect, playScreen.getAssets()));
+                            playScreen.getObjectManager().getSensorRobots().add(new SensorRobot(object.getName().substring(object.getName().length()-1), playScreen.getWorld(), playScreen.getMap(), rect, playScreen.getAssets(), playScreen.getCurrentLevelID()));
                             playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getSensorRobots().get(playScreen.getObjectManager().getSensorRobots().size()-1));
                         }
                         else {
@@ -110,7 +111,7 @@ public class B2WorldCreator {
                         }
                     }
                     else if(object.getName().contains("quiz")) {
-                        playScreen.getObjectManager().getQuizes().add(new Quiz(object.getName(), playScreen, rect));
+                        playScreen.getObjectManager().getQuizes().add(new Quiz(object.getName(), playScreen.getWorld(), playScreen.getMap(), rect, playScreen.getAssets(), playScreen.getObjectManager(), playScreen.getHud()));
                         playScreen.getObjectManager().addGameObject(playScreen.getObjectManager().getQuizes().get(playScreen.getObjectManager().getQuizes().size()-1));
                     }
                     else if(object.getName().contains("floatingPlatform")) {

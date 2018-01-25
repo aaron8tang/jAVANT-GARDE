@@ -1,12 +1,6 @@
 package com.steveflames.javantgarde.sprites;
 
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
@@ -14,13 +8,13 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.tools.Assets;
 import com.steveflames.javantgarde.tools.global.Cameras;
-import com.steveflames.javantgarde.tools.global.Fonts;
 import com.steveflames.javantgarde.tools.global.MyFileReader;
 
 import java.util.ArrayList;
 
 /**
- * Created by Flames on 4/10/2017.
+ * Implements the Info Signs that contain the theory.
+ * The player reads these signs and learns about programming.
  */
 
 public class InfoSign extends GameObject {
@@ -37,6 +31,10 @@ public class InfoSign extends GameObject {
             text = MyFileReader.readFile("txt/info/" + name + ".txt");
     }
 
+    /**
+     * Called when the player has read an Info Sign.
+     * @param doors The Door objects of the game.
+     */
     public void setRead(ArrayList<Door> doors) {
         if(name.equals("info-1_1-0") || name.equals("info-7_1-0") || name.equals("info-5_1-0") || name.equals("info-6_1-1"))
             doors.get(0).open();

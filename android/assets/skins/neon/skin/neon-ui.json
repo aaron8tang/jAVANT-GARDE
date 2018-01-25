@@ -1,14 +1,6 @@
 {
 com.badlogic.gdx.graphics.g2d.BitmapFont: {
-	font: {
-		file: font-export.fnt
-	}
-	font-over: {
-		file: font-over-export.fnt
-	}
-	font-pressed: {
-		file: font-pressed-export.fnt
-	}
+
 }
 com.badlogic.gdx.graphics.Color: {
 	color: {
@@ -35,8 +27,64 @@ com.badlogic.gdx.graphics.Color: {
 		b: 1
 		a: 1
 	}
+	black: {
+		r: 0
+		g: 0
+		b: 0
+		a: 1
+	}
+    gray: {
+		r: 0.175
+		g: 0.175
+		b: 0.175
+		a: 1
+	}
+	cyan: {
+		r: 0.1
+		g: 0.88
+		b: 0.91
+		a: 0.7
+	}
+	white: {
+		r: 1
+		g: 1
+		b: 1
+		a: 1
+	}
+	red: {
+		r: 0.8
+		g: 0
+		b: 0
+		a: 1
+	}
+	alphaC: {
+		r: 0
+		g: 0
+		b: 0
+		a: 0.5
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
+	alpha: {
+		name: white
+		color: alphaC
+	}
+	black: {
+		name: white
+		color: black
+	}
+    gray: {
+		name: white
+		color: gray
+	}
+	cyan: {
+		name:white
+		color: cyan
+	}
+	red: {
+		name: white
+		color: red
+	}
 	button-c: {
 		name: button
 		color: color
@@ -201,6 +249,10 @@ com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 		name: window
 		color: color
 	}
+	window-c2: {
+		name: window2
+		color: color
+	}
 	checkbox-pressed-over-c: {
 		name: checkbox-pressed-over
 		color: color
@@ -219,6 +271,11 @@ com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 		up: button-c
 		down: button-pressed-c
 		over: button-over-c
+	}
+	button2: {
+		up: black
+		down: cyan
+		over: gray
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
@@ -282,16 +339,18 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	default: {
+		font: LiberationMonoMARKUP
+	}
+	big: {
+		font: LiberationMonoBIG
+		fontColor: red
+	}
+	no_markup: {
 		font: LiberationMono
 		fontColor: text
 	}
-	over: {
-		font: font-over
-		fontColor: text
-	}
-	pressed: {
-		font: font-pressed
-		fontColor: text
+	mvboli: {
+		font: mvboli
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
@@ -416,8 +475,17 @@ com.badlogic.gdx.scenes.scene2d.ui.Tree$TreeStyle: {
 com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
 	default: {
 		background: window-c
-		titleFont: font
-		titleFont: font
+		titleFont: mvboli
+	}
+	window2: {
+		background: window-c2
+		titleFont: mvboli
+	}
+	dialog: {
+		titleFont: mvboli
+		background: window-c2
+		titleFontColor: white
+		stageBackground: alpha
 	}
 }
 }

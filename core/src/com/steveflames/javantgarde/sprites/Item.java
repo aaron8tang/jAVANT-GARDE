@@ -1,18 +1,17 @@
 package com.steveflames.javantgarde.sprites;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.tools.Assets;
+import com.steveflames.javantgarde.tools.global.MyFileReader;
 
 /**
- * Created by Flames on 19/10/2017.
+ * Implements the acquirable items that are floating
+ * on a level (health, class).
  */
 
 public class Item extends GameObject {
@@ -21,6 +20,7 @@ public class Item extends GameObject {
     private int itemID;
     private static int nOfClasses = 0;
     private Assets assets;
+    private String text = "";
 
     public Item(String name, World world, TiledMap map, Rectangle bounds, Assets assets) {
         super(name, world, map, bounds, true);
@@ -30,15 +30,16 @@ public class Item extends GameObject {
         else if(name.contains("class")) {
             itemID = 2;
             nOfClasses++;
+            text = MyFileReader.readFile("txt/classes/"+name+".txt");
         }
     }
 
     public void update(float dt) {
-        b2body.setTransform(b2body.getPosition().x, b2body.getPosition().y+0.15f*dt*dir, 0);
+        b2body.setTransform(b2body.getPosition().x, b2body.getPosition().y+30/MyGdxGame.PPM*dt*dir, 0);
 
-        if(b2body.getPosition().y +0.15f*dt > bounds.y/MyGdxGame.PPM + 0.15)
+        if(b2body.getPosition().y +30/MyGdxGame.PPM*dt > bounds.y/MyGdxGame.PPM + 30/MyGdxGame.PPM)
             dir = -1;
-        else if (b2body.getPosition().y +0.15f*dt < bounds.y/MyGdxGame.PPM + 0.05)
+        else if (b2body.getPosition().y +30/MyGdxGame.PPM*dt < bounds.y/MyGdxGame.PPM + 10/MyGdxGame.PPM)
             dir = 1;
     }
 
@@ -59,5 +60,9 @@ public class Item extends GameObject {
 
     public static int getnOfClasses() {
         return nOfClasses;
+    }
+
+    public String getText() {
+        return text;
     }
 }

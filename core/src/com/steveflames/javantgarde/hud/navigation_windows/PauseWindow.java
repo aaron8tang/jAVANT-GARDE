@@ -2,9 +2,7 @@ package com.steveflames.javantgarde.hud.navigation_windows;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -12,9 +10,10 @@ import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.screens.ChooseLevelScreen;
 import com.steveflames.javantgarde.screens.PlayScreen;
 import com.steveflames.javantgarde.tools.Assets;
+import com.steveflames.javantgarde.tools.global.Cameras;
 
 /**
- * Created by Flames on 10/11/2017.
+ * This class implements the in-game Pause screen.
  */
 
 public class PauseWindow extends Window {
@@ -22,11 +21,11 @@ public class PauseWindow extends Window {
     private Assets assets;
 
     public PauseWindow(String title, final PlayScreen playScreen) {
-        super(title, playScreen.getAssets().terraSkin);
+        super(title, playScreen.getAssets().neonSkin, "window2");
         this.assets = playScreen.getAssets();
 
         this.setSize(800,500);
-        this.setPosition(MyGdxGame.WIDTH/2 - this.getWidth()/2, MyGdxGame.HEIGHT/2 - this.getHeight()/2);
+        this.setPosition(Cameras.hudPort.getCamera().viewportWidth/2 - this.getWidth()/2, Cameras.hudPort.getCamera().viewportHeight/2 - this.getHeight()/2);
 
         TextButton resumeBtn = new TextButton("RESUME", playScreen.getAssets().neonSkin);
         resumeBtn.addListener(new ClickListener() {

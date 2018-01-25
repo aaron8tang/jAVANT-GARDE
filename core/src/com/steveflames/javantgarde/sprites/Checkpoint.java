@@ -8,7 +8,10 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.steveflames.javantgarde.tools.global.MyFileReader;
 
 /**
- * Created by Flames on 11/10/2017.
+ * Implements the checkpoints of each level.
+ * This object is a sensor and is not visualized.
+ * Each time a player is out of bounds, he spawns in
+ * the last saved checkpoint.
  */
 
 public class Checkpoint extends GameObject {

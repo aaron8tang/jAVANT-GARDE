@@ -1,12 +1,6 @@
 package com.steveflames.javantgarde.sprites;
 
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
@@ -14,10 +8,9 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.tools.Assets;
 import com.steveflames.javantgarde.tools.global.Cameras;
-import com.steveflames.javantgarde.tools.global.Fonts;
 
 /**
- * Created by Flames on 19/11/2017.
+ * Implements all the in-game levers.
  */
 
 public class Lever extends GameObject {
@@ -74,7 +67,7 @@ public class Lever extends GameObject {
             this.usable = usable;
     }
 
-    public void setManualPull(boolean manualPull) {
+    void setManualPull(boolean manualPull) {
         this.manualPull = manualPull;
     }
 
@@ -82,7 +75,7 @@ public class Lever extends GameObject {
         return manualPull;
     }
 
-    public boolean isColliding() {
+    boolean isColliding() {
         return colliding;
     }
 

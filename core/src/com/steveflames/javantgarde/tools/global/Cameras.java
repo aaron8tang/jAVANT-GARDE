@@ -2,20 +2,21 @@ package com.steveflames.javantgarde.tools.global;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.sprites.Player;
 
 /**
- * Created by Flames on 2/12/2017.
+ * Global class that initializes the game cameras and provides
+ * access to them.
+ * TODO: make non-global
  */
 
 public class Cameras {
 
     public static OrthographicCamera playScreenCam;
     public static Viewport playScreenPort;
-    private static float mapWidth;
+    public static float mapWidth;
     private static float mapHeight;
 
     public static Viewport hudPort;
@@ -25,8 +26,8 @@ public class Cameras {
         Cameras.mapWidth = mapWidth;
         Cameras.mapHeight = mapHeight;
         playScreenCam = new OrthographicCamera();
-        Cameras.playScreenCam.setToOrtho(false, MyGdxGame.WIDTH / MyGdxGame.PPM, MyGdxGame.HEIGHT / MyGdxGame.PPM);
-        playScreenPort = new FitViewport(MyGdxGame.WIDTH / MyGdxGame.PPM, MyGdxGame.HEIGHT / MyGdxGame.PPM); //TODO: h mhpws fit
+        playScreenCam.setToOrtho(false, MyGdxGame.WIDTH / MyGdxGame.PPM, MyGdxGame.HEIGHT / MyGdxGame.PPM);
+        playScreenPort = new FitViewport(MyGdxGame.WIDTH / MyGdxGame.PPM, MyGdxGame.HEIGHT / MyGdxGame.PPM, playScreenCam);
         hudPort = new FitViewport(MyGdxGame.WIDTH, MyGdxGame.HEIGHT, new OrthographicCamera());
     }
 

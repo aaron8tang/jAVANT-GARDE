@@ -1,10 +1,6 @@
 package com.steveflames.javantgarde.sprites;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
@@ -13,11 +9,11 @@ import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.quests.Quest;
 import com.steveflames.javantgarde.tools.Assets;
 import com.steveflames.javantgarde.tools.global.Cameras;
-import com.steveflames.javantgarde.tools.global.Fonts;
 import com.steveflames.javantgarde.tools.global.MyFileReader;
 
 /**
- * Created by Flames on 24/9/2017.
+ * Implements the pc sprites of the levels.
+ * A pc can be a code-pc, a quiz-pc or an order-pc.
  */
 
 public class Pc extends GameObject {
@@ -49,7 +45,10 @@ public class Pc extends GameObject {
             quest = new Quest(name.substring(3));
 
             if(MyFileReader.exists("txt/pcs/" + name + ".txt"))
-                editorText = MyFileReader.readFile("txt/pcs/" + name + ".txt").replaceAll("\r", "");
+                if(!MyGdxGame.platformDepended.isHTML())
+                    editorText = MyFileReader.readFile("txt/pcs/" + name + ".txt").replaceAll("\r", "");
+                else
+                    editorText = "";
             else
                 editorText = "class MyClass {\n" +
                         "\n" +

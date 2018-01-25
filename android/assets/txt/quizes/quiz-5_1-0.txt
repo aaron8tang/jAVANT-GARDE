@@ -3,7 +3,7 @@
 class IfDemo1 {
    public static void main(String[[] args) {
        int a = 10;
-       if( a != 10 && 1==1) {
+       if( a != 10 && 1 == 1 ) {
            a = -a;
        }
        System.out.println(a);
@@ -18,7 +18,7 @@ class IfDemo1 {
 class IfDemo2 {
    public static void main(String[[] args) {
        int a = 10;
-       if( a <= 10 && 1==1) {
+       if( a <= 10 && 1 == 1 ) {
            a = -a;
        }
        System.out.println(a);
@@ -33,7 +33,7 @@ class IfDemo2 {
 class IfDemo3 {
    public static void main(String[[] args) {
        int a = 10;
-       if( a != 10 || 1==1) {
+       if( a != 10 || 1 == 1 ) {
            a = -a;
        }
        System.out.println(a);
@@ -48,7 +48,7 @@ class IfDemo3 {
 class IfDemo4 {
    public static void main(String[[] args) {
        int a = 10;
-       if( a != 10 || 2<1) {
+       if( a != 10 || 2 < 1 ) {
            a = -a;
        }
        System.out.println(a);

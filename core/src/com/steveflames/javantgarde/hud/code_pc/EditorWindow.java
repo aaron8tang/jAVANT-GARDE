@@ -9,7 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -34,7 +33,9 @@ import java.util.ArrayList;
 import java.util.Map;
 
 /**
- * Created by Flames on 10/11/2017.
+ * This class implements the 'write code' pc.
+ * Consists of 2 other windows (ConsoleWindow and QuestWindow).
+ * Also, the custom compiler is utilized here.
  */
 
 public class EditorWindow extends Window {
@@ -61,15 +62,15 @@ public class EditorWindow extends Window {
     private Assets assets;
 
     public EditorWindow(String title, final Assets assets, final Hud hud) {
-        super(title, assets.terraSkin);
+        super(title, assets.neonSkin, "window2");
         this.hud = hud;
         this.assets = assets;
 
         //top bar
         Table topBarTable = new Table(assets.neonSkin);
         TextButton exitBtn = new TextButton("x", assets.neonSkin);
-        Table dummyTable = new Table(assets.terraSkin);
-        classesTable = new Table(assets.terraSkin);
+        Table dummyTable = new Table(assets.neonSkin);
+        classesTable = new Table(assets.neonSkin);
         TextButton classBtn = new TextButton("MyClass.java", assets.neonSkin);
         classesTable.add(classBtn).left().height(50).padLeft(0);
         dummyTable.add(classesTable).left().expandX();
@@ -92,7 +93,7 @@ public class EditorWindow extends Window {
         Label label = new Label(1 + "", assets.neonSkin);
         label.setColor(Color.CYAN);
         lineNumTable.add(label).width(60).height(codeTextArea.getStyle().font.getLineHeight());
-        for (int i = 1; i < 150; i++) {
+        for (int i = 1; i < 50; i++) {
             lineNumTable.row();
             label = new Label(i + 1 + "", assets.neonSkin);
             label.setColor(Color.CYAN);
@@ -100,10 +101,10 @@ public class EditorWindow extends Window {
         }
 
         //codeTable
-        Table codeTable = new Table(assets.lmlSkin);
+        Table codeTable = new Table(assets.neonSkin);
         codeTable.add(lineNumTable).top().left();
-        codeTable.add(codeTextArea).top().expand().fill().width(1000).padTop(5); //todo otan pataw 1h grammh enter k meta click indexoutOfBouds
-        ScrollPane codeScroll = new ScrollPane(codeTable, assets.neonSkin);       //todo kalutero textArea.. na valw height k scroll mono sto textArea
+        codeTable.add(codeTextArea).top().expand().fill().width(1000).padTop(5);
+        ScrollPane codeScroll = new ScrollPane(codeTable, assets.neonSkin);
         if(MyGdxGame.platformDepended.deviceHasKeyboard())
             codeScroll.setFlickScroll(false);
 
@@ -114,10 +115,10 @@ public class EditorWindow extends Window {
 
         //add components to window
         if(MyGdxGame.platformDepended.deviceHasKeyboard())
-            this.setSize(700, MyGdxGame.HEIGHT-213);
+            this.setSize(700, Cameras.hudPort.getCamera().viewportHeight-213);
         else
-            this.setSize(700, MyGdxGame.HEIGHT-295);
-        this.setX(MyGdxGame.WIDTH - this.getWidth());
+            this.setSize(700, Cameras.hudPort.getCamera().viewportHeight-295);
+        this.setX(Cameras.hudPort.getCamera().viewportWidth - this.getWidth());
         this.setY(195);
         this.add(topBarTable).expandX().fillX().top();
         this.row().padTop(5);
@@ -125,7 +126,7 @@ public class EditorWindow extends Window {
         this.row();
         this.add(bottomBarTable).expandX().fillX();
 
-        consoleWindow = new ConsoleWindow("CONSOLE", assets.neonSkin, assets.terraSkin, hud.stage);
+        consoleWindow = new ConsoleWindow("CONSOLE", assets.neonSkin, assets.neonSkin, hud.stage);
         questWindow = new QuestWindow("QUEST", assets, hud);
         if(!MyGdxGame.platformDepended.deviceHasKeyboard())
             androidExtraKeyboardWindow = new AndroidExtraKeyboardWindow("+KEYBOARD", assets, this);
@@ -200,7 +201,7 @@ public class EditorWindow extends Window {
                 for(Map.Entry<String, String> entry: hud.playScreen.getPlayer().getClasses().entrySet())
                     myClasses.add(new MyClass(entry.getKey(), entry.getValue()));
 
-                //compile and run
+                //COMPILE AND RUN
                 if(compiler.compile(myClasses) || (hud.playScreen.getCurrentLevelID().equals("1_1") && currentPc.getQuest().getProgress()==0)) {
                     if (validateCodeForQuest(hud.playScreen, myClasses.get(0), currentPc.getQuest().getQuestN())) {
                         assets.playSound(assets.correctSound);
@@ -311,7 +312,7 @@ public class EditorWindow extends Window {
             StringBuilder stringBuilder = new StringBuilder();
 
             for(int i=0; i<pos; i++) {
-                if(codeTextArea.getText().charAt(i) == '{') //todo if the user types { or } as a String there's a problem
+                if(codeTextArea.getText().charAt(i) == '{')
                     bracketCounter++;
                 else if(codeTextArea.getText().charAt(i) == '}')
                     bracketCounter--;
@@ -324,7 +325,7 @@ public class EditorWindow extends Window {
 
             int bracketCounter2 = bracketCounter;
             for(int i=pos; i<codeTextArea.getText().length(); i++) {
-                if (codeTextArea.getText().charAt(i) == '{') //todo if the user types { or } as a String there's a problem
+                if (codeTextArea.getText().charAt(i) == '{')
                     bracketCounter2++;
                 else if (codeTextArea.getText().charAt(i) == '}')
                     bracketCounter2--;
@@ -374,7 +375,7 @@ public class EditorWindow extends Window {
             }
 
             for(int j=0; j<pos - charsToDelete; j++) { //count brackets
-                if(codeTextArea.getText().charAt(j) == '{') //todo if the user types { or } in a String there's a problem
+                if(codeTextArea.getText().charAt(j) == '{')
                     bracketCounter++;
                 else if(codeTextArea.getText().charAt(j) == '}')
                     bracketCounter--;
@@ -513,12 +514,16 @@ public class EditorWindow extends Window {
                         codeTextArea.setText(s.getValue().replaceAll("\r",""));
                         codeTextArea.setDisabled(true);
                         if(currentPc.getQuest().getQuestN()==0) {
-                            if (currentPc.getQuest().getProgress() == 0 && btn.getText().toString().equals("InfoSign.java"))
+                            if (currentPc.getQuest().getProgress() == 0 && btn.getText().toString().equals("InfoSign.java")) {
+                                assets.playSound(assets.correctSound);
                                 questWindow.incrementQuestStep(currentPc.getQuest(), EditorWindow.this);
+                            }
                         }
                         else {
-                            if (currentPc.getQuest().getProgress() == 0 && btn.getText().toString().equals("Lever.java"))
+                            if (currentPc.getQuest().getProgress() == 0 && btn.getText().toString().equals("Lever.java")) {
+                                assets.playSound(assets.correctSound);
                                 questWindow.incrementQuestStep(currentPc.getQuest(), EditorWindow.this);
+                            }
                         }
                     }
                 });
@@ -606,7 +611,7 @@ public class EditorWindow extends Window {
                             if(!myVariable.getValue().equals("null")) {
                                 floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(0).getBounds().x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(0).getBounds().width / 2 / MyGdxGame.PPM,
                                         playScreen.getObjectManager().getMarkers().get(0).getBounds().y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(0).getBounds().height / 2 / MyGdxGame.PPM
-                                                + 0.64f * Integer.parseInt(myVariable.getValue()), 0);
+                                                + 128/MyGdxGame.PPM * Integer.parseInt(myVariable.getValue()), 0);
                                 break;
                             }
                         }
@@ -618,7 +623,7 @@ public class EditorWindow extends Window {
                             if(!myVariable.getValue().equals("null")) {
                                 floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(1).getBounds().x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(1).getBounds().width / 2 / MyGdxGame.PPM,
                                         playScreen.getObjectManager().getMarkers().get(1).getBounds().y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(1).getBounds().height / 2 / MyGdxGame.PPM
-                                                + 0.64f * (float) Double.parseDouble(myVariable.getValue()), 0);
+                                                + 128/MyGdxGame.PPM * (float) Double.parseDouble(myVariable.getValue()), 0);
                                 break;
                             }
                         }
@@ -630,12 +635,12 @@ public class EditorWindow extends Window {
                             if(myVariable.getValue().equals("true")) {
                                 floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(2).getBounds().x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(2).getBounds().width / 2 / MyGdxGame.PPM,
                                         playScreen.getObjectManager().getMarkers().get(2).getBounds().y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(2).getBounds().height / 2 / MyGdxGame.PPM
-                                                + 0.64f*1.5f, 0);
+                                                + 64/MyGdxGame.PPM*300/MyGdxGame.PPM, 0);
                             }
                             else {
                                 floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(2).getBounds().x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(2).getBounds().width / 2 / MyGdxGame.PPM,
                                         playScreen.getObjectManager().getMarkers().get(2).getBounds().y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(2).getBounds().height / 2 / MyGdxGame.PPM
-                                                - 0.64f*1.5f, 0);
+                                                - 64/MyGdxGame.PPM*300/MyGdxGame.PPM, 0);
                             }
                             break;
                         }
@@ -647,7 +652,7 @@ public class EditorWindow extends Window {
                             if(myVariable.getValue().equals("a")) {
                                 floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(3).getBounds().x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(3).getBounds().width / 2 / MyGdxGame.PPM,
                                         playScreen.getObjectManager().getMarkers().get(3).getBounds().y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(3).getBounds().height / 2 / MyGdxGame.PPM
-                                                + 0.64f*1.5f, 0);
+                                                + 64/MyGdxGame.PPM*300/MyGdxGame.PPM, 0);
                                 break;
                             }
                             else if(myVariable.getValue().equals("b")) {
@@ -658,11 +663,11 @@ public class EditorWindow extends Window {
                             else if(myVariable.getValue().equals("c")) {
                                 floatingPlatform.setTransform(playScreen.getObjectManager().getMarkers().get(3).getBounds().x / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(3).getBounds().width / 2 / MyGdxGame.PPM,
                                         playScreen.getObjectManager().getMarkers().get(3).getBounds().y / MyGdxGame.PPM - floatingPlatform.getBounds().height / 2 / MyGdxGame.PPM + playScreen.getObjectManager().getMarkers().get(3).getBounds().height / 2 / MyGdxGame.PPM
-                                                - 0.64f*1.5f, 0);
+                                                - 64/MyGdxGame.PPM*300/MyGdxGame.PPM, 0);
                                 break;
                             }
                             else {
-                                floatingPlatform.setTransform(-5, -5, 0);
+                                floatingPlatform.setTransform(-1000/MyGdxGame.PPM, -1000/MyGdxGame.PPM, 0);
                                 break;
                             }
                         }
@@ -677,7 +682,7 @@ public class EditorWindow extends Window {
                                 break;
                             }
                             else {
-                                floatingPlatform.setTransform(-5, -5, 0);
+                                floatingPlatform.setTransform(-1000/MyGdxGame.PPM, -1000/MyGdxGame.PPM, 0);
                                 break;
                             }
                         }
@@ -802,6 +807,7 @@ public class EditorWindow extends Window {
     }
 
     public void completed() {
+        assets.playSound(assets.questSound);
         if(hud.playScreen.getCurrentLevelID().equals("1_1")) {
             tempHideEditor(-1, false);
             hud.playScreen.getObjectManager().getDoors().get(3).open();

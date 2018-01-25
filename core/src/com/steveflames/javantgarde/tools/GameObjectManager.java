@@ -2,11 +2,7 @@ package com.steveflames.javantgarde.tools;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.World;
-import com.steveflames.javantgarde.screens.PlayScreen;
 import com.steveflames.javantgarde.sprites.Checkpoint;
 import com.steveflames.javantgarde.sprites.Door;
 import com.steveflames.javantgarde.sprites.FloatingPlatform;
@@ -26,15 +22,16 @@ import com.steveflames.javantgarde.tools.global.Cameras;
 import java.util.ArrayList;
 
 /**
- * Created by Flames on 29/11/2017.
+ * This class contains all the dynamic objects of the game
+ * as well as appropriate methods to handle them.
+ * Also, the interpolation method is implemented here.
  */
 
 public class GameObjectManager {
 
     private ArrayList<GameObject> gameObjects;
     private ArrayList<GameObject> objectsToRemove = new ArrayList<GameObject>();
-    private PlayScreen playScreen;
-    //world bodies
+    //Box2D world bodies
     private Player player;
     private ArrayList<Pc> pcs = new ArrayList<Pc>();
     private ArrayList<InfoSign> infoSigns = new ArrayList<InfoSign>();
@@ -50,12 +47,11 @@ public class GameObjectManager {
     private ArrayList<SensorRobot> sensorRobots = new ArrayList<SensorRobot>();
 
 
-    public GameObjectManager(PlayScreen playScreen) {
-        this.playScreen = playScreen;
+    public GameObjectManager() {
         gameObjects = new ArrayList<GameObject>();
     }
 
-    public void copyCurrentPosition() { //interpolation
+    public void copyCurrentPosition() { //part of interpolation
         for (int i = 0; i < gameObjects.size(); i++) {
             if (gameObjects.get(i).b2body != null) {
                 if ((gameObjects.get(i).b2body.getType() == BodyDef.BodyType.DynamicBody || gameObjects.get(i).b2body.getType() == BodyDef.BodyType.KinematicBody) && gameObjects.get(i).b2body.isActive()) {
@@ -67,7 +63,7 @@ public class GameObjectManager {
         }
     }
 
-    public void interpolateCurrentPosition(float alpha) { //interpolation
+    public void interpolateCurrentPosition(float alpha) { //the actual interpolation
         for (int i = 0; i < gameObjects.size(); i++) {
             if (gameObjects.get(i).b2body != null) {
                 if ((gameObjects.get(i).b2body.getType() == BodyDef.BodyType.DynamicBody || gameObjects.get(i).b2body.getType() == BodyDef.BodyType.KinematicBody) && gameObjects.get(i).b2body.isActive()) {
@@ -108,25 +104,27 @@ public class GameObjectManager {
         gameObjects.add(gameObject);
     }
 
+    public void addPlayer(Player player) {
+        gameObjects.add(player);
+        this.player = player;
+    }
+
     public void addGameObjectBeforePlayer(GameObject gameObject) { //layout
         gameObjects.add(gameObjects.size()-2, gameObject);
     }
 
     public void destroyUnusedBodies() {
-        for(int i = 0; i< objectsToRemove.size(); i++) {
-            gameObjects.remove(objectsToRemove.get(i));
-            playScreen.getWorld().destroyBody(objectsToRemove.get(i).b2body);
-        }
-        objectsToRemove.clear();
+		if(objectsToRemove.size()>0) {
+			for(int i = 0; i< objectsToRemove.size(); i++) {
+				gameObjects.remove(objectsToRemove.get(i));
+				//playScreen.getWorld().destroyBody(objectsToRemove.get(i).b2body); //todo DESTROY BODY BUG
+			}
+			objectsToRemove.clear();
+		}
     }
 
     public void clearGameObjects() {
         gameObjects.clear();
-    }
-
-    public void initializePlayer(World world, TiledMap map) {
-        player = new Player(world, map, checkpoints, playScreen.getAssets());
-        gameObjects.add(player);
     }
 
 

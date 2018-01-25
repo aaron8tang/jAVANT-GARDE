@@ -7,7 +7,8 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
 import com.steveflames.javantgarde.hud.Hud;
-import com.steveflames.javantgarde.screens.PlayScreen;
+import com.steveflames.javantgarde.tools.Assets;
+import com.steveflames.javantgarde.tools.GameObjectManager;
 import com.steveflames.javantgarde.tools.global.Cameras;
 import com.steveflames.javantgarde.tools.global.Fonts;
 import com.steveflames.javantgarde.tools.global.MyFileReader;
@@ -15,7 +16,9 @@ import com.steveflames.javantgarde.tools.global.MyFileReader;
 import java.util.ArrayList;
 
 /**
- * Created by Flames on 21/11/2017.
+ * Implements the quizzes of the game.
+ * Includes three floating platforms with one lever on top
+ * of each platform.
  */
 
 public class Quiz extends GameObject {
@@ -28,12 +31,18 @@ public class Quiz extends GameObject {
     private int pulled = 0;
     private float timer=0;
     private String id;
-    private PlayScreen playScreen;
 
-    public Quiz(String name, PlayScreen playScreen, Rectangle bounds) {
-        super(name, playScreen.getWorld(), playScreen.getMap(), bounds, true);
-        this.playScreen = playScreen;
-        this.id = playScreen.getCurrentLevelID();
+    private Assets assets;
+    private GameObjectManager objectManager;
+    private Hud hud;
+
+
+    public Quiz(String name, World world, TiledMap map, Rectangle bounds, Assets assets, GameObjectManager objectManager, Hud hud) {
+        super(name, world, map, bounds, true);
+        this.assets = assets;
+        this.objectManager = objectManager;
+        this.hud = hud;
+        this.id = name.split("-")[1];
         parseQuizString(MyFileReader.readFile("txt/quizes/"+name+".txt"));
     }
 
@@ -64,22 +73,29 @@ public class Quiz extends GameObject {
             incrementCurrentQuestion();
             for(int i=0; i<floatingPlatforms.size(); i++){
                 if(!isQuizCompleted())
-                    floatingPlatforms.get(i).quizReset(answers.get(currentQuestion)[i], playScreen.getHud(), false);
+                    floatingPlatforms.get(i).quizReset(answers.get(currentQuestion)[i], hud, false);
                 else { //QUIZ COMPLETED
-                    floatingPlatforms.get(i).quizReset(" ", playScreen.getHud(), true);
-                    if(id.equals("2_2") || id.equals("1_2") || id.equals("6_2"))
-                        playScreen.getObjectManager().getDoors().get(0).open();
-                    else if(id.equals("4_1"))
-                        playScreen.getObjectManager().getDoors().get(0).open();
-                    else if(id.equals("5_1"))
-                        playScreen.getObjectManager().getDoors().get(6).open();
-                    else if(id.equals("7_2")) {
-                        playScreen.getObjectManager().getTeleporter().b2body.setTransform(playScreen.getObjectManager().getInfoSigns().get(0).position.x,
-                                playScreen.getObjectManager().getInfoSigns().get(0).position.y, 0);
-                        playScreen.getObjectManager().getInfoSigns().get(0).b2body.setTransform(0, -5, 0);
-                    }
+                    floatingPlatforms.get(i).quizReset(" ", hud, true);
                 }
             }
+            if(isQuizCompleted()) {
+                completed();
+            }
+        }
+    }
+
+    private void completed() {
+        assets.playSound(assets.questSound);
+        if (id.equals("2_2") || id.equals("1_2") || id.equals("6_2"))
+            objectManager.getDoors().get(0).open();
+        else if (id.equals("4_1"))
+            objectManager.getDoors().get(0).open();
+        else if (id.equals("5_1"))
+            objectManager.getDoors().get(6).open();
+        else if (id.equals("7_2")) {
+            objectManager.getTeleporter().b2body.setTransform(objectManager.getInfoSigns().get(0).position.x,
+                    objectManager.getInfoSigns().get(0).position.y, 0);
+            objectManager.getInfoSigns().get(0).b2body.setTransform(0, -5, 0);
         }
     }
 

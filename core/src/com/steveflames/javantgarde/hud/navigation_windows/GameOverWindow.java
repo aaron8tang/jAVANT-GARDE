@@ -1,28 +1,26 @@
 package com.steveflames.javantgarde.hud.navigation_windows;
 
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.screens.ChooseLevelScreen;
 import com.steveflames.javantgarde.screens.PlayScreen;
-import com.steveflames.javantgarde.tools.Assets;
+import com.steveflames.javantgarde.tools.global.Cameras;
 
 /**
- * Created by Flames on 10/11/2017.
+ * This class implements the screen that pops up when
+ * the player is out of lives.
  */
 
 public class GameOverWindow extends Table {
 
     public GameOverWindow(final PlayScreen playScreen) {
         this.setSize(400,260);
-        this.setPosition(MyGdxGame.WIDTH/2 - 200, MyGdxGame.HEIGHT/2 - 130);
+        this.setPosition(Cameras.hudPort.getCamera().viewportWidth/2 - 200, Cameras.hudPort.getCamera().viewportHeight/2 - 130);
 
-        Label gameOverLabel = new Label("GAME OVER", playScreen.getAssets().lmlSkin);
+        Label gameOverLabel = new Label("GAME OVER", playScreen.getAssets().neonSkin, "big");
         gameOverLabel.scaleBy(1.4f, 1.4f);
         this.add(gameOverLabel).top().expandX().padTop(5);
         this.row();

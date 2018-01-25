@@ -11,7 +11,10 @@ import com.steveflames.javantgarde.tools.global.Cameras;
 import com.steveflames.javantgarde.tools.global.Fonts;
 
 /**
- * Created by Flames on 12/12/2017.
+ * Implements the markers of each level.
+ * This object is a sensor and is not visualized.
+ * Utilizes the mark object of the Tiled map to spot specific
+ * coordinates for specific tasks.
  */
 
 public class Marker extends GameObject {

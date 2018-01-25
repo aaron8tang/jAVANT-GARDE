@@ -2,9 +2,7 @@ package com.steveflames.javantgarde.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -13,7 +11,6 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.steveflames.javantgarde.MyGdxGame;
@@ -27,34 +24,41 @@ import com.steveflames.javantgarde.tools.GameObjectManager;
 import com.steveflames.javantgarde.tools.InputHandler;
 import com.steveflames.javantgarde.tools.global.Cameras;
 import com.steveflames.javantgarde.tools.global.Fonts;
+import com.badlogic.gdx.graphics.FPSLogger;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 
 /**
  * This class holds the main loop and processing of the game.
+ * One of the most critical parts of the game.
  */
 public class PlayScreen implements Screen{
 
     private MyGdxGame game;
     private static float WIDTH; //width of the map
     private static float HEIGHT; //height of the map
-    private static final int GRAVITY = -20;
+    private static final int GRAVITY = -Math.round(4000/MyGdxGame.PPM);
     private LevelListItem currentLevel;
-    private Hud hud;
+    private Hud hud; //head-up display
     private World world; //box2D variable
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
 
     //fixed timestep with interpolation variables
     private double accumulator = 0;
-    private final float delta = 0.0133f; //logic updates 1/75f
+    private final float step = 0.0133f; //logic updates 1/75f
+    //public static final long RENDERER_SLEEP_MS = 0; // 34 -> limits to 30 fps, 30 -> 34 fps, 22 gives ~46 FPS, 20 = 100, 10 = 50
+    //private long now2, diff, start; //variables to utilize fps limit
 
-    //**************DEBUG**************
-    private final static int logic_FPSupdateIntervall = 1;
+    //**************DEBUG VARIABLES**************
+    /*private final static int logic_FPSupdateIntervall = 1;
     private long logic_lastRender;
     private long logic_now;
     private int logic_frameCount = 0;
     private int logic_lastFPS = 0; //logic frames per second
     private Box2DDebugRenderer b2dr; //draws the outline on every object for debugging
     private FPSLogger fpsLogger; //display game loop real frames per second
+    */
+    //*******************************************
 
     //world bodies
     private GameObjectManager objectManager;
@@ -69,7 +73,8 @@ public class PlayScreen implements Screen{
     private GlyphLayout onScreenMsgGlyphLayout1 = new GlyphLayout();
     private GlyphLayout onScreenMsgGlyphLayout2 = new GlyphLayout();
 
-    private boolean restartLevel = false;
+    private boolean restartLevel = false; //prevents unloading assets if user chooses 'restart' or 'next' level
+    private boolean gameOver = false;
 
 
     public PlayScreen(MyGdxGame game, LevelListItem level) {
@@ -80,10 +85,11 @@ public class PlayScreen implements Screen{
         onScreenMsgGlyphLayout1.setText(Fonts.medium, currentLevel.getName());
         onScreenMsgGlyphLayout2.setText(Fonts.big, currentLevel.getCategoryName());
 
-        //**************DEBUG**************
-        fpsLogger = new FPSLogger();
-        b2dr = new Box2DDebugRenderer();
+        //***********************DEBUG VARIABLES***********************
+        //fpsLogger = new FPSLogger();
+        //b2dr = new Box2DDebugRenderer();
         //GLProfiler.enable();
+        //*************************************************************
 
         //initialize map
         TmxMapLoader mapLoader = new TmxMapLoader();
@@ -95,23 +101,32 @@ public class PlayScreen implements Screen{
         Cameras.load(WIDTH, HEIGHT);
 
         game.assets.refreshPlayScreenAssets();
+        hud = new Hud(this, game.sb); //initialize hud
+
         //create world
         world = new World(new Vector2(0, GRAVITY), true);
-        world.setContactListener(new B2WorldContactListener(this));
-        objectManager = new GameObjectManager(this);
+        objectManager = new GameObjectManager();
+        world.setContactListener(new B2WorldContactListener(hud, objectManager, getAssets()));
         new B2WorldCreator(this); //initialize world
-        objectManager.initializePlayer(world, map); //initialize player
-        hud = new Hud(this, game.sb); //initialize hud
+        initializePlayer(world, map); //initialize player
 
         //initialize inputHandler
         inputHandler = new InputHandler(this);
 
         //play music
-        game.assets.playMusic(game.assets.playScreenMusic);
+        game.assets.playPlayScreenMusic();
 
         if(!MyGdxGame.platformDepended.deviceHasKeyboard())
             hud.newAndroidInputTable();
 
+        hud.initAfterWorldCreation(); //hud initialization after world creation
+
+        //fixes html sound delay bug
+        if(MyGdxGame.platformDepended.isHTML()) {
+            for(int i=0; i<3; i++) {
+                game.assets.playAllPlayScreenSoundsMuted();
+            }
+        }
     }
 
     private void setMapProperties(TiledMap map) {
@@ -126,19 +141,22 @@ public class PlayScreen implements Screen{
         HEIGHT = mapHeight * tilePixelHeight / MyGdxGame.PPM;
     }
 
+    private void initializePlayer(World world, TiledMap map) {
+        getObjectManager().addPlayer(new Player(world, map, getObjectManager().getCheckpoints(), getAssets()));
+    }
+
     public void render(float dt) {
         if (dt > 0.25f) dt = 0.25f; //max frame time to avoid spiral of death
 
-        //System.out.println("DT: " +dt); //DEBUG
-        //logic_frameCount = 0;
+        //logic_frameCount = 0; //DEBUG
 
-        //*************************FIXED TIMESTEP METHOD*************************
+        //*******************FIXED TIMESTEP WITH INTERPOLATION METHOD*******************
         accumulator += dt;
-        while (accumulator >= delta) {
+        while (accumulator >= step) {
             objectManager.copyCurrentPosition(); //INTERPOLATION
-            updatePhysics(delta);
-            accumulator -= delta;
-            objectManager.interpolateCurrentPosition((float)(accumulator / delta)); //INTERPOLATION
+            updatePhysics(step);
+            accumulator -= step;
+            objectManager.interpolateCurrentPosition((float)(accumulator / step)); //INTERPOLATION
 
             // FPS check
             /*logic_frameCount ++;
@@ -182,32 +200,35 @@ public class PlayScreen implements Screen{
     }
 
     private void update() {
-        if(!hud.isPauseWindowShowing()) { //game not paused
-            inputHandler.handleInput();
+        if(!gameOver) {
+            if (!hud.isPauseWindowShowing()) { //game not paused
+                inputHandler.handleInput();
 
-            if (getPlayer().getCurrentState() == Player.State.DISAPPEARED) {
-                getPlayer().setCurrentState(Player.State.READING);
-                hud.showLevelCompletedWindow();
-            }
-            else if (getPlayer().getCurrentState() == Player.State.DEAD) {
-                getPlayer().setCurrentState(Player.State.READING);
-                hud.showGameOverWindow();
-            }
-            else if (getPlayer().getCurrentState() != Player.State.CODING)
-                Cameras.updateCameraPosition(getPlayer());
+                if (getPlayer().getCurrentState() == Player.State.DISAPPEARED) {
+                    //getPlayer().setCurrentState(Player.State.READING);
+                    gameOver = true;
+                    getAssets().playSound(getAssets().levelCompletedSound);
+                    hud.showLevelCompletedWindow();
+                } else if (getPlayer().getCurrentState() == Player.State.DEAD) {
+                    //getPlayer().setCurrentState(Player.State.READING);
+                    gameOver = true;
+                    getAssets().playSound(getAssets().deadSound);
+                    hud.showGameOverWindow();
+                } else if (getPlayer().getCurrentState() != Player.State.CODING)
+                    Cameras.updateCameraPosition(getPlayer());
 
-            if (getPlayer().isOutOfBounds() && getPlayer().getPlayerMsgAlpha() == 1)
-                getPlayer().respawnAtCheckpoint(objectManager.getRopes());
+                if (getPlayer().isOutOfBounds() && getPlayer().getPlayerMsgAlpha() == 1)
+                    getPlayer().respawnAtCheckpoint(objectManager.getRopes());
+            } else //game paused
+                hud.getPauseWindow().handleExitFromPauseMenuInput();
         }
-        else //game paused
-            hud.getPauseWindow().handleExitFromPauseMenuInput();
 
         Cameras.playScreenCam.update();
-        renderer.setView(Cameras.playScreenCam);
     }
 
     private void rendering() {
         //render the game map
+        renderer.setView(Cameras.playScreenCam);
         renderer.render();
 
 
@@ -266,11 +287,6 @@ public class PlayScreen implements Screen{
         objectManager.drawLine(game.sr);
         game.sr.end();
 
-        //draw filled over line (unscaled)
-        game.sr.begin(ShapeRenderer.ShapeType.Filled);
-        hud.drawFilled(game.sr);
-        game.sr.end();
-
         //draw fonts and textures (unscaled)
         game.sb.begin();
         objectManager.drawFont(game.sb);
@@ -286,6 +302,17 @@ public class PlayScreen implements Screen{
         hud.drawFont(game.sb);
         drawOnScreenMsg();
         getPlayer().drawPlayerMsg(game.sb);
+        Fonts.medium.setColor(Color.RED);
+        game.sb.end();
+
+        //draw filled over line (unscaled)
+        game.sr.begin(ShapeRenderer.ShapeType.Filled);
+        hud.drawFilled(game.sr);
+        game.sr.end();
+
+        //draw toast font
+        game.sb.begin();
+        hud.drawToastFont(game.sb);
         game.sb.end();
 
         //disable alpha
@@ -304,6 +331,20 @@ public class PlayScreen implements Screen{
         System.out.println("GL textureBindings: " + GLProfiler.textureBindings);
         System.out.println("GL vertexCount: " + GLProfiler.vertexCount);
         GLProfiler.reset();*/
+
+        //***********************LIMIT FPS***********************
+        /*if (RENDERER_SLEEP_MS > 0) {
+            now2 = System.currentTimeMillis();
+            diff = now2 - start;
+
+            if (diff < RENDERER_SLEEP_MS) {
+                try {
+                    Thread.sleep(RENDERER_SLEEP_MS - diff);
+                } catch (InterruptedException e) {
+                }
+            }
+            start = System.currentTimeMillis();
+        }*/
     }
 
     private void drawOnScreenMsg() {
@@ -331,16 +372,18 @@ public class PlayScreen implements Screen{
 
     }
 
+    @Override
     public void pause() {
         if(getPlayer().canMove)
             hud.showPauseWindow();
         getAssets().unloadAllMainMenuAssets();
         getAssets().unloadAllPlayScreenAssets();
-        getAssets().stopMusic(getAssets().playScreenMusic);
+        getAssets().stopPlayScreenMusic();
     }
 
+    @Override
     public void resume() {
-        getAssets().playMusic(getAssets().playScreenMusic);
+        getAssets().playPlayScreenMusic();
         getAssets().loadAllMainMenuAssets();
         getAssets().loadAllPlayScreenAssets();
         getAssets().finishLoading();
@@ -354,23 +397,19 @@ public class PlayScreen implements Screen{
             objectManager.getSensorRobots().get(i).update(dt);
     }
 
-    /**
-     * Dispose the unused assets.
-     */
     @Override
-    public void dispose() {
-        game.assets.stopMusic(game.assets.playScreenMusic);
+    public void dispose() { //dispose unused assets
+        game.assets.stopPlayScreenMusic();
         if(!restartLevel)
             game.assets.unloadAllPlayScreenAssets();
         map.dispose();
         renderer.dispose();
         world.dispose();
-        b2dr.dispose();
         hud.dispose();
         Item.reset();
+        //b2dr.dispose(); //DEBUG
 
-        for(int i=0; i<objectManager.getGameObjects().size(); i++)
-            objectManager.clearGameObjects();
+        objectManager.clearGameObjects();
     }
 
     public TiledMap getMap() {

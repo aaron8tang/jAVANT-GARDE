@@ -3,37 +3,29 @@ package com.steveflames.javantgarde.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.steveflames.javantgarde.MyGdxGame;
-import com.steveflames.javantgarde.tools.Assets;
 import com.steveflames.javantgarde.tools.global.Fonts;
 import com.steveflames.javantgarde.tools.global.MyFileReader;
 
 /**
- * Created by Flames on 25/12/2017.
+ * The Screen of the Main Menu. This is the first screen
+ * that the player sees when he runs the game.
  */
 
 public class MainMenuScreen implements Screen {
@@ -53,6 +45,7 @@ public class MainMenuScreen implements Screen {
     private Button aboutBtn;
 
     private boolean backBtnPressed = false;
+    private int aboutPressedCounter = 0; //trick to unlock all levels
 
 
     public MainMenuScreen(final MyGdxGame game) {
@@ -69,7 +62,7 @@ public class MainMenuScreen implements Screen {
         game.assets.playMusic(game.assets.mainMenuMusic);
 
         //window
-        Window window = new Window("", game.assets.terraSkin);
+        Window window = new Window("", game.assets.neonSkin, "window2");
         window.setFillParent(true);
         window.top();
 
@@ -78,17 +71,17 @@ public class MainMenuScreen implements Screen {
         //audioTable
         audioTable = new Table(game.assets.neonSkin);
         Table table = new Table(game.assets.neonSkin);
-        Button musicBtn = new Button(game.assets.lmlSkin);
+        Button musicBtn = new Button(game.assets.neonSkin, "button2");
         if(game.preferences.isMusicEnabled())
-            musicLabel = new Label("[GREEN]Music: ON[]   ", game.assets.terraSkin);
+            musicLabel = new Label("[GREEN]Music: ON[]   ", game.assets.neonSkin);
         else
-            musicLabel = new Label("[RED]Music: OFF[]   ", game.assets.terraSkin);
+            musicLabel = new Label("[RED]Music: OFF[]   ", game.assets.neonSkin);
         musicBtn.add(musicLabel).expand().height(70).right();
-        Button sfxBtn = new Button(game.assets.lmlSkin);
+        Button sfxBtn = new Button(game.assets.neonSkin, "button2");
         if(game.preferences.isSoundEffectsEnabled())
-            sfxLabel = new Label("[GREEN]Sound Effects: ON[]   ", game.assets.terraSkin);
+            sfxLabel = new Label("[GREEN]Sound Effects: ON[]   ", game.assets.neonSkin);
         else
-            sfxLabel = new Label("[RED]Sound Effects: OFF[]   ", game.assets.terraSkin);
+            sfxLabel = new Label("[RED]Sound Effects: OFF[]   ", game.assets.neonSkin);
         sfxBtn.add(sfxLabel).expand().height(70).right();
         table.add(musicBtn).expand().fill();
         table.row();
@@ -102,8 +95,6 @@ public class MainMenuScreen implements Screen {
 
         //aboutBtn
         aboutBtn = new Button(game.assets.neonSkin);
-        //ImageButton aboutBtn = new ImageButton(new TextureRegionDrawable(new TextureRegion(game.assets.get(Assets.aboutUpT, Texture.class))), new TextureRegionDrawable(new TextureRegion(game.assets.get(Assets.aboutDownT, Texture.class))));
-        //aboutTable.add(aboutBtn).expand().top();
         Label aboutLabel = new Label("About", game.assets.neonSkin);
         aboutBtn.add(aboutLabel).expand().center();
 
@@ -113,6 +104,22 @@ public class MainMenuScreen implements Screen {
         midTable.add(aboutBtn).width(500).height(200);
         midTable.row();
         midTable.add(audioTable).width(500).height(160);
+
+        //virtual keyboardBtn for html version
+        final CheckBox keyboardChkBox;
+        if(MyGdxGame.platformDepended.isHTML()) {
+            keyboardChkBox = new CheckBox("Enable virtual keyboard (mobile mode)", game.assets.neonSkin);
+            if(!MyGdxGame.platformDepended.deviceHasKeyboard())
+                keyboardChkBox.setChecked(true);
+            midTable.row();
+            midTable.add(keyboardChkBox).padTop(10);
+            keyboardChkBox.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    MyGdxGame.platformDepended.setDeviceHasKeyboard(!keyboardChkBox.isChecked());
+                }
+            });
+        }
 
         window.add(midTable).expand().bottom().padBottom(30);
 
@@ -135,7 +142,7 @@ public class MainMenuScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 game.assets.playSound(game.assets.clickSound);
                 Gdx.input.setInputProcessor(dialogStage);
-                Dialog infoDialog = new Dialog("ABOUT", game.assets.terraSkin, "dialog") {
+                Dialog infoDialog = new Dialog("ABOUT", game.assets.neonSkin, "dialog") {
                     public void result(Object obj) {
                         game.assets.playSound(game.assets.clickSound);
                         this.remove();
@@ -150,6 +157,14 @@ public class MainMenuScreen implements Screen {
                 infoDialog.key(Input.Keys.ESCAPE, true);
                 infoDialog.text(aboutString);
                 infoDialog.show(dialogStage);
+                aboutPressedCounter++; //unlock all levels
+                if(aboutPressedCounter == 6) {
+                    game.preferences.setLevelProgress("9_1");
+                    game.assets.playSound(game.assets.clickSound);
+                    infoDialog.remove();
+                    Gdx.input.setInputProcessor(stage);
+                    backBtnPressed = true;
+                }
             }
         });
         musicBtn.addListener( new ClickListener() {
@@ -201,6 +216,13 @@ public class MainMenuScreen implements Screen {
                 sfxLabel.layout();
             }
         });
+
+        //fixes html sound delay bug
+        if(MyGdxGame.platformDepended.isHTML()) {
+            for(int i=0; i<3; i++) {
+                game.assets.playAllMenuSoundsMuted();
+            }
+        }
     }
 
     @Override
@@ -219,8 +241,7 @@ public class MainMenuScreen implements Screen {
         game.sb.draw(game.assets.playT, playBtn.localToStageCoordinates(new Vector2(0,0)).x + 30, playBtn.localToStageCoordinates(new Vector2(0,0)).y+ 35);
         game.sb.draw(game.assets.aboutUpT, aboutBtn.localToStageCoordinates(new Vector2(0,0)).x + 30, aboutBtn.localToStageCoordinates(new Vector2(0,0)).y+ 35);
         Fonts.big.setColor(Color.RED);
-        Fonts.big.draw(game.sb, MyGdxGame.TITLE, MyGdxGame.WIDTH/2 - glyphLayout.width/2, MyGdxGame.HEIGHT-60);
-        game.sb.end();
+        Fonts.big.draw(game.sb, MyGdxGame.TITLE, viewport.getCamera().viewportWidth/2 - glyphLayout.width/2, viewport.getCamera().viewportHeight-60);        game.sb.end();
 
         dialogStage.act(delta);
         dialogStage.draw();

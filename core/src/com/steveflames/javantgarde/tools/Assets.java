@@ -14,7 +14,8 @@ import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.tools.global.Fonts;
 
 /**
- * Created by Flames on 6/12/2017.
+ * This class is responsible for the managing of the assets.
+ * The tool AssetManager that LibGDX provides is utilized.
  */
 
 public class Assets {
@@ -23,10 +24,14 @@ public class Assets {
     public static final float SFXVOLUME = 0.3f;
     private static final float MUSICVOLUME = 0.2f;
 
-    //GRAPHICS - TEXTURE REGIONS
+    //-------------------------------------GRAPHICS-------------------------------------
+    //TextureAtlas PATHS
     private static final String texturesATLAS = "images/textures.pack";
     private static final String frogATLAS = "images/frog/frog.pack";
     private static final String mainMenuTexturesATLAS = "images/mainMenuTextures.pack";
+    //Texture PATHS
+    private static final String lockTEXTURE = "images/lock.png";
+    //TextureAtlas regions
     private static final String teleporterDisappearREGION = "teleporter_disappear";
     private static final String botTypingREGION = "bot_typing";
     private static final String pcREGION = "pc";
@@ -51,11 +56,8 @@ public class Assets {
     private static final String aboutUpREGION = "helpUp";
     private static final String audioREGION = "audio";
     private static final String playREGION = "play";
-    private static final String lockTEXTURE = "images/lock.png";
 
-    private TextureAtlas textureAtlas;
-    private TextureAtlas frogAtlas;
-    private TextureAtlas mainMenuTexturesAtlas;
+    //Animation - TextureRegion - Texture objects
     public Animation<TextureRegion> botIdleAnimation;
     public Animation<TextureRegion> botTypingAnimation;
     public Animation<TextureRegion> robotTalkinAnimation;
@@ -83,9 +85,10 @@ public class Assets {
     public Texture lockT;
 
 
-    //AUDIO
+    //-------------------------------------AUDIO-------------------------------------
+    //Music and Sound PATHS
     private static final String mainMenuMUSIC = "audio/music/jewelbeat_electro_dance.ogg";
-    private static final String playScreenMUSIC = "audio/music/jewelbeat_stepping_stones.wav";
+    private static final String playScreenMUSIC = "audio/music/jewelbeat_stepping_stones.ogg";
     private static final String jumpSOUND = "audio/sounds/jump.ogg";
     private static final String correctSOUND = "audio/sounds/correct.ogg";
     private static final String levelCompletedSOUND = "audio/sounds/levelCompleted.ogg";
@@ -102,9 +105,12 @@ public class Assets {
     private static final String getItemSOUND = "audio/sounds/coin.ogg";
     private static final String frogSOUND = "audio/sounds/frog.ogg";
     private static final String riseSOUND = "audio/sounds/rise.ogg";
+    private static final String questSOUND = "audio/sounds/quest.ogg";
 
+    //Music and Sound objects
     public Music mainMenuMusic;
-    public Music playScreenMusic;
+    private Music playScreenMusic;
+    private Sound playScreenMusicSound; //Music on pc makes the game stutter, so im using a looping Sound for pc instead of Music
     public Sound clickSound;
     public Sound jumpSound;
     public Sound correctSound;
@@ -121,55 +127,68 @@ public class Assets {
     public Sound getItemSound;
     public Sound frogSound;
     public Sound riseSound;
+    public Sound questSound;
 
 
-    //SKINS
+    //-------------------------------------SKINS-------------------------------------
+    //PATHS
     private static final String neonSKIN = "skins/neon/skin/neon-ui.json";
-    private static final String terraSKIN = "skins/terra-mother/skin/terra-mother-ui.json";
-    private static final String lmlSKIN = "skins/lml/skin/skin.json";
-
+    //Skin objects
     public Skin neonSkin;
-    public Skin terraSkin;
-    public Skin lmlSkin;
 
 
     public <T> T get(String path, Class<T> tClass) {
         return manager.get(path, tClass);
     }
+
     public boolean update() {
         return manager.update();
     }
+
     public void finishLoading() {
         manager.finishLoading();
     }
+
     public float getQueuedAssets() {
         return manager.getQueuedAssets();
     }
+
     public float getProgress() {
         return manager.getProgress();
     }
 
     public void loadAllPlayScreenAssets() {
-        manager.load(frogATLAS, TextureAtlas.class);
-        manager.load(texturesATLAS, TextureAtlas.class);
-        if(MyGdxGame.musicOn)
-            manager.load(playScreenMUSIC, Music.class);
+        if(!manager.isLoaded(texturesATLAS)) {
+            manager.load(frogATLAS, TextureAtlas.class);
+            manager.load(texturesATLAS, TextureAtlas.class);
+        }
+        if(MyGdxGame.musicOn) {
+            if(!manager.isLoaded(playScreenMUSIC)) {
+                if (MyGdxGame.platformDepended.isPC())
+                    manager.load(playScreenMUSIC, Sound.class);
+                else
+                    manager.load(playScreenMUSIC, Music.class);
+            }
+        }
         if(MyGdxGame.sfxOn) {
-            manager.load(jumpSOUND, Sound.class);
-            manager.load(deadSOUND, Sound.class);
-            manager.load(getItemSOUND, Sound.class);
-            manager.load(bumpSOUND, Sound.class);
-            manager.load(frogSOUND, Sound.class);
-            manager.load(doorSOUND, Sound.class);
-            manager.load(robotTalkingSOUND, Sound.class);
-            manager.load(errorSOUND, Sound.class);
-            manager.load(correctSOUND, Sound.class);
-            manager.load(wrongAnswerSOUND, Sound.class);
-            manager.load(loseHealthSOUND, Sound.class);
-            manager.load(teleportSOUND, Sound.class);
-            manager.load(useItemSOUND, Sound.class);
-            manager.load(levelCompletedSOUND, Sound.class);
-            manager.load(riseSOUND, Sound.class);
+            if(!manager.isLoaded(jumpSOUND)) {
+                manager.load(jumpSOUND, Sound.class);
+                manager.load(deadSOUND, Sound.class);
+                manager.load(getItemSOUND, Sound.class);
+                manager.load(bumpSOUND, Sound.class);
+                manager.load(frogSOUND, Sound.class);
+                manager.load(doorSOUND, Sound.class);
+                manager.load(robotTalkingSOUND, Sound.class);
+                manager.load(errorSOUND, Sound.class);
+                manager.load(correctSOUND, Sound.class);
+                manager.load(wrongAnswerSOUND, Sound.class);
+                manager.load(loseHealthSOUND, Sound.class);
+                manager.load(teleportSOUND, Sound.class);
+                manager.load(useItemSOUND, Sound.class);
+                manager.load(levelCompletedSOUND, Sound.class);
+                manager.load(riseSOUND, Sound.class);
+                manager.load(questSOUND, Sound.class);
+            }
         }
     }
 
@@ -194,15 +213,21 @@ public class Assets {
             manager.unload(useItemSOUND);
             manager.unload(levelCompletedSOUND);
             manager.unload(riseSOUND);
+            manager.unload(questSOUND);
         }
     }
 
     public void refreshPlayScreenAssets() {
         if(MyGdxGame.musicOn) {
             //playScreenMusic = manager.get(playScreenMUSIC, Music.class);
-            playScreenMusic = manager.get(playScreenMUSIC);
-            playScreenMusic.setVolume(MUSICVOLUME);
-            playScreenMusic.setLooping(true);
+            if(MyGdxGame.platformDepended.isPC()) {
+                playScreenMusicSound = manager.get(playScreenMUSIC);
+            }
+            else {
+                playScreenMusic = manager.get(playScreenMUSIC);
+                playScreenMusic.setVolume(MUSICVOLUME);
+                playScreenMusic.setLooping(true);
+            }
         }
         if(MyGdxGame.sfxOn) {
             jumpSound = manager.get(jumpSOUND, Sound.class);
@@ -220,14 +245,13 @@ public class Assets {
             getItemSound = manager.get(getItemSOUND, Sound.class);
             frogSound = manager.get(frogSOUND, Sound.class);
             riseSound = manager.get(riseSOUND, Sound.class);
+            questSound = manager.get(questSOUND, Sound.class);
         }
         if(manager.isLoaded(neonSKIN)) {
             neonSkin = manager.get(neonSKIN, Skin.class);
-            terraSkin = manager.get(terraSKIN, Skin.class);
-            lmlSkin = manager.get(lmlSKIN, Skin.class);
         }
-        textureAtlas = manager.get("images/textures.pack");
-        frogAtlas = manager.get("images/frog/frog.pack");
+        TextureAtlas textureAtlas = manager.get("images/textures.pack");
+        TextureAtlas frogAtlas = manager.get("images/frog/frog.pack");
         pcTR = textureAtlas.findRegion(pcREGION);
         leverClosedTR = textureAtlas.findRegion(leverClosedREGION);
         leverOpenTR = textureAtlas.findRegion(leverOpenREGION);
@@ -272,8 +296,6 @@ public class Assets {
             manager.unload(clickSOUND);
         /*if(manager.isLoaded(neonSKIN)) {
             manager.unload(neonSKIN);
-            manager.unload(terraSKIN);
-            manager.unload(lmlSKIN);
         }*/
     }
 
@@ -288,14 +310,14 @@ public class Assets {
         }
         if(manager.isLoaded(neonSKIN)) {
             neonSkin = manager.get(neonSKIN, Skin.class);
-            terraSkin = manager.get(terraSKIN, Skin.class);
-            lmlSkin = manager.get(lmlSKIN, Skin.class);
         }
-        mainMenuTexturesAtlas = manager.get(mainMenuTexturesATLAS);
-        playT = mainMenuTexturesAtlas.findRegion(playREGION);
-        aboutUpT = mainMenuTexturesAtlas.findRegion(aboutUpREGION);
-        audioT = mainMenuTexturesAtlas.findRegion(audioREGION);
-        lockT = manager.get(lockTEXTURE, Texture.class);
+        if(manager.isLoaded(mainMenuTexturesATLAS)) {
+            TextureAtlas mainMenuTexturesAtlas = manager.get(mainMenuTexturesATLAS);
+            playT = mainMenuTexturesAtlas.findRegion(playREGION);
+            aboutUpT = mainMenuTexturesAtlas.findRegion(aboutUpREGION);
+            audioT = mainMenuTexturesAtlas.findRegion(audioREGION);
+            lockT = manager.get(lockTEXTURE, Texture.class);
+        }
     }
 
     public void loadMainMenuMusic() {
@@ -315,23 +337,22 @@ public class Assets {
         if(!manager.isLoaded(neonSKIN)) {
             ObjectMap<String, Object> resources = new ObjectMap<String, Object>();
             resources.put("LiberationMono", Fonts.xsmallMono);
-
+            resources.put("LiberationMonoBIG", Fonts.big);
+            resources.put("LiberationMonoMARKUP", Fonts.xsmallMonoMarkup);
+            resources.put("mvboli", Fonts.xsmall);
             manager.load("skins/neon/skin/neon-ui.atlas", TextureAtlas.class);
             manager.load("skins/neon/skin/neon-ui.json", Skin.class, new SkinLoader.SkinParameter("skins/neon/skin/neon-ui.atlas", resources));
-
-            resources = new ObjectMap<String, Object>();
-            resources.put("LiberationMono", Fonts.big);
-            manager.load("skins/lml/skin/skin.atlas", TextureAtlas.class);
-            manager.load("skins/lml/skin/skin.json", Skin.class, new SkinLoader.SkinParameter("skins/lml/skin/skin.atlas", resources));
-
-            resources = new ObjectMap<String, Object>();
-            resources.put("LiberationMono", Fonts.xsmallMonoMarkup);
-            resources.put("mvboli", Fonts.xsmall);
-            manager.load("skins/terra-mother/skin/terra-mother-ui.atlas", TextureAtlas.class);
-            manager.load("skins/terra-mother/skin/terra-mother-ui.json", Skin.class, new SkinLoader.SkinParameter("skins/terra-mother/skin/terra-mother-ui.atlas", resources));
         }
     }
 
+    /**
+     * Utilized to load a TextureRegion[] that is used to create an Animation.
+     * @param region The region of the animation.
+     * @param columns The number of columns to split in the region.
+     * @param rows The number of rows to split in the region.
+     * @param lastNoImageN The number of missing textures in the last line.
+     * @return The TextureRegion[] that is used to create an Animation.
+     */
     private TextureRegion[] loadAnim(TextureAtlas.AtlasRegion region, int columns, int rows, int lastNoImageN) {
         TextureRegion[] temp = new TextureRegion[columns * rows - lastNoImageN];
 
@@ -364,9 +385,21 @@ public class Assets {
         }
     }
 
-    public void playMusic(Sound music) {
+    public void playPlayScreenMusic() {
         if(MyGdxGame.musicOn) {
-            music.loop(MUSICVOLUME);
+            if(MyGdxGame.platformDepended.isPC())
+                playScreenMusicSound.loop(MUSICVOLUME);
+            else
+                playScreenMusic.play();
+        }
+    }
+
+    public void stopPlayScreenMusic() {
+        if(MyGdxGame.musicOn) {
+            if(MyGdxGame.platformDepended.isPC())
+                playScreenMusicSound.stop();
+            else
+                playScreenMusic.stop();
         }
     }
 
@@ -380,14 +413,34 @@ public class Assets {
             music.stop();
     }
 
-    public void stopMusic(Sound music) {
-        if(MyGdxGame.musicOn)
-            music.stop();
-    }
-
     public void pauseMusic(Music music) {
         if(MyGdxGame.musicOn)
             music.pause();
     }
 
+    //fixes html sound delay bug
+    public void playAllPlayScreenSoundsMuted() {
+        jumpSound.play(0);
+        correctSound.play(0);
+        levelCompletedSound.play(0);
+        wrongSound.play(0);
+        errorSound.play(0);
+        loseHealthSound.play(0);
+        deadSound.play(0);
+        clickSound.play(0);
+        bumpSound.play(0);
+        robotTalkingSound.play(0);
+        useItemSound.play(0);
+        doorSound.play(0);
+        teleportSound.play(0);
+        getItemSound.play(0);
+        frogSound.play(0);
+        riseSound.play(0);
+        questSound.play(0);
+    }
+
+    //fixes html sound delay bug
+    public void playAllMenuSoundsMuted() {
+        clickSound.play(0);
+    }
 }

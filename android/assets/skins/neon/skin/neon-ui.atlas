@@ -2,7 +2,7 @@
 neon-ui.png
 size: 512,512
 format: RGBA8888
-filter: Linear,Linear
+filter: MipMapNearestLinear,Linear
 repeat: none
 button
   rotate: false
@@ -378,5 +378,14 @@ window
   split: 17, 16, 17, 17
   pad: 16, 15, 16, 16
   orig: 56, 56
+  offset: 0, 0
+  index: -1
+window2
+  rotate: false
+  xy: 224, 230
+  size: 50, 44
+  split: 14, 15, 17, 20
+  pad: 8, 8, 8, 8
+  orig: 50, 44
   offset: 0, 0
   index: -1

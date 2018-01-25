@@ -5,7 +5,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import java.util.ArrayList;
 
 /**
- * Created by Flames on 18/10/2017.
+ * This class implements the custom compiler of the code-pc.
+ * It is quite restricted and needs review.
  */
 
 public class MyCompiler {
@@ -25,7 +26,7 @@ public class MyCompiler {
     }
 
 
-    /**
+    /* todo
      * lexical analysis
      * syntax analysis
      * semantic analysis
@@ -37,8 +38,8 @@ public class MyCompiler {
      * the order of the words that the lexical analysis gave
      *
      * SEMANTIC ERRORS
-     * Type mismatch
-     * Undeclared variable
+     * Type mismatch.
+     * Undeclared variable.
      * Reserved identifier misuse.
      * Multiple declaration of variable in a scope.
      * Accessing an out of scope variable.
@@ -49,7 +50,7 @@ public class MyCompiler {
         consoleTextArea.setText("");
         int bracketsCounter = 0;
 
-        // parse MyClass and its code
+        //parse MyClass and its code
         compilationClass = classes.get(0);
         compilationClass.addError("Error: class not defined in file " + compilationClass.getName() + ".java");
         compilationClass.addError("Error: main method not found");
@@ -267,15 +268,21 @@ public class MyCompiler {
                     }
                 }
                 if(stringToPrint.length()>0) {
-                    if (nextWord != null && nextWord.equals(")")) {
+                    if ((nextWord=getNextWordInLine()) != null && nextWord.equals(")")) {
                         if (isNextWordStrictlyEqualTo(";")) {
                             if(getNextWordInLine()==null) {
                                 if(compilationClass.getErrors().size()==0)
                                     consoleTextArea.setText(consoleTextArea.getText() + stringToPrint.toString() + "\n");
                             }
+                            else
+                                compilationClass.addErrorInLine(null, lineN);
                         }
+                        else
+                            compilationClass.addErrorInLine(null, lineN);
                     }
-                    /*else if(isNextWordEqualTo("+")) { //todo +
+                    else
+                        compilationClass.addErrorInLine(null, lineN);
+                    /*else if(isNextWordEqualTo("+")) { //todo + operator
                         currentWordPtr++;
                         while((nextWord = getNextWordInLine()) != null && !nextWord.equals(")")) {
 

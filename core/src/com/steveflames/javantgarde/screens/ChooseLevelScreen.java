@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -25,7 +26,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 /**
- * Created by Flames on 25/9/2017.
+ * In this Screen the learning categories and their levels
+ * are presented. The player chooses which level he wants
+ * to play from the list.
  */
 
 public class ChooseLevelScreen implements Screen{
@@ -60,7 +63,7 @@ public class ChooseLevelScreen implements Screen{
         game.assets.refreshMainMenuAssets();
         assets.playMusic(assets.mainMenuMusic);
 
-        Window window = new Window("", assets.terraSkin);
+        Window window = new Window("", assets.neonSkin, "window2");
         window.setFillParent(true);
         window.top();
 
@@ -79,22 +82,24 @@ public class ChooseLevelScreen implements Screen{
         window.add(topTable).expandX().left();
         window.row();
 
-        Table mainTable = new Table(assets.terraSkin);
+        Table mainTable = new Table(assets.neonSkin);
         ScrollPane scroll = new ScrollPane(mainTable, assets.neonSkin);
         window.add(scroll).expandX().fillX().left();
 
         ArrayList<Table> categoryTables = new ArrayList<Table>();
         for(final String category : categories.keySet()) {
             //new categoryTable
-            categoryTables.add(new Table(assets.terraSkin));
+            categoryTables.add(new Table(assets.neonSkin));
             categoryTables.get(categoryTables.size()-1).add(new Label(category, assets.neonSkin)).expandX().fillX().left().top();
             categoryTables.get(categoryTables.size()-1).row();
 
             ArrayList<Table> levelTables = new ArrayList<Table>();
-            Table levelsTable = new Table(assets.terraSkin);
+            Table levelsTable = new Table(assets.neonSkin);
+            TextTooltip textTooltip = new TextTooltip(" Complete all previous \n levels to unlock!", assets.neonSkin);
+            textTooltip.setInstant(true);
             for(final LevelListItem level : categories.get(category)) {
                 //create new level table
-                levelTables.add(new Table(assets.terraSkin).padRight(20));
+                levelTables.add(new Table(assets.neonSkin).padRight(20));
                 final TextButton levelBtn = new TextButton(level.getName(), assets.neonSkin);
                 levelBtn.addListener(new ChangeListener() {
                     @Override
@@ -115,6 +120,7 @@ public class ChooseLevelScreen implements Screen{
                     int savedLevelN = Integer.parseInt(game.preferences.getLevelProgress().split("_")[1]);
                     if (categoryN > savedCategoryN || (categoryN == savedCategoryN && levelN > savedLevelN)) {
                         levelBtn.setDisabled(true);
+                        levelBtn.addListener(textTooltip);
                         levelBtn.row();
                         levelBtn.add(new Image(assets.lockT)).right().width(64).height(64);
                     }
@@ -158,13 +164,6 @@ public class ChooseLevelScreen implements Screen{
         handleInput();
         stage.act(delta);
         stage.draw();
-
-        /*game.sb.begin();
-        for(int i=0; i<lockedLevelBtnsVectors.size(); i++) {
-            game.sb.setColor(Color.WHITE);
-            game.sb.draw(assets.lockT, lockedLevelBtnsVectors.get(i).x + 50, lockedLevelBtnsVectors.get(i).y);
-        }
-        game.sb.end();*/
     }
 
     @Override

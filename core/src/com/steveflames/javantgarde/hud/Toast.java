@@ -1,23 +1,22 @@
 package com.steveflames.javantgarde.hud;
 
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.tools.Assets;
+import com.steveflames.javantgarde.tools.global.Cameras;
 import com.steveflames.javantgarde.tools.global.Fonts;
 
 import java.util.ArrayList;
 
 /**
- * Created by Flames on 24/9/2017.
+ * This class is part of the Hud.
+ * Implements the window of the announcer-robot.
  */
 
 class Toast {
@@ -30,6 +29,7 @@ class Toast {
     private Rectangle rect;
     private GlyphLayout glyphLayout;
     private String text;
+    private String nextPrompt;
 
     private int currentPage;
     private int numOfPages =0;
@@ -50,7 +50,7 @@ class Toast {
     private Assets assets;
 
     Toast(Assets assets) {
-        rect = new Rectangle(10, MyGdxGame.HEIGHT + 260, MyGdxGame.WIDTH-20, 160);
+        rect = new Rectangle(10, Cameras.hudPort.getCamera().viewportHeight + 260, Cameras.hudPort.getCamera().viewportWidth-20, 160);
         glyphLayout = new GlyphLayout();
         linesOfText = new ArrayList<StringBuilder>();
         this.assets = assets;
@@ -59,6 +59,11 @@ class Toast {
         drawStrings.add(new StringBuilder());
         drawStrings.add(new StringBuilder());
         drawStrings.add(new StringBuilder());
+
+        if(MyGdxGame.platformDepended.deviceHasKeyboard())
+            nextPrompt = "Press ENTER";
+        else
+            nextPrompt = "TAP";
     }
 
     void newToast(String text) {
@@ -73,9 +78,6 @@ class Toast {
 
             breakTextIntoLines();
             timerMillis = TimeUtils.millis();
-
-            //for(StringBuilder s : linesOfText)
-            //  System.out.println("EDW: " + s);
         }
     }
 
@@ -127,14 +129,18 @@ class Toast {
             linesOfText.get(numOfPages).append("\n");
     }
 
+    /**
+     * The text is shown letter by letter and this method
+     * utilizes that effect.
+     */
     public void update(float dt, Hud hud) {
         setCurrentFrame(dt);
         if (currentState == State.INCOMING) {
-            if (rect.y - SPEED * dt > MyGdxGame.HEIGHT - rect.height - 65) {
+            if (rect.y - SPEED * dt > Cameras.hudPort.getCamera().viewportHeight - rect.height - 65) {
                 rect.y -= SPEED * dt;
             } else {
                 assets.playSound(assets.robotTalkingSound);
-                rect.y = MyGdxGame.HEIGHT - rect.height - 65;
+                rect.y = Cameras.hudPort.getCamera().viewportHeight - rect.height - 65;
                 currentState = State.WRITING;
                 timerMillis = TimeUtils.millis();
             }
@@ -191,7 +197,7 @@ class Toast {
             assets.stopSound(assets.robotTalkingSound);
             if (currentState != State.LEFT) {
                 rect.y += SPEED * dt;
-                if (rect.y > MyGdxGame.HEIGHT) {
+                if (rect.y > Cameras.hudPort.getCamera().viewportHeight) {
                     currentState = State.LEFT;
                     drawStrings.get(0).setLength(0);
                     drawStrings.get(1).setLength(0);
@@ -202,7 +208,7 @@ class Toast {
         }
     }
 
-    public  void handleNextPressed() {
+    void handleNextPressed() {
         if (currentState == Toast.State.READY)
             currentState = Toast.State.NEXT;
         else if (currentState == Toast.State.WRITING)
@@ -232,12 +238,12 @@ class Toast {
 
             for(int i=0; i<drawStrings.size(); i++)
                 Fonts.small.draw(sb, drawStrings.get(i), rect.x + 120, rect.y + rect.height - 20 - i*40);
-            Fonts.xsmall.draw(sb, MyGdxGame.platformDepended.getNextPrompt(), rect.x + rect.width - 180 + nextPromptOffset, rect.y + 25);
+            Fonts.xsmall.draw(sb, nextPrompt, rect.x + rect.width - 180 + nextPromptOffset, rect.y + 25);
             sb.draw(robotTR, rect.x - 5, rect.y + 15, 128, 128);
         }
     }
 
-    public boolean isShowing() {
+    boolean isShowing() {
         return currentState!=State.LEFT;
     }
 }

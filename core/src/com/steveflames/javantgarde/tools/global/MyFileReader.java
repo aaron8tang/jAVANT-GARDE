@@ -4,7 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 
 /**
- * Created by Flames on 4/10/2017.
+ * Global tool for reading files, utilizing the LibGDX
+ * class FileHandle.
  */
 
 public class MyFileReader {

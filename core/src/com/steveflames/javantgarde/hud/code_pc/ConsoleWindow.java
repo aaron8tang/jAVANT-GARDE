@@ -10,18 +10,19 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.steveflames.javantgarde.MyGdxGame;
+import com.steveflames.javantgarde.tools.global.Cameras;
 
 /**
- * Created by Flames on 10/11/2017.
+ * This class implements the Console window of the code-pc.
  */
 
-public class ConsoleWindow extends Window {
+class ConsoleWindow extends Window {
 
     private Label consoleTextArea;
     private ScrollPane consoleScroll;
 
     ConsoleWindow(String title, Skin neonSkin, Skin terraSkin, final Stage stage ) {
-        super(title, terraSkin);
+        super(title, terraSkin, "window2");
 
         //textArea of console window
         Table table = new Table(neonSkin);
@@ -37,7 +38,7 @@ public class ConsoleWindow extends Window {
 
         //add components to window
         this.setSize(700, 190);
-        this.setX(MyGdxGame.WIDTH - this.getWidth());
+        this.setX(Cameras.hudPort.getCamera().viewportWidth - this.getWidth());
         this.setY(0);
         this.add(consoleScroll).expand().fill().top().left().padTop(5);
         this.addListener(new ClickListener() {
@@ -48,7 +49,7 @@ public class ConsoleWindow extends Window {
         });
     }
 
-    public Label getConsoleTextArea() {
+    Label getConsoleTextArea() {
         return consoleTextArea;
     }
 

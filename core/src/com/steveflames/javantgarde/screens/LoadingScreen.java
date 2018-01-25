@@ -15,14 +15,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.tools.Assets;
 import com.steveflames.javantgarde.tools.global.Fonts;
 
 /**
- * Created by Flames on 19/12/2017.
+ * This is the Loading Screen on which the assets
+ * of the level that the player chose are loaded.
  */
 
 public class LoadingScreen extends Window implements Screen {
@@ -52,24 +52,28 @@ public class LoadingScreen extends Window implements Screen {
 
         //loading table
         TextButton exitBtn = new TextButton("< BACK", game.assets.neonSkin);
-        progressBar = new ProgressBar(0, 1, 1/game.assets.getQueuedAssets(), false, game.assets.neonSkin);
+        if(game.assets.getQueuedAssets()==0)
+            progressBar = new ProgressBar(0, 1, 1, false, game.assets.neonSkin, "big");
+        else
+            progressBar = new ProgressBar(0, 1, 1/game.assets.getQueuedAssets(), false, game.assets.neonSkin, "big");
+
         Table table = new Table(game.assets.neonSkin);
 
         table.add(exitBtn).expandX().right().width(200).height(100);
-        table.row().space(180);
-        table.add(progressBar).expand().fillX().padLeft(400).padRight(100).height(200).top();
-
-
-        //add components to window
-        this.setSize(MyGdxGame.WIDTH, MyGdxGame.HEIGHT);
-        this.setX(0);
-        this.setY(0);
-        this.add(table).expand().fill();
+        table.row().space(240);
+        table.add(progressBar).expand().fillX().padLeft(400).padRight(100).height(100).top();
 
         viewport = new FitViewport(MyGdxGame.WIDTH, MyGdxGame.HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, game.sb);
         Gdx.input.setInputProcessor(stage);
         stage.addActor(this);
+
+        //add components to window
+        this.setSize(viewport.getCamera().viewportWidth, viewport.getCamera().viewportHeight);
+        this.setX(0);
+        this.setY(0);
+        this.add(table).expand().fill();
+
 
         exitBtn.addListener(new ClickListener() {
             @Override
@@ -99,17 +103,18 @@ public class LoadingScreen extends Window implements Screen {
     @Override
     public void render(float delta) {
         int i=0;
+        //draw all the categories and levels, and highlight the current one being loaded
         game.sb.begin();
         for(String category : ChooseLevelScreen.categories.keySet()) {
             i++;
             Fonts.xsmall.setColor(Color.WHITE);
-            Fonts.xsmall.draw(game.sb, category, 30, MyGdxGame.HEIGHT - i*30);
+            Fonts.xsmall.draw(game.sb, category, 30, viewport.getCamera().viewportHeight - i*30);
             for(final LevelListItem level : ChooseLevelScreen.categories.get(category)) {
                 i++;
                 levelName = level.getName().replaceAll("\n", " ");
                 if(this.level.getName().equals(level.getName()))
                     levelName = "[GREEN]"+levelName+"[]";
-                Fonts.xsmall.draw(game.sb, levelName, 80, MyGdxGame.HEIGHT - i*30);
+                Fonts.xsmall.draw(game.sb, levelName, 80, viewport.getCamera().viewportHeight - i*30);
             }
         }
         Fonts.medium.draw(game.sb, loadingString, 780 - glyphLayout.width/2, 450);
@@ -120,11 +125,12 @@ public class LoadingScreen extends Window implements Screen {
         stage.draw();
         game.sb.setColor(1,1,1,1);
 
+        //loading bar
         if(game.assets.update()) {
-            progressBar.setValue(game.assets.getProgress());
+            progressBar.setValue(1f);
             if(MyGdxGame.platformDepended.deviceHasKeyboard()) {
                 loadingString = "[GREEN]Press ENTER to begin![]";
-                glyphLayout = new GlyphLayout(Fonts.medium, loadingString);
+                glyphLayout.setText(Fonts.medium, loadingString);
                 if(Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
                     assets.playSound(assets.clickSound);
                     dispose();
@@ -133,7 +139,7 @@ public class LoadingScreen extends Window implements Screen {
             }
             else {
                 loadingString = "[GREEN]Tap to begin![]";
-                glyphLayout = new GlyphLayout(Fonts.medium, loadingString);
+                glyphLayout.setText(Fonts.medium, loadingString);
                 if(!xPressed && Gdx.input.isTouched()) {
                     assets.playSound(assets.clickSound);
                     dispose();

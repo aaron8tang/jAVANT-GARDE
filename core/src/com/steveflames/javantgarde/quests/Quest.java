@@ -5,7 +5,9 @@ import com.steveflames.javantgarde.tools.global.MyFileReader;
 import java.util.ArrayList;
 
 /**
- * Created by Flames on 6/10/2017.
+ * The logic of the quests of the game is implemented here.
+ * Every in-game pc has exactly one quest that splits into
+ * one or more quest steps (QuestStep class).
  */
 
 public class Quest {
@@ -23,6 +25,10 @@ public class Quest {
             completedText = MyFileReader.readFile("txt/quests/quest-"+id+"-completed.txt");
     }
 
+    /**
+     * Parse the quest file and initialize the quest and queststeps.
+     * @param quest The text of the quest file.
+     */
     private void parseQuestString(String quest) {
         quest = quest.replaceAll("\r", "");
         questSteps.clear();

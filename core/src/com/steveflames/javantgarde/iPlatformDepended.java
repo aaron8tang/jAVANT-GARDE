@@ -1,12 +1,18 @@
 package com.steveflames.javantgarde;
 
 /**
- * Created by Flames on 14/10/2017.
+ * The iPlatformDepended interface is implemented from every
+ * Launcher and provides information to the core about the device
+ * that is currently running the game.
  */
 
 public interface iPlatformDepended {
-    String getNextPrompt();
-    String getLevel1Tip();
+
     boolean deviceHasKeyboard();
+
+    void setDeviceHasKeyboard(boolean bool);
+
     boolean isHTML();
+
+    boolean isPC();
 }

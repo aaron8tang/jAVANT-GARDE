@@ -1,6 +1,5 @@
 package com.steveflames.javantgarde.sprites;
 
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -11,14 +10,16 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.hud.Hud;
-import com.steveflames.javantgarde.screens.PlayScreen;
 import com.steveflames.javantgarde.tools.Assets;
 import com.steveflames.javantgarde.tools.global.Cameras;
 import com.steveflames.javantgarde.tools.global.Fonts;
 
 
 /**
- * Created by Flames on 30/10/2017.
+ * Implements any dynamic floating platform of the game.
+ * (e.g. quiz floating platforms with levers,
+ *  floating platforms on quiz-pc,
+ *  elevators..)
  */
 
 public class FloatingPlatform extends GameObject {
@@ -41,13 +42,11 @@ public class FloatingPlatform extends GameObject {
     public void update(float dt) {}
 
     public void drawFilled(ShapeRenderer sr) {
-        //sr.setColor(0.21f, 0.18f, 0.17f, 1);
         sr.setColor(Color.BLACK);
         sr.rect(b2body.getPosition().x* MyGdxGame.PPM + Cameras.getHudCameraOffsetX() - bounds.width/2, b2body.getPosition().y* MyGdxGame.PPM - bounds.height/2, bounds.width, bounds.height);
     }
 
     public void drawLine(ShapeRenderer sr) {
-        //sr.setColor(Color.BLACK);
         sr.setColor(0.14f, 0.87f, 0.88f, 1);
         sr.rect(b2body.getPosition().x* MyGdxGame.PPM + Cameras.getHudCameraOffsetX() - bounds.width/2, b2body.getPosition().y* MyGdxGame.PPM - bounds.height/2, bounds.width, bounds.height);
     }
@@ -64,7 +63,12 @@ public class FloatingPlatform extends GameObject {
             lever.drawFontScaled(sb);
     }
 
-    public void quizReset(String name, Hud hud, boolean isCompleted) {
+    /**
+     * Reset the state of the FloatingPlatform and its lever.
+     * @param name The text of the FloatingPlatform (quiz choice).
+     * @param isCompleted Whether the whole quiz is completed or not.
+     */
+    void quizReset(String name, Hud hud, boolean isCompleted) {
         correct = false;
         resetB2Body();
         if(!name.equals("$")) { //not empty answer
@@ -82,28 +86,38 @@ public class FloatingPlatform extends GameObject {
         }
         else { //deactivate this floatingPlatform's lever and name
             setAnswerText(" ");
-            lever.b2body.setTransform(-2,-2, 0);
+            lever.b2body.setTransform(-400/MyGdxGame.PPM,-400/MyGdxGame.PPM, 0);
         }
     }
 
+    /**
+     * Reset the Box2D body to its initial state.
+     */
     public void resetB2Body() {
         b2body.setType(BodyDef.BodyType.KinematicBody);
         b2body.setLinearVelocity(0,0);
         b2body.setTransform((bounds.getX() + bounds.getWidth() / 2) / MyGdxGame.PPM, (bounds.getY() + bounds.getHeight() / 2) / MyGdxGame.PPM, 0);
     }
 
-    public void quizPull() {
+    /**
+     * Pull the lever of the current FloatingPlatform (part of the quiz).
+     */
+    void quizPull() {
         lever.pull();
         if(correct) {
             assets.playSound(assets.correctSound);
         }
         else {
             assets.playSound(assets.wrongSound);
-            b2body.setLinearVelocity(0, -6);
-            lever.b2body.setLinearVelocity(0, -6);
+            b2body.setLinearVelocity(0, -1200/MyGdxGame.PPM);
+            lever.b2body.setLinearVelocity(0, -1200/MyGdxGame.PPM);
         }
     }
 
+    /**
+     * Applies velocity to the FloatingPlatform.
+     * @param speed The velocity to apply to the FloatingPlatform.
+     */
     public void drop(float speed) {
         assets.playSound(assets.riseSound);
         b2body.setType(BodyDef.BodyType.DynamicBody);

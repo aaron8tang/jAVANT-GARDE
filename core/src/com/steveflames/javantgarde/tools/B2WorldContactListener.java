@@ -1,7 +1,5 @@
 package com.steveflames.javantgarde.tools;
 
-import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -10,7 +8,6 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.hud.Hud;
-import com.steveflames.javantgarde.screens.PlayScreen;
 import com.steveflames.javantgarde.sprites.Checkpoint;
 import com.steveflames.javantgarde.sprites.FloatingPlatform;
 import com.steveflames.javantgarde.sprites.GameObject;
@@ -25,18 +22,22 @@ import com.steveflames.javantgarde.sprites.Teleporter;
 import com.steveflames.javantgarde.sprites.ropes.Platform;
 
 /**
- * Created by Flames on 19/4/16.
+ * This class is responsible for all the collisions
+ * that happen in-game (e.g. player-ground collision,
+ * player-infoSign collision).
  */
 public class B2WorldContactListener implements ContactListener {
 
     private String[] splitter;
-    private PlayScreen playScreen;
+    private Hud hud;
+    private GameObjectManager objectManager;
     private Assets assets;
     private long bumpSoundMillis = TimeUtils.millis();
 
-    public B2WorldContactListener(PlayScreen playScreen) {
-        this.playScreen = playScreen;
-        this.assets = playScreen.getAssets();
+    public B2WorldContactListener(Hud hud, GameObjectManager objectManager, Assets assets) {
+        this.hud = hud;
+        this.objectManager = objectManager;
+        this.assets = assets;
     }
 
     @Override
@@ -44,6 +45,7 @@ public class B2WorldContactListener implements ContactListener {
         Fixture fixA = contact.getFixtureA();
         Fixture fixB = contact.getFixtureB();
 
+        //one of the colliding fixtures is Player
         if(fixA.getUserData() instanceof Player || fixB.getUserData() instanceof Player) {
             Fixture player = fixA.getUserData() instanceof Player ? fixA : fixB;
             Fixture object = player == fixA ? fixB : fixA;
@@ -56,24 +58,34 @@ public class B2WorldContactListener implements ContactListener {
 
                         if (((Checkpoint) object.getUserData()).getName().equals("checkpoint-1_1-0")) {
                             if (!((Checkpoint) object.getUserData()).isVisited()) {
-                                playScreen.getHud().newToast(MyGdxGame.platformDepended.getLevel1Tip());
+                                if(MyGdxGame.platformDepended.deviceHasKeyboard())
+                                    hud.newToast("Hello and welcome to "+ MyGdxGame.TITLE+" tutorials!\n" +
+                                            "Here you will get the chance to learn the basics of programming in Java from scratch - let's begin!\n" +
+                                            "Use the ARROWS to move around and jump\n" +
+                                            "ENTER to use item\n" +
+                                            "ESCAPE to exit");
+                                else
+                                    hud.newToast("Hello and welcome to "+ MyGdxGame.TITLE+" tutorials!\n" +
+                                            "Here you will get the chance to learn the basics of programming in Java from scratch - let's begin!\n" +
+                                            "Use the ONSCREEN BUTTONS to move, jump and use items\n" +
+                                            "BACK to exit");
                             }
                         } else {
                             if(((Checkpoint) object.getUserData()).getText() != null)
-                                playScreen.getHud().newToast(((Checkpoint) object.getUserData()).getText());
+                                hud.newToast(((Checkpoint) object.getUserData()).getText());
                         }
                         ((Checkpoint) object.getUserData()).setVisited(true);
                     }
                 }
                 else if(object.getUserData() instanceof Item) {
-                    playScreen.getObjectManager().getObjectsToRemove().add((Item)object.getUserData());
-                    playScreen.getObjectManager().getItems().remove(object.getUserData());
+                    objectManager.getObjectsToRemove().add((Item)object.getUserData());
+                    objectManager.getItems().remove(object.getUserData());
                     if(((Item) object.getUserData()).isUsable()) {
                         assets.playSound(assets.getItemSound);
                         if (((Item) object.getUserData()).getName().equals("health"))
                             ((Player) player.getUserData()).addHealth();
                         else if (((Item) object.getUserData()).getName().contains("class")) {
-                            ((Player) player.getUserData()).addClass(((Item) object.getUserData()).getName());
+                            ((Player) player.getUserData()).addClass(((Item) object.getUserData()).getName(), ((Item) object.getUserData()).getText());
                         }
                     }
                     ((Item) object.getUserData()).setUsable(false);
@@ -88,12 +100,12 @@ public class B2WorldContactListener implements ContactListener {
                 else if(object.getUserData() instanceof InfoSign ) {
                     ((GameObject) object.getUserData()).setUsable(true);
                     Player.colliding = true;
-                    playScreen.getHud().showUseBtn("READ");
+                    hud.showUseBtn("READ");
                 }
                 else if(object.getUserData() instanceof Pc) {
                     ((GameObject) object.getUserData()).setUsable(true);
                     Player.colliding = true;
-                    playScreen.getHud().showUseBtn("CODE");
+                    hud.showUseBtn("CODE");
                 }
                 else if(object.getUserData() instanceof Lever) {
                     ((Lever) object.getUserData()).setUsable(true);
@@ -101,25 +113,34 @@ public class B2WorldContactListener implements ContactListener {
                     ((Lever) object.getUserData()).setColliding(true);
                     if(((Lever) object.getUserData()).isManualPull()) {
                         if(((Player)player.getUserData()).position.y > 0)
-                            playScreen.getHud().showUseBtn("PULL");
+                            hud.showUseBtn("PULL");
+                    }
+                }
+                else if(object.getUserData() instanceof FloatingPlatform) {
+                    if(((FloatingPlatform) object.getUserData()).getB2body().getLinearVelocity().y ==0) { //for quiz wrong answer rebump
+                        if (TimeUtils.timeSinceMillis(bumpSoundMillis) > 100) {
+                            bumpSoundMillis = TimeUtils.millis();
+                            assets.playSound(assets.bumpSound);
+                        }
                     }
                 }
 
             }
             else if(object.getUserData().equals("cyberfrogLeftSensor")) {
                 assets.playSound(assets.frogSound);
-                ((Player)player.getUserData()).b2body.applyLinearImpulse(-5,0,0,0,true);
+                ((Player)player.getUserData()).b2body.applyLinearImpulse(-1000/MyGdxGame.PPM,0,0,0,true);
             }
             else if(object.getUserData().equals("cyberfrogRightSensor")) {
                 assets.playSound(assets.frogSound);
-                ((Player)player.getUserData()).b2body.applyLinearImpulse(5,0,0,0,true);
+                ((Player)player.getUserData()).b2body.applyLinearImpulse(1000/MyGdxGame.PPM,0,0,0,true);
             }
             else if(object.getUserData().equals("cyberfrogUpperSensor")) {
                 assets.playSound(assets.frogSound);
                 ((Player)player.getUserData()).setCurrentState(Player.State.JUMPING);
-                ((Player)player.getUserData()).b2body.applyLinearImpulse(0,20,0,0,true);
+                ((Player)player.getUserData()).b2body.applyLinearImpulse(0,4000/MyGdxGame.PPM,0,0,true);
             }
         }
+        //one of the colliding fixtures is Player's down sensor
         else if(fixA.getUserData().equals("playerDownSensor") || fixB.getUserData().equals("playerDownSensor")) {
             Fixture player = fixA.getUserData().equals("playerDownSensor") ? fixA : fixB;
             Fixture object = player == fixA ? fixB : fixA;
@@ -128,12 +149,13 @@ public class B2WorldContactListener implements ContactListener {
                 ((Platform) object.getUserData()).setActive(false);
             }
         }
+        //one of the colliding fixtures is cyber-frog's right sensor
         else if(fixA.getUserData().equals("cyberfrogRightSensor") || fixB.getUserData().equals("cyberfrogRightSensor")) {
             Fixture cyberfrogSensor = fixA.getUserData().equals("cyberfrogRightSensor") ? fixA : fixB;
             Fixture object = cyberfrogSensor == fixA ? fixB : fixA;
 
             if(object.getUserData().equals("ground")) {
-                for(SensorRobot cyberfrog: playScreen.getObjectManager().getSensorRobots()) {
+                for(SensorRobot cyberfrog: objectManager.getSensorRobots()) {
                     if (cyberfrog.b2body.getFixtureList().contains(cyberfrogSensor, true)) {
                         cyberfrog.jump();
                         break;
@@ -142,21 +164,22 @@ public class B2WorldContactListener implements ContactListener {
             }
             else if(object.getUserData() instanceof Marker) {
                 if(((Marker) object.getUserData()).getName().contains("destination")) {
-                    for(SensorRobot cyberfrog: playScreen.getObjectManager().getSensorRobots()) {
+                    for(SensorRobot cyberfrog: objectManager.getSensorRobots()) {
                         if (cyberfrog.b2body.getFixtureList().contains(cyberfrogSensor, true)) {
                             assets.playSound(assets.frogSound);
-                            cyberfrog.completed(playScreen);
+                            cyberfrog.completed(objectManager);
                             break;
                         }
                     }
                 }
             }
         }
+        //one of the colliding fixtures is cyber-frog's upper sensor
         else if(fixA.getUserData().equals("cyberfrogUpperSensor") || fixB.getUserData().equals("cyberfrogUpperSensor")) {
             Fixture cyberfrogSensor = fixA.getUserData().equals("cyberfrogUpperSensor") ? fixA : fixB;
             //Fixture object = cyberfrogSensor == fixA ? fixB : fixA;
 
-            for(SensorRobot cyberfrog: playScreen.getObjectManager().getSensorRobots()) {
+            for(SensorRobot cyberfrog: objectManager.getSensorRobots()) {
                 if (cyberfrog.b2body.getFixtureList().contains(cyberfrogSensor, true)) {
                     if(cyberfrog.isUpperSensorEnabled())
                         cyberfrog.setUpperSensorDetectsObject(1);
@@ -164,6 +187,7 @@ public class B2WorldContactListener implements ContactListener {
                 }
             }
         }
+        //one of the colliding fixtures is a floating platform
         else if(fixA.getUserData() instanceof FloatingPlatform || fixB.getUserData() instanceof FloatingPlatform) {
             Fixture floatingPlatform = fixA.getUserData() instanceof FloatingPlatform ? fixA : fixB;
             Fixture object = floatingPlatform == fixA ? fixB : fixA;
@@ -171,12 +195,13 @@ public class B2WorldContactListener implements ContactListener {
             if(object.getUserData() instanceof Marker) {
                 ((FloatingPlatform)floatingPlatform.getUserData()).b2body.setGravityScale(0);
                 ((FloatingPlatform)floatingPlatform.getUserData()).b2body.setLinearVelocity(0,0);
-                if(playScreen.getObjectManager().getPcs().size()>=2) {
-                    playScreen.getObjectManager().getPcs().get(0).b2body.setLinearVelocity(0,0);
-                    playScreen.getObjectManager().getPcs().get(1).b2body.setLinearVelocity(0,0);
+                if(objectManager.getPcs().size()>=2) {
+                    objectManager.getPcs().get(0).b2body.setLinearVelocity(0,0);
+                    objectManager.getPcs().get(1).b2body.setLinearVelocity(0,0);
                 }
             }
         }
+        //one of the colliding fixtures is the ground.
         if(fixA.getUserData().equals("ground") || fixB.getUserData().equals("ground")) {
             if(TimeUtils.timeSinceMillis(bumpSoundMillis) > 100) {
                 bumpSoundMillis = TimeUtils.millis();
@@ -190,6 +215,7 @@ public class B2WorldContactListener implements ContactListener {
         Fixture fixA = contact.getFixtureA();
         Fixture fixB = contact.getFixtureB();
 
+        //one of the colliding fixtures is the Player.
         if(fixA.getUserData() instanceof Player || fixB.getUserData() instanceof Player) {
             Fixture player = fixA.getUserData() instanceof Player ? fixA : fixB;
             Fixture object = player == fixA ? fixB : fixA;
@@ -202,22 +228,23 @@ public class B2WorldContactListener implements ContactListener {
                 if(object.getUserData() instanceof InfoSign || object.getUserData() instanceof  Pc) {
                     ((GameObject) object.getUserData()).setUsable(false);
                     Player.colliding = false;
-                    playScreen.getHud().hideUseBtn();
+                    hud.hideUseBtn();
                 }
                 else if (object.getUserData() instanceof Lever) {
                     ((GameObject) object.getUserData()).setUsable(false);
                     ((Lever) object.getUserData()).setColliding(false);
                     Player.colliding = false;
-                    playScreen.getHud().hideUseBtn();
+                    hud.hideUseBtn();
                 }
             }
         }
+        //one of the colliding fixtures is cyber-frog's upper sensor.
         else if(fixA.getUserData().equals("cyberfrogUpperSensor") || fixB.getUserData().equals("cyberfrogUpperSensor")) {
             Fixture cyberfrogSensor = fixA.getUserData().equals("cyberfrogUpperSensor") ? fixA : fixB;
             Fixture object = cyberfrogSensor == fixA ? fixB : fixA;
 
             if(object.getUserData().equals("ground")) {
-                for (SensorRobot cyberfrog : playScreen.getObjectManager().getSensorRobots()) {
+                for (SensorRobot cyberfrog : objectManager.getSensorRobots()) {
                     if (cyberfrog.b2body.getFixtureList().contains(cyberfrogSensor, true)) {
                         if(cyberfrog.isUpperSensorEnabled())
                             cyberfrog.setUpperSensorDetectsObject(2);

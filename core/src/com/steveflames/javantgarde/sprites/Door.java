@@ -10,7 +10,8 @@ import com.steveflames.javantgarde.tools.Assets;
 import com.steveflames.javantgarde.tools.global.Cameras;
 
 /**
- * Created by Flames on 15/10/2017.
+ * Implements the doors of the game.
+ * The player completes quests in order to open these doors.
  */
 
 public class Door extends GameObject {
@@ -22,7 +23,6 @@ public class Door extends GameObject {
         super(name, world, map, bounds, false);
         this.assets = assets;
     }
-
 
     public void update(float dt) {
         if(opening) {

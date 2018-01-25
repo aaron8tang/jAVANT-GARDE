@@ -3,7 +3,8 @@ package com.steveflames.javantgarde.quests;
 import java.util.ArrayList;
 
 /**
- * Created by Flames on 6/10/2017.
+ * The steps of the games quests.
+ * Utilized by the Quest class.
  */
 
 public class QuestStep {

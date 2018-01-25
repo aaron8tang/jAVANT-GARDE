@@ -1,31 +1,34 @@
 package com.steveflames.javantgarde.desktop;
 
+import com.steveflames.javantgarde.MyGdxGame;
+
 /**
- * Created by Flames on 14/10/2017.
+ * Implements the iPlatformDepended interface and provides
+ * information to the core about the device that is currently
+ * running the game.
  */
 
 public class PlatformDepended implements com.steveflames.javantgarde.iPlatformDepended {
-    @Override
-    public String getNextPrompt() {
-        return "Press ENTER";
-    }
 
-    @Override
-    public String getLevel1Tip() {
-        return "Hello and welcome to jAVANT-GARDE tutorials!\n" +
-                "Here you will get the chance to learn the basics of programming in Java from scratch - let's begin!\n" +
-                "Use the ARROWS to move around and jump\n" +
-                "ENTER to use item\n" +
-                "ESCAPE to exit";
-    }
+    private boolean keyboard = true;
 
     @Override
     public boolean deviceHasKeyboard() {
-        return true;
+        return keyboard;
+    }
+
+    @Override
+    public void setDeviceHasKeyboard(boolean bool) {
+        keyboard = bool;
     }
 
     @Override
     public boolean isHTML() {
         return false;
+    }
+
+    @Override
+    public boolean isPC() {
+        return true;
     }
 }

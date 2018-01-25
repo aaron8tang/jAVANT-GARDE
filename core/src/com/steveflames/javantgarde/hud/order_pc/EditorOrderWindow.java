@@ -1,7 +1,6 @@
 package com.steveflames.javantgarde.hud.order_pc;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -20,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- * Created by Flames on 10/12/2017.
+ * This class implements the 'put the code in the correct order" pc.
  */
 
 public class EditorOrderWindow extends Window {
@@ -45,7 +44,7 @@ public class EditorOrderWindow extends Window {
     private Assets assets;
 
     public EditorOrderWindow(String title, final PlayScreen playScreen) {
-        super(title, playScreen.getAssets().terraSkin);
+        super(title, playScreen.getAssets().neonSkin, "window2");
         this.playScreen = playScreen;
         this.assets = playScreen.getAssets();
 
@@ -53,7 +52,7 @@ public class EditorOrderWindow extends Window {
         botBarTable = new Table(playScreen.getAssets().neonSkin);
         compileBtn = new TextButton(" compile & run ", playScreen.getAssets().neonSkin);
         TextButton exitBtn = new TextButton("x", playScreen.getAssets().neonSkin);
-        Label infoLabel = new Label("[CYAN]Put the code in the correct order![]", playScreen.getAssets().terraSkin);
+        Label infoLabel = new Label("[CYAN]Put the code in the correct order![]", playScreen.getAssets().neonSkin);
         botBarTable.add(exitBtn).left();
         botBarTable.add(infoLabel).expandX().center();
         botBarTable.add(compileBtn).right();
@@ -64,8 +63,8 @@ public class EditorOrderWindow extends Window {
         afterCodeTable = new Table(playScreen.getAssets().neonSkin);
 
         //add components to window
-        this.setSize(800, MyGdxGame.HEIGHT-120);
-        this.setX(MyGdxGame.WIDTH/2 - this.getWidth()/2 + 150);
+        this.setSize(800, Cameras.hudPort.getCamera().viewportHeight-120);
+        this.setX(Cameras.hudPort.getCamera().viewportWidth/2 - this.getWidth()/2 + 150);
         this.setY(50);
         this.row();
         this.add(preCodeTable).expand().fillX().left();
@@ -100,7 +99,7 @@ public class EditorOrderWindow extends Window {
                 else { //WRONG ORDER
                     assets.playSound(assets.wrongSound);
                     closeCurrentEditor();
-                    playScreen.getPlayer().b2body.applyLinearImpulse(-14, 6, 0, 0, true);
+                    playScreen.getPlayer().b2body.applyLinearImpulse(-2800/MyGdxGame.PPM, 1200/MyGdxGame.PPM, 0, 0, true);
                 }
             }
         });
@@ -135,6 +134,7 @@ public class EditorOrderWindow extends Window {
                 }
 
                 if (!currentPc.getQuest().nextQuestStep()) { //whole quest completed
+                    assets.playSound(assets.questSound);
                     closeCurrentEditor();
                 }
 
@@ -150,24 +150,25 @@ public class EditorOrderWindow extends Window {
                     playScreen.getObjectManager().getDoors().get(0).open();
                     break;
                 case 1:
-                    playScreen.getPlayer().b2body.applyLinearImpulse(16,6,0,0,true);
+                    playScreen.getPlayer().b2body.applyLinearImpulse(3200/MyGdxGame.PPM,1200/MyGdxGame.PPM,0,0,true);
                     timer = 2.9f;
                     break;
             }
         }
         else if(playScreen.getCurrentLevelID().equals("4_1")) {
             if(currentPc.getName().equals("orderpc-4_1-0")) {
-                playScreen.getObjectManager().getFloatingPlatforms().get(0).b2body.setLinearVelocity(0, 2);
-                playScreen.getObjectManager().getPcs().get(0).b2body.setLinearVelocity(0, 2);
+                playScreen.getObjectManager().getFloatingPlatforms().get(0).b2body.setLinearVelocity(0, 400/MyGdxGame.PPM);
+                playScreen.getObjectManager().getPcs().get(0).b2body.setLinearVelocity(0, 400/MyGdxGame.PPM);
             }
             else {
-                playScreen.getObjectManager().getFloatingPlatforms().get(1).b2body.setLinearVelocity(0,-2);
-                playScreen.getObjectManager().getPcs().get(1).b2body.setLinearVelocity(0,-2);
+                playScreen.getObjectManager().getFloatingPlatforms().get(1).b2body.setLinearVelocity(0,-400/MyGdxGame.PPM);
+                playScreen.getObjectManager().getPcs().get(1).b2body.setLinearVelocity(0,-400/MyGdxGame.PPM);
             }
         }
         else if(playScreen.getCurrentLevelID().equals("5_2")) {
             Cameras.setCameraTo(playScreen.getObjectManager().getSensorRobots().get(0).b2body.getPosition().x);
             playScreen.getObjectManager().getSensorRobots().get(0).setRunRight(true);
+            timer = 2.9f;
         }
     }
 
@@ -196,7 +197,7 @@ public class EditorOrderWindow extends Window {
                 //init immutable code before orderCode
                 for(int i=0; i<currentPc.getQuest().getCurrentQuestStep().getHints().size(); i++) {
                     if(currentPc.getQuest().getCurrentQuestStep().getHints().get(i).startsWith("[")) {
-                        preCodeTable.add(new Label(currentPc.getQuest().getCurrentQuestStep().getHints().get(i).substring(1), playScreen.getAssets().terraSkin)).expandX().left();
+                        preCodeTable.add(new Label(currentPc.getQuest().getCurrentQuestStep().getHints().get(i).substring(1), playScreen.getAssets().neonSkin)).expandX().left();
                         if(i != currentPc.getQuest().getCurrentQuestStep().getHints().size()-1)
                             preCodeTable.row();
                     }
@@ -209,7 +210,7 @@ public class EditorOrderWindow extends Window {
                         codeTable.row();
 
                     Table lineOfCode = new Table(playScreen.getAssets().neonSkin);
-                    Label codeLabel = new Label(s[i], playScreen.getAssets().terraSkin);
+                    Label codeLabel = new Label(s[i], playScreen.getAssets().neonSkin);
                     lineOfCode.add(codeLabel).expandX().left();
                     codeTable.add(lineOfCode).expand().fill();
 
@@ -226,7 +227,7 @@ public class EditorOrderWindow extends Window {
                         });
                         lineOfCode.add(upBtn).width(70);
                         if(i==s.length-1)
-                            lineOfCode.add(new Label("", playScreen.getAssets().terraSkin)).width(70);
+                            lineOfCode.add(new Label("", playScreen.getAssets().neonSkin)).width(70);
                     }
                     if (i != s.length - 1) {
                         final TextButton downBtn = new TextButton("v", playScreen.getAssets().neonSkin);
@@ -247,7 +248,7 @@ public class EditorOrderWindow extends Window {
                 //init immutable code after orderCode
                 for(int i=0; i<currentPc.getQuest().getCurrentQuestStep().getHints().size(); i++) {
                     if(currentPc.getQuest().getCurrentQuestStep().getHints().get(i).startsWith("]")) {
-                        afterCodeTable.add(new Label(currentPc.getQuest().getCurrentQuestStep().getHints().get(i).substring(1), playScreen.getAssets().terraSkin)).expandX().left();
+                        afterCodeTable.add(new Label(currentPc.getQuest().getCurrentQuestStep().getHints().get(i).substring(1), playScreen.getAssets().neonSkin)).expandX().left();
                         if(i != currentPc.getQuest().getCurrentQuestStep().getHints().size()-1)
                             afterCodeTable.row();
                     }
@@ -259,7 +260,7 @@ public class EditorOrderWindow extends Window {
             afterCodeTable.remove();
             linesOfCodeTexts.clear();
             codeTable.clear();
-            codeTable.add(new Label("[GREEN]Quest completed![]", playScreen.getAssets().terraSkin));
+            codeTable.add(new Label("[GREEN]Quest completed![]", playScreen.getAssets().neonSkin));
             compileBtn.remove();
         }
     }

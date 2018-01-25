@@ -6,6 +6,12 @@ import org.robovm.apple.uikit.UIApplication;
 import com.badlogic.gdx.backends.iosrobovm.IOSApplication;
 import com.badlogic.gdx.backends.iosrobovm.IOSApplicationConfiguration;
 
+/**
+ * The starting point (main) of the game when run on iOS.
+ * After the PlatformDepended class is initialized, the flow
+ * of the program moves to the core (MyGdxGame class).
+ */
+
 public class IOSLauncher extends IOSApplication.Delegate {
     @Override
     protected IOSApplication createApplication() {

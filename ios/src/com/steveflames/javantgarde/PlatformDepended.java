@@ -1,30 +1,32 @@
 package com.steveflames.javantgarde;
 
 /**
- * Created by Flames on 11/11/2017.
+ * Implements the iPlatformDepended interface and provides
+ * information to the core about the device that is currently
+ * running the game.
  */
 
 public class PlatformDepended implements iPlatformDepended {
-    @Override
-    public String getNextPrompt() {
-        return "Press ENTER";
-    }
 
-    @Override
-    public String getLevel1Tip() {
-        return "Hello and welcome to jAVANT-GARDE tutorials!\n" +
-                "Here you will get the chance to learn the basics of programming in Java from scratch - let's begin!\n" +
-                "Use the ONSCREEN BUTTONS to move, jump and use items\n" +
-                "BACK to exit";
-    }
+    private boolean keyboard = false;
 
     @Override
     public boolean deviceHasKeyboard() {
-        return true;
+        return keyboard;
+    }
+
+    @Override
+    public void setDeviceHasKeyboard(boolean bool) {
+        keyboard = bool;
     }
 
     @Override
     public boolean isHTML() {
+        return false;
+    }
+
+    @Override
+    public boolean isPC() {
         return false;
     }
 }

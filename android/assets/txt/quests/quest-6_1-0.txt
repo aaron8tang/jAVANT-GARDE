@@ -5,7 +5,7 @@ class ArrayTest {
         int[RED]__[] myArray = ___ ___[_];
     }
 }
-[CYAN]Initialize an array of 5 integers.[]
+[CYAN]//Initialize an array of 5 integers.[]
 #HELP
 ?()
 #HELP
@@ -18,7 +18,7 @@ class ArrayTest {
         int[[] myArray = [RED]___[] ___[_];
     }
 }
-[CYAN]Initialize an array of 5 integers.[]
+[CYAN]//Initialize an array of 5 integers.[]
 #HELP
 ?array
 #HELP
@@ -31,7 +31,7 @@ class ArrayTest {
         int[[] myArray = new [RED]___[][_];
     }
 }
-[CYAN]Initialize an array of 5 integers.[]
+[CYAN]//Initialize an array of 5 integers.[]
 #HELP
 !int
 #HELP
@@ -42,7 +42,7 @@ class ArrayTest {
         int[[] myArray = new int[[[RED]_[]];
     }
 }
-[CYAN]Initialize an array of 5 integers.[]
+[CYAN]//Initialize an array of 5 integers.[]
 #HELP
 !5
 #HELP
@@ -56,7 +56,7 @@ class ArrayTest {
         System.out.println(myArray[[[RED]_[]]);
     }
 }
-[CYAN]Print the 1st element of the array.[]
+[CYAN]//Print the 1st element of the array.[]
 #HELP
 ?
 #HELP

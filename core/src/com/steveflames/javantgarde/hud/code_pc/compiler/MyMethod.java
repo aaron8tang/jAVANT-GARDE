@@ -3,7 +3,8 @@ package com.steveflames.javantgarde.hud.code_pc.compiler;
 import java.util.ArrayList;
 
 /**
- * Created by Flames on 6/11/2017.
+ * The custom method implementation.
+ * Utilized by the compiler (MyCompiler class).
  */
 
 public class MyMethod {
@@ -14,7 +15,7 @@ public class MyMethod {
     private ArrayList<MyVariable> arguments;
     private String code;
 
-    private ArrayList<MyVariable> localVariables = new ArrayList<MyVariable>();
+    //private ArrayList<MyVariable> localVariables = new ArrayList<MyVariable>();
 
     public MyMethod(String modifier, String returnType, String name, ArrayList<MyVariable> arguments, String code) {
         this.modifier = modifier;

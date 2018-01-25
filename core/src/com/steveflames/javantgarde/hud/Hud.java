@@ -20,18 +20,19 @@ import com.steveflames.javantgarde.hud.navigation_windows.LevelCompletedWindow;
 import com.steveflames.javantgarde.hud.navigation_windows.PauseWindow;
 import com.steveflames.javantgarde.hud.order_pc.EditorOrderWindow;
 import com.steveflames.javantgarde.hud.quiz_pc.EditorQuizWindow;
+import com.steveflames.javantgarde.screens.ChooseLevelScreen;
 import com.steveflames.javantgarde.screens.PlayScreen;
 import com.steveflames.javantgarde.sprites.InfoSign;
 import com.steveflames.javantgarde.sprites.Item;
 import com.steveflames.javantgarde.sprites.Pc;
 import com.steveflames.javantgarde.sprites.Player;
-import com.steveflames.javantgarde.tools.Assets;
 import com.steveflames.javantgarde.tools.global.Cameras;
 import com.steveflames.javantgarde.tools.global.Fonts;
 
 
 /**
- * Created by Flames on 9/4/16.
+ * Hud (head-up display) is the class that implements
+ * all the in-game UI (e.g. code-pc, order-pc, quiz-pc, navigation windows).
  */
 public class Hud implements Disposable {
 
@@ -58,28 +59,51 @@ public class Hud implements Disposable {
     private boolean useBtnPressed = false;
     private boolean jumpBtnPressed = false;
 
-    private Assets assets;
-
     public Hud(final PlayScreen playScreen, SpriteBatch sb) {
         this.playScreen = playScreen;
-        this.assets = playScreen.getAssets();
         stage = new Stage(Cameras.hudPort, sb);
         toast = new Toast((playScreen.getAssets()));
-        editorWindow = new EditorWindow("EDITOR", playScreen.getAssets(), this);
-        editorQuizWindow = new EditorQuizWindow("EDITOR", playScreen);
-        editorOrderWindow = new EditorOrderWindow("EDITOR", playScreen);
+
         pauseWindow = new PauseWindow("GAME PAUSED", playScreen);
         gameOverWindow = new GameOverWindow(playScreen);
         levelCompletedWindow = new LevelCompletedWindow(playScreen);
         Gdx.input.setInputProcessor(stage);
     }
 
+    /**
+     * Hud initialization after world creation.
+     * Because constructor of Hud is called before the world is created.
+     */
+    public void initAfterWorldCreation() {
+        for(int i=0; i<playScreen.getObjectManager().getPcs().size(); i++) {
+            if(playScreen.getObjectManager().getPcs().get(i).getPcType()==0) {
+                editorWindow = new EditorWindow("EDITOR", playScreen.getAssets(), this);
+                break;
+            }
+        }
+        for(int i=0; i<playScreen.getObjectManager().getPcs().size(); i++) {
+            if(playScreen.getObjectManager().getPcs().get(i).getPcType()==2) {
+                editorOrderWindow = new EditorOrderWindow("EDITOR", playScreen);
+                break;
+            }
+        }
+        for(int i=0; i<playScreen.getObjectManager().getPcs().size(); i++) {
+            if(playScreen.getObjectManager().getPcs().get(i).getPcType()==1) {
+                editorQuizWindow = new EditorQuizWindow("EDITOR", playScreen);
+                break;
+            }
+        }
+    }
+
     public void update(float dt) {
         if(toast.isShowing())
             toast.update(dt, this);
-        editorWindow.update(dt);
-        editorQuizWindow.update(dt);
-        editorOrderWindow.update(dt);
+        if(editorWindow != null)
+            editorWindow.update(dt);
+        if(editorQuizWindow != null)
+            editorQuizWindow.update(dt);
+        if(editorOrderWindow != null)
+            editorOrderWindow.update(dt);
     }
 
     public void drawStage(SpriteBatch sb) {
@@ -98,12 +122,14 @@ public class Hud implements Disposable {
         if(playScreen.getPlayer().getHealth() > 0) {
             if(Item.getnOfClasses() > 0) {
                 Fonts.small.setColor(Color.WHITE);
-                Fonts.small.draw(sb, "Classes found: " + playScreen.getPlayer().getClasses().size() +"/" + Item.getnOfClasses(), 15, MyGdxGame.HEIGHT - 67);
+                Fonts.small.draw(sb, "Classes found: " + playScreen.getPlayer().getClasses().size() +"/" + Item.getnOfClasses(), 15, Cameras.hudPort.getCamera().viewportHeight - 67);
             }
             for(int i = 0; i< playScreen.getPlayer().getHealth(); i++)
-                sb.draw(assets.heartTR, 20 +(60*i), MyGdxGame.HEIGHT - 60, 50, 50);
+                sb.draw(playScreen.getAssets().heartTR, 20 +(60*i), Cameras.hudPort.getCamera().viewportHeight - 60, 50, 50);
         }
+    }
 
+    public void drawToastFont(SpriteBatch sb) {
         if(toast.isShowing())
             toast.drawFont(sb);
     }
@@ -115,7 +141,7 @@ public class Hud implements Disposable {
 
     public void newAndroidInputTable() {
         androidInputTable = new Table(playScreen.getAssets().neonSkin);
-        androidInputTable.setSize(MyGdxGame.WIDTH, 120);
+        androidInputTable.setSize(Cameras.hudPort.getCamera().viewportWidth, 120);
         final TextButton leftBtn = new TextButton("<", playScreen.getAssets().neonSkin);
         leftBtn.addListener(new ClickListener() {
             @Override
@@ -183,14 +209,12 @@ public class Hud implements Disposable {
             }
         });
 
-
         Table leftTable = new Table(playScreen.getAssets().neonSkin);
         leftTable.add(leftBtn).left().width(150).height(120).expandX();
         leftTable.add(rightBtn).left().width(150).height(120).expandX();
         Table rightTable = new Table(playScreen.getAssets().neonSkin);
         rightTable.add(useBtn).right().width(200).height(120).expandX();
         rightTable.add(jumpBtn).right().width(200).height(120).expandX();
-
 
         androidInputTable.add(leftTable).expand().left();
         androidInputTable.add(rightTable).expand().right();
@@ -214,24 +238,24 @@ public class Hud implements Disposable {
     }
 
     public void showEditorWindow(Pc pc) {
-        assets.playSound(assets.useItemSound);
+        playScreen.getAssets().playSound(playScreen.getAssets().useItemSound);
         editorWindow.show(pc);
     }
 
     public void showEditorQuizWindow(Pc pc) {
-        assets.playSound(assets.useItemSound);
+        playScreen.getAssets().playSound(playScreen.getAssets().useItemSound);
         editorQuizWindow.show(pc);
     }
 
     public void showEditorOrderWindow(Pc pc) {
-        assets.playSound(assets.useItemSound);
+        playScreen.getAssets().playSound(playScreen.getAssets().useItemSound);
         editorOrderWindow.show(pc);
     }
 
     public void showInfoWindow(InfoSign infoSign, String text) {
-        assets.playSound(assets.useItemSound);
+        playScreen.getAssets().playSound(playScreen.getAssets().useItemSound);
         hideAndroidInputTable();
-        infoDialog = new Dialog("", playScreen.getAssets().terraSkin, "dialog") {
+        infoDialog = new Dialog("", playScreen.getAssets().neonSkin, "dialog") {
             public void result(Object obj) {
                 closeCurrentInfo();
                 showAndroidInputTable();
@@ -255,22 +279,36 @@ public class Hud implements Disposable {
         });
     }
 
+    public void closeEditors() {
+        if(editorWindow != null)
+            editorWindow.closeCurrentEditor();
+        if(editorQuizWindow != null)
+            editorQuizWindow.closeCurrentEditor();
+        if(editorOrderWindow != null)
+            editorOrderWindow.closeCurrentEditor();
+    }
+
+    public void setEditorWindowBot() {
+        editorWindow.getQuestWindow().setPosition(0, 45);
+    }
+
     public void showGameOverWindow() {
-        assets.stopMusic(assets.playScreenMusic);
+        playScreen.getAssets().stopPlayScreenMusic();
         stage.addActor(gameOverWindow);
-        editorWindow.closeCurrentEditor();
+        if(editorWindow != null)
+            editorWindow.closeCurrentEditor();
         hideAndroidInputTable();
     }
 
     public void showLevelCompletedWindow() {
-        assets.stopMusic(assets.playScreenMusic);
-        assets.playSound(assets.levelCompletedSound);
+        playScreen.getAssets().stopPlayScreenMusic();
         stage.addActor(levelCompletedWindow);
         hideAndroidInputTable();
+        playScreen.getGame().preferences.setLevelProgress((ChooseLevelScreen.getNextLevelId(playScreen.getCurrentLevel())));
     }
 
     public void closeCurrentInfo() {
-        assets.playSound(assets.clickSound);
+        playScreen.getAssets().playSound(playScreen.getAssets().clickSound);
         if(infoDialog.getStage()!=null)
             infoDialog.remove();
         playScreen.getPlayer().setCurrentState(Player.State.STANDING);
@@ -308,10 +346,6 @@ public class Hud implements Disposable {
         return pauseWindow;
     }
 
-    public EditorWindow getEditorWindow() {
-        return editorWindow;
-    }
-
     public boolean isLeftBtnPressed() {
         return leftBtnPressed;
     }
@@ -344,13 +378,5 @@ public class Hud implements Disposable {
 
     public boolean isToastShowing() {
         return toast.isShowing();
-    }
-
-    public EditorQuizWindow getEditorQuizWindow() {
-        return editorQuizWindow;
-    }
-
-    public EditorOrderWindow getEditorOrderWindow() {
-        return editorOrderWindow;
     }
 }

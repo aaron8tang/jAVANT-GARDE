@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="right-down" width="100" height="24" tilewidth="32" tileheight="32" nextobjectid="100">
+<map version="1.0" tiledversion="1.1.1" orientation="orthogonal" renderorder="right-down" width="100" height="24" tilewidth="32" tileheight="32" infinite="0" nextobjectid="102">
  <tileset firstgid="1" source="untitled2.tsx"/>
  <tileset firstgid="129" name="scifiplatform_div2" tilewidth="32" tileheight="32" tilecount="936" columns="39">
   <image source="scifiplatform_div2.png" width="1250" height="769"/>
@@ -125,5 +125,7 @@
   <object id="92" name="floatingPlatform-10" x="2752" y="640" width="128" height="63"/>
   <object id="95" name="floatingPlatform-11" x="2944" y="640" width="128" height="63"/>
   <object id="97" name="marker_sensorRobot_0" x="912" y="74" width="64" height="64"/>
+  <object id="100" name="health" x="2976" y="320" width="64" height="64"/>
+  <object id="101" name="health" x="914" y="-68" width="64" height="64"/>
  </objectgroup>
 </map>

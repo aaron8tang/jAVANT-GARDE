@@ -1,7 +1,6 @@
 package com.steveflames.javantgarde.hud.quiz_pc;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -21,7 +20,7 @@ import com.steveflames.javantgarde.tools.global.Cameras;
 import java.util.Random;
 
 /**
- * Created by Flames on 3/12/2017.
+ * This class implements the 'fill in the blank' pc.
  */
 
 public class EditorQuizWindow extends Window {
@@ -43,7 +42,7 @@ public class EditorQuizWindow extends Window {
     private Assets assets;
 
     public EditorQuizWindow(String title, final PlayScreen playScreen) {
-        super(title, playScreen.getAssets().terraSkin);
+        super(title, playScreen.getAssets().neonSkin, "window2");
         this.playScreen = playScreen;
         this.assets = playScreen.getAssets();
 
@@ -56,20 +55,20 @@ public class EditorQuizWindow extends Window {
                 closeCurrentEditor();
             }
         });
-        Label infoLabel = new Label("[CYAN]Fill in the blank![]", playScreen.getAssets().terraSkin);
+        Label infoLabel = new Label("[CYAN]Fill in the blank![]", playScreen.getAssets().neonSkin);
         topBarTable.add(infoLabel).expandX().center();
         topBarTable.add(exitBtn).top().right();
 
         //codeLabel
-        codeLabel = new Label("", playScreen.getAssets().terraSkin);
+        codeLabel = new Label("", playScreen.getAssets().neonSkin);
         codeLabel.getStyle().fontColor = Color.WHITE;
 
         Table codeTable = new Table(playScreen.getAssets().neonSkin);
         codeTable.add(codeLabel).expand().fillX().top();
 
         //add components to window
-        this.setSize(740, MyGdxGame.HEIGHT-240);
-        this.setX(MyGdxGame.WIDTH/2 - this.getWidth()/2);
+        this.setSize(740, Cameras.hudPort.getCamera().viewportHeight-240);
+        this.setX(Cameras.hudPort.getCamera().viewportWidth/2 - this.getWidth()/2);
         this.setY(170);
         this.add(topBarTable).expandX().fillX().top();
         this.row();
@@ -104,14 +103,14 @@ public class EditorQuizWindow extends Window {
                     if(playScreen.getCurrentLevelID().equals("3_2")) {
                         switch (currentPc.getQuest().getProgress()) {
                             case 0:
-                                playScreen.getObjectManager().getFloatingPlatforms().get(1).drop(8);
+                                playScreen.getObjectManager().getFloatingPlatforms().get(1).drop(1600/MyGdxGame.PPM);
                                 break;
                             case 1:
-                                playScreen.getObjectManager().getFloatingPlatforms().get(2).drop(8);
+                                playScreen.getObjectManager().getFloatingPlatforms().get(2).drop(1600/MyGdxGame.PPM);
                                 break;
                             case 2:
                                 showEditor = false;
-                                playScreen.getObjectManager().getFloatingPlatforms().get(3).drop(8);
+                                playScreen.getObjectManager().getFloatingPlatforms().get(3).drop(1600/MyGdxGame.PPM);
                                 break;
                         }
                     }
@@ -176,24 +175,24 @@ public class EditorQuizWindow extends Window {
                         switch (currentPc.getQuest().getProgress()) {
                             case 0:
                                 Cameras.setCameraTo(playScreen.getObjectManager().getFloatingPlatforms().get(1).b2body.getPosition().x);
-                                playScreen.getObjectManager().getFloatingPlatforms().get(1).drop(-10);
+                                playScreen.getObjectManager().getFloatingPlatforms().get(1).drop(-2000/MyGdxGame.PPM);
                                 break;
                             case 1:
                                 Cameras.setCameraTo(playScreen.getObjectManager().getFloatingPlatforms().get(2).b2body.getPosition().x);
-                                playScreen.getObjectManager().getFloatingPlatforms().get(2).drop(-12);
+                                playScreen.getObjectManager().getFloatingPlatforms().get(2).drop(-2400/MyGdxGame.PPM);
                                 break;
                             case 2:
                                 Cameras.setCameraTo(playScreen.getObjectManager().getFloatingPlatforms().get(3).b2body.getPosition().x);
-                                playScreen.getObjectManager().getFloatingPlatforms().get(3).drop(-14);
+                                playScreen.getObjectManager().getFloatingPlatforms().get(3).drop(-2800/MyGdxGame.PPM);
                                 break;
                             case 3:
                                 Cameras.setCameraTo(playScreen.getObjectManager().getFloatingPlatforms().get(4).b2body.getPosition().x);
-                                playScreen.getObjectManager().getFloatingPlatforms().get(4).drop(-10);
+                                playScreen.getObjectManager().getFloatingPlatforms().get(4).drop(-2000/MyGdxGame.PPM);
                                 break;
                             case 4:
                                 Cameras.setCameraTo(playScreen.getObjectManager().getFloatingPlatforms().get(5).b2body.getPosition().x);
                                 showEditor = false;
-                                playScreen.getObjectManager().getFloatingPlatforms().get(5).drop(-11);
+                                playScreen.getObjectManager().getFloatingPlatforms().get(5).drop(-2200/MyGdxGame.PPM);
                                 break;
                         }
                     }
@@ -214,8 +213,10 @@ public class EditorQuizWindow extends Window {
                 if(correct) {
                     if (currentPc.getQuest().nextQuestStep()) //quest step completed
                         updateUI();
-                    else //whole quest completed
+                    else {//whole quest completed
+                        completed();
                         closeCurrentEditor();
+                    }
                 }
                 else {
                     if(!playScreen.getCurrentLevelID().equals("6_2") && !playScreen.getCurrentLevelID().equals("5_2"))
@@ -255,10 +256,10 @@ public class EditorQuizWindow extends Window {
                 closeCurrentEditor();
                 playScreen.getPlayer().setCurrentState(Player.State.CODING); //so that the player can't run
                 if(!playScreen.getCurrentLevelID().equals("6_2") && !playScreen.getCurrentLevelID().equals("5_2"))
-                    playScreen.getObjectManager().getFloatingPlatforms().get(0).drop(6);
+                    playScreen.getObjectManager().getFloatingPlatforms().get(0).drop(1200/MyGdxGame.PPM);
                 else {
                     playScreen.getPlayer().setCurrentState(Player.State.STANDING);
-                    playScreen.getPlayer().b2body.applyLinearImpulse(-20, 6, 0, 0, true);
+                    playScreen.getPlayer().b2body.applyLinearImpulse(-4000/MyGdxGame.PPM, 1200/MyGdxGame.PPM, 0, 0, true);
                 }
             }
             answered = 1;
@@ -285,11 +286,13 @@ public class EditorQuizWindow extends Window {
             for (String s : currentPc.getQuest().getCurrentQuestStep().getHints()) //add buttons
                 extraKeyboardWindow.addButton(s.substring(0, s.length()).replace("\n", ""));
         }
-        else { //quest completed
-            codeLabel.setText("[GREEN]Quest completed![]");
-            extraKeyboardWindow.clearButtons();
-            extraKeyboardWindow.remove();
-        }
+    }
+
+    private void completed() {
+        assets.playSound(assets.questSound);
+        codeLabel.setText("[GREEN]Quest completed![]");
+        extraKeyboardWindow.clearButtons();
+        extraKeyboardWindow.remove();
     }
 
     private void tempHideEditor(float camX) {
