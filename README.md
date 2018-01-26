@@ -14,3 +14,5 @@ After reading and understanding the theory, the player must complete a given <b>
 3. <b>Fill in the blank</b> on given code.<br/>
 4. Complete <b>quizzes</b>.<br/>
 
+
+<b>Web version link:</b> http://javantgarde.000webhostapp.com
