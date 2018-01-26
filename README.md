@@ -1,12 +1,9 @@
 # jAVANT-GARDE
 A 2D cross platform <b>serious game</b> to introduce to the player the basic concepts of programming and Object-Oriented programming through Java.
 
-### IDE
-Android Studio
-
-### FRAMEWORK:
-LibGDX
-
+<b>IDE:</b> Android Studio</br>
+<b>FRAMEWORK:</b> LibGDX
+</br>
 ## GAMEPLAY:
 The game currently consists of <b>14 learning levels</b>. The player chooses the level that he wants to play.<br/>
 The player controls a robot to navigate through the level and find Info Signs that contain the <b>theory</b> of the level.<br/>
