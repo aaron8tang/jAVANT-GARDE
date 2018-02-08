@@ -59,16 +59,9 @@ public class B2WorldContactListener implements ContactListener {
                         if (((Checkpoint) object.getUserData()).getName().equals("checkpoint-1_1-0")) {
                             if (!((Checkpoint) object.getUserData()).isVisited()) {
                                 if(MyGdxGame.platformDepended.deviceHasKeyboard())
-                                    hud.newToast("Hello and welcome to "+ MyGdxGame.TITLE+" tutorials!\n" +
-                                            "Here you will get the chance to learn the basics of programming in Java from scratch - let's begin!\n" +
-                                            "Use the ARROWS to move around and jump\n" +
-                                            "ENTER to use item\n" +
-                                            "ESCAPE to exit");
+                                    hud.newToast(assets.playscreenBundle.get("1_1_pc"));
                                 else
-                                    hud.newToast("Hello and welcome to "+ MyGdxGame.TITLE+" tutorials!\n" +
-                                            "Here you will get the chance to learn the basics of programming in Java from scratch - let's begin!\n" +
-                                            "Use the ONSCREEN BUTTONS to move, jump and use items\n" +
-                                            "BACK to exit");
+                                    hud.newToast(assets.playscreenBundle.get("1_1_mob"));
                             }
                         } else {
                             if(((Checkpoint) object.getUserData()).getText() != null)
@@ -100,12 +93,12 @@ public class B2WorldContactListener implements ContactListener {
                 else if(object.getUserData() instanceof InfoSign ) {
                     ((GameObject) object.getUserData()).setUsable(true);
                     Player.colliding = true;
-                    hud.showUseBtn("READ");
+                    hud.showUseBtn(assets.playscreenBundle.get("read"));
                 }
                 else if(object.getUserData() instanceof Pc) {
                     ((GameObject) object.getUserData()).setUsable(true);
                     Player.colliding = true;
-                    hud.showUseBtn("CODE");
+                    hud.showUseBtn(assets.playscreenBundle.get("code"));
                 }
                 else if(object.getUserData() instanceof Lever) {
                     ((Lever) object.getUserData()).setUsable(true);
@@ -113,7 +106,7 @@ public class B2WorldContactListener implements ContactListener {
                     ((Lever) object.getUserData()).setColliding(true);
                     if(((Lever) object.getUserData()).isManualPull()) {
                         if(((Player)player.getUserData()).position.y > 0)
-                            hud.showUseBtn("PULL");
+                            hud.showUseBtn(assets.playscreenBundle.get("pull"));
                     }
                 }
                 else if(object.getUserData() instanceof FloatingPlatform) {
@@ -157,7 +150,6 @@ public class B2WorldContactListener implements ContactListener {
             if(object.getUserData().equals("ground")) {
                 for(SensorRobot cyberfrog: objectManager.getSensorRobots()) {
                     if (cyberfrog.b2body.getFixtureList().contains(cyberfrogSensor, true)) {
-                        System.out.println("EDW");
                         cyberfrog.jump();
                         break;
                     }

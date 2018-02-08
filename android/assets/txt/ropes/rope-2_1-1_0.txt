@@ -1,4 +1,0 @@
-~integer
-!int
-?double
-?number

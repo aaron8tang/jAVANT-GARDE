@@ -18,10 +18,12 @@ public class Door extends GameObject {
 
     private boolean opening = false;
     private Assets assets;
+    private Rectangle initialBounds;
 
     public Door(String name, World world, TiledMap map, Rectangle bounds, Assets assets) {
         super(name, world, map, bounds, false);
         this.assets = assets;
+        initialBounds = new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
     }
 
     public void update(float dt) {
@@ -57,6 +59,11 @@ public class Door extends GameObject {
             assets.doorSound.loop(Assets.SFXVOLUME);
         opening = true;
         b2body.getFixtureList().get(0).setSensor(true);
+    }
+
+    public void reset() {
+        bounds.set(initialBounds.x, initialBounds.y, initialBounds.width, initialBounds.height);
+        opening=false;
     }
 
 }

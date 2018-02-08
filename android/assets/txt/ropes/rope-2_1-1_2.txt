@@ -1,4 +1,0 @@
-~true/false
-!boolean
-?bool
-?truefalse

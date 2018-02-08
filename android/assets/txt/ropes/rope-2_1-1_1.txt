@@ -1,4 +1,0 @@
-~real
-!double
-?decimal
-?boolean

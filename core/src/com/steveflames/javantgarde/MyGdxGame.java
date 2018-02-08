@@ -2,6 +2,7 @@ package com.steveflames.javantgarde;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -19,16 +20,22 @@ import com.steveflames.javantgarde.tools.global.Fonts;
  * COMPILER: if the user types { or } on a println, uneven brackets error is triggered
  * COMPILER: add compiler errors: (method doesn't exist, var not declared)
  * EDITOR: remake codeArea
- * add greek
+ *
  * MAKE TILESETS POWER OF 2 RESOLUTION (1024x1024) and rmk maps
- * skins enable MIPMAP
- * load/unload skins resume/pause. constructors call refresh method. resume calls refresh method aswell
- * start displaying the PlayScreen after world initialization (idea: put b2world creation in loading screen and pass as parameter)
- * html/web version no android keyboard..
+ * smaller textures.pack pngs. rmk
+ *
+ * html/web version no android keyboard.. / create CUSTOM ONSCREEN KEYBOARD
+ * REFLECTION STON ASSET LOADER possible fix gia web
+ *
+ * choose level slow response. map loading?
+ *
  * TODO minor
  * POOL objects
  * add loading screen random programming tip
- * hide/show game, draw black rect on whole screen
+ * new custom infosign window with scroll (no dialog)
+ * -load/unload SKINS resume/pause. constructors call refresh method. resume calls refresh method aswell
+ * -lock textureregion dispose, recreate but on swap windows (click) resume is not called (no recreation)
+ *
  *
  * ---------------LEVELS TO ADD---------------
  * INTRO STAGE: point out that each command is written on a new line (line of code)
@@ -43,7 +50,6 @@ import com.steveflames.javantgarde.tools.global.Fonts;
  * files
  * exceptions
  * -------------------------------------------
- *
  */
 public class MyGdxGame extends Game {
 
@@ -60,6 +66,7 @@ public class MyGdxGame extends Game {
 	public static iPlatformDepended platformDepended;
 	public Assets assets;
 	public MyPreferences preferences;
+	public boolean gameMinimized = false;
 
 	public MyGdxGame(iPlatformDepended platformDepended) {
 		MyGdxGame.platformDepended = platformDepended;
@@ -91,5 +98,21 @@ public class MyGdxGame extends Game {
 		assets.unloadAllMainMenuAssets();
 		assets.unloadAllPlayScreenAssets();
 		Fonts.dispose();
+	}
+
+	public void drawMinimized() {
+		sr.setColor(Color.BLACK);
+		sr.begin(ShapeRenderer.ShapeType.Filled);
+		sr.rect(0, 0, MyGdxGame.WIDTH, MyGdxGame.HEIGHT);
+		sr.end();
+		Fonts.big.setColor(Color.RED);
+		Fonts.medium.setColor(Color.WHITE);
+		sb.begin();
+		Fonts.big.draw(sb, "jAVANT-GARDE", MyGdxGame.WIDTH/2-390, MyGdxGame.HEIGHT/2 + 100);
+		if(Fonts.languageShort.equals("en"))
+			Fonts.medium.draw(sb, "PAUSED", MyGdxGame.WIDTH / 2 - 120, MyGdxGame.HEIGHT / 2 - 10);
+		else if(Fonts.languageShort.equals("gr"))
+			Fonts.medium.draw(sb, "ΠΑΥΣΗ", MyGdxGame.WIDTH / 2 - 120, MyGdxGame.HEIGHT / 2 - 10);
+		sb.end();
 	}
 }

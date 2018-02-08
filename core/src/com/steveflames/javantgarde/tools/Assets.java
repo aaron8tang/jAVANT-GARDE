@@ -1,14 +1,18 @@
 package com.steveflames.javantgarde.tools;
 
+import com.badlogic.gdx.Application;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.I18NBundle;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.tools.global.Fonts;
@@ -29,8 +33,6 @@ public class Assets {
     private static final String texturesATLAS = "images/textures.pack";
     private static final String frogATLAS = "images/frog/frog.pack";
     private static final String mainMenuTexturesATLAS = "images/mainMenuTextures.pack";
-    //Texture PATHS
-    private static final String lockTEXTURE = "images/lock.png";
     //TextureAtlas regions
     private static final String teleporterDisappearREGION = "teleporter_disappear";
     private static final String botTypingREGION = "bot_typing";
@@ -56,6 +58,9 @@ public class Assets {
     private static final String aboutUpREGION = "helpUp";
     private static final String audioREGION = "audio";
     private static final String playREGION = "play";
+    private static final String earthREGION = "earth";
+    private static final String optionsREGION = "options";
+    private static final String lockREGION = "images/lock.png";
 
     //Animation - TextureRegion - Texture objects
     public Animation<TextureRegion> botIdleAnimation;
@@ -79,9 +84,11 @@ public class Assets {
     public TextureRegion fixTR;
     public TextureRegion handTR;
     public TextureRegion heartTR;
-    public TextureRegion playT;
-    public TextureRegion aboutUpT;
-    public TextureRegion audioT;
+    public TextureRegion playTR;
+    public TextureRegion aboutUpTR;
+    public TextureRegion audioTR;
+    public TextureRegion optionsTR;
+    public TextureRegion earthTR;
     public Texture lockT;
 
 
@@ -136,23 +143,35 @@ public class Assets {
     //Skin objects
     public Skin neonSkin;
 
+    //-------------------------------------BUNDLES-------------------------------------
+    //PATHS
+    private static final String mainMenuStrings_en_BUNDLE = "strings/mainMenuStrings";
+    private static final String mainMenuStrings_gr_BUNDLE = "strings/mainMenuStrings_gr";
+    private static final String playscreenStrings_en_BUNDLE = "strings/playscreenStrings";
+    private static final String playscreenStrings_gr_BUNDLE = "strings/playscreenStrings_gr";
+    private static final String[] mainMenuBUNDLES =
+                    {mainMenuStrings_en_BUNDLE,
+                    mainMenuStrings_gr_BUNDLE};
+    private static final String[] playscreenBUNDLES =
+                    {playscreenStrings_en_BUNDLE,
+                    playscreenStrings_gr_BUNDLE};
+    //Bundle objects
+    public I18NBundle mainMenuBundle;
+    public I18NBundle playscreenBundle;
+
 
     public <T> T get(String path, Class<T> tClass) {
         return manager.get(path, tClass);
     }
-
     public boolean update() {
         return manager.update();
     }
-
     public void finishLoading() {
         manager.finishLoading();
     }
-
     public float getQueuedAssets() {
         return manager.getQueuedAssets();
     }
-
     public float getProgress() {
         return manager.getProgress();
     }
@@ -164,7 +183,7 @@ public class Assets {
         }
         if(MyGdxGame.musicOn) {
             if(!manager.isLoaded(playScreenMUSIC)) {
-                if (MyGdxGame.platformDepended.isPC())
+                if (Gdx.app.getType()== Application.ApplicationType.Desktop) //platform specific
                     manager.load(playScreenMUSIC, Sound.class);
                 else
                     manager.load(playScreenMUSIC, Music.class);
@@ -188,8 +207,10 @@ public class Assets {
                 manager.load(levelCompletedSOUND, Sound.class);
                 manager.load(riseSOUND, Sound.class);
                 manager.load(questSOUND, Sound.class);
+                manager.load(clickSOUND, Sound.class);
             }
         }
+        //loadSkins();
     }
 
     public void unloadAllPlayScreenAssets() {
@@ -214,13 +235,15 @@ public class Assets {
             manager.unload(levelCompletedSOUND);
             manager.unload(riseSOUND);
             manager.unload(questSOUND);
+            if(manager.isLoaded(clickSOUND))
+                manager.unload(clickSOUND);
         }
     }
 
     public void refreshPlayScreenAssets() {
         if(MyGdxGame.musicOn) {
             //playScreenMusic = manager.get(playScreenMUSIC, Music.class);
-            if(MyGdxGame.platformDepended.isPC()) {
+            if(Gdx.app.getType()== Application.ApplicationType.Desktop) { //platform specific
                 playScreenMusicSound = manager.get(playScreenMUSIC);
             }
             else {
@@ -246,6 +269,7 @@ public class Assets {
             frogSound = manager.get(frogSOUND, Sound.class);
             riseSound = manager.get(riseSOUND, Sound.class);
             questSound = manager.get(questSOUND, Sound.class);
+            clickSound = manager.get(clickSOUND, Sound.class);
         }
         if(manager.isLoaded(neonSKIN)) {
             neonSkin = manager.get(neonSKIN, Skin.class);
@@ -275,11 +299,41 @@ public class Assets {
         teleporterDisappearingAnimation = new Animation<TextureRegion>(0.12f, loadAnim(textureAtlas.findRegion(Assets.teleporterDisappearREGION), 4, 4, 1 ));
     }
 
+    public void loadPlayScreenBundles(String lang) {
+        for(String bundle: playscreenBUNDLES) { //unload all bundles
+            if(manager.isLoaded(bundle))
+                manager.unload(bundle);
+        }
+
+        if(lang.equals("English")) {
+            manager.load(playscreenStrings_en_BUNDLE, I18NBundle.class);
+        }
+        else if(lang.equals("Ελληνικά")){
+            manager.load(playscreenStrings_gr_BUNDLE, I18NBundle.class);
+        }
+
+        manager.finishLoading();
+        for(String bundle : playscreenBUNDLES) {
+            if(manager.isLoaded(bundle))
+                playscreenBundle = manager.get(bundle, I18NBundle.class);
+        }
+    }
+
+    public void unloadPlayScreenBundles() {
+        for(String bundle: playscreenBUNDLES) {
+            if (manager.isLoaded(bundle)) {
+                manager.unload(bundle);
+                playscreenBundle = null;
+            }
+        }
+    }
+
     public void loadAllMainMenuAssets() {
         if(!manager.isLoaded(mainMenuTexturesATLAS)) {
             manager.load(mainMenuTexturesATLAS, TextureAtlas.class);
-            manager.load(lockTEXTURE, Texture.class);
         }
+        if(!manager.isLoaded(lockREGION))
+            manager.load(lockREGION, Texture.class);
         if(MyGdxGame.musicOn)
             loadMainMenuMusic();
         if(MyGdxGame.sfxOn)
@@ -294,9 +348,12 @@ public class Assets {
             manager.unload(mainMenuMUSIC);
         if(manager.isLoaded(clickSOUND))
             manager.unload(clickSOUND);
-        /*if(manager.isLoaded(neonSKIN)) {
-            manager.unload(neonSKIN);
-        }*/
+        for(String bundle: mainMenuBUNDLES) {
+            if (manager.isLoaded(bundle)) {
+                manager.unload(bundle);
+                mainMenuBundle = null;
+            }
+        }
     }
 
     public void refreshMainMenuAssets() {
@@ -313,13 +370,34 @@ public class Assets {
         }
         if(manager.isLoaded(mainMenuTexturesATLAS)) {
             TextureAtlas mainMenuTexturesAtlas = manager.get(mainMenuTexturesATLAS);
-            playT = mainMenuTexturesAtlas.findRegion(playREGION);
-            aboutUpT = mainMenuTexturesAtlas.findRegion(aboutUpREGION);
-            audioT = mainMenuTexturesAtlas.findRegion(audioREGION);
-            lockT = manager.get(lockTEXTURE, Texture.class);
+            playTR = mainMenuTexturesAtlas.findRegion(playREGION);
+            earthTR = mainMenuTexturesAtlas.findRegion(earthREGION);
+            aboutUpTR = mainMenuTexturesAtlas.findRegion(aboutUpREGION);
+            audioTR = mainMenuTexturesAtlas.findRegion(audioREGION);
+            optionsTR = mainMenuTexturesAtlas.findRegion(optionsREGION);
+            lockT = manager.get(lockREGION, Texture.class);
         }
     }
 
+    public void loadMainMenuBundles(String lang) {
+        for(String bundle: mainMenuBUNDLES) { //unload all bundles
+            if(manager.isLoaded(bundle))
+                manager.unload(bundle);
+        }
+
+        if(lang.equals("English")) {
+            manager.load(mainMenuStrings_en_BUNDLE, I18NBundle.class);
+        }
+        else if(lang.equals("Ελληνικά")){
+            manager.load(mainMenuStrings_gr_BUNDLE, I18NBundle.class);
+        }
+
+        manager.finishLoading();
+        for(String bundle : mainMenuBUNDLES) {
+            if(manager.isLoaded(bundle))
+                mainMenuBundle = manager.get(bundle, I18NBundle.class);
+        }
+    }
     public void loadMainMenuMusic() {
         manager.load(mainMenuMUSIC, Music.class);
     }
@@ -340,8 +418,13 @@ public class Assets {
             resources.put("LiberationMonoBIG", Fonts.big);
             resources.put("LiberationMonoMARKUP", Fonts.xsmallMonoMarkup);
             resources.put("mvboli", Fonts.xsmall);
-            manager.load("skins/neon/skin/neon-ui.atlas", TextureAtlas.class);
             manager.load("skins/neon/skin/neon-ui.json", Skin.class, new SkinLoader.SkinParameter("skins/neon/skin/neon-ui.atlas", resources));
+        }
+    }
+
+    public void unloadSkins() {
+        if(manager.isLoaded(neonSKIN)) {
+            manager.unload(neonSKIN);
         }
     }
 
@@ -387,7 +470,7 @@ public class Assets {
 
     public void playPlayScreenMusic() {
         if(MyGdxGame.musicOn) {
-            if(MyGdxGame.platformDepended.isPC())
+            if(Gdx.app.getType()== Application.ApplicationType.Desktop) // platform specific
                 playScreenMusicSound.loop(MUSICVOLUME);
             else
                 playScreenMusic.play();
@@ -396,7 +479,7 @@ public class Assets {
 
     public void stopPlayScreenMusic() {
         if(MyGdxGame.musicOn) {
-            if(MyGdxGame.platformDepended.isPC())
+            if(Gdx.app.getType()== Application.ApplicationType.Desktop) //platform specific
                 playScreenMusicSound.stop();
             else
                 playScreenMusic.stop();

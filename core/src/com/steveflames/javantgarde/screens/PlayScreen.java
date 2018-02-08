@@ -1,20 +1,20 @@
 package com.steveflames.javantgarde.screens;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.hud.Hud;
+import com.steveflames.javantgarde.sprites.Door;
 import com.steveflames.javantgarde.sprites.Item;
 import com.steveflames.javantgarde.sprites.Player;
 import com.steveflames.javantgarde.tools.Assets;
@@ -24,6 +24,7 @@ import com.steveflames.javantgarde.tools.GameObjectManager;
 import com.steveflames.javantgarde.tools.InputHandler;
 import com.steveflames.javantgarde.tools.global.Cameras;
 import com.steveflames.javantgarde.tools.global.Fonts;
+import com.badlogic.gdx.graphics.profiling.GLProfiler;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 
@@ -33,10 +34,8 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
  */
 public class PlayScreen implements Screen{
 
-    private MyGdxGame game;
-    private static float WIDTH; //width of the map
-    private static float HEIGHT; //height of the map
     private static final int GRAVITY = -Math.round(4000/MyGdxGame.PPM);
+    private MyGdxGame game;
     private LevelListItem currentLevel;
     private Hud hud; //head-up display
     private World world; //box2D variable
@@ -57,6 +56,7 @@ public class PlayScreen implements Screen{
     private int logic_lastFPS = 0; //logic frames per second
     private Box2DDebugRenderer b2dr; //draws the outline on every object for debugging
     private FPSLogger fpsLogger; //display game loop real frames per second
+    private GLProfiler profiler;
     */
     //*******************************************
 
@@ -77,8 +77,10 @@ public class PlayScreen implements Screen{
     private boolean gameOver = false;
 
 
-    public PlayScreen(MyGdxGame game, LevelListItem level) {
+    public PlayScreen(MyGdxGame game, LevelListItem level, TiledMap map, OrthogonalTiledMapRenderer renderer) {
         this.game = game;
+        this.map = map;
+        this.renderer = renderer;
         Gdx.input.setCatchBackKey(true);
         currentLevel = level;
         currentLevel.setName(currentLevel.getName().replaceAll("\n", " "));
@@ -88,17 +90,8 @@ public class PlayScreen implements Screen{
         //***********************DEBUG VARIABLES***********************
         //fpsLogger = new FPSLogger();
         //b2dr = new Box2DDebugRenderer();
-        //GLProfiler.enable();
+        //profiler = new GLProfiler(Gdx.graphics);
         //*************************************************************
-
-        //initialize map
-        TmxMapLoader mapLoader = new TmxMapLoader();
-        map = mapLoader.load("tiled/level-"+level.getId()+".tmx");
-        renderer = new OrthogonalTiledMapRenderer(map, 1 / MyGdxGame.PPM);
-        setMapProperties(map);
-
-        //initialize camera and viewport
-        Cameras.load(WIDTH, HEIGHT);
 
         game.assets.refreshPlayScreenAssets();
         hud = new Hud(this, game.sb); //initialize hud
@@ -108,10 +101,12 @@ public class PlayScreen implements Screen{
         objectManager = new GameObjectManager();
         world.setContactListener(new B2WorldContactListener(hud, objectManager, getAssets()));
         new B2WorldCreator(this); //initialize world
-        initializePlayer(world, map); //initialize player
+        getObjectManager().addPlayer(new Player(world, map, getObjectManager().getCheckpoints(), getAssets()));; //initialize player
 
         //initialize inputHandler
         inputHandler = new InputHandler(this);
+
+        hud.initAfterWorldCreation(); //hud initialization after world creation
 
         //play music
         game.assets.playPlayScreenMusic();
@@ -119,30 +114,11 @@ public class PlayScreen implements Screen{
         if(!MyGdxGame.platformDepended.deviceHasKeyboard())
             hud.newAndroidInputTable();
 
-        hud.initAfterWorldCreation(); //hud initialization after world creation
-
         //fixes html sound delay bug
-        if(MyGdxGame.platformDepended.isHTML()) {
-            for(int i=0; i<3; i++) {
+        if(Gdx.app.getType()== Application.ApplicationType.WebGL) { //web specific
+            for(int i=0; i<6; i++)
                 game.assets.playAllPlayScreenSoundsMuted();
-            }
         }
-    }
-
-    private void setMapProperties(TiledMap map) {
-        MapProperties prop = map.getProperties();
-
-        int mapWidth = prop.get("width", Integer.class);
-        int mapHeight = prop.get("height", Integer.class);
-        int tilePixelWidth = prop.get("tilewidth", Integer.class);
-        int tilePixelHeight = prop.get("tileheight", Integer.class);
-
-        WIDTH = mapWidth * tilePixelWidth / MyGdxGame.PPM;
-        HEIGHT = mapHeight * tilePixelHeight / MyGdxGame.PPM;
-    }
-
-    private void initializePlayer(World world, TiledMap map) {
-        getObjectManager().addPlayer(new Player(world, map, getObjectManager().getCheckpoints(), getAssets()));
     }
 
     public void render(float dt) {
@@ -227,124 +203,130 @@ public class PlayScreen implements Screen{
     }
 
     private void rendering() {
-        //render the game map
-        renderer.setView(Cameras.playScreenCam);
-        renderer.render();
+        if(game.gameMinimized)
+            game.drawMinimized();
+        else {
+            //render the game map
+            renderer.setView(Cameras.playScreenCam);
+            renderer.render();
 
 
-        //************set projection matrix UNSCALED (1280x768)************
-        game.sb.setProjectionMatrix(hud.stage.getCamera().combined);
-        game.sr.setProjectionMatrix(hud.stage.getCamera().combined);
+            //************set projection matrix UNSCALED (1280x768)************
+            game.sb.setProjectionMatrix(hud.stage.getCamera().combined);
+            game.sr.setProjectionMatrix(hud.stage.getCamera().combined);
 
-        //draw textures and fonts in background (some fonts must be behind the player (different layout)) (unscaled)
-        game.sb.begin();
-        for (int i = 0; i < objectManager.getRopes().size(); i++)
-            if (Cameras.inLineOfSight(objectManager.getRopes().get(i)))
-                objectManager.getRopes().get(i).drawFontInBackground(game.sb);
-        for (int i = 0; i < objectManager.getQuizes().size(); i++)
-            if (Cameras.inLineOfSight(objectManager.getQuizes().get(i)))
-                objectManager.getQuizes().get(i).drawFontInBackground(game.sb);
-        for (int i = 0; i < objectManager.getMarkers().size(); i++)
-            if (Cameras.inLineOfSight(objectManager.getMarkers().get(i)))
-                objectManager.getMarkers().get(i).drawFontInBackground(game.sb);
-        game.sb.end();
+            //draw textures and fonts in background (some fonts must be behind the player (different layout)) (unscaled)
+            game.sb.begin();
+            for (int i = 0; i < objectManager.getRopes().size(); i++)
+                if (Cameras.inLineOfSight(objectManager.getRopes().get(i)))
+                    objectManager.getRopes().get(i).drawFontInBackground(game.sb);
+            for (int i = 0; i < objectManager.getQuizes().size(); i++)
+                if (Cameras.inLineOfSight(objectManager.getQuizes().get(i)))
+                    objectManager.getQuizes().get(i).drawFontInBackground(game.sb);
+            for (int i = 0; i < objectManager.getMarkers().size(); i++)
+                if (Cameras.inLineOfSight(objectManager.getMarkers().get(i)))
+                    objectManager.getMarkers().get(i).drawFontInBackground(game.sb);
+            game.sb.end();
 
-        //disable alpha
-        Gdx.gl.glDisable(GL20.GL_BLEND);
-
-
-        //***********set projection matrix according to world SCALE (1280x768 / 200)***********
-        game.sb.setProjectionMatrix(Cameras.playScreenCam.combined);
-        game.sr.setProjectionMatrix(Cameras.playScreenCam.combined);
-        //enable alpha
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-
-        //draw textures and fonts (scaled)
-        game.sb.setColor(Color.WHITE);
-        game.sb.begin();
-        objectManager.drawFontScaled(game.sb);
-        game.sb.end();
-
-        //disable alpha
-        Gdx.gl.glDisable(GL20.GL_BLEND);
+            //disable alpha
+            Gdx.gl.glDisable(GL20.GL_BLEND);
 
 
-        //***********change projection matrix UNSCALED (1280x768)************
-        game.sb.setProjectionMatrix(hud.stage.getCamera().combined);
-        game.sr.setProjectionMatrix(hud.stage.getCamera().combined);
-        //enable alpha
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+            //***********set projection matrix according to world SCALE (1280x768 / 200)***********
+            game.sb.setProjectionMatrix(Cameras.playScreenCam.combined);
+            game.sr.setProjectionMatrix(Cameras.playScreenCam.combined);
+            //enable alpha
+            Gdx.gl.glEnable(GL20.GL_BLEND);
+            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
-        //draw filled shapes (unscaled)
-        game.sr.begin(ShapeRenderer.ShapeType.Filled);
-        objectManager.drawFilled(game.sr);
-        game.sr.end();
+            //draw textures and fonts (scaled)
+            game.sb.setColor(Color.WHITE);
+            game.sb.begin();
+            objectManager.drawFontScaled(game.sb);
+            game.sb.end();
 
-        //draw line shapes (unscaled)
-        game.sr.begin(ShapeRenderer.ShapeType.Line);
-        objectManager.drawLine(game.sr);
-        game.sr.end();
-
-        //draw fonts and textures (unscaled)
-        game.sb.begin();
-        objectManager.drawFont(game.sb);
-        //draw the use item prompts
-        if (getPlayer().getCurrentState() != Player.State.READING && getPlayer().getCurrentState() != Player.State.CODING) { //if player is coding or reading sign, dont draw the use prompt
-            for (int i = 0; i < objectManager.getInfoSigns().size(); i++)
-                objectManager.getInfoSigns().get(i).drawUsePrompt(game.sb);
-            for (int i = 0; i < objectManager.getPcs().size(); i++)
-                objectManager.getPcs().get(i).drawUsePrompt(game.sb);
-            for (int i = 0; i < objectManager.getLevers().size(); i++)
-                objectManager.getLevers().get(i).drawUsePrompt(game.sb);
-        }
-        hud.drawFont(game.sb);
-        drawOnScreenMsg();
-        getPlayer().drawPlayerMsg(game.sb);
-        Fonts.medium.setColor(Color.RED);
-        game.sb.end();
-
-        //draw filled over line (unscaled)
-        game.sr.begin(ShapeRenderer.ShapeType.Filled);
-        hud.drawFilled(game.sr);
-        game.sr.end();
-
-        //draw toast font
-        game.sb.begin();
-        hud.drawToastFont(game.sb);
-        game.sb.end();
-
-        //disable alpha
-        Gdx.gl.glDisable(GL20.GL_BLEND);
-
-        //draw HUD stage
-        hud.drawStage(game.sb);
+            //disable alpha
+            Gdx.gl.glDisable(GL20.GL_BLEND);
 
 
-        //*************************DEBUG*************************
-        //b2dr.render(world, Cameras.playScreenCam.combined);
-        //fpsLogger.log();
-        /*System.out.println("GL calls: " + GLProfiler.calls);
-        System.out.println("GL drawCalls: " + GLProfiler.drawCalls);
-        System.out.println("GL shaderSwitches: " + GLProfiler.shaderSwitches);
-        System.out.println("GL textureBindings: " + GLProfiler.textureBindings);
-        System.out.println("GL vertexCount: " + GLProfiler.vertexCount);
-        GLProfiler.reset();*/
+            //***********change projection matrix UNSCALED (1280x768)************
+            game.sb.setProjectionMatrix(hud.stage.getCamera().combined);
+            game.sr.setProjectionMatrix(hud.stage.getCamera().combined);
+            //enable alpha
+            Gdx.gl.glEnable(GL20.GL_BLEND);
+            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
-        //***********************LIMIT FPS***********************
-        /*if (RENDERER_SLEEP_MS > 0) {
-            now2 = System.currentTimeMillis();
-            diff = now2 - start;
+            //draw filled shapes (unscaled)
+            game.sr.begin(ShapeRenderer.ShapeType.Filled);
+            objectManager.drawFilled(game.sr);
+            game.sr.end();
 
-            if (diff < RENDERER_SLEEP_MS) {
-                try {
-                    Thread.sleep(RENDERER_SLEEP_MS - diff);
-                } catch (InterruptedException e) {
-                }
+            //draw line shapes (unscaled)
+            game.sr.begin(ShapeRenderer.ShapeType.Line);
+            objectManager.drawLine(game.sr);
+            game.sr.end();
+
+            //draw fonts and textures (unscaled)
+            game.sb.begin();
+            objectManager.drawFont(game.sb);
+            //draw the use item prompts
+            if (getPlayer().getCurrentState() != Player.State.READING && getPlayer().getCurrentState() != Player.State.CODING) { //if player is coding or reading sign, dont draw the use prompt
+                for (int i = 0; i < objectManager.getInfoSigns().size(); i++)
+                    objectManager.getInfoSigns().get(i).drawUsePrompt(game.sb);
+                for (int i = 0; i < objectManager.getPcs().size(); i++)
+                    objectManager.getPcs().get(i).drawUsePrompt(game.sb);
+                for (int i = 0; i < objectManager.getLevers().size(); i++)
+                    objectManager.getLevers().get(i).drawUsePrompt(game.sb);
             }
-            start = System.currentTimeMillis();
-        }*/
+            hud.drawFont(game.sb);
+            drawOnScreenMsg();
+            getPlayer().drawPlayerMsg(game.sb);
+            Fonts.medium.setColor(Color.RED);
+            game.sb.end();
+
+            //draw filled over line (unscaled)
+            game.sr.begin(ShapeRenderer.ShapeType.Filled);
+            hud.drawFilled(game.sr);
+            game.sr.end();
+
+            //draw toast font
+            game.sb.begin();
+            hud.drawToastFont(game.sb);
+            game.sb.end();
+
+            //disable alpha
+            Gdx.gl.glDisable(GL20.GL_BLEND);
+
+            //draw HUD stage
+            hud.drawStage(game.sb);
+
+
+            //*************************DEBUG*************************
+            //b2dr.render(world, Cameras.playScreenCam.combined);
+            //fpsLogger.log();
+            /*
+            System.out.println("GL calls: " + profiler.getCalls());
+            System.out.println("GL drawCalls: " + profiler.getDrawCalls());
+            System.out.println("GL shaderSwitches: " + profiler.getShaderSwitches());
+            System.out.println("GL textureBindings: " + profiler.getTextureBindings());
+            System.out.println("GL vertexCount: " + profiler.getVertexCount());
+            profiler.reset();
+            */
+
+            //***********************LIMIT FPS***********************
+            /*if (RENDERER_SLEEP_MS > 0) {
+                now2 = System.currentTimeMillis();
+                diff = now2 - start;
+
+                if (diff < RENDERER_SLEEP_MS) {
+                    try {
+                        Thread.sleep(RENDERER_SLEEP_MS - diff);
+                    } catch (InterruptedException e) {
+                    }
+                }
+                start = System.currentTimeMillis();
+            }*/
+        }
     }
 
     private void drawOnScreenMsg() {
@@ -374,11 +356,14 @@ public class PlayScreen implements Screen{
 
     @Override
     public void pause() {
+        game.gameMinimized = true;
         if(getPlayer().canMove)
             hud.showPauseWindow();
         getAssets().unloadAllMainMenuAssets();
         getAssets().unloadAllPlayScreenAssets();
+        //getAssets().unloadSkins();
         getAssets().stopPlayScreenMusic();
+        getAssets().unloadPlayScreenBundles();
     }
 
     @Override
@@ -388,27 +373,35 @@ public class PlayScreen implements Screen{
         getAssets().loadAllPlayScreenAssets();
         getAssets().finishLoading();
         game.assets.refreshPlayScreenAssets();
+        game.gameMinimized = false;
 
         //update once to refresh each currentTR
         float dt = Gdx.graphics.getDeltaTime();
         getPlayer().update(dt);
+        objectManager.getTeleporter().update(dt);
         hud.update(dt);
         for(int i=0; i<objectManager.getSensorRobots().size(); i++)
             objectManager.getSensorRobots().get(i).update(dt);
+        game.assets.loadPlayScreenBundles(game.preferences.getLanguage());
+        //hud.recreateUI();
     }
 
     @Override
     public void dispose() { //dispose unused assets
         game.assets.stopPlayScreenMusic();
-        if(!restartLevel)
+        if(!restartLevel) {
             game.assets.unloadAllPlayScreenAssets();
-        map.dispose();
-        renderer.dispose();
+            map.dispose();
+            renderer.dispose();
+            game.assets.unloadPlayScreenBundles();
+        }
         world.dispose();
         hud.dispose();
         Item.reset();
         //b2dr.dispose(); //DEBUG
 
+        for(Door door: objectManager.getDoors())
+            door.reset();
         objectManager.clearGameObjects();
     }
 
@@ -458,5 +451,9 @@ public class PlayScreen implements Screen{
 
     public void setRestartLevel() {
         this.restartLevel = true;
+    }
+
+    public OrthogonalTiledMapRenderer getRenderer() {
+        return renderer;
     }
 }

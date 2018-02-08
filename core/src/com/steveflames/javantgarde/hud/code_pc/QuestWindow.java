@@ -27,9 +27,11 @@ class QuestWindow extends Window {
     private Label questTextArea;
     private TextButton helpBtn;
     private ScrollPane questScroll;
+    private Assets assets;
 
-    QuestWindow(String title, final Assets assets, final Hud hud) {
-        super(title, assets.neonSkin, "window2");
+    QuestWindow(final Assets assets, final Hud hud) {
+        super(assets.playscreenBundle.get("quest"), assets.neonSkin, "window2");
+        this.assets = assets;
 
         //quest text area
         Table table = new Table(assets.neonSkin);
@@ -43,14 +45,14 @@ class QuestWindow extends Window {
         //bottom bar
         Table bottomBarTable = new Table(assets.neonSkin);
         progressBar = new ProgressBar(0, 3, 1, false, assets.neonSkin);
-        helpBtn = new TextButton("help", assets.neonSkin);
+        helpBtn = new TextButton(assets.playscreenBundle.get("help"), assets.neonSkin);
         helpBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 assets.playSound(assets.clickSound);
                 hud.playScreen.getPlayer().reduceHealth(1);
                 hud.playScreen.getPlayer().setPlayerMsgAlpha(1);
-                questTextArea.setText(questTextArea.getText() + "\n[CYAN]HELP:[]\n");
+                questTextArea.setText(questTextArea.getText() + "\n[CYAN]"+assets.playscreenBundle.get("help")+":[]\n");
                 String text = currentQuest.getNextHint();
                 if(text.contains("\r")) {
                     text = text.replace("\r", "");
@@ -98,13 +100,13 @@ class QuestWindow extends Window {
             editorWindow.completed();
         }
 
-        questTextArea.setText(quest.getCurrentQuestStepText());
+        questTextArea.setText(quest.getCurrentQuestStepText(assets.playscreenBundle.get("quest_completed")));
         progressBar.setValue(quest.getProgress());
     }
 
     void show(Stage stage, Quest quest) {
         currentQuest = quest;
-        questTextArea.setText(quest.getCurrentQuestStepText());
+        questTextArea.setText(quest.getCurrentQuestStepText(assets.playscreenBundle.get("quest_completed")));
         progressBar.setRange(0, quest.getSize());
         progressBar.setValue(quest.getProgress());
         if(!quest.isCompleted()) {

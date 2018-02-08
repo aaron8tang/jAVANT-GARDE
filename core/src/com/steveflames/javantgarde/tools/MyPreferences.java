@@ -15,6 +15,7 @@ public class MyPreferences {
     private static final String PREF_MUSIC_ENABLED = "musicenabled";
     private static final String PREF_SOUND_ENABLED = "soundenabled";
     private static final String LEVEL_PROGRESS = "levelprogress";
+    private static final String LANGUAGE = "language";
 
     private Preferences getPrefs() {
         if(preferences==null){
@@ -64,5 +65,14 @@ public class MyPreferences {
                 getPrefs().flush();
             }
         }
+    }
+
+    public String getLanguage() {
+        return getPrefs().getString(LANGUAGE, "English");
+    }
+
+    public void setLanguage(String lang) {
+        getPrefs().putString(LANGUAGE, lang);
+        getPrefs().flush();
     }
 }

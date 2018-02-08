@@ -21,12 +21,12 @@ class ConsoleWindow extends Window {
     private Label consoleTextArea;
     private ScrollPane consoleScroll;
 
-    ConsoleWindow(String title, Skin neonSkin, Skin terraSkin, final Stage stage ) {
-        super(title, terraSkin, "window2");
+    ConsoleWindow(String title, Skin neonSkin, final Stage stage ) {
+        super(title, neonSkin, "window2");
 
         //textArea of console window
         Table table = new Table(neonSkin);
-        consoleTextArea = new Label("", terraSkin);
+        consoleTextArea = new Label("", neonSkin);
         consoleTextArea.setWrap(true);
         //consoleTextArea.setDisabled(true);
         table.add(consoleTextArea).expand().fillX().left().top().padLeft(5);

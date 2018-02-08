@@ -1,4 +1,0 @@
-In programming, we use conditionals to make the program
-decide whether to execute a block of code or not depending
-on a condition.
-Let's explain more!

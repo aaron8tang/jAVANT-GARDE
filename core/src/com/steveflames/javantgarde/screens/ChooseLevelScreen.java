@@ -1,9 +1,12 @@
 package com.steveflames.javantgarde.screens;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -21,6 +24,7 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.tools.Assets;
+import com.steveflames.javantgarde.tools.global.Fonts;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -55,20 +59,24 @@ public class ChooseLevelScreen implements Screen{
     public ChooseLevelScreen(final MyGdxGame game) {
         this.game = game;
         this.assets = game.assets;
-        loadCategories();
         viewport = new FitViewport(MyGdxGame.WIDTH, MyGdxGame.HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, game.sb);
+
         game.assets.loadAllMainMenuAssets();
         game.assets.finishLoading();
         game.assets.refreshMainMenuAssets();
-        assets.playMusic(assets.mainMenuMusic);
+        game.assets.loadMainMenuBundles(game.preferences.getLanguage());
+        loadCategories();
+        recreateUI();
+    }
 
+    private void recreateUI() {
         Window window = new Window("", assets.neonSkin, "window2");
         window.setFillParent(true);
         window.top();
 
         Table topTable = new Table(assets.neonSkin);
-        TextButton backBtn = new TextButton("< BACK  ", assets.neonSkin);
+        TextButton backBtn = new TextButton("< "+game.assets.mainMenuBundle.get("back")+"  ", assets.neonSkin);
         backBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -95,7 +103,7 @@ public class ChooseLevelScreen implements Screen{
 
             ArrayList<Table> levelTables = new ArrayList<Table>();
             Table levelsTable = new Table(assets.neonSkin);
-            TextTooltip textTooltip = new TextTooltip(" Complete all previous \n levels to unlock!", assets.neonSkin);
+            TextTooltip textTooltip = new TextTooltip(" " +game.assets.mainMenuBundle.get("unlock"), assets.neonSkin);
             textTooltip.setInstant(true);
             for(final LevelListItem level : categories.get(category)) {
                 //create new level table
@@ -104,16 +112,16 @@ public class ChooseLevelScreen implements Screen{
                 levelBtn.addListener(new ChangeListener() {
                     @Override
                     public void changed (ChangeListener.ChangeEvent event, Actor actor) {
-                         assets.playSound(assets.clickSound);
-                         assets.stopMusic(assets.mainMenuMusic);
-                         dispose();
-                         game.setScreen(new LoadingScreen(game, level));
-                     }
+                        assets.playSound(assets.clickSound);
+                        assets.stopMusic(assets.mainMenuMusic);
+                        dispose();
+                        game.setScreen(new LoadingScreen(game, level));
+                    }
                 });
                 levelTables.get(levelTables.size()-1).add(levelBtn).expand().fill().left();
 
                 //lock levels that the player hasn't reached
-                if(!MyGdxGame.platformDepended.isHTML()) {
+                if(Gdx.app.getType()!= Application.ApplicationType.WebGL) {
                     int categoryN = Integer.parseInt(level.getId().split("_")[0]);
                     int levelN = Integer.parseInt(level.getId().split("_")[1]);
                     int savedCategoryN = Integer.parseInt(game.preferences.getLevelProgress().split("_")[0]);
@@ -161,9 +169,13 @@ public class ChooseLevelScreen implements Screen{
 
     @Override
     public void render(float delta) {
-        handleInput();
-        stage.act(delta);
-        stage.draw();
+        if(game.gameMinimized)
+            game.drawMinimized();
+        else {
+            handleInput();
+            stage.act(delta);
+            stage.draw();
+        }
     }
 
     @Override
@@ -173,8 +185,10 @@ public class ChooseLevelScreen implements Screen{
 
     @Override
     public void pause() {
+        game.gameMinimized = true;
         assets.pauseMusic(assets.mainMenuMusic);
         game.assets.unloadAllMainMenuAssets();
+        //game.assets.unloadSkins();
     }
 
     @Override
@@ -182,7 +196,10 @@ public class ChooseLevelScreen implements Screen{
         game.assets.loadAllMainMenuAssets();
         game.assets.finishLoading();
         game.assets.refreshMainMenuAssets();
+        game.assets.loadMainMenuBundles(game.preferences.getLanguage());
+        game.gameMinimized = false;
         assets.playMusic(assets.mainMenuMusic);
+        recreateUI();
     }
 
     @Override
@@ -191,39 +208,40 @@ public class ChooseLevelScreen implements Screen{
     }
 
     private void loadCategories() {
-        categories.put("INTRO", new ArrayList<LevelListItem>()); //1
-        categories.get("INTRO").add(new LevelListItem("INTRO", "1_1", "Hello World!"));
-        categories.get("INTRO").add(new LevelListItem("INTRO", "1_2", "comments"));
+        categories.clear();
+        categories.put(game.assets.mainMenuBundle.get("intro"), new ArrayList<LevelListItem>()); //1
+        categories.get(game.assets.mainMenuBundle.get("intro")).add(new LevelListItem(game.assets.mainMenuBundle.get("intro"), "1_1", game.assets.mainMenuBundle.get("1_1")));
+        categories.get(game.assets.mainMenuBundle.get("intro")).add(new LevelListItem(game.assets.mainMenuBundle.get("intro"), "1_2", game.assets.mainMenuBundle.get("1_2")));
 
-        categories.put("VARIABLES", new ArrayList<LevelListItem>()); //2
-        categories.get("VARIABLES").add(new LevelListItem("VARIABLES", "2_1", "naming\n&\ntypes"));
-        categories.get("VARIABLES").add(new LevelListItem("VARIABLES", "2_2", "initialization\n&\noperations"));
+        categories.put(game.assets.mainMenuBundle.get("variables"), new ArrayList<LevelListItem>()); //2
+        categories.get(game.assets.mainMenuBundle.get("variables")).add(new LevelListItem(game.assets.mainMenuBundle.get("variables"), "2_1", game.assets.mainMenuBundle.get("2_1")));
+        categories.get(game.assets.mainMenuBundle.get("variables")).add(new LevelListItem(game.assets.mainMenuBundle.get("variables"), "2_2", game.assets.mainMenuBundle.get("2_2")));
 
-        categories.put("METHODS", new ArrayList<LevelListItem>()); //3
-        categories.get("METHODS").add(new LevelListItem("METHODS", "3_1", "calling a method"));
-        categories.get("METHODS").add(new LevelListItem("METHODS", "3_2", "return types"));
+        categories.put(game.assets.mainMenuBundle.get("methods"), new ArrayList<LevelListItem>()); //3
+        categories.get(game.assets.mainMenuBundle.get("methods")).add(new LevelListItem(game.assets.mainMenuBundle.get("methods"), "3_1", game.assets.mainMenuBundle.get("3_1")));
+        categories.get(game.assets.mainMenuBundle.get("methods")).add(new LevelListItem(game.assets.mainMenuBundle.get("methods"), "3_2", game.assets.mainMenuBundle.get("3_2")));
 
-        categories.put("LOOPS", new ArrayList<LevelListItem>()); //4
-        categories.get("LOOPS").add(new LevelListItem("LOOPS", "4_1", "while\n&\ndo while"));
-        categories.get("LOOPS").add(new LevelListItem("LOOPS", "4_2", "for"));
+        categories.put(game.assets.mainMenuBundle.get("loops"), new ArrayList<LevelListItem>()); //4
+        categories.get(game.assets.mainMenuBundle.get("loops")).add(new LevelListItem(game.assets.mainMenuBundle.get("loops"), "4_1", game.assets.mainMenuBundle.get("4_1")));
+        categories.get(game.assets.mainMenuBundle.get("loops")).add(new LevelListItem(game.assets.mainMenuBundle.get("loops"), "4_2", game.assets.mainMenuBundle.get("4_2")));
 
-        categories.put("CONDITIONALS", new ArrayList<LevelListItem>()); //5
-        categories.get("CONDITIONALS").add(new LevelListItem("CONDITIONALS", "5_1", "if\n&\nlogical operators"));
-        categories.get("CONDITIONALS").add(new LevelListItem("CONDITIONALS", "5_2", "nested if\n&\nif else"));
+        categories.put(game.assets.mainMenuBundle.get("conditionals"), new ArrayList<LevelListItem>()); //5
+        categories.get(game.assets.mainMenuBundle.get("conditionals")).add(new LevelListItem(game.assets.mainMenuBundle.get("conditionals"), "5_1", game.assets.mainMenuBundle.get("5_1")));
+        categories.get(game.assets.mainMenuBundle.get("conditionals")).add(new LevelListItem(game.assets.mainMenuBundle.get("conditionals"), "5_2", game.assets.mainMenuBundle.get("5_2")));
         //categories.get("CONDITIONALS").add(new LevelListItem("CONDITIONALS", "4_3", "switch"));
 
-        categories.put("ARRAYS", new ArrayList<LevelListItem>()); //6
-        categories.get("ARRAYS").add(new LevelListItem("ARRAYS", "6_1", "initialization"));
-        categories.get("ARRAYS").add(new LevelListItem("ARRAYS", "6_2", "enhanced for"));
+        categories.put(game.assets.mainMenuBundle.get("arrays"), new ArrayList<LevelListItem>()); //6
+        categories.get(game.assets.mainMenuBundle.get("arrays")).add(new LevelListItem(game.assets.mainMenuBundle.get("arrays"), "6_1", game.assets.mainMenuBundle.get("6_1")));
+        categories.get(game.assets.mainMenuBundle.get("arrays")).add(new LevelListItem(game.assets.mainMenuBundle.get("arrays"), "6_2", game.assets.mainMenuBundle.get("6_2")));
         //categories.get("ARRAYS").add(new LevelListItem("ARRAYS", "6_3", "multidimensional"));
 
-        categories.put("CLASSES", new ArrayList<LevelListItem>()); //7
-        categories.get("CLASSES").add(new LevelListItem("CLASSES", "7_1", "intro\n&\ncreating objects"));
-        categories.get("CLASSES").add(new LevelListItem("CLASSES", "7_2", "access modifiers"));
+        categories.put(game.assets.mainMenuBundle.get("classes"), new ArrayList<LevelListItem>()); //7
+        categories.get(game.assets.mainMenuBundle.get("classes")).add(new LevelListItem(game.assets.mainMenuBundle.get("classes"), "7_1", game.assets.mainMenuBundle.get("7_1")));
+        categories.get(game.assets.mainMenuBundle.get("classes")).add(new LevelListItem(game.assets.mainMenuBundle.get("classes"), "7_2", game.assets.mainMenuBundle.get("7_2")));
 
-        categories.put("EXTRA", new ArrayList<LevelListItem>()); //8
+        categories.put(game.assets.mainMenuBundle.get("extra"), new ArrayList<LevelListItem>()); //8
         //categories.get("EXTRA").add(new LevelListItem("EXTRA", "8_1", "user input"));
-        categories.get("EXTRA").add(new LevelListItem("EXTRA", "8_2", "ALL"));
+        categories.get(game.assets.mainMenuBundle.get("extra")).add(new LevelListItem(game.assets.mainMenuBundle.get("extra"), "8_2", game.assets.mainMenuBundle.get("8_1")));
     }
 
     public static LevelListItem getNextLevel(LevelListItem currentLevel) {

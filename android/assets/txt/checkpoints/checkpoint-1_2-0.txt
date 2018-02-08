@@ -1,3 +1,0 @@
-Sometimes, when we write our code we may need to add
-comments to it in order to make it more understandable to the one who reads it and even to ourselves!
-Let's learn how to add comments to our code!

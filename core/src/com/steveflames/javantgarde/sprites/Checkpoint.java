@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
+import com.steveflames.javantgarde.tools.global.Fonts;
 import com.steveflames.javantgarde.tools.global.MyFileReader;
 
 /**
@@ -21,8 +22,8 @@ public class Checkpoint extends GameObject {
 
     public Checkpoint(String name, World world, TiledMap map, Rectangle bounds) {
         super(name, world, map, bounds, true);
-        if (MyFileReader.exists("txt/checkpoints/" + name + ".txt"))
-            text = MyFileReader.readFile("txt/checkpoints/" + name + ".txt");
+        if (MyFileReader.exists("txt/"+ Fonts.languageShort+"/checkpoints/" + name + ".txt"))
+            text = MyFileReader.readFile("txt/"+Fonts.languageShort+"/checkpoints/" + name + ".txt");
     }
 
     public boolean isVisited() {

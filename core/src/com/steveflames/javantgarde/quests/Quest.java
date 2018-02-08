@@ -1,5 +1,6 @@
 package com.steveflames.javantgarde.quests;
 
+import com.steveflames.javantgarde.tools.global.Fonts;
 import com.steveflames.javantgarde.tools.global.MyFileReader;
 
 import java.util.ArrayList;
@@ -19,10 +20,10 @@ public class Quest {
 
     public Quest(String id) {
         questN = Integer.parseInt(id.substring(id.length()-1));
-        parseQuestString(MyFileReader.readFile("txt/quests/quest-" + id + ".txt"));
+        parseQuestString(MyFileReader.readFile("txt/"+ Fonts.languageShort+"/quests/quest-" + id + ".txt"));
         progress = 0;
-        if(MyFileReader.exists("txt/quests/quest-"+id+"-completed.txt"))
-            completedText = MyFileReader.readFile("txt/quests/quest-"+id+"-completed.txt");
+        if(MyFileReader.exists("txt/"+Fonts.languageShort+"/quests/quest-"+id+"-completed.txt"))
+            completedText = MyFileReader.readFile("txt/"+Fonts.languageShort+"/quests/quest-"+id+"-completed.txt");
     }
 
     /**
@@ -73,11 +74,11 @@ public class Quest {
         return getCurrentQuestStep().getHints().get(getCurrentQuestStep().getHintPtr());
     }
 
-    public String getCurrentQuestStepText() {
+    public String getCurrentQuestStepText(String completed) {
         if(progress < questSteps.size())
             return questSteps.get(progress).getText();
         else
-            return "[GREEN]Quest completed![]";
+            return "[GREEN]"+completed+"[]";
     }
 
     public String getCompletedText() {

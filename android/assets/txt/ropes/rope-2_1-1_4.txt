@@ -1,4 +1,0 @@
-~string
-!String
-?string
-?sentence

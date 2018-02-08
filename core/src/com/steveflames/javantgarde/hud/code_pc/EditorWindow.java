@@ -61,8 +61,8 @@ public class EditorWindow extends Window {
 
     private Assets assets;
 
-    public EditorWindow(String title, final Assets assets, final Hud hud) {
-        super(title, assets.neonSkin, "window2");
+    public EditorWindow(final Assets assets, final Hud hud) {
+        super(assets.playscreenBundle.get("editor"), assets.neonSkin, "window2");
         this.hud = hud;
         this.assets = assets;
 
@@ -109,7 +109,7 @@ public class EditorWindow extends Window {
             codeScroll.setFlickScroll(false);
 
         //bottom bar
-        TextButton compileAndRunBtn = new TextButton(" compile & run ", assets.neonSkin);
+        TextButton compileAndRunBtn = new TextButton(" "+assets.playscreenBundle.get("compile")+" ", assets.neonSkin);
         Table bottomBarTable = new Table(assets.neonSkin);
         bottomBarTable.add(compileAndRunBtn).right().expandX().pad(0).height(60);
 
@@ -126,10 +126,10 @@ public class EditorWindow extends Window {
         this.row();
         this.add(bottomBarTable).expandX().fillX();
 
-        consoleWindow = new ConsoleWindow("CONSOLE", assets.neonSkin, assets.neonSkin, hud.stage);
-        questWindow = new QuestWindow("QUEST", assets, hud);
+        consoleWindow = new ConsoleWindow(assets.playscreenBundle.get("console"), assets.neonSkin, hud.stage);
+        questWindow = new QuestWindow(assets, hud);
         if(!MyGdxGame.platformDepended.deviceHasKeyboard())
-            androidExtraKeyboardWindow = new AndroidExtraKeyboardWindow("+KEYBOARD", assets, this);
+            androidExtraKeyboardWindow = new AndroidExtraKeyboardWindow(assets.playscreenBundle.get("plus_keyboard"), assets, this);
         compiler = new MyCompiler(consoleWindow.getConsoleTextArea());
 
         //ADD LISTENERS

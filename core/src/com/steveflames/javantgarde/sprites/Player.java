@@ -239,7 +239,7 @@ public class Player extends GameObject {
 
     public void addHealth() {
         health++;
-        playerMsg = "+1 health";
+        playerMsg = "+1 "+assets.playscreenBundle.get("health");
         playerMsgGlyph.setText(Fonts.small, playerMsg);
         playerMsgVector.x = b2body.getPosition().x;
         playerMsgVector.y = b2body.getPosition().y + 50/MyGdxGame.PPM;
@@ -252,7 +252,7 @@ public class Player extends GameObject {
     public void reduceHealth(int k) {
         assets.playSound(assets.loseHealthSound);
         health -= k;
-        playerMsg = "-"+k+" health";
+        playerMsg = "-"+k+" "+assets.playscreenBundle.get("health");
         playerMsgGlyph.setText(Fonts.small, playerMsg);
         playerMsgVector.x = b2body.getPosition().x;
         playerMsgVector.y = b2body.getPosition().y + 50/MyGdxGame.PPM;
@@ -267,7 +267,7 @@ public class Player extends GameObject {
     public void addClass(String name, String text) {
         String[] temp = name.split("-");
         classes.put(temp[2], text);
-        playerMsg = "+"+temp[2]+" class";
+        playerMsg = "+"+temp[2]+" "+assets.playscreenBundle.get("class");
         playerMsgGlyph.setText(Fonts.small, playerMsg);
         playerMsgVector.x = b2body.getPosition().x;
         playerMsgVector.y = b2body.getPosition().y + 50/MyGdxGame.PPM;

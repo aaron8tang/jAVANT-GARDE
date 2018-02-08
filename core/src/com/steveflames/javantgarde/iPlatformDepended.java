@@ -9,10 +9,5 @@ package com.steveflames.javantgarde;
 public interface iPlatformDepended {
 
     boolean deviceHasKeyboard();
-
     void setDeviceHasKeyboard(boolean bool);
-
-    boolean isHTML();
-
-    boolean isPC();
 }

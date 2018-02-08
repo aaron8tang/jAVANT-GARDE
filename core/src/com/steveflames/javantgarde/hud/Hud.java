@@ -45,8 +45,8 @@ public class Hud implements Disposable {
     private EditorQuizWindow editorQuizWindow;
     private EditorOrderWindow editorOrderWindow;
     private PauseWindow pauseWindow;
-    private Table gameOverWindow;
-    private Table levelCompletedWindow;
+    private GameOverWindow gameOverWindow;
+    private LevelCompletedWindow levelCompletedWindow;
     private Dialog infoDialog;
 
     private InfoSign currentInfoSign;
@@ -64,11 +64,17 @@ public class Hud implements Disposable {
         stage = new Stage(Cameras.hudPort, sb);
         toast = new Toast((playScreen.getAssets()));
 
-        pauseWindow = new PauseWindow("GAME PAUSED", playScreen);
+        pauseWindow = new PauseWindow(playScreen);
         gameOverWindow = new GameOverWindow(playScreen);
         levelCompletedWindow = new LevelCompletedWindow(playScreen);
         Gdx.input.setInputProcessor(stage);
     }
+
+    /*public void recreateUI() {
+        pauseWindow.recreateUI();
+        gameOverWindow.recreateUI(playScreen);
+        levelCompletedWindow.recreateUI(playScreen);
+    }*/
 
     /**
      * Hud initialization after world creation.
@@ -77,19 +83,19 @@ public class Hud implements Disposable {
     public void initAfterWorldCreation() {
         for(int i=0; i<playScreen.getObjectManager().getPcs().size(); i++) {
             if(playScreen.getObjectManager().getPcs().get(i).getPcType()==0) {
-                editorWindow = new EditorWindow("EDITOR", playScreen.getAssets(), this);
+                editorWindow = new EditorWindow(playScreen.getAssets(), this);
                 break;
             }
         }
         for(int i=0; i<playScreen.getObjectManager().getPcs().size(); i++) {
             if(playScreen.getObjectManager().getPcs().get(i).getPcType()==2) {
-                editorOrderWindow = new EditorOrderWindow("EDITOR", playScreen);
+                editorOrderWindow = new EditorOrderWindow(playScreen);
                 break;
             }
         }
         for(int i=0; i<playScreen.getObjectManager().getPcs().size(); i++) {
             if(playScreen.getObjectManager().getPcs().get(i).getPcType()==1) {
-                editorQuizWindow = new EditorQuizWindow("EDITOR", playScreen);
+                editorQuizWindow = new EditorQuizWindow(playScreen);
                 break;
             }
         }
@@ -122,7 +128,7 @@ public class Hud implements Disposable {
         if(playScreen.getPlayer().getHealth() > 0) {
             if(Item.getnOfClasses() > 0) {
                 Fonts.small.setColor(Color.WHITE);
-                Fonts.small.draw(sb, "Classes found: " + playScreen.getPlayer().getClasses().size() +"/" + Item.getnOfClasses(), 15, Cameras.hudPort.getCamera().viewportHeight - 67);
+                Fonts.small.draw(sb, playScreen.getAssets().playscreenBundle.get("classes_found") + playScreen.getPlayer().getClasses().size() +"/" + Item.getnOfClasses(), 15, Cameras.hudPort.getCamera().viewportHeight - 67);
             }
             for(int i = 0; i< playScreen.getPlayer().getHealth(); i++)
                 sb.draw(playScreen.getAssets().heartTR, 20 +(60*i), Cameras.hudPort.getCamera().viewportHeight - 60, 50, 50);
@@ -195,7 +201,7 @@ public class Hud implements Disposable {
                 useBtnPressed = false;
             }
         });
-        TextButton jumpBtn = new TextButton("JUMP", playScreen.getAssets().neonSkin);
+        TextButton jumpBtn = new TextButton(playScreen.getAssets().playscreenBundle.get("jump"), playScreen.getAssets().neonSkin);
         jumpBtn.addListener(new ClickListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -224,8 +230,10 @@ public class Hud implements Disposable {
     }
 
     public void showAndroidInputTable() {
-        if(!MyGdxGame.platformDepended.deviceHasKeyboard())
-            androidInputTable.setVisible(true);
+        if(!MyGdxGame.platformDepended.deviceHasKeyboard()) {
+            if(!toast.isShowing())
+                androidInputTable.setVisible(true);
+        }
     }
 
     public void hideAndroidInputTable() {
@@ -235,6 +243,7 @@ public class Hud implements Disposable {
 
     public void showPauseWindow() {
         stage.addActor(pauseWindow);
+        hideAndroidInputTable();
     }
 
     public void showEditorWindow(Pc pc) {

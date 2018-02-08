@@ -28,7 +28,7 @@ public class InputHandler {
         if (!playScreen.getHud().isToastShowing() || playScreen.getHud().getCurrentToast() == null) {
             if (playScreen.getPlayer().canMove) {
                 //move player on key press
-                if (Gdx.input.isKeyJustPressed(Input.Keys.UP) || playScreen.getHud().isJumpBtnPressed()) {
+                if (Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE) || playScreen.getHud().isJumpBtnPressed()) {
                     playScreen.getHud().setJumpBtnPressed();
                     playScreen.getPlayer().jump();
                 }
@@ -43,11 +43,9 @@ public class InputHandler {
                     playScreen.getPlayer().setRunRight(false);
                     playScreen.getPlayer().setRunLeft(false);
                 }
-                if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-                    playScreen.getHud().newToast("Use the ARROWS to move around and jump\n" +
-                            "ENTER to use item\n" +
-                            "ESCAPE to exit");
-                }
+                //if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+                //    playScreen.getHud().newToast(playScreen.getAssets().playscreenBundle.get("controls"));
+                //}
 
                 //use item
                 if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || playScreen.getHud().isUseBtnPressed()) {
@@ -94,7 +92,7 @@ public class InputHandler {
                                                 floatingPlatform.getLever().getB2body().getPosition().y + 16/MyGdxGame.PPM, 0);
                                         quiz.pull(floatingPlatform);
                                         if (floatingPlatform.isCorrect()) {
-                                            playScreen.getPlayer().showPlayerMsg("correct!");
+                                            playScreen.getPlayer().showPlayerMsg(playScreen.getAssets().playscreenBundle.get("correct"));
                                             playScreen.getHud().hideUseBtn();
                                         }
                                     }
@@ -119,13 +117,10 @@ public class InputHandler {
         playScreen.setEnterKeyHandled(false);
         //back button
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
-            if (playScreen.getPlayer().getCurrentState() == Player.State.CODING) {
+            if (playScreen.getPlayer().getCurrentState() == Player.State.CODING)
                 playScreen.getHud().closeEditors();
-            }
             else if (playScreen.getPlayer().getCurrentState() == Player.State.READING)
                 playScreen.getHud().closeCurrentInfo();
-            else if (playScreen.getHud().isPauseWindowShowing())
-                playScreen.getHud().getPauseWindow().remove();
             else {
                 if(playScreen.getPlayer().getCurrentState() != Player.State.DISAPPEARED && playScreen.getPlayer().getCurrentState() != Player.State.DEAD)
                     playScreen.getHud().showPauseWindow();

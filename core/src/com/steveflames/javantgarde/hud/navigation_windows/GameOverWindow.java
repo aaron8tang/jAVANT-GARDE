@@ -17,26 +17,30 @@ import com.steveflames.javantgarde.tools.global.Cameras;
 public class GameOverWindow extends Table {
 
     public GameOverWindow(final PlayScreen playScreen) {
+        recreateUI(playScreen);
+    }
+
+    public void recreateUI(final PlayScreen playScreen) {
         this.setSize(400,260);
         this.setPosition(Cameras.hudPort.getCamera().viewportWidth/2 - 200, Cameras.hudPort.getCamera().viewportHeight/2 - 130);
 
-        Label gameOverLabel = new Label("GAME OVER", playScreen.getAssets().neonSkin, "big");
+        Label gameOverLabel = new Label(playScreen.getAssets().playscreenBundle.get("game_over"), playScreen.getAssets().neonSkin, "big");
         gameOverLabel.scaleBy(1.4f, 1.4f);
         this.add(gameOverLabel).top().expandX().padTop(5);
         this.row();
 
         Table optionsTable = new Table(playScreen.getAssets().neonSkin);
-        TextButton tryAgainBtn = new TextButton(" RESTART ", playScreen.getAssets().neonSkin);
+        TextButton tryAgainBtn = new TextButton(" "+playScreen.getAssets().playscreenBundle.get("restart")+" ", playScreen.getAssets().neonSkin);
         tryAgainBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 playScreen.getAssets().playSound(playScreen.getAssets().clickSound);
                 playScreen.setRestartLevel();
                 playScreen.dispose();
-                playScreen.getGame().setScreen(new PlayScreen(playScreen.getGame(), playScreen.getCurrentLevel()));
+                playScreen.getGame().setScreen(new PlayScreen(playScreen.getGame(), playScreen.getCurrentLevel(), playScreen.getMap(), playScreen.getRenderer()));
             }
         });
-        TextButton exitBtn = new TextButton(" EXIT ", playScreen.getAssets().neonSkin);
+        TextButton exitBtn = new TextButton(" "+playScreen.getAssets().playscreenBundle.get("exit")+" ", playScreen.getAssets().neonSkin);
         exitBtn.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

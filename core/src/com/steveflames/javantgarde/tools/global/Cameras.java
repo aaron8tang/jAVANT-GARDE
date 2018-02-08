@@ -49,7 +49,7 @@ public class Cameras {
     private static boolean inLineOfSightX(com.steveflames.javantgarde.sprites.GameObject gameObject) {
         float extra = 0;
         if(gameObject instanceof com.steveflames.javantgarde.sprites.ropes.Rope)
-            extra = 1;
+            extra = 2;
         return Math.abs(playScreenCam.position.x - gameObject.b2body.getPosition().x) < (playScreenCam.viewportWidth/2 + gameObject.getBounds().getWidth()/2/ com.steveflames.javantgarde.MyGdxGame.PPM + extra);
     }
 

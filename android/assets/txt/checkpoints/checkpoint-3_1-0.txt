@@ -1,8 +1,0 @@
-In Java, we write most of our code in methods and then call
-these methods to execute their code.
-
-When we write our code, we divide its logic into smaller
-parts (methods) to make it more understandable, easier to
-maintain, reusable and much more.
-The more experience you get in programming, the more you will
-understand why and how to divide your code into methods.

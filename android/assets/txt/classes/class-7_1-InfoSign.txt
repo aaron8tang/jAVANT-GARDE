@@ -1,6 +1,0 @@
-class InfoSign {
-    
-    public InfoSign() {
-    }
-    
-}

@@ -43,7 +43,7 @@ public class Quiz extends GameObject {
         this.objectManager = objectManager;
         this.hud = hud;
         this.id = name.split("-")[1];
-        parseQuizString(MyFileReader.readFile("txt/quizes/"+name+".txt"));
+        parseQuizString(MyFileReader.readFile("txt/"+Fonts.languageShort+"/quizes/"+name+".txt"));
     }
 
     private void parseQuizString(String quiz) {
@@ -60,9 +60,9 @@ public class Quiz extends GameObject {
             answers.add(temp3);
         }
         if(id.equals("1_2"))
-            questions.add("[GREEN]Quiz completed![]\n\n\n\n[ORANGE]* In this game, comments are not supported in the\n  code that YOU write.\n\n  You won't be asked to write any complex code![]");
+            questions.add("[GREEN]"+assets.playscreenBundle.get("quiz_completed")+"[]"+"\n\n\n\n[ORANGE]" +assets.playscreenBundle.get("quiz_com")+ "[]");
         else
-            questions.add("[GREEN]Quiz completed![]");
+            questions.add("[GREEN]"+assets.playscreenBundle.get("quiz_completed")+"[]");
     }
 
     public void update(float dt) {

@@ -19,14 +19,4 @@ public class PlatformDepended implements iPlatformDepended {
     public void setDeviceHasKeyboard(boolean bool) {
         keyboard = bool;
     }
-
-    @Override
-    public boolean isHTML() {
-        return false;
-    }
-
-    @Override
-    public boolean isPC() {
-        return false;
-    }
 }

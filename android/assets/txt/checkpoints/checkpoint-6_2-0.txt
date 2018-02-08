@@ -1,5 +1,0 @@
-On this level we will learn how to access each element of the
-array one by one (parse) and print it.
-
-Fill in the blanks to print the boolean array's elements to find
-out which one is true!

@@ -1,5 +1,0 @@
-In programming, it's very common to have some code that we
-want to execute more than once. (e.g. if we want to print a
-message 20 times, its not practical to write it 20 times)
-To achieve that we use loops. On this level, we will learn
-2 types of loops.

@@ -41,8 +41,8 @@ public class EditorQuizWindow extends Window {
 
     private Assets assets;
 
-    public EditorQuizWindow(String title, final PlayScreen playScreen) {
-        super(title, playScreen.getAssets().neonSkin, "window2");
+    public EditorQuizWindow(final PlayScreen playScreen) {
+        super(playScreen.getAssets().playscreenBundle.get("editor"), playScreen.getAssets().neonSkin, "window2");
         this.playScreen = playScreen;
         this.assets = playScreen.getAssets();
 
@@ -55,7 +55,7 @@ public class EditorQuizWindow extends Window {
                 closeCurrentEditor();
             }
         });
-        Label infoLabel = new Label("[CYAN]Fill in the blank![]", playScreen.getAssets().neonSkin);
+        Label infoLabel = new Label("[CYAN]"+assets.playscreenBundle.get("fill_prompt")+"[]", playScreen.getAssets().neonSkin);
         topBarTable.add(infoLabel).expandX().center();
         topBarTable.add(exitBtn).top().right();
 
@@ -77,7 +77,7 @@ public class EditorQuizWindow extends Window {
 
         //level specific
         if(playScreen.getCurrentLevelID().equals("6_2")) {
-            playScreen.getObjectManager().getMarkers().get(0).setText("CONSOLE:");
+            playScreen.getObjectManager().getMarkers().get(0).setText(assets.playscreenBundle.get("console")+":");
 
             booleanArray = new boolean[12];
             for(int i=0; i<booleanArray.length; i++)
@@ -247,7 +247,7 @@ public class EditorQuizWindow extends Window {
 
             if (text.charAt(0) == '!') { //correct answer
                 assets.playSound(assets.correctSound);
-                playScreen.getPlayer().showPlayerMsg("correct!");
+                playScreen.getPlayer().showPlayerMsg(assets.playscreenBundle.get("correct"));
                 codeLabel.getText().replace("RED", "GREEN");
                 correct = true;
             }
@@ -279,7 +279,7 @@ public class EditorQuizWindow extends Window {
     }
 
     private void updateUI() {
-        String questStepText = currentPc.getQuest().getCurrentQuestStepText();
+        String questStepText = currentPc.getQuest().getCurrentQuestStepText(assets.playscreenBundle.get("quest_completed"));
         if(!questStepText.contains("Quest completed!")) { //next quest step
             codeLabel.setText(questStepText);
             extraKeyboardWindow.clearButtons();

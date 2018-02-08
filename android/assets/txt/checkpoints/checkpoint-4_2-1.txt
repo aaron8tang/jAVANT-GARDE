@@ -1,6 +1,0 @@
-The 3 loops we learned are equivalent and can replace
-each other.
-
-You can choose which loop you like the best and use it, but
-after you've gained some experience in coding you will realize
-that each one is suited best on several ocassions.

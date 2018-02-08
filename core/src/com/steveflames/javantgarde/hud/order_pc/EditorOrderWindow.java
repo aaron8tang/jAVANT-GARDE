@@ -43,8 +43,8 @@ public class EditorOrderWindow extends Window {
 
     private Assets assets;
 
-    public EditorOrderWindow(String title, final PlayScreen playScreen) {
-        super(title, playScreen.getAssets().neonSkin, "window2");
+    public EditorOrderWindow(final PlayScreen playScreen) {
+        super(playScreen.getAssets().playscreenBundle.get("editor"), playScreen.getAssets().neonSkin, "window2");
         this.playScreen = playScreen;
         this.assets = playScreen.getAssets();
 
@@ -52,7 +52,7 @@ public class EditorOrderWindow extends Window {
         botBarTable = new Table(playScreen.getAssets().neonSkin);
         compileBtn = new TextButton(" compile & run ", playScreen.getAssets().neonSkin);
         TextButton exitBtn = new TextButton("x", playScreen.getAssets().neonSkin);
-        Label infoLabel = new Label("[CYAN]Put the code in the correct order![]", playScreen.getAssets().neonSkin);
+        Label infoLabel = new Label("[CYAN]"+assets.playscreenBundle.get("order_prompt")+"[]", playScreen.getAssets().neonSkin);
         botBarTable.add(exitBtn).left();
         botBarTable.add(infoLabel).expandX().center();
         botBarTable.add(compileBtn).right();
@@ -81,25 +81,26 @@ public class EditorOrderWindow extends Window {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 assets.playSound(assets.clickSound);
-                StringBuilder temp = new StringBuilder();
-                for(int i=0; i<linesOfCodeTexts.size(); i++) {
-                    temp.append(linesOfCodeTexts.get(i));
-                    if(i != linesOfCodeTexts.size()-1)
-                        temp.append("\n");
-                }
-                if(temp.toString().equals(currentPc.getQuest().getCurrentQuestStepText())
-                        || (temp.toString()+"\n").equals(currentPc.getQuest().getCurrentQuestStepText())) { //CORRECT ORDER
-                    assets.playSound(assets.correctSound);
-                    answered =1;
-                    playScreen.getPlayer().showPlayerMsg("correct!");
-                    for(int i=0; i<linesOfCodeTexts.size(); i++)
-                        linesOfCodeTexts.set(i, "[GREEN]"+linesOfCodeTexts.get(i)+"[]");
-                    updateUIcode();
-                }
-                else { //WRONG ORDER
-                    assets.playSound(assets.wrongSound);
-                    closeCurrentEditor();
-                    playScreen.getPlayer().b2body.applyLinearImpulse(-2800/MyGdxGame.PPM, 1200/MyGdxGame.PPM, 0, 0, true);
+                if(timer==0) {
+                    StringBuilder temp = new StringBuilder();
+                    for (int i = 0; i < linesOfCodeTexts.size(); i++) {
+                        temp.append(linesOfCodeTexts.get(i));
+                        if (i != linesOfCodeTexts.size() - 1)
+                            temp.append("\n");
+                    }
+                    if (temp.toString().equals(currentPc.getQuest().getCurrentQuestStepText(assets.playscreenBundle.get("quest_completed")))
+                            || (temp.toString() + "\n").equals(currentPc.getQuest().getCurrentQuestStepText(assets.playscreenBundle.get("quest_completed")))) { //CORRECT ORDER
+                        assets.playSound(assets.correctSound);
+                        answered = 1;
+                        playScreen.getPlayer().showPlayerMsg(assets.playscreenBundle.get("correct"));
+                        for (int i = 0; i < linesOfCodeTexts.size(); i++)
+                            linesOfCodeTexts.set(i, "[GREEN]" + linesOfCodeTexts.get(i) + "[]");
+                        updateUIcode();
+                    } else { //WRONG ORDER
+                        assets.playSound(assets.wrongSound);
+                        closeCurrentEditor();
+                        playScreen.getPlayer().b2body.applyLinearImpulse(-2800 / MyGdxGame.PPM, 1200 / MyGdxGame.PPM, 0, 0, true);
+                    }
                 }
             }
         });
@@ -184,8 +185,8 @@ public class EditorOrderWindow extends Window {
     }
 
     private void initUI() {
-        String questStepText = currentPc.getQuest().getCurrentQuestStepText();
-        if (!questStepText.contains("Quest completed!")) { //next quest step
+        String questStepText = currentPc.getQuest().getCurrentQuestStepText(assets.playscreenBundle.get("quest_completed"));
+        if (!questStepText.contains(assets.playscreenBundle.get("quest_completed"))) { //next quest step
             if (linesOfCodeTexts.size() == 0) {
                 if(!botBarTable.getChildren().contains(compileBtn, false))
                     botBarTable.add(compileBtn).right();
@@ -260,7 +261,7 @@ public class EditorOrderWindow extends Window {
             afterCodeTable.remove();
             linesOfCodeTexts.clear();
             codeTable.clear();
-            codeTable.add(new Label("[GREEN]Quest completed![]", playScreen.getAssets().neonSkin));
+            codeTable.add(new Label("[GREEN]"+assets.playscreenBundle.get("quest_completed")+"[]", playScreen.getAssets().neonSkin));
             compileBtn.remove();
         }
     }

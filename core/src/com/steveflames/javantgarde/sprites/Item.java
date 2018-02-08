@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.tools.Assets;
+import com.steveflames.javantgarde.tools.global.Fonts;
 import com.steveflames.javantgarde.tools.global.MyFileReader;
 
 /**
@@ -30,7 +31,7 @@ public class Item extends GameObject {
         else if(name.contains("class")) {
             itemID = 2;
             nOfClasses++;
-            text = MyFileReader.readFile("txt/classes/"+name+".txt");
+            text = MyFileReader.readFile("txt/"+ Fonts.languageShort+"/classes/"+name+".txt");
         }
     }
 

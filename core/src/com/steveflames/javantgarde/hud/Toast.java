@@ -61,9 +61,9 @@ class Toast {
         drawStrings.add(new StringBuilder());
 
         if(MyGdxGame.platformDepended.deviceHasKeyboard())
-            nextPrompt = "Press ENTER";
+            nextPrompt = assets.playscreenBundle.get("enter_prompt");
         else
-            nextPrompt = "TAP";
+            nextPrompt = assets.playscreenBundle.get("tap_prompt");
     }
 
     void newToast(String text) {

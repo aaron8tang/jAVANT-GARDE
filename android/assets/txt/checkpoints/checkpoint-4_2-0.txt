@@ -1,3 +1,0 @@
-Other than the while and do-while statements there's also the
-'for' statement. It comes in handy when you know the number
-of iterations you need to do. Let's see!

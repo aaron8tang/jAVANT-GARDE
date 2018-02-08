@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.tools.Assets;
 import com.steveflames.javantgarde.tools.global.Cameras;
+import com.steveflames.javantgarde.tools.global.Fonts;
 import com.steveflames.javantgarde.tools.global.MyFileReader;
 
 import java.util.ArrayList;
@@ -27,8 +28,8 @@ public class InfoSign extends GameObject {
         this.assets = assets;
         this.alpha = alpha;
 
-        if (MyFileReader.exists("txt/info/" + name + ".txt"))
-            text = MyFileReader.readFile("txt/info/" + name + ".txt");
+        if (MyFileReader.exists("txt/"+ Fonts.languageShort+"/info/" + name + ".txt"))
+            text = MyFileReader.readFile("txt/"+Fonts.languageShort+"/info/" + name + ".txt");
     }
 
     /**

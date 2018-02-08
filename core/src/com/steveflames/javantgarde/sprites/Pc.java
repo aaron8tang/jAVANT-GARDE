@@ -1,5 +1,7 @@
 package com.steveflames.javantgarde.sprites;
 
+import com.badlogic.gdx.Application;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -9,6 +11,7 @@ import com.steveflames.javantgarde.MyGdxGame;
 import com.steveflames.javantgarde.quests.Quest;
 import com.steveflames.javantgarde.tools.Assets;
 import com.steveflames.javantgarde.tools.global.Cameras;
+import com.steveflames.javantgarde.tools.global.Fonts;
 import com.steveflames.javantgarde.tools.global.MyFileReader;
 
 /**
@@ -32,21 +35,21 @@ public class Pc extends GameObject {
             pcType = 1;
             name = name.substring(4);
             quest = new Quest(name.substring(3));
-            editorText = quest.getCurrentQuestStepText();
+            editorText = quest.getCurrentQuestStepText(assets.playscreenBundle.get("quest_completed"));
         }
         else if(name.startsWith("order")) { //order pc
             pcType = 2;
             name = name.substring(5);
             quest = new Quest(name.substring(3));
-            editorText = quest.getCurrentQuestStepText();
+            editorText = quest.getCurrentQuestStepText(assets.playscreenBundle.get("quest_completed"));
         }
         else { //code pc
             pcType = 0;
             quest = new Quest(name.substring(3));
 
-            if(MyFileReader.exists("txt/pcs/" + name + ".txt"))
-                if(!MyGdxGame.platformDepended.isHTML())
-                    editorText = MyFileReader.readFile("txt/pcs/" + name + ".txt").replaceAll("\r", "");
+            if(MyFileReader.exists("txt/"+ Fonts.languageShort+"/pcs/" + name + ".txt"))
+                if(Gdx.app.getType()!= Application.ApplicationType.WebGL) //web specific
+                    editorText = MyFileReader.readFile("txt/"+Fonts.languageShort+"/pcs/" + name + ".txt").replaceAll("\r", "");
                 else
                     editorText = "";
             else

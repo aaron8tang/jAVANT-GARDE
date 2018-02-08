@@ -109,7 +109,7 @@
   <object id="79" x="5983.5" y="130.061" width="64" height="445.939"/>
  </objectgroup>
  <objectgroup name="checkpoint">
-  <object id="38" name="checkpoint-2_1-0" x="576" y="5.33333" width="64" height="634.667"/>
+  <object id="38" name="checkpoint-2_1-0" x="544" y="0" width="64" height="634.667"/>
   <object id="46" name="checkpoint-2_1-1" x="3232" y="0" width="64" height="637.333"/>
  </objectgroup>
  <objectgroup name="teleporter">

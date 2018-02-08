@@ -1,7 +1,5 @@
 package com.steveflames.javantgarde.client;
 
-import com.steveflames.javantgarde.MyGdxGame;
-
 /**
  * Implements the iPlatformDepended interface and provides
  * information to the core about the device that is currently
@@ -22,13 +20,4 @@ public class PlatformDepended implements com.steveflames.javantgarde.iPlatformDe
         keyboard = bool;
     }
 
-    @Override
-    public boolean isHTML() {
-        return true;
-    }
-
-    @Override
-    public boolean isPC() {
-        return false;
-    }
 }
