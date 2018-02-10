@@ -1,0 +1,22 @@
+CALLING A METHOD:
+Every line of code inside the method gets executed once you [PURPLE]call[] the method.
+
+Let's [PURPLE]call[] the sayHi() method from our main method:
+[CYAN]______________________________________________________________________________[]
+
+class MyClass {
+    public [ORANGE]static[] void main(String[[] args) {
+        [PURPLE]sayHi();[]
+    }
+	
+    [ORANGE]static[] [BLUE]void sayHi() {[]
+        System.out.println("Hello World!");
+    [BLUE]}[]
+}
+[CYAN]______________________________________________________________________________[]
+ [ORANGE]*[] Every method that is accessed from another method that is declared [ORANGE]static[]
+  (the main method always is) needs to be declared [ORANGE]static[] aswell.
+  
+To [PURPLE]call[] a method we just write its [PURPLE]name[] and the parentheses [PURPLE]()[]
+
+The output of this program is: Hello World!

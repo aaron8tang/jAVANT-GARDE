@@ -1,0 +1,81 @@
+//IGNORE FIRST LINE
+~QUEST
+class EnhancedForDemo() {
+   public static void main(String[[] args) {
+      boolean[[] myArray = new boolean[12];
+      for(int i=0; i<12; i++) { [LIGHT_GRAY]//απλό for[]
+         myArray[i] = false;
+      }
+      myArray[[[YELLOW]_[]] = true; [LIGHT_GRAY]//κρυφό στοιχείο[]
+      for([RED]____[] ___ _ ____) { [LIGHT_GRAY]//enhanced for[]
+         System.out.println(myVar);
+      }
+   }
+}
+#HELP
+?int
+#HELP
+!boolean
+#HELP
+?myArray
+#HELP
+?myVar
+~QUEST
+class EnhancedForDemo() {
+   public static void main(String[[] args) {
+      boolean[[] myArray = new boolean[12];
+      for(int i=0; i<12; i++) { [LIGHT_GRAY]//απλό for[]
+         myArray[i] = false;
+      }
+      myArray[[[YELLOW]_[]] = true; [LIGHT_GRAY]//κρυφό στοιχείο[]
+      for(boolean [RED]___[] _ ____) { [LIGHT_GRAY]//enhanced for[]
+         System.out.println(myVar);
+      }
+   }
+}
+#HELP
+!myVar
+#HELP
+?myArray
+#HELP
+?var
+~QUEST
+class EnhancedForDemo() {
+   public static void main(String[[] args) {
+      boolean[[] myArray = new boolean[12];
+      for(int i=0; i<12; i++) { [LIGHT_GRAY]//απλό for[]
+         myArray[i] = false;
+      }
+      myArray[[[YELLOW]_[]] = true; [LIGHT_GRAY]//κρυφό στοιχείο[]
+      for(boolean myVar [RED]_[] ____) { [LIGHT_GRAY]//enhanced for[]
+         System.out.println(myVar);
+      }
+   }
+}
+#HELP
+?!
+#HELP
+?in
+#HELP
+!:
+#HELP
+?myArray
+~QUEST
+class EnhancedForDemo() {
+   public static void main(String[[] args) {
+      boolean[[] myArray = new boolean[12];
+      for(int i=0; i<12; i++) { [LIGHT_GRAY]//απλό for[]
+         myArray[i] = false;
+      }
+      myArray[[[YELLOW]_[]] = true; [LIGHT_GRAY]//κρυφό στοιχείο[]
+      for(boolean myVar : [RED]____[]) { [LIGHT_GRAY]//enhanced for[]
+         System.out.println(myVar);
+      }
+   }
+}
+#HELP
+?myArray[]
+#HELP
+!myArray
+#HELP
+?myArray;

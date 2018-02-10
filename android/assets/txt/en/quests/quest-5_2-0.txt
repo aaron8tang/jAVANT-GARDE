@@ -1,0 +1,12 @@
+//IGNORE FIRST LINE
+~QUEST
+if(frontSensorDetectsWall) {
+jump();
+}
+else {
+flyForward();
+}
+#HELP
+[while(true) {
+#HELP
+]}

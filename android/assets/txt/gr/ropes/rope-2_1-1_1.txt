@@ -1,0 +1,4 @@
+~πραγματικός
+!double
+?decimal
+?boolean

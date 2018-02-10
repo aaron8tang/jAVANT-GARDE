@@ -1,0 +1,110 @@
+//IGNORE FIRST LINE
+~QUEST
+class ForTest {
+   public static void main(String[[] args) {
+      for([RED]____[] ___ ___) {
+         System.out.println("Print me 5 times");
+      }
+   }
+}
+[CYAN]//Fill in the red blank![]
+#HELP
+?int i==0
+#HELP
+?int i=0
+#HELP
+!int i=0;
+~QUEST
+class ForTest {
+   public static void main(String[[] args) {
+      for(int i=0; [RED]___[] ___) {
+         System.out.println("Print me 5 times");
+      }
+   }
+}
+[CYAN]//Fill in the red blank![]
+#HELP
+!i<5;
+#HELP
+?i++
+#HELP
+?i<5
+~QUEST
+class ForTest {
+   public static void main(String[[] args) {
+      for(int i=0; i<5; [RED]___[]) {
+         System.out.println("Print me 5 times");
+      }
+   }
+}
+[CYAN]//Fill in the red blank![]
+#HELP
+?
+#HELP
+!i++
+#HELP
+?i++;
+~QUEST
+class ForTest {
+   public static void main(String[[] args) {
+      for(int i=5; i>0; [RED]___[]) {
+         System.out.println("Print me 5 times");
+      }
+   }
+}
+[CYAN]//Fill in the red blank![]
+#HELP
+?i++;
+#HELP
+?i++
+#HELP
+?i--;
+#HELP
+!i--
+~QUEST
+class ForTest {
+   public static void main(String[[] args) {
+      for(int i=0; i<=10; [RED]___[]) {
+         System.out.println(i);
+      }
+   }
+}
+[CYAN]/*Fill in the red blank so that the output is:
+0
+2
+4
+6
+8
+10
+*/[]
+#HELP
+!i=i+2
+#HELP
+?i==i+2
+#HELP
+?i=i+2;
+#HELP
+?i++
+~QUEST
+class ForTest {
+   public static void main(String[[] args) {
+      for([RED]___[] i=0; i<0.5; i=i+0.1) {
+         System.out.println(i);
+      }
+   }
+}
+[CYAN]/*Fill in the red blank so that the output is:
+0 
+0.1 
+0.2
+0.3
+0.4
+*/[]
+#HELP
+?int
+#HELP
+?int;
+#HELP
+!double
+#HELP
+?double;

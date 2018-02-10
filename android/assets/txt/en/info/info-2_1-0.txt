@@ -1,0 +1,12 @@
+RULES FOR NAMING A VARIABLE:
+The [GREEN]first[] character must be a [GREEN]letter[] or an [GREEN]underscore[] ([GREEN]_[]).
+The [GREEN]rest[] of the name can include [GREEN]any letter[], [GREEN]number[] or [GREEN]the underscore[].
+
+You [RED]can't[] use any other characters like [RED]spaces, symbols, punctuation marks[].
+You [RED]can't[] use one of Java's [ORANGE]reserved keywords[] as a variable name.
+Some of those are: [ORANGE]public[], [ORANGE]static[], [ORANGE]void[], [ORANGE]class[], [ORANGE]new[]
+
+
+Also:
+Variable names are [RED]case sensitive[] (this means that my_variable and 
+my_Variable are 2 different variables).

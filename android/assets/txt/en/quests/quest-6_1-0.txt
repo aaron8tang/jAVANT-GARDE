@@ -1,0 +1,65 @@
+//IGNORE FIRST LINE
+~QUEST
+class ArrayTest {
+    public static void main(String[[] args) {
+        int[RED]__[] myArray = ___ ___[_];
+    }
+}
+[CYAN]//Initialize an array of 5 integers.[]
+#HELP
+?()
+#HELP
+![]
+#HELP
+?{}
+~QUEST
+class ArrayTest {
+    public static void main(String[[] args) {
+        int[[] myArray = [RED]___[] ___[_];
+    }
+}
+[CYAN]//Initialize an array of 5 integers.[]
+#HELP
+?array
+#HELP
+?int
+#HELP
+!new
+~QUEST
+class ArrayTest {
+    public static void main(String[[] args) {
+        int[[] myArray = new [RED]___[][_];
+    }
+}
+[CYAN]//Initialize an array of 5 integers.[]
+#HELP
+!int
+#HELP
+?array
+~QUEST
+class ArrayTest {
+    public static void main(String[[] args) {
+        int[[] myArray = new int[[[RED]_[]];
+    }
+}
+[CYAN]//Initialize an array of 5 integers.[]
+#HELP
+!5
+#HELP
+?4
+#HELP
+?
+~QUEST
+class ArrayTest {
+    public static void main(String[[] args) {
+        int[[] myArray = new int[5];
+        System.out.println(myArray[[[RED]_[]]);
+    }
+}
+[CYAN]//Print the 1st element of the array.[]
+#HELP
+?
+#HELP
+?1
+#HELP
+!0

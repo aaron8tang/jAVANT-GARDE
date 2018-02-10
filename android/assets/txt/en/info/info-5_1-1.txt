@@ -1,0 +1,12 @@
+[CYAN]SYMBOL    NAME[]
+   [ORANGE]![]       NOT operator
+
+[CYAN]EXPLANATION[]
+Reverses a boolean value.
+Must be put [ORANGE]before[] the value.
+
+[CYAN]EXAMPLE[]
+boolean var = false;
+if([ORANGE]![]var) { [LIGHT_GRAY]//true[]
+   [LIGHT_GRAY]//enters here[]
+}

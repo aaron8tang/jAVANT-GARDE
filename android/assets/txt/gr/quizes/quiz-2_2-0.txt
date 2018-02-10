@@ -1,0 +1,51 @@
+//IGNORE FIRST LINE
+~QUIZ
+int a = 2 + 5;
+System.out.println(a);
+
+[CYAN]//Τι θα εμφανιστεί στην κονσόλα;[]
+#ANSWERS
+!7
+?a
+?error
+~QUIZ
+int a = 4;
+int b = 10 * a;
+System.out.println(b);
+
+[CYAN]//Τι θα εμφανιστεί στην κονσόλα;[]
+#ANSWERS
+?10 * a
+?14
+!40
+~QUIZ
+String s1 = "he";
+String s2 = "llo";
+String s3 = s1 + s2;
+System.out.println(s3);
+
+[CYAN]//Τι θα εμφανιστεί στην κονσόλα;[]
+#ANSWERS
+?s3
+!hello
+?error
+~QUIZ
+int a = 12;
+int b = 5;
+System.out.println(a - 2 + b);
+
+[CYAN]//Τι θα εμφανιστεί στην κονσόλα;[]
+#ANSWERS
+!15
+?105
+?error
+~QUIZ
+int number = 0;
+number++;
+System.out.println(number);
+
+[CYAN]//Τι θα εμφανιστεί στην κονσόλα;[]
+#ANSWERS
+?0
+!1
+?2

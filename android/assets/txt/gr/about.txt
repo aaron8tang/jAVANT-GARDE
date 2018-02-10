@@ -1,0 +1,19 @@
+[CYAN]____________________________________________________________________________________[]
+
+   Ένα εκπαιδευτικό παιχνίδι από τον Στέφανο Γκαλγκουράνα, [CYAN]github.com/SteveFlames[]   
+     γραμμένο σε [RED]Java[], με το [RED]Android Studio[], χρησιμοποιώντας το [RED]LibGDX[] framework
+[CYAN]____________________________________________________________________________________[]
+
+
+                                       [CYAN]Ήχοι:[]
+                    Royalty free production [CYAN]music by JewelBeat.com[]           
+                        Free [CYAN]sound effects by NoiseForFun.com[]                
+
+				   
+                                      [CYAN]Γραφικά:[]
+                            Delapouite, delapouite.com
+                            Lorc, lorcblog.blogspot.com
+                            [CYAN]Available on game-icons.net[]
+                         Glitch project, [CYAN]glitchthegame.com[]
+                              GameArt2D, [CYAN]gameart2d.com[]
+                               Στέφανος Γκαλγκουράνας

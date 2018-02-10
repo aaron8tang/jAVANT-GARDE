@@ -1,0 +1,25 @@
+THE FOR STATEMENT:
+The [YELLOW]for[] statement is also used in programming loops.
+Its general form is:  [YELLOW]for ([RED]initialization[]; [BLUE]termination[]; [GREEN]increment[]) {}[]
+
+A variable is [RED]initialized[] once, a [BLUE]condition[] is evaluated, if it is true the
+program enters the [YELLOW]for[]'s body. When it reached its end, the variable is
+[GREEN]incremented[] and the [BLUE]condition[] is evaluated again and so on.
+[CYAN]___________________________________________________________________________________[]
+
+[PURPLE]1[]    [YELLOW]for ([RED]int i=0[]; [BLUE]i<3[]; [GREEN]i++[]) {[]
+[PURPLE]2[]        [CYAN]System.out.println(x);[]
+[PURPLE]3[]    [YELLOW]}[]
+[PURPLE]4[]    [LIGHT_GRAY]//after the loop, the value of x is 3[]
+[CYAN]___________________________________________________________________________________[]
+The output is:
+0
+1
+2
+
+The [PURPLE]lines[] of code are executed in the following order:
+[PURPLE]1 [RED](initialization i=0)[], 1 [BLUE](condition 0<3 is true)[], 2, 3, 1 [GREEN](increment i=1)[]
+, 1 [BLUE](condition 1<3 is true)[], 2, 3, 1 [GREEN](increment i=2)[], 1 [BLUE](condition 2<3 is true)[], 2, 3
+, 1 [GREEN](increment i=3)[], 1 [BLUE](condition 3<3 is false)[], 4[]
+
+Don't forget the semicolons ([YELLOW];[]) after the initializer and the condition.

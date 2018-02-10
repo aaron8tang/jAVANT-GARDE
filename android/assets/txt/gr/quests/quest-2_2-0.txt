@@ -1,0 +1,39 @@
+//IGNORE FIRST LINE
+~QUEST
+Δήλωσε μια μεταβλητή τύπου [ORANGE]int[] με όνομα '[YELLOW]a[]' και [CYAN]ανάθεσε[] της την τιμή 2, προσθέτωντας '[CYAN] = 2[]' μετά το όνομά της.
+#HELP
+[ORANGE]int[] [YELLOW]a[] [CYAN]= 2[][GREEN];[]
+~QUEST
+Επίσης, μπορείς να [CYAN]αναθέσεις[] μια τιμή σε μια μεταβλητή σε άλλη γραμμή αφού πρώτα έχεις δηλώσει τη μεταβλητή.
+π.χ.
+[ORANGE]    int[] [YELLOW]a[][GREEN];[]
+    [YELLOW]a[] [CYAN]= -1[][GREEN];[]
+	
+Δοκίμασέ το!
+~QUEST
+Για να [CYAN]αναθέσεις[] μια δεκαδική τιμή σε μια μεταβλητή τύπου [ORANGE]double[] πρέπει να χρησιμοποιήσεις τελεία.
+π.χ. [ORANGE]double[] [YELLOW]b[] [CYAN]= 0.5[][GREEN];[]
+
+Επίσης, μπορείς να αναθέσεις και ακέραιες τιμές σε μεταβλητές τύπου double.
+π.χ. [ORANGE]double[] [YELLOW]b[] [CYAN]= 1[][GREEN];[]
+[CYAN]Σε μία νέα γραμμή[], ανάθεσε μια [CYAN]δεκαδική[] τιμή σε μια μεταβλητή τύπου double με όνομα '[YELLOW]b[]'!
+~QUEST
+Μία [ORANGE]λογική[] μεταβλητή μπορεί να πάρει μόνο 2 τιμές: [CYAN]true[] ή [CYAN]false[]
+π.χ.
+    [ORANGE]boolean[] [YELLOW]c[] [CYAN]= true[][GREEN];[]
+ή
+    [ORANGE]boolean[] [YELLOW]c[] [CYAN]= false[][GREEN];[]
+	
+Δοκίμασέ το!
+~QUEST
+Για να [CYAN]αναθέσεις[] έναν χαρακτήρα σε μία μεταβλητή τύπου [ORANGE]char[] πρέπει να τον κλείσεις σε μονά εισαγωγικά.
+π.χ.
+    [ORANGE]char[] [YELLOW]d[] [CYAN]= 'a'[][GREEN];[]
+	
+Δοκίμασέ το!
+~QUEST
+Για να [CYAN]αναθέσεις[] μια τιμή σε μια μεταβλητή τύπου String πρέπει να την κλείσεις σε διπλά εισαγωγικά.
+π.χ.
+    [ORANGE]String[] [YELLOW]e[] [CYAN]= "hello"[][GREEN];[]
+
+Δοκίμασέ το!

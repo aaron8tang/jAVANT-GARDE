@@ -1,0 +1,52 @@
+//IGNORE FIRST LINE
+~QUIZ
+private class AccessModifiersDemo1 {
+    public static void main(String[[] args) {
+        if(true) {
+            System.out.println("0");
+        }
+        else {
+            System.out.println("1");
+        }
+    }
+}[CYAN]//Τι θα εμφανιστεί στην οθόνη?[]
+#ANSWERS
+?0
+?1
+!error
+~QUIZ
+default class AccessModifiersDemo2 {
+    public static void main(String[[] args) {
+        if(true) {
+            System.out.println("0");
+        }
+        else {
+            System.out.println("1");
+        }
+    }
+}[CYAN]//Τι θα εμφανιστεί στην οθόνη?[]
+#ANSWERS
+?0
+?1
+!error
+~QUIZ
+class AccessModifiersDemo3 {
+    public static void main(String[[] args) {
+        
+    }
+}
+[CYAN]//Ποιός είναι ο access modifier αυτής της κλάσης?[]
+#ANSWERS
+!default
+?protected
+?none
+#ANSWERS
+?0
+?1
+!error
+~QUIZ
+Τι access modifier θα πρέπει να έχει ένα πεδίο?
+#ANSWERS
+?public
+!private
+?default

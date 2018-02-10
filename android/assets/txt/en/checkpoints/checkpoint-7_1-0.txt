@@ -1,0 +1,4 @@
+Java is an object-oriented programming language.
+Object-oriented programming is a model in which we utilize
+objects.
+Let's learn a few things about these objects!

@@ -1,0 +1,4 @@
+In the very first level we learned how to print output with
+the System.out.println() command to the user of our program.
+Now we will learn how to get input from the user of our
+program. This means that the user will have to type something

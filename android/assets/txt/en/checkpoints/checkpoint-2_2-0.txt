@@ -1,0 +1,11 @@
+In programming, you will be using variables to store and
+process data like a name, age, height, gender etc.
+
+After declaring a variable, you can assign a value to it.
+You may later change a variable's value, use it in calculations,
+print it on the user's screen and more.
+A variable may only store a value of its type.
+For example, an int variable can store the number 15 but
+not the decimal number 1,5 or a text like "Hello World!".
+First of all, you will have to learn how to assign a value to
+a variable!

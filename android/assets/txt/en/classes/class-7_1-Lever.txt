@@ -1,0 +1,12 @@
+class Lever {
+
+    private boolean doorOpen = false;
+	
+    public Lever() {
+    }
+    
+    public void pull() {
+        doorOpen = true;
+    }
+	
+}

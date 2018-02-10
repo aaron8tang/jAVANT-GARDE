@@ -1,0 +1,7 @@
+Normally, you will be writing your own classes and their code
+but, in this game, you will be finding them as items that
+already contain their code and you won't be able to change it.
+You will be able to create objects of the classes you find and
+manipulate them through their methods in the MyClass class
+to reach your goal!
+Grab this class and create a new object!

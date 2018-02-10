@@ -1,0 +1,61 @@
+//IGNORE FIRST LINE
+~QUEST
+class MyClass {
+	
+    public static void main(String[[] args) {
+        int a = sum(3,2);
+    }
+	
+    static int sum(int x, int y) {
+        [RED]____[] x + y;
+    }
+	
+}
+#HELP
+?void
+#HELP
+!return
+#HELP
+?a =
+~QUEST
+class MyClass {
+	
+    public static void main(String[[] args) {
+        double a = divide(7,2);
+    }
+	
+    static [RED]____[] divide(int x, int y) {
+        return x / y;
+    }
+	
+}
+#HELP
+?void
+#HELP
+?boolean
+#HELP
+?char
+#HELP
+!double
+#HELP
+?String
+~QUEST
+class MyClass {
+	
+    public static void main(String[[] args) {
+        printMsg("Print me plz!");
+    }
+	
+    static [RED]____[] printMsg(String msg) {
+        System.out.println(msg);
+    }
+	
+}
+#HELP
+?String
+#HELP
+?char
+#HELP
+!void
+#HELP
+?

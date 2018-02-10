@@ -1,0 +1,25 @@
+//IGNORE FIRST LINE
+~QUEST
+Declare a variable suitable to store [CYAN]integer[] numbers and hit the 'compile & run' button.
+#HELP
+don't forget to write your code inside the main method
+#HELP
+don't forget the semicolon  (;) at the end of your line of code
+#HELP
+[ORANGE]int[] varName;
+~QUEST
+Declare a variable suitable to store [CYAN]decimal[] numbers.
+#HELP
+[ORANGE]double[] varName;
+~QUEST
+Declare a variable of type [CYAN]boolean[].
+#HELP
+[ORANGE]boolean[] varName;
+~QUEST
+Declare a variable suitable to store a [CYAN]single character[].
+#HELP
+[ORANGE]char[] varName;
+~QUEST
+Declare a variable suitable to store a [CYAN]sequence of characters[].
+#HELP
+[ORANGE]String[] varName;

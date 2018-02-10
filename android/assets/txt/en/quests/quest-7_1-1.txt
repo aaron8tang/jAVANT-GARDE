@@ -1,0 +1,14 @@
+//IGNORE FIRST LINE
+~QUEST
+Find the [RED]Lever[] class and read its code in the editor.
+~QUEST
+Create a new instance of [RED]Lever[] in your main method and assign it to a variable.
+#HELP
+Lever myLever = new Lever();
+~QUEST
+Now [CYAN]call[] the appropriate [CYAN]method[] of the [RED]Lever[] class to open the door
+
+Click on the [CYAN]help[] button for info on how to call a method of another class.
+#HELP
+In a new line, type the [RED]name of the object[], then a [GREEN]dot[], then call its method like we have learned in the METHODS section ([BLUE]name of the method[] and finally [YELLOW]()[])
+e.g.    [RED]myDog[][GREEN].[][BLUE]run[][YELLOW]()[];

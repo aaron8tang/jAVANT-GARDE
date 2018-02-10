@@ -1,0 +1,11 @@
+//IGNORE FIRST LINE
+~QUEST
+Find the [RED]InfoSign[] class and read its code in the editor.
+~QUEST
+Create a new instance of [RED]InfoSign[] in your main method.
+
+To create a new instance of an object we use the keyword [ORANGE]new[] and then follows the call to the [CYAN]constructor[] of the class:
+e.g.
+[ORANGE]new[] [CYAN]Dog()[];
+#HELP
+new InfoSign();

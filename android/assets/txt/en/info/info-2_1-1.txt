@@ -1,0 +1,14 @@
+VARIABLE TYPE:
+A variable stores [RED]data[]. The data must have a [RED]type[].
+It could be a number, a letter, a whole sentence etc.
+
+When declaring a variable, the variable's [RED]type[] must be defined.
+To do that, you must use a specific [ORANGE]keyword[] from Java's reserved words.
+Some of the basic types and their definition keywords in Java are:
+
+[CYAN]TYPE        EXPLANATION                                    KEYWORD[]
+integer     (any integer number: 0, 100, -22 etc.)         [ORANGE]int[]
+real        (any real number: 0.36, -0.7, 10 etc.)         [ORANGE]double[]
+boolean     (only 2 possible values: true or false)        [ORANGE]boolean[]
+character   (any single character from the keyboard)       [ORANGE]char[]
+string      (a sequence of characters - e.g. a sentence)   [ORANGE]String[]

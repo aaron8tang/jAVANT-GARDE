@@ -1,0 +1,5 @@
+On this level, you will be writing code to navigate the cyberfrog!
+
+
+You can code him to move forward or, by using his front sensor, you can make him jump if he detects a wall in front of him.
+Don't fail him!

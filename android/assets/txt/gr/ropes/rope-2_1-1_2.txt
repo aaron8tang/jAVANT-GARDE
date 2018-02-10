@@ -1,0 +1,4 @@
+~λογικός
+!boolean
+?bool
+?truefalse

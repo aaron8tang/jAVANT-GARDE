@@ -1,0 +1,4 @@
+~ακέραιος
+!int
+?double
+?number
