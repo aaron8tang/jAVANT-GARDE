@@ -40,6 +40,7 @@ public class PauseWindow extends Window {
             public void clicked(InputEvent event, float x, float y) {
                 playScreen.getAssets().playSound(playScreen.getAssets().clickSound);
                 remove();
+                playScreen.getHud().showAndroidInputTable();
             }
         });
         TextButton restartBtn = new TextButton(assets.playscreenBundle.get("restart_level"), playScreen.getAssets().neonSkin);

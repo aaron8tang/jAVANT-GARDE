@@ -63,7 +63,6 @@ public class MainMenuScreen implements Screen {
         dialogStage = new Stage(viewport, game.sb);
         glyphLayout = new GlyphLayout();
         Fonts.changeFont(game.preferences.getLanguage());
-        aboutString = MyFileReader.readFile("txt/"+Fonts.languageShort+"/about.txt");
         Gdx.input.setCatchBackKey(true);
 
         game.assets.loadAllMainMenuAssets();
@@ -84,6 +83,7 @@ public class MainMenuScreen implements Screen {
     private void recreateUI() {
         game.assets.loadMainMenuBundles(game.preferences.getLanguage());
         glyphLayout.setText(Fonts.big, MyGdxGame.TITLE);
+        aboutString = MyFileReader.readFile("txt/"+Fonts.languageShort+"/about.txt");
 
         //window
         Window window = new Window("", game.assets.neonSkin, "window2");
@@ -134,7 +134,7 @@ public class MainMenuScreen implements Screen {
         languageSb = new SelectBox<String>(game.assets.neonSkin);
         languageSb.setItems("English", "Ελληνικά");
         languageSb.setSelected(game.preferences.getLanguage());
-        topTable.add(languageSb).expandX().left().top().width(200);
+        topTable.add(languageSb).expandX().left().top().width(200).height(70);
 
         //add to midTable
         midTable.add(playBtn).width(500).height(190);
@@ -147,7 +147,7 @@ public class MainMenuScreen implements Screen {
 
         //virtual keyboardBtn for html version
         final CheckBox keyboardChkBox;
-        if(Gdx.app.getType()== Application.ApplicationType.WebGL) { //web specific
+        /*if(Gdx.app.getType()== Application.ApplicationType.WebGL) { //web specific
             keyboardChkBox = new CheckBox(game.assets.mainMenuBundle.get("virtual_keyboard"), game.assets.neonSkin);
             if(!MyGdxGame.platformDepended.deviceHasKeyboard())
                 keyboardChkBox.setChecked(true);
@@ -160,7 +160,7 @@ public class MainMenuScreen implements Screen {
                 }
             });
         }
-        else if(Gdx.app.getType()== Application.ApplicationType.Desktop) { //desktop specific
+        else*/ if(Gdx.app.getType()== Application.ApplicationType.Desktop) { //desktop specific
                 keyboardChkBox = new CheckBox(game.assets.mainMenuBundle.get("fullscreen"), game.assets.neonSkin);
             midTable.row();
             midTable.add(keyboardChkBox).padTop(10);
@@ -194,6 +194,10 @@ public class MainMenuScreen implements Screen {
                     for(Actor a: stage.getActors())
                         a.remove();
                     Fonts.changeFont(game.preferences.getLanguage());
+                    game.assets.unloadSkins();
+                    game.assets.loadSkins();
+                    game.assets.finishLoading();
+                    game.assets.refreshMainMenuAssets();
                     recreateUI();
                 }
             }
@@ -307,7 +311,7 @@ public class MainMenuScreen implements Screen {
 
             game.sb.setColor(Color.WHITE);
             game.sb.begin();
-            game.sb.draw(game.assets.earthTR, languageSb.localToStageCoordinates(new Vector2(0, 0)).x - 60, languageSb.localToStageCoordinates(new Vector2(0, 0)).y - 6, 64, 64);
+            game.sb.draw(game.assets.earthTR, languageSb.localToStageCoordinates(new Vector2(0, 0)).x - 60, languageSb.localToStageCoordinates(new Vector2(0, 0)).y + 4, 64, 64);
             game.sb.draw(game.assets.audioTR, audioTable.localToStageCoordinates(new Vector2(0, 0)).x + 30, audioTable.localToStageCoordinates(new Vector2(0, 0)).y + 20);
             game.sb.draw(game.assets.playTR, playBtn.localToStageCoordinates(new Vector2(0, 0)).x + 30, playBtn.localToStageCoordinates(new Vector2(0, 0)).y + 35);
 //            game.sb.draw(game.assets.optionsT, optionsBtn.localToStageCoordinates(new Vector2(0, 0)).x + 30, optionsBtn.localToStageCoordinates(new Vector2(0, 0)).y + 35);

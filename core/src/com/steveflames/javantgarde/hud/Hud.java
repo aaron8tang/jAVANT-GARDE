@@ -302,7 +302,7 @@ public class Hud implements Disposable {
     }
 
     public void showGameOverWindow() {
-        playScreen.getAssets().stopPlayScreenMusic();
+        playScreen.getAssets().stopAllPlayScreenAudio();
         stage.addActor(gameOverWindow);
         if(editorWindow != null)
             editorWindow.closeCurrentEditor();
@@ -310,7 +310,7 @@ public class Hud implements Disposable {
     }
 
     public void showLevelCompletedWindow() {
-        playScreen.getAssets().stopPlayScreenMusic();
+        playScreen.getAssets().stopAllPlayScreenAudio();
         stage.addActor(levelCompletedWindow);
         hideAndroidInputTable();
         playScreen.getGame().preferences.setLevelProgress((ChooseLevelScreen.getNextLevelId(playScreen.getCurrentLevel())));

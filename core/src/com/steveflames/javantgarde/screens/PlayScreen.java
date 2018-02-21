@@ -183,13 +183,13 @@ public class PlayScreen implements Screen{
                 if (getPlayer().getCurrentState() == Player.State.DISAPPEARED) {
                     //getPlayer().setCurrentState(Player.State.READING);
                     gameOver = true;
-                    getAssets().playSound(getAssets().levelCompletedSound);
                     hud.showLevelCompletedWindow();
+                    getAssets().playSound(getAssets().levelCompletedSound);
                 } else if (getPlayer().getCurrentState() == Player.State.DEAD) {
                     //getPlayer().setCurrentState(Player.State.READING);
                     gameOver = true;
-                    getAssets().playSound(getAssets().deadSound);
                     hud.showGameOverWindow();
+                    getAssets().playSound(getAssets().deadSound);
                 } else if (getPlayer().getCurrentState() != Player.State.CODING)
                     Cameras.updateCameraPosition(getPlayer());
 
@@ -362,7 +362,7 @@ public class PlayScreen implements Screen{
         getAssets().unloadAllMainMenuAssets();
         getAssets().unloadAllPlayScreenAssets();
         //getAssets().unloadSkins();
-        getAssets().stopPlayScreenMusic();
+        getAssets().stopAllPlayScreenAudio();
         getAssets().unloadPlayScreenBundles();
     }
 
@@ -388,7 +388,7 @@ public class PlayScreen implements Screen{
 
     @Override
     public void dispose() { //dispose unused assets
-        game.assets.stopPlayScreenMusic();
+        game.assets.stopAllPlayScreenAudio();
         if(!restartLevel) {
             game.assets.unloadAllPlayScreenAssets();
             map.dispose();

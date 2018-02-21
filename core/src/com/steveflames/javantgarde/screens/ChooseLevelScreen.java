@@ -62,6 +62,7 @@ public class ChooseLevelScreen implements Screen{
         viewport = new FitViewport(MyGdxGame.WIDTH, MyGdxGame.HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, game.sb);
 
+        game.assets.playMusic(game.assets.mainMenuMusic);
         game.assets.loadAllMainMenuAssets();
         game.assets.finishLoading();
         game.assets.refreshMainMenuAssets();

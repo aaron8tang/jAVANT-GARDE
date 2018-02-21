@@ -8,7 +8,6 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -411,7 +410,7 @@ public class Assets {
         manager.unload(clickSOUND);
     }
 
-    private void loadSkins() {
+    public void loadSkins() {
         if(!manager.isLoaded(neonSKIN)) {
             ObjectMap<String, Object> resources = new ObjectMap<String, Object>();
             resources.put("LiberationMono", Fonts.xsmallMono);
@@ -477,15 +476,6 @@ public class Assets {
         }
     }
 
-    public void stopPlayScreenMusic() {
-        if(MyGdxGame.musicOn) {
-            if(Gdx.app.getType()== Application.ApplicationType.Desktop) //platform specific
-                playScreenMusicSound.stop();
-            else
-                playScreenMusic.stop();
-        }
-    }
-
     public void stopSound(Sound sound) {
         if(MyGdxGame.sfxOn)
             sound.stop();
@@ -520,6 +510,34 @@ public class Assets {
         frogSound.play(0);
         riseSound.play(0);
         questSound.play(0);
+    }
+
+    public void stopAllPlayScreenAudio() {
+        if(MyGdxGame.sfxOn) {
+            jumpSound.stop();
+            correctSound.stop();
+            levelCompletedSound.stop();
+            wrongSound.stop();
+            errorSound.stop();
+            loseHealthSound.stop();
+            deadSound.stop();
+            //clickSound.stop();
+            bumpSound.stop();
+            robotTalkingSound.stop();
+            useItemSound.stop();
+            doorSound.stop();
+            teleportSound.stop();
+            getItemSound.stop();
+            frogSound.stop();
+            riseSound.stop();
+            questSound.stop();
+        }
+        if(MyGdxGame.musicOn) {
+            if(Gdx.app.getType()== Application.ApplicationType.Desktop) //platform specific
+                playScreenMusicSound.stop();
+            else
+                playScreenMusic.stop();
+        }
     }
 
     //fixes html sound delay bug

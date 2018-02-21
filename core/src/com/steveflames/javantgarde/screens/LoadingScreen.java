@@ -67,10 +67,9 @@ public class LoadingScreen extends Window implements Screen {
         this.level = levelListItem;
 
         assets.loadPlayScreenBundles(game.preferences.getLanguage());
+        game.assets.loadAllPlayScreenAssets();
         recreateUI();
 
-        game.assets.loadAllPlayScreenAssets();
-        game.assets.loadPlayScreenBundles(game.preferences.getLanguage());
         loadingString = "[RED]"+game.assets.playscreenBundle.get("loading")+"[]";
         glyphLayout = new GlyphLayout(Fonts.medium, loadingString);
 
@@ -88,7 +87,7 @@ public class LoadingScreen extends Window implements Screen {
         //loading table
         TextButton exitBtn = new TextButton("< "+game.assets.playscreenBundle.get("back"), game.assets.neonSkin);
         if(game.assets.getQueuedAssets()==0)
-            progressBar = new ProgressBar(0, 1, 1, false, game.assets.neonSkin, "big");
+            progressBar = new ProgressBar(0, 1, 0.1f, false, game.assets.neonSkin, "big");
         else
             progressBar = new ProgressBar(0, 1, 1/game.assets.getQueuedAssets(), false, game.assets.neonSkin, "big");
 
@@ -191,13 +190,14 @@ public class LoadingScreen extends Window implements Screen {
                 } else {
                     loadingString = "[GREEN]"+game.assets.playscreenBundle.get("ready_tap")+"[]";
                     glyphLayout.setText(Fonts.medium, loadingString);
-                    if (!xPressed && Gdx.input.isTouched()) {
+                    if (!xPressed && Gdx.input.justTouched()) {
                         assets.playSound(assets.clickSound);
                         dispose();
                         game.setScreen(new PlayScreen(game, level, map, renderer));
                     }
                 }
-            } else {
+            }
+            else { //loading not complete
                 if (game.assets.getProgress() > 0.5f)
                     loadingString = "[YELLOW]"+game.assets.playscreenBundle.get("loading")+"[]";
                 progressBar.setValue(game.assets.getProgress());

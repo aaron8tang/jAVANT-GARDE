@@ -19,22 +19,18 @@ import com.steveflames.javantgarde.tools.global.Fonts;
  * TODO NOTES
  * COMPILER: if the user types { or } on a println, uneven brackets error is triggered
  * COMPILER: add compiler errors: (method doesn't exist, var not declared)
+ * COMPILER: auto format the way i check before compile
  * EDITOR: remake codeArea
  *
- * MAKE TILESETS POWER OF 2 RESOLUTION (1024x1024) and rmk maps
- * smaller textures.pack pngs. rmk
- *
  * html/web version no android keyboard.. / create CUSTOM ONSCREEN KEYBOARD
- * REFLECTION STON ASSET LOADER possible fix gia web
- *
- * choose level slow response. map loading?
  *
  * TODO minor
  * POOL objects
  * add loading screen random programming tip
  * new custom infosign window with scroll (no dialog)
- * -load/unload SKINS resume/pause. constructors call refresh method. resume calls refresh method aswell
- * -lock textureregion dispose, recreate but on swap windows (click) resume is not called (no recreation)
+ * make scifi tilesets power of 2 (1024x1024) and rmk maps
+ * #load/unload SKINS resume/pause. constructors call refresh method. resume calls refresh method aswell
+ * #lock textureregion dispose, recreate but on swap windows (click) resume is not called (no recreation)
  *
  *
  * ---------------LEVELS TO ADD---------------
