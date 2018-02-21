@@ -1,7 +1,103 @@
 
 textures.png
 format: RGBA8888
-filter: MipMapNearestLinear,Linear
+filter: Nearest,Nearest
+repeat: none
+robot-antennas
+  rotate: false
+  xy: 0, 768
+  size: 1024, 256
+  orig: 1024, 256
+  offset: 0, 0
+  index: -1
+bot_talk
+  rotate: false
+  xy: 0, 240
+  size: 972, 528
+  orig: 972, 528
+  offset: 0, 0
+  index: -1
+bot_wheel
+  rotate: false
+  xy: 972, 719
+  size: 49, 49
+  orig: 49, 49
+  offset: 0, 0
+  index: -1
+keyboardDown
+  rotate: false
+  xy: 0, 30
+  size: 340, 210
+  orig: 340, 210
+  offset: 0, 0
+  index: -1
+keyboardUp
+  rotate: false
+  xy: 340, 30
+  size: 340, 210
+  orig: 340, 210
+  offset: 0, 0
+  index: -1
+pc
+  rotate: false
+  xy: 680, 80
+  size: 96, 160
+  orig: 96, 160
+  offset: 0, 0
+  index: -1
+class
+  rotate: false
+  xy: 776, 112
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+lever_closed
+  rotate: false
+  xy: 904, 150
+  size: 90, 90
+  orig: 90, 90
+  offset: 0, 0
+  index: -1
+lever_open
+  rotate: false
+  xy: 904, 60
+  size: 90, 90
+  orig: 90, 90
+  offset: 0, 0
+  index: -1
+bot_move
+  rotate: false
+  xy: 776, 24
+  size: 81, 88
+  orig: 81, 88
+  offset: 0, 0
+  index: -1
+infoSign
+  rotate: false
+  xy: 680, 16
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+diploma
+  rotate: false
+  xy: 857, 0
+  size: 60, 60
+  orig: 60, 60
+  offset: 0, 0
+  index: -1
+scroll
+  rotate: false
+  xy: 917, 0
+  size: 60, 60
+  orig: 60, 60
+  offset: 0, 0
+  index: -1
+
+textures2.png
+format: RGBA8888
+filter: Nearest,Nearest
 repeat: none
 teleporter_disappear
   rotate: false
@@ -17,149 +113,43 @@ bot_typing
   orig: 972, 176
   offset: 0, 0
   index: -1
-pc
-  rotate: false
-  xy: 900, 860
-  size: 96, 160
-  orig: 96, 160
-  offset: 0, 0
-  index: -1
-lever_closed
-  rotate: false
-  xy: 900, 770
-  size: 90, 90
-  orig: 90, 90
-  offset: 0, 0
-  index: -1
-lever_open
-  rotate: false
-  xy: 900, 680
-  size: 90, 90
-  orig: 90, 90
-  offset: 0, 0
-  index: -1
-bot_move
-  rotate: false
-  xy: 900, 592
-  size: 81, 88
-  orig: 81, 88
-  offset: 0, 0
-  index: -1
-infoSign
-  rotate: false
-  xy: 900, 528
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: -1
-diploma
-  rotate: false
-  xy: 964, 532
-  size: 60, 60
-  orig: 60, 60
-  offset: 0, 0
-  index: -1
-scroll
-  rotate: false
-  xy: 964, 472
-  size: 60, 60
-  orig: 60, 60
-  offset: 0, 0
-  index: -1
-bot_wheel
-  rotate: false
-  xy: 900, 479
-  size: 49, 49
-  orig: 49, 49
-  offset: 0, 0
-  index: -1
-
-textures2.png
-format: RGBA8888
-filter: Nearest,Nearest
-repeat: none
-keyboardDown
-  rotate: false
-  xy: 0, 768
-  size: 340, 210
-  orig: 340, 210
-  offset: 0, 0
-  index: -1
-keyboardUp
-  rotate: false
-  xy: 340, 768
-  size: 340, 210
-  orig: 340, 210
-  offset: 0, 0
-  index: -1
-robot-antennas
-  rotate: false
-  xy: 0, 512
-  size: 1024, 256
-  orig: 1024, 256
-  offset: 0, 0
-  index: -1
-class
-  rotate: false
-  xy: 0, 0
-  size: 512, 512
-  orig: 512, 512
-  offset: 0, 0
-  index: -1
-eye
-  rotate: false
-  xy: 512, 0
-  size: 512, 512
-  orig: 512, 512
-  offset: 0, 0
-  index: -1
 
 textures3.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-fix
-  rotate: false
-  xy: 0, 512
-  size: 512, 512
-  orig: 512, 512
-  offset: 0, 0
-  index: -1
-hand
-  rotate: false
-  xy: 512, 512
-  size: 512, 512
-  orig: 512, 512
-  offset: 0, 0
-  index: -1
-heart
-  rotate: false
-  xy: 0, 0
-  size: 512, 512
-  orig: 512, 512
-  offset: 0, 0
-  index: -1
-
-textures4.png
-format: RGBA8888
-filter: Nearest,Nearest
-repeat: none
 teleporter_idle
   rotate: false
-  xy: 0, 0
+  xy: 0, 128
   size: 900, 844
   orig: 900, 844
   offset: 0, 0
   index: -1
-
-textures5.png
-format: RGBA8888
-filter: Nearest,Nearest
-repeat: none
-bot_talk
+eye
   rotate: false
   xy: 0, 0
-  size: 972, 528
-  orig: 972, 528
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+fix
+  rotate: false
+  xy: 128, 0
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+hand
+  rotate: false
+  xy: 256, 0
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+heart
+  rotate: false
+  xy: 384, 0
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: -1
