@@ -184,7 +184,7 @@ public class LoadingScreen extends Window implements Screen {
                     if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
                         assets.playSound(assets.clickSound);
                         dispose();
-                        game.assets.unloadAllMainMenuAssets();
+                        game.assets.unloadAllMainMenuAssets(false);
                         game.setScreen(new PlayScreen(game, level, map, renderer));
                     }
                 } else {
@@ -193,6 +193,7 @@ public class LoadingScreen extends Window implements Screen {
                     if (!xPressed && Gdx.input.justTouched()) {
                         assets.playSound(assets.clickSound);
                         dispose();
+                        game.assets.unloadAllMainMenuAssets(false);
                         game.setScreen(new PlayScreen(game, level, map, renderer));
                     }
                 }
@@ -214,7 +215,7 @@ public class LoadingScreen extends Window implements Screen {
     @Override
     public void pause() {
         game.gameMinimized = true;
-        game.assets.unloadAllMainMenuAssets();
+        game.assets.unloadAllMainMenuAssets(true);
         //game.assets.unloadSkins();
     }
 

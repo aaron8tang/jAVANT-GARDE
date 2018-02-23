@@ -359,7 +359,6 @@ public class PlayScreen implements Screen{
         game.gameMinimized = true;
         if(getPlayer().canMove)
             hud.showPauseWindow();
-        getAssets().unloadAllMainMenuAssets();
         getAssets().unloadAllPlayScreenAssets();
         //getAssets().unloadSkins();
         getAssets().stopAllPlayScreenAudio();
@@ -369,7 +368,6 @@ public class PlayScreen implements Screen{
     @Override
     public void resume() {
         getAssets().playPlayScreenMusic();
-        getAssets().loadAllMainMenuAssets();
         getAssets().loadAllPlayScreenAssets();
         getAssets().finishLoading();
         game.assets.refreshPlayScreenAssets();

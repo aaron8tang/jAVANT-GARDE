@@ -91,7 +91,7 @@ public class MyGdxGame extends Game {
 	public void dispose () {
 		sb.dispose();
 		sr.dispose();
-		assets.unloadAllMainMenuAssets();
+		assets.unloadAllMainMenuAssets(true);
 		assets.unloadAllPlayScreenAssets();
 		Fonts.dispose();
 	}

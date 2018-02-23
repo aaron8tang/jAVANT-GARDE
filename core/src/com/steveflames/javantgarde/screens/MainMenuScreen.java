@@ -342,7 +342,7 @@ public class MainMenuScreen implements Screen {
     public void pause() {
         game.gameMinimized = true;
         game.assets.pauseMusic(game.assets.mainMenuMusic);
-        game.assets.unloadAllMainMenuAssets();
+        game.assets.unloadAllMainMenuAssets(true);
         //game.assets.unloadSkins();
         //for(Actor actor: dialogStage.getActors())
         //    actor.remove();

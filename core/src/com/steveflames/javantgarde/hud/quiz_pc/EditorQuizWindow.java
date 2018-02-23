@@ -280,7 +280,7 @@ public class EditorQuizWindow extends Window {
 
     private void updateUI() {
         String questStepText = currentPc.getQuest().getCurrentQuestStepText(assets.playscreenBundle.get("quest_completed"));
-        if(!questStepText.contains("Quest completed!")) { //next quest step
+        if(!questStepText.contains(assets.playscreenBundle.get("quest_completed"))) { //next quest step
             codeLabel.setText(questStepText);
             extraKeyboardWindow.clearButtons();
             for (String s : currentPc.getQuest().getCurrentQuestStep().getHints()) //add buttons
@@ -290,7 +290,7 @@ public class EditorQuizWindow extends Window {
 
     private void completed() {
         assets.playSound(assets.questSound);
-        codeLabel.setText("[GREEN]Quest completed![]");
+        codeLabel.setText("[GREEN]"+assets.playscreenBundle.get("quest_completed")+"[]");
         extraKeyboardWindow.clearButtons();
         extraKeyboardWindow.remove();
     }

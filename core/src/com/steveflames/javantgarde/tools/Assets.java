@@ -340,13 +340,15 @@ public class Assets {
         loadSkins();
     }
 
-    public void unloadAllMainMenuAssets() {
+    public void unloadAllMainMenuAssets(boolean unloadClick) {
         if(manager.isLoaded(mainMenuTexturesATLAS))
             manager.unload(mainMenuTexturesATLAS);
         if(manager.isLoaded(mainMenuMUSIC))
             manager.unload(mainMenuMUSIC);
-        if(manager.isLoaded(clickSOUND))
-            manager.unload(clickSOUND);
+        if(unloadClick) {
+            if (manager.isLoaded(clickSOUND))
+                manager.unload(clickSOUND);
+        }
         for(String bundle: mainMenuBUNDLES) {
             if (manager.isLoaded(bundle)) {
                 manager.unload(bundle);
@@ -491,27 +493,6 @@ public class Assets {
             music.pause();
     }
 
-    //fixes html sound delay bug
-    public void playAllPlayScreenSoundsMuted() {
-        jumpSound.play(0);
-        correctSound.play(0);
-        levelCompletedSound.play(0);
-        wrongSound.play(0);
-        errorSound.play(0);
-        loseHealthSound.play(0);
-        deadSound.play(0);
-        clickSound.play(0);
-        bumpSound.play(0);
-        robotTalkingSound.play(0);
-        useItemSound.play(0);
-        doorSound.play(0);
-        teleportSound.play(0);
-        getItemSound.play(0);
-        frogSound.play(0);
-        riseSound.play(0);
-        questSound.play(0);
-    }
-
     public void stopAllPlayScreenAudio() {
         if(MyGdxGame.sfxOn) {
             jumpSound.stop();
@@ -538,6 +519,27 @@ public class Assets {
             else
                 playScreenMusic.stop();
         }
+    }
+
+    //fixes html sound delay bug
+    public void playAllPlayScreenSoundsMuted() {
+        jumpSound.play(0);
+        correctSound.play(0);
+        levelCompletedSound.play(0);
+        wrongSound.play(0);
+        errorSound.play(0);
+        loseHealthSound.play(0);
+        deadSound.play(0);
+        clickSound.play(0);
+        bumpSound.play(0);
+        robotTalkingSound.play(0);
+        useItemSound.play(0);
+        doorSound.play(0);
+        teleportSound.play(0);
+        getItemSound.play(0);
+        frogSound.play(0);
+        riseSound.play(0);
+        questSound.play(0);
     }
 
     //fixes html sound delay bug

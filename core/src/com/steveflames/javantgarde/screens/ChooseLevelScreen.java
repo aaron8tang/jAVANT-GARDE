@@ -62,10 +62,10 @@ public class ChooseLevelScreen implements Screen{
         viewport = new FitViewport(MyGdxGame.WIDTH, MyGdxGame.HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, game.sb);
 
-        game.assets.playMusic(game.assets.mainMenuMusic);
         game.assets.loadAllMainMenuAssets();
         game.assets.finishLoading();
         game.assets.refreshMainMenuAssets();
+        game.assets.playMusic(game.assets.mainMenuMusic);
         game.assets.loadMainMenuBundles(game.preferences.getLanguage());
         loadCategories();
         recreateUI();
@@ -188,7 +188,7 @@ public class ChooseLevelScreen implements Screen{
     public void pause() {
         game.gameMinimized = true;
         assets.pauseMusic(assets.mainMenuMusic);
-        game.assets.unloadAllMainMenuAssets();
+        game.assets.unloadAllMainMenuAssets(true);
         //game.assets.unloadSkins();
     }
 
