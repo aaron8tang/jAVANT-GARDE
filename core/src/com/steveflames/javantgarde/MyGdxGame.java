@@ -19,10 +19,10 @@ import com.steveflames.javantgarde.tools.global.Fonts;
  * TODO NOTES
  * COMPILER: if the user types { or } on a println, uneven brackets error is triggered
  * COMPILER: add compiler errors: (method doesn't exist, var not declared)
- * COMPILER: auto format the way i check before compile
+ * COMPILER: use java code formatter library to format code to Google Java Format
  * EDITOR: remake codeArea
  *
- * html/web version no android keyboard.. / create CUSTOM ONSCREEN KEYBOARD
+ * create CUSTOM ONSCREEN KEYBOARD (html/web version no android keyboard)
  *
  * TODO minor
  * POOL objects
@@ -30,13 +30,12 @@ import com.steveflames.javantgarde.tools.global.Fonts;
  * new custom infosign window with scroll (no dialog)
  * make scifi tilesets power of 2 (1024x1024) and rmk maps
  * #load/unload SKINS resume/pause. constructors call refresh method. resume calls refresh method aswell
- * #lock textureregion dispose, recreate but on swap windows (click) resume is not called (no recreation)
+ * #lockpad textureregion dispose, recreate but on swap windows (click) resume is not called (no recreation)
  *
  *
  * ---------------LEVELS TO ADD---------------
- * INTRO STAGE: point out that each command is written on a new line (line of code)
- * INTRO STAGE: method BODY, class BODY
  * INTRO STAGE: indentation (spacing)
+ * CMD COMPILE
  * package? import?
  * LOCAL VARIABLES (SCOPE)
  * getters setters

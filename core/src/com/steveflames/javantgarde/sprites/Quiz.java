@@ -86,10 +86,10 @@ public class Quiz extends GameObject {
 
     private void completed() {
         assets.playSound(assets.questSound);
-        if (id.equals("2_2") || id.equals("1_2") || id.equals("6_2"))
+        if (id.equals("2_2") || id.equals("1_3") || id.equals("6_2") || id.equals("4_1"))
             objectManager.getDoors().get(0).open();
-        else if (id.equals("4_1"))
-            objectManager.getDoors().get(0).open();
+        else if (id.equals("1_1"))
+            objectManager.getDoors().get(2).open();
         else if (id.equals("5_1"))
             objectManager.getDoors().get(6).open();
         else if (id.equals("7_2")) {

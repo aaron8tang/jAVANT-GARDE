@@ -1,40 +1,55 @@
 //IGNORE FIRST LINE
 ~QUEST
-The code to define a class:
-[RED]class MyClass {[]
-
-[RED]}[]
-
-Write this code on the editor and hit the '[CYAN]compile & run[]' button
+class MyClass {
+    [RED]___[] ___ ___ main(___ args) {
+        
+    }
+}
+[CYAN]//Fill in the red blank.[]
+#HELP
+?static
+#HELP
+?void
+#HELP
+!public
+#HELP
+?String[]
 ~QUEST
-We get an [RED]error[] because our program does not have a main method.
-
-The code of the main method:
-[GREEN]public static void main(String[[] args) {[]
-
-[GREEN]}[]
-
-Write this code inside your class and hit the '[CYAN]compile & run[]' button
+class MyClass {
+    public [RED]___[] ___ main(___ args) {
+        
+    }
+}
+[CYAN]//Fill in the red blank.[]
 #HELP
-[RED]class MyClass {[]
-    [GREEN]public static void main(String[[] args) {[]
- 
-    [GREEN]}[]
-[RED]}[]
+!static
+#HELP
+?void
+#HELP
+?string
 ~QUEST
-Great, we have our program's starting point.
-
-Now, print the words "[CYAN]Hello World![]" on the console.
-Use the [CYAN]help[] button to learn how to do that!
+class MyClass {
+    public static [RED]___[] main(___ args) {
+        
+    }
+}
+[CYAN]//Fill in the red blank.[]
 #HELP
-To print a message to the console you have to type: [CYAN]System.out.println("");[]
-your message goes between the quotes [CYAN]""[]
+!void
 #HELP
-add this code inside your main method:
-[CYAN]System.out.println("Hello World!");[]
+?String
+~QUEST
+class MyClass {
+    public static void main([RED]___[] args) {
+        
+    }
+}
+[CYAN]//Fill in the red blank.[]
 #HELP
-[RED]public class MyClass {[]
-    [GREEN]public static void main(String[[] args) {[]
-        [CYAN]System.out.println("Hello World!");[]
-    [GREEN]}[]
-[RED]}[]
+?string
+#HELP
+?String
+#HELP
+?string[]
+#HELP
+!String[]

@@ -202,7 +202,7 @@ public class EditorWindow extends Window {
                     myClasses.add(new MyClass(entry.getKey(), entry.getValue()));
 
                 //COMPILE AND RUN
-                if(compiler.compile(myClasses) || (hud.playScreen.getCurrentLevelID().equals("1_1") && currentPc.getQuest().getProgress()==0)) {
+                if(compiler.compile(myClasses) || (hud.playScreen.getCurrentLevelID().equals("1_2") && currentPc.getQuest().getProgress()==0)) {
                     if (validateCodeForQuest(hud.playScreen, myClasses.get(0), currentPc.getQuest().getQuestN())) {
                         assets.playSound(assets.correctSound);
                         questWindow.incrementQuestStep(currentPc.getQuest(), EditorWindow.this);
@@ -550,7 +550,7 @@ public class EditorWindow extends Window {
 
 
     private boolean validateCodeForQuest(PlayScreen playScreen, MyClass myClass, int questN) {
-        if(playScreen.getCurrentLevelID().equals("1_1")) {
+        if(playScreen.getCurrentLevelID().equals("1_2")) {
             switch (currentPc.getQuest().getProgress()) {
                 case 0:
                     if (consoleWindow.getConsoleTextArea().getText().toString().equals("[RED]Error: main method not found[]\n"))
@@ -808,9 +808,9 @@ public class EditorWindow extends Window {
 
     public void completed() {
         assets.playSound(assets.questSound);
-        if(hud.playScreen.getCurrentLevelID().equals("1_1")) {
+        if(hud.playScreen.getCurrentLevelID().equals("1_2")) {
             tempHideEditor(-1, false);
-            hud.playScreen.getObjectManager().getDoors().get(3).open();
+            hud.playScreen.getObjectManager().getDoors().get(0).open();
         }
         else if(hud.playScreen.getCurrentLevelID().equals("2_1")) {
             closeCurrentEditor();

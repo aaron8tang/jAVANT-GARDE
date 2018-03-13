@@ -96,11 +96,21 @@ public class EditorQuizWindow extends Window {
             if(timer > 1.5 && doOnce) { //1.5 after the answer
                 doOnce = false;
                 if(correct) { //if it is correct
-                    if(playScreen.getCurrentLevelID().equals("6_2") || playScreen.getCurrentLevelID().equals("5_2")) //on level 6_2 no need to hide editor
+                    if(playScreen.getCurrentLevelID().equals("1_1") || playScreen.getCurrentLevelID().equals("6_2") || playScreen.getCurrentLevelID().equals("5_2")) //on level 6_2 no need to hide editor
                         timer = 2.5f;
                     else
                         tempHideEditor(-1); //hide the editor temporarily to show the result in the map (e.g. open door)
-                    if(playScreen.getCurrentLevelID().equals("3_2")) {
+
+                    if(playScreen.getCurrentLevelID().equals("1_1")) {
+                        if(currentPc.getQuest().getProgress() == 3) {
+                            tempHideEditor(-1);
+                            timer = 1.5f;
+                            Cameras.setCameraTo(playScreen.getObjectManager().getFloatingPlatforms().get(1).b2body.getPosition().x);
+                            showEditor = false;
+                            playScreen.getObjectManager().getFloatingPlatforms().get(1).drop(-2000 / MyGdxGame.PPM);
+                        }
+                    }
+                    else if(playScreen.getCurrentLevelID().equals("3_2")) {
                         switch (currentPc.getQuest().getProgress()) {
                             case 0:
                                 playScreen.getObjectManager().getFloatingPlatforms().get(1).drop(1600/MyGdxGame.PPM);
@@ -230,6 +240,10 @@ public class EditorQuizWindow extends Window {
                     else { //dont show editor again
                         playScreen.getPlayer().setCurrentState(Player.State.STANDING);
                         playScreen.getHud().showAndroidInputTable();
+                        if(currentPc.getQuest().isCompleted()) { //if text completion has a toast, show it
+                            if(currentPc.getQuest().getCompletedText()!= null)
+                                playScreen.getHud().newToast(currentPc.getQuest().getCompletedText());
+                        }
                     }
                 }
             }
@@ -305,7 +319,7 @@ public class EditorQuizWindow extends Window {
     }
 
     private void tempShowEditor() {
-        if(!playScreen.getCurrentLevelID().equals("6_2") && !playScreen.getCurrentLevelID().equals("5_2")) {
+        if(!playScreen.getCurrentLevelID().equals("1_1") && !playScreen.getCurrentLevelID().equals("6_2") && !playScreen.getCurrentLevelID().equals("5_2")) {
             Cameras.playScreenCam.position.x = tempCamX;
             tempCamX = -1;
             playScreen.getHud().stage.addActor(this);

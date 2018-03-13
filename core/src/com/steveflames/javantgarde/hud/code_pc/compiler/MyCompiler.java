@@ -56,13 +56,50 @@ public class MyCompiler {
         compilationClass.addError("Error: main method not found");
         //boolean inFieldDeclaration = false;
 
+        //format code to Google Java Style
+        /*String formattedCode = "";
+        try {
+            formattedCode = new Formatter().formatSource(compilationClass.getCode());
+        } catch (FormatterException e) {
+            compilationClass.removeError("Error: class not defined in file " + compilationClass.getName() + ".java");
+            compilationClass.removeError("Error: main method not found");
+            compilationClass.addErrorInLine(e.getMessage().split(":")[3].substring(1), Integer.parseInt(e.getMessage().split(":")[0]));
+        }*/
+        //System.out.println(formattedCode);
+/*
+        String className = "mypackage.MyClass";
+        String javaCode = "package mypackage;\n" +
+                "import com.steveflames.javantgarde.hud.code_pc.compiler.Test;\n" +
+                "public class MyClass implements Test {\n" +
+                "    public void printHello() {\n" +
+                "        System.out.println(\"Hello World\");\n" +
+                "    }\n" +
+                "}\n";
+        try {
+            Class aClass = CompilerUtils.CACHED_COMPILER.loadFromJava(className, javaCode);
+            Test runner = null;
+            try {
+                runner = (Test) aClass.newInstance();
+            } catch (InstantiationException e1) {
+                e1.printStackTrace();
+            } catch (IllegalAccessException e1) {
+                e1.printStackTrace();
+            }
+            runner.printHello();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }*/
 
-        lineSplitter = compilationClass.getCode().split("\n"); //get the lines of code
+
+        //get the lines of code
+        lineSplitter = classes.get(0).getCode().split("\n");
 
         for(int i=0; i<lineSplitter.length; i++) {
             //prepare lineOfCode
             lineSplitter[i] = prepareLineOfCode(lineSplitter[i]);
         }
+
+        lineSplitter = formatCode(lineSplitter);
 
         lineN = 0;
         for(String lineOfCode: lineSplitter) { //parse the lines of code
@@ -87,6 +124,7 @@ public class MyCompiler {
                                     if(!nextWord.equals("MyClass")) { //wrong class name
                                         compilationClass.addError("Error: class " + nextWord + " should be defined in its own file.");
                                         compilationClass.addError("[YELLOW]Warning: the class name should be same as the file name. (MyClass)[]");
+                                        compilationClass.removeError("Error: main method not found");
                                     }
                                     else {
                                         if (isNextWordStrictlyEqualTo("{")) {
@@ -99,8 +137,10 @@ public class MyCompiler {
                                 }
                             }
                         }
-                        else
-                            compilationClass.addErrorInLine(null,lineN);
+                        else {
+                            compilationClass.addErrorInLine(null, lineN);
+                            compilationClass.removeError("Error: main method not found");
+                        }
                     }
                     else { //class is declared previously
                         if (!isMethodDeclaration(wordSplitter[0])
@@ -137,6 +177,18 @@ public class MyCompiler {
         if(flag)
             consoleTextArea.setText(consoleTextArea.getText() + "\n[GREEN](Compilation finished with no errors)[]");
         return flag;
+    }
+
+    private String[] formatCode(String[] lineSplitter) {
+        for(int i=0; i<lineSplitter.length; i++) {
+            if(lineSplitter[i].equals("{")) {
+                if(i-1>=0) {
+                    lineSplitter[i-1] += " " +lineSplitter[i];
+                    lineSplitter[i]="";
+                }
+            }
+        }
+        return lineSplitter;
     }
 
     private void splitLineToWords(String lineOfCode) {
@@ -312,7 +364,7 @@ public class MyCompiler {
                                         if (isNextWordStrictlyEqualTo("args")) { //9th word
                                             if (isNextWordStrictlyEqualTo(")")) { //10th word
                                                 if (isNextWordStrictlyEqualTo("{")) { //11th word
-                                                    if(getNextWordInLine()==null) {
+                                                    if(getNextWordInLine() == null) {
                                                         compilationClass.addMethod(new MyMethod("public", "void", "main", new ArrayList<MyVariable>(), ""));
                                                         compilationClass.removeError("Error: main method not found");
                                                         return true;

@@ -213,6 +213,7 @@ public class ChooseLevelScreen implements Screen{
         categories.put(game.assets.mainMenuBundle.get("intro"), new ArrayList<LevelListItem>()); //1
         categories.get(game.assets.mainMenuBundle.get("intro")).add(new LevelListItem(game.assets.mainMenuBundle.get("intro"), "1_1", game.assets.mainMenuBundle.get("1_1")));
         categories.get(game.assets.mainMenuBundle.get("intro")).add(new LevelListItem(game.assets.mainMenuBundle.get("intro"), "1_2", game.assets.mainMenuBundle.get("1_2")));
+        categories.get(game.assets.mainMenuBundle.get("intro")).add(new LevelListItem(game.assets.mainMenuBundle.get("intro"), "1_3", game.assets.mainMenuBundle.get("1_3")));
 
         categories.put(game.assets.mainMenuBundle.get("variables"), new ArrayList<LevelListItem>()); //2
         categories.get(game.assets.mainMenuBundle.get("variables")).add(new LevelListItem(game.assets.mainMenuBundle.get("variables"), "2_1", game.assets.mainMenuBundle.get("2_1")));

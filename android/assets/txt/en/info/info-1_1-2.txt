@@ -1,5 +1,5 @@
 The starting point of your project is the class that contains
-the unique method named [GREEN]main[]
+the unique method named [GREEN]main[].
 
 the syntax of the main method inside our class:
 [CYAN]________________________________________________________________[]

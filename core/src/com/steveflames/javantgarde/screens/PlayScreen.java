@@ -193,8 +193,11 @@ public class PlayScreen implements Screen{
                 } else if (getPlayer().getCurrentState() != Player.State.CODING)
                     Cameras.updateCameraPosition(getPlayer());
 
-                if (getPlayer().isOutOfBounds() && getPlayer().getPlayerMsgAlpha() == 1)
-                    getPlayer().respawnAtCheckpoint(objectManager.getRopes());
+                if (getPlayer().isOutOfBounds()  ) {
+                    getPlayer().setCurrentState(Player.State.STANDING);
+                    if (getPlayer().getPlayerMsgAlpha() == 1)
+                        getPlayer().respawnAtCheckpoint(objectManager.getRopes());
+                }
             } else //game paused
                 hud.getPauseWindow().handleExitFromPauseMenuInput();
         }

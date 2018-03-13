@@ -1,11 +1,11 @@
-Each [RED]class[] consists of groups of code called [BLUE]methods[]
+Each [RED]class[] consists of groups of code called [BLUE]methods[].
 
 a simple way of writing a method inside our class:
 [CYAN]_____________________________________________________________________[]
 
 [RED]class MyClass {[]
     [BLUE]void myMethod() {[]
-        [LIGHT_GRAY]//CODE OF METHOD GOES HERE[]
+        [LIGHT_GRAY]//CODE OF METHOD GOES HERE (BODY OF THE METHOD)[]
     [BLUE]}[]
 [RED]}[]
 [CYAN]_____________________________________________________________________[]

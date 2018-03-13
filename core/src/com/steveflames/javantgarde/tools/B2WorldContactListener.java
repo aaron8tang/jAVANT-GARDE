@@ -130,7 +130,7 @@ public class B2WorldContactListener implements ContactListener {
             else if(object.getUserData().equals("cyberfrogUpperSensor")) {
                 assets.playSound(assets.frogSound);
                 ((Player)player.getUserData()).setCurrentState(Player.State.JUMPING);
-                ((Player)player.getUserData()).b2body.applyLinearImpulse(0,4000/MyGdxGame.PPM,0,0,true);
+                ((Player)player.getUserData()).b2body.applyLinearImpulse(0,3700/MyGdxGame.PPM,0,0,true);
             }
         }
         //one of the colliding fixtures is Player's down sensor

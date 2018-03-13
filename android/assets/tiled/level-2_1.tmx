@@ -110,7 +110,7 @@
  </objectgroup>
  <objectgroup name="checkpoint">
   <object id="38" name="checkpoint-2_1-0" x="544" y="0" width="64" height="634.667"/>
-  <object id="46" name="checkpoint-2_1-1" x="3232" y="0" width="64" height="637.333"/>
+  <object id="46" name="checkpoint-2_1-1" x="3210" y="556" width="224" height="81.333"/>
  </objectgroup>
  <objectgroup name="teleporter">
   <object id="74" name="teleporter_end" x="6080" y="512" width="128" height="64"/>

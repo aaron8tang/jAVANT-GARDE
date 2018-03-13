@@ -1,5 +1,8 @@
-In Java, most of the lines of code you write must be inside
-a [RED]class[].
+[ORANGE]Our [CYAN]code[] is actually commands given in a specific order.
+Each command is written in a new line called [CYAN]line of code[].
+There is no limitation to the lines of code that we write.[]
+
+In Java, most of the code you write must be inside a [RED]class[].
 
 the code to write a class:
 [CYAN]____________________________________________________________[]
@@ -11,4 +14,5 @@ the code to write a class:
 
  [ORANGE]*[] [RED]class[] is the keyword to define a class
  [ORANGE]*[] [RED]MyClass[] is the name we chose for our class
- [ORANGE]*[] the code of the class starts at [RED]{[] and ends at [RED]}
+ [ORANGE]*[] the [CYAN]code[] of the class starts at [RED]{[] and ends at [RED]}[] and
+   is called the [ORANGE]body[] of the class.

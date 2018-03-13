@@ -41,9 +41,9 @@ public class InfoSign extends GameObject {
             doors.get(0).open();
         else if(name.equals("info-1_1-1") || name.equals("info-7_1-1"))
             doors.get(1).open();
-        else if(name.equals("info-1_1-2") || name.equals("info-7_1-2"))
+        else if(name.equals("info-1_2-2") || name.equals("info-7_1-2"))
             doors.get(2).open();
-        else if(name.equals("info-7_1-3"))
+        else if(name.equals("info-1_1-2") || name.equals("info-1_1-3") || name.equals("info-7_1-3"))
             doors.get(3).open();
     }
 
