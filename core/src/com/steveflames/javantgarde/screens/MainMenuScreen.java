@@ -239,7 +239,7 @@ public class MainMenuScreen implements Screen {
                 infoDialog.text(aboutString);
                 infoDialog.show(dialogStage);
                 aboutPressedCounter++; //unlock all levels
-                if(aboutPressedCounter == 6) {
+                if(aboutPressedCounter == 5) {
                     game.preferences.setLevelProgress("9_1");
                     game.assets.playSound(game.assets.clickSound);
                     infoDialog.remove();

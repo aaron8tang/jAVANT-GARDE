@@ -38,7 +38,8 @@ public class Rope extends GameObject {
     public Rope(String name, World world, TiledMap map, Rectangle bounds, GameObjectManager objectManager, Assets assets) {
         super(name, world, map, bounds, true);
         String text = MyFileReader.readFile("txt/"+Fonts.languageShort+"/ropes/"+name+".txt");
-        String[] lineSplitter = text.split("\r\n");
+        text = text.replaceAll("\r", "");
+        String[] lineSplitter = text.split("\n");
         String[] attributeSplitter;
         Random random = new Random();
         float randExtraY = random.nextFloat()*3;

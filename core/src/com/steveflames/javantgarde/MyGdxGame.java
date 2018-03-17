@@ -27,6 +27,7 @@ import com.steveflames.javantgarde.tools.global.Fonts;
  * TODO minor
  * POOL objects
  * add loading screen random programming tip
+ * 3_1 change static call
  * new custom infosign window with scroll (no dialog)
  * make scifi tilesets power of 2 (1024x1024) and rmk maps
  * #load/unload SKINS resume/pause. constructors call refresh method. resume calls refresh method aswell
