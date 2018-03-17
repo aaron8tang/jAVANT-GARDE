@@ -6,6 +6,7 @@ A 2D cross-platform <b>Serious Game</b> aiming to introduce to the player the ba
 <br/>
 ## GAME LOGIC:
 The player controls a robot and guides it through a series of levels. Each level is filled with obstacles that the player is called to overcome in order to reach the final portal and complete that specific level.<br/>
+Basic structure of levels:<br/>
 •	The player studies the theory of the level from Info Signs that are placed throughout the map.<br/>
 •	The path of the robot is blocked and the player has to complete various tasks and quests in order to move on.
 
