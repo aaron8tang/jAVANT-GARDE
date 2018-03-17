@@ -1,0 +1,29 @@
+//IGNORE FIRST LINE
+~QUIZ
+What do we call the code between the curly brackets
+of a class?
+#ANSWERS
+?head
+?command
+!body
+~QUIZ
+Is there a limit to the lines of code that we can
+write?
+#ANSWERS
+?yes
+$
+!no
+~QUIZ
+Is the definition of the classes and their methods
+considered as code?
+#ANSWERS
+!yes
+$
+?no
+~QUIZ
+Where do we write our methods in relation to the
+body of our class?
+#ANSWERS
+?before
+!inside
+?after

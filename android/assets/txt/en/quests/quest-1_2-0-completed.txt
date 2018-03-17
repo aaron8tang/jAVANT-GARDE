@@ -1,0 +1,3 @@
+Congratulations! You just wrote your first Java program!
+You managed to print to the user of your program the phrase
+"Hello World!". Go through the portal to complete the level!
