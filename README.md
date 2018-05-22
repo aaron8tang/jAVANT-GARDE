@@ -1,9 +1,9 @@
 # jAVANT-GARDE
 A 2D cross-platform <b>Serious Game</b> that aims to introduce to the player the basic concepts of programming and Object-Oriented programming through Java.
 
-<b>Website:</b> https://javantgarde.ga/javant-garde
+<b>Website:</b> https://javantgarde.ga/javant-garde <br/>
 <b>IDE:</b> Android Studio<br/>
-<b>FRAMEWORK:</b> LibGDX
+<b>FRAMEWORK:</b> LibGDX <br/>
 <b>Supported Platforms:</b> Windows, Mac, Linux, Android, iOS, HTML5
 <br/>
 ## GAME LOGIC:
