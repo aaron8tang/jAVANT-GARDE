@@ -91,8 +91,9 @@ public class ChooseLevelScreen implements Screen{
         window.add(topTable).expandX().left();
         window.row();
 
-        Table mainTable = new Table(assets.neonSkin);
+        final Table mainTable = new Table(assets.neonSkin);
         ScrollPane scroll = new ScrollPane(mainTable, assets.neonSkin);
+        scroll.setFadeScrollBars(false);
         window.add(scroll).expandX().fillX().left();
 
         ArrayList<Table> categoryTables = new ArrayList<Table>();

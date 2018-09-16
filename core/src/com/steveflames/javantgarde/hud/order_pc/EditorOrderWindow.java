@@ -132,6 +132,10 @@ public class EditorOrderWindow extends Window {
                 else {//dont show editor again
                     playScreen.getPlayer().setCurrentState(Player.State.STANDING);
                     playScreen.getHud().showAndroidInputTable();
+                    if(currentPc.getQuest().isCompleted()) { //if text completion has a toast, show it
+                        if(currentPc.getQuest().getCompletedText()!= null)
+                            playScreen.getHud().newToast(currentPc.getQuest().getCompletedText());
+                    }
                 }
 
                 if (!currentPc.getQuest().nextQuestStep()) { //whole quest completed
@@ -295,11 +299,6 @@ public class EditorOrderWindow extends Window {
             playScreen.getPlayer().setCurrentState(Player.State.STANDING);
             this.remove();
             playScreen.getHud().showAndroidInputTable();
-
-            if(currentPc.getQuest().isCompleted()) { //if text completion has a toast, show it
-                if(currentPc.getQuest().getCompletedText()!= null)
-                    playScreen.getHud().newToast(currentPc.getQuest().getCompletedText());
-            }
         }
     }
 }

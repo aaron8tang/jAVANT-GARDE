@@ -31,7 +31,7 @@ android {
     defaultConfig {
         applicationId "com.steveflames.javantgarde"
         minSdkVersion 9
-        targetSdkVersion 20
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
     }

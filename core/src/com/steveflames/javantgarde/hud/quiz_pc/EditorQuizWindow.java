@@ -245,6 +245,7 @@ public class EditorQuizWindow extends Window {
                                 playScreen.getHud().newToast(currentPc.getQuest().getCompletedText());
                         }
                     }
+                    //if(extraKeyboardWindow)
                 }
             }
         }
@@ -336,11 +337,6 @@ public class EditorQuizWindow extends Window {
             extraKeyboardWindow.clearButtons();
             extraKeyboardWindow.remove();
             playScreen.getHud().showAndroidInputTable();
-
-            if(currentPc.getQuest().isCompleted()) { //if text completion has a toast, show it
-                if(currentPc.getQuest().getCompletedText()!= null)
-                    playScreen.getHud().newToast(currentPc.getQuest().getCompletedText());
-            }
         }
     }
 }

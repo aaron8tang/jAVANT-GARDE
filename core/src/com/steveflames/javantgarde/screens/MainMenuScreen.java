@@ -177,7 +177,8 @@ public class MainMenuScreen implements Screen {
             });
         }
 
-        window.add(topTable).top().colspan(0).padLeft(64).padTop(5);
+        window.add(topTable).expandX().top().left().padLeft(64).padTop(5);
+        window.row();
         window.add(midTable).expand().bottom().padBottom(30);
 
         //add window to stage

@@ -1,7 +1,7 @@
 OUTPUT OF A PROGRAM:
 By the term [ORANGE]output[] of a program we mean the information that
-it produces (display a message to the user, create/modify
-a file etc.).
+it produces during its execution (display a message to the user,
+create/modify a file etc.).
 
 In this level we will learn one of the most common ways to
 display a message to the user of our Java program.
